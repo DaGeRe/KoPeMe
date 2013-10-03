@@ -52,6 +52,11 @@ public class PerformanceTestRunner {
 		}
 		for ( Method method : c.getMethods() )
 		{
+			System.out.println("Methode: " + method);
+			for ( Annotation a : method.getAnnotations())
+			{
+				System.out.println("Annotation: " + a);
+			}
 			if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
 			{
 				TestExecution te = new TestExecution(c, instance, method);

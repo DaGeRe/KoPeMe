@@ -14,6 +14,12 @@ import de.kopeme.datacollection.TestResult;
 import de.kopeme.datacollection.TimeDataCollector;
 import de.kopeme.datastorage.YAMLDataStorer;
 
+/**
+ * Represents an execution of all runs of
+ * one test
+ * @author dagere
+ *
+ */
 public class TestExecution {
 	protected Class klasse;
 	protected Object instanz;

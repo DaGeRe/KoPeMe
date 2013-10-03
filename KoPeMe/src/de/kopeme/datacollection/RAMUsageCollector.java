@@ -19,37 +19,35 @@ public class RAMUsageCollector extends DataCollector {
 	
 	@Override
 	public void startCollection() {
-		//MXBean seems to work incorrect
-//		mxb = ManagementFactory.getMemoryMXBean();
-//		long init = mxb.getHeapMemoryUsage().getInit();
-//		long max = mxb.getHeapMemoryUsage().getMax();
-//		long used = mxb.getHeapMemoryUsage().getUsed();
-////		System.out.println("Init: " + init + " Max: " + max + " Used: " + used);
-//		
-//		long init2 = mxb.getNonHeapMemoryUsage().getInit();
-//		long max2 = mxb.getNonHeapMemoryUsage().getMax();
-//		long used2 = mxb.getNonHeapMemoryUsage().getUsed();
-////		System.out.println(" Init: " + init2 + " Max: " + max2 + " Used: " + used2);
-//		
-//		usedStart = used + used2;
-		usedStart = Runtime.getRuntime().totalMemory();
+		mxb = ManagementFactory.getMemoryMXBean();
+		long init = mxb.getHeapMemoryUsage().getInit();
+		long max = mxb.getHeapMemoryUsage().getMax();
+		long used = mxb.getHeapMemoryUsage().getUsed();
+//		System.out.println("Init: " + init + " Max: " + max + " Used: " + used);
+		
+		long init2 = mxb.getNonHeapMemoryUsage().getInit();
+		long max2 = mxb.getNonHeapMemoryUsage().getMax();
+		long used2 = mxb.getNonHeapMemoryUsage().getUsed();
+//		System.out.println(" Init: " + init2 + " Max: " + max2 + " Used: " + used2);
+		
+		usedStart = used + used2;
+
 	}
 
 	@Override
 	public void stopCollection() {
-//		long init = mxb.getHeapMemoryUsage().getInit();
-//		long max = mxb.getHeapMemoryUsage().getMax();
-//		long used = mxb.getHeapMemoryUsage().getUsed();
-////		System.out.println("Init: " + init + " Max: " + max + " Used: " + used);
-//		
-//		long init2 = mxb.getNonHeapMemoryUsage().getInit();
-//		long max2 = mxb.getNonHeapMemoryUsage().getMax();
-//		long used2 = mxb.getNonHeapMemoryUsage().getUsed();
-////		System.out.println(" Init: " + init2 + " Max: " + max2 + " Used: " + used2);
-//		
-//		long nowVal = used + used2;
-		long nowVal =Runtime.getRuntime().totalMemory();
-
+		long init = mxb.getHeapMemoryUsage().getInit();
+		long max = mxb.getHeapMemoryUsage().getMax();
+		long used = mxb.getHeapMemoryUsage().getUsed();
+//		System.out.println("Init: " + init + " Max: " + max + " Used: " + used);
+		
+		long init2 = mxb.getNonHeapMemoryUsage().getInit();
+		long max2 = mxb.getNonHeapMemoryUsage().getMax();
+		long used2 = mxb.getNonHeapMemoryUsage().getUsed();
+//		System.out.println(" Init: " + init2 + " Max: " + max2 + " Used: " + used2);
+		
+		long nowVal = used + used2;
+		
 		value = nowVal - usedStart ;
 //		System.out.println("RAM: " + value);
 	}

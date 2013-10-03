@@ -22,7 +22,7 @@ public class PerformanzTest {
 	@PerformanceTest(executionTimes=5, warmupExecutions=2,
 			assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void testMoebelkauf(final TestResult tr) {
-
+		
 		tr.startCollection();
 		int anzahl = 1000 + (int) (Math.random() * 10);
 		anzahl = 500;

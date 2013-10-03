@@ -41,7 +41,7 @@ public class YAMLDataStorer implements DataStorer{
 	@Override
 	public void storeValue(String name, long value) {
 		Map<Date, Long> dataList = data.get(name);
-//		System.out.println("Speichere " + value + " für " + name);
+		System.out.println("Speichere " + value + " für " + name);
 		if ( dataList == null )
 			dataList = new HashMap<Date, Long>();
 		dataList.put(new Date(), value);
@@ -60,7 +60,7 @@ public class YAMLDataStorer implements DataStorer{
 			fw = new FileWriter(f);
 			fw.write(yam.dump(data));
 			fw.flush();
-//			System.out.println("Schreibe: " + data.size() + " Werte in " + f.getPath());
+			System.out.println("Schreibe: " + data.size() + " Werte in " + f.getPath());
 		} catch (IOException e) {
 			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();

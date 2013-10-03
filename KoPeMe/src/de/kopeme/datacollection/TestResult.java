@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.kopeme.Checker;
 import de.kopeme.datastorage.YAMLDataStorer;
+import de.kopeme.measuresummarizing.AverageSummerizer;
+import de.kopeme.measuresummarizing.MeasureSummarizer;
 import de.kopeme.paralleltests.MethodExecution;
 
 /**
@@ -34,6 +37,8 @@ public class TestResult {
 	protected String filename;
 	protected Checker checker;
 	private List<MethodExecution> methods;
+	
+	private MeasureSummarizer ms;
 
 	public TestResult(String filename, int executionTimes) {
 		values = new HashMap<String, Long>();
@@ -41,6 +46,8 @@ public class TestResult {
 		realValues = new HashMap[executionTimes + 1];
 		methods = new LinkedList<MethodExecution>();
 		index = 0;
+		
+		ms = new AverageSummerizer();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
 		// realValues = new HashMap<String, Long>[executionTimes];
 	}
@@ -96,7 +103,6 @@ public class TestResult {
 //			throw new Error(
 //					"Sie sollten TestResult.setCollectors aufrufen, bevor Sie anfangen, Daten zu sammeln.");
 //		}
-		
 		for (DataCollector dc : dataCollectors.values())
 			dc.startCollection();
 	}
@@ -117,6 +123,16 @@ public class TestResult {
 		realValues[index] = runData;
 		index++;
 	}
+	
+	/**
+	 * Sets the method how the different measures of different runs
+	 * should be summarized, e.g. as average, median, maximum, ...
+	 * @param ms
+	 */
+	public void setMeasureSummarizer(MeasureSummarizer ms)
+	{
+		this.ms = ms;
+	}
 
 	/**
 	 * Called when the collection of data is finally finished, i.e. also the
@@ -125,11 +141,16 @@ public class TestResult {
 	 */
 	public void finalizeCollection() {
 		for (String s : getKeys()) {
-			int sum = 0;
-			for (int i = 0; i < realValues.length; i++) {
-				sum += getValue(s);
+//			int sum = 0;
+			List<Long> localValues = new LinkedList<Long>();
+			for (int i = 0; i < realValues.length-1; i++) {
+				System.out.println("I: " + i);
+				System.out.println(realValues[i].get(s));
+				localValues.add(realValues[i].get(s));
+//				sum += getValue(s);
 			}
-			values.put(s, (long) (sum / realValues.length));
+			Long result = ms.getValue(localValues);
+			values.put(s, result);
 		}
 
 		historicalDataMap = new HashMap<String, Map<Date, Long>>();
