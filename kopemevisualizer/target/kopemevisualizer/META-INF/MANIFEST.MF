@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Built-By: dagere
+Created-By: Apache Maven
+Build-Jdk: 1.6.0_27
+Extension-Name: kopemevisualizer
+Specification-Title: Dieses Plugin ermöglicht es, KoPeMe-Performanzda
+ ten zu visualisieren.
+Implementation-Title: kopemevisualizer
+Implementation-Version: 1.0-SNAPSHOT
+Group-Id: de.kopeme.visualizer
+Short-Name: kopemevisualizer
+Long-Name: KoPeMe-Visualizer-Plugin
+Url: http://jenkins-ci.org/plugin/kopemevisualizer/
+Plugin-Version: 1.0-SNAPSHOT (private-10/03/2013 14:48-dagere)
+Hudson-Version: 1.505
+Jenkins-Version: 1.505
+Plugin-Developers: 
+

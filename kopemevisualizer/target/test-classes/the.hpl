@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Group-Id: de.kopeme.visualizer
+Short-Name: kopemevisualizer
+Long-Name: KoPeMe-Visualizer-Plugin
+Url: http://jenkins-ci.org/plugin/kopemevisualizer/
+Plugin-Version: 1.0-SNAPSHOT (private-10/03/2013 14:48-dagere)
+Hudson-Version: 1.505
+Jenkins-Version: 1.505
+Plugin-Developers: 
+Libraries: /home/dagere/workspace/github/kopemevisualizer/target/class
+ es,/home/dagere/.m2/repository/jfree/jfreechart/1.0.7/jfreechart-1.0.
+ 7.jar,/home/dagere/.m2/repository/jfree/jcommon/1.0.12/jcommon-1.0.12
+ .jar,/home/dagere/.m2/repository/net/sf/opencsv/opencsv/1.7/opencsv-1
+ .7.jar,/home/dagere/.m2/repository/org/yaml/snakeyaml/1.12/snakeyaml-
+ 1.12.jar,/home/dagere/.m2/repository/org/apache/xmlgraphics/xmlgraphi
+ cs-commons/1.5/xmlgraphics-commons-1.5.jar,/home/dagere/.m2/repositor
+ y/commons-io/commons-io/1.3.1/commons-io-1.3.1.jar,/home/dagere/.m2/r
+ epository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4
+ .jar
+Resource-Path: /home/dagere/workspace/github/kopemevisualizer/src/main
+ /webapp
+
