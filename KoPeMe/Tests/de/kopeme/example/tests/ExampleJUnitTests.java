@@ -13,7 +13,7 @@ import de.kopeme.datacollection.TimeDataCollector;
 import de.kopeme.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
-public class PerformanzTestJUnit {
+public class ExampleJUnitTests {
 
 	@Test
 	@PerformanceTest
