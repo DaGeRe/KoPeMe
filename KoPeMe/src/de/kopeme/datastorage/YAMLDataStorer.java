@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Node;
@@ -16,6 +18,8 @@ import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
 public class YAMLDataStorer implements DataStorer{
+	
+	Logger log = LogManager.getLogger(YAMLDataStorer.class);
 	
 	private Map<String, Map<Date, Long>> data;
 	private File f;
@@ -41,7 +45,7 @@ public class YAMLDataStorer implements DataStorer{
 	@Override
 	public void storeValue(String name, long value) {
 		Map<Date, Long> dataList = data.get(name);
-		System.out.println("Speichere " + value + " für " + name);
+		log.debug("Speichere " + value + " für " + name);
 		if ( dataList == null )
 			dataList = new HashMap<Date, Long>();
 		dataList.put(new Date(), value);

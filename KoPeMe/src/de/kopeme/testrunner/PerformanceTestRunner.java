@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.kopeme.PerformanceTest;
 import de.kopeme.TestExecution;
@@ -50,23 +52,40 @@ public class PerformanceTestRunner {
 			System.out.println("Fehler");
 			return;
 		}
+		boolean failed = false;
+		List<AssertionError> errors = new LinkedList<AssertionError>();
 		for ( Method method : c.getMethods() )
 		{
-			System.out.println("Methode: " + method);
-			for ( Annotation a : method.getAnnotations())
-			{
-				System.out.println("Annotation: " + a);
+			try{
+//				System.out.println("Methode: " + method);
+//				for ( Annotation a : method.getAnnotations())
+//				{
+//					System.out.println("Annotation: " + a);
+//				}
+				if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
+				{
+					TestExecution te = new TestExecution(c, instance, method);
+					te.runTest();
+				}
+				if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
+				{
+					System.out.println("Führe aus");
+					ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
+					te.runTest();
+				}
 			}
-			if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
-			{
-				TestExecution te = new TestExecution(c, instance, method);
-				te.runTest();
+			catch (AssertionError ae){
+				failed = true;
+				errors.add(ae);
 			}
-			if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
-			{
-				System.out.println("Führe aus");
-				ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
-				te.runTest();
+		}
+//		if ( failed ) throw errors.get(0);
+		if (failed){
+			for (AssertionError ae : errors){
+				System.out.println("Exception: " + ae.getLocalizedMessage());
+				for (StackTraceElement ste: ae.getStackTrace()){
+					System.out.println(ste);
+				}
 			}
 		}
 	}

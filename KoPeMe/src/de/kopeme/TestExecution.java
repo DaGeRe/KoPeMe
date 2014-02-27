@@ -25,6 +25,7 @@ public class TestExecution {
 	protected Object instanz;
 	protected Method method;
 	protected int executionTimes, warmupExecutions;
+	protected double maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
@@ -39,6 +40,7 @@ public class TestExecution {
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
+			maximalRelativeStandardDeviation = annotation.maximalRelativeStandardDeviation();
 
 			assertationvalues = new HashMap<String, Long>();
 			for (Assertion a : annotation.assertions()) {
@@ -46,36 +48,20 @@ public class TestExecution {
 			}
 		}
 		
-		filename = klasse.getName() + "::" + method.getName();
+		filename = klasse.getName() + "." + method.getName();
+		
+//		System.out.println("Run " + klasse);
 	}
 
 	public void runTest() {
 		try {
-
+			
 			TestResult tr = new TestResult(filename, warmupExecutions);
-			Object[] params = { tr };
-
-			for (int i = 1; i <= warmupExecutions; i++) {
-				System.out.println("--- Starting warmup execution " + i + "/"
-						+ warmupExecutions + " ---");
-				method.invoke(instanz, params);
-				System.out.println("--- Stopping warmup execution " + i + "/"
-						+ warmupExecutions + " ---");
+			if (method.getParameterTypes().length == 1){
+				tr = executeComplexTest(tr);
+			}else{
+				tr = executeSimpleTest(tr);
 			}
-
-			tr = new TestResult(filename, executionTimes);
-			params[0] = tr;
-			for (int i = 1; i <= executionTimes; i++) {
-				System.out.println("--- Starting execution " + i + "/"
-						+ executionTimes + " ---");
-				method.invoke(instanz, params);
-				System.out.println("--- Stopping execution " + i + "/"
-						+ executionTimes + " ---");
-			}
-
-			tr.finalizeCollection();
-
-			tr.checkValues();
 
 			if (!assertationvalues.isEmpty()) {
 				tr.checkValues(assertationvalues);
@@ -93,5 +79,77 @@ public class TestExecution {
 			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
 		}
+	}
+
+	private TestResult executeComplexTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+		Object[] params = { tr };
+
+		for (int i = 1; i <= warmupExecutions; i++) {
+			System.out.println("--- Starting warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
+			method.invoke(instanz, params);
+			System.out.println("--- Stopping warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
+		}
+
+		tr = new TestResult(filename, executionTimes);
+		params[0] = tr;
+		runMainExecution(tr, params, false);
+
+		tr.finalizeCollection();
+
+		tr.checkValues();
+		return tr;
+	}
+	
+	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+		Object[] params = { };
+
+		for (int i = 1; i <= warmupExecutions; i++) {
+			System.out.println("--- Starting warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
+			method.invoke(instanz, params);
+			System.out.println("--- Stopping warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
+		}
+
+		tr = new TestResult(filename, executionTimes);
+		
+		runMainExecution(tr, params, true);
+
+		tr.finalizeCollection();
+
+		tr.checkValues();
+		return tr;
+	}
+
+	private void runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException,
+		InvocationTargetException {
+		
+		if (maximalRelativeStandardDeviation == 0.0f){
+			for (int i = 1; i <= executionTimes; i++) {
+				
+				System.out.println("--- Starting execution " + i + "/"
+						+ executionTimes + " ---");
+				if (simple) tr.startCollection();
+				method.invoke(instanz, params);
+				if (simple) tr.stopCollection();
+				System.out.println("--- Stopping execution " + i + "/"
+						+ executionTimes + " ---");
+			}
+		}
+		else{
+			System.out.println("--- Starting execution until standard deviation is below " + maximalRelativeStandardDeviation + " ---");
+			int i = 1;
+			while (!tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation) && i < executionTimes){
+				System.out.println("--- Starting execution " + i + " ---");
+				if (simple) tr.startCollection();
+				method.invoke(instanz, params);
+				if (simple) tr.stopCollection();
+				System.out.println("--- Stopping execution " + i + " ---");
+				i++;
+			}
+		}
+		
 	}
 }

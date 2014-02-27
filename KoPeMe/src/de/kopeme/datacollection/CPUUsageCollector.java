@@ -1,7 +1,7 @@
 package de.kopeme.datacollection;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 
@@ -13,11 +13,14 @@ public class CPUUsageCollector extends DataCollector {
 	private long startTimeUser = 0, stopTimeUser = 0;
 	private long startTime= 0, stopTime = 0;
 	ThreadMXBean mxb;
+	OperatingSystemMXBean oxb;
 	
 	
 	@Override
 	public void startCollection() {
 		mxb = ManagementFactory.getThreadMXBean();
+		oxb = ManagementFactory.getOperatingSystemMXBean();
+		
 //		ManagementFactory.getMemoryManagerMXBeans().get(0).;
 		startTimeCpu = mxb.getCurrentThreadCpuTime();
 		startTimeUser = mxb.getCurrentThreadUserTime();
@@ -33,12 +36,14 @@ public class CPUUsageCollector extends DataCollector {
 
 	@Override
 	public long getValue() {
+		
 		long cpuTime = stopTimeCpu - startTimeCpu;
 		long time = stopTime - startTime;
+		System.out.println("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
 //		long timeUser = stopTimeUser - startTimeUser;
 //		System.out.println("User: " + (1000*timeUser / time) + " CPU: " + (1000*cpuTime / time));
 		if ( !mxb.isCurrentThreadCpuTimeSupported() ) return -1;
-		return 1000 * cpuTime / time;
+		return (1000 * cpuTime) / time;
 		
 	}
 

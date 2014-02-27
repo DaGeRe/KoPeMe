@@ -19,8 +19,8 @@ import de.kopeme.datacollection.TimeDataCollector;
 
 public class ExamplePurePerformanceTests {
 
-	@PerformanceTest(executionTimes=5, warmupExecutions=2,
-		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
+//	@PerformanceTest(executionTimes=5, warmupExecutions=2,
+//		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void simpleTest(){
 		System.out.println("This is a very simple test");
 		int i = 10000;
@@ -32,7 +32,20 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(executionTimes=5, warmupExecutions=2 )
+	@PerformanceTest(maximalRelativeStandardDeviation=0.10f, warmupExecutions=2, executionTimes=1000,
+		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
+	public void simpleDeviationTest(){
+		System.out.println("This is a very simple test");
+		int i = 10000;
+		for (int j = 0; j < 19000; j++ )
+		{
+			i -= j;
+			int[] array = new int[100];
+		}
+		System.out.println("Test finished");
+	}
+	
+//	@PerformanceTest(executionTimes=5, warmupExecutions=2 )
 	public void complexTest(TestResult tr){
 		tr.startCollection();
 		int i = 10000;
@@ -64,8 +77,8 @@ public class ExamplePurePerformanceTests {
 		});
 	}
 	
-	@PerformanceTest(executionTimes=5, warmupExecutions=2,
-			assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
+//	@PerformanceTest(executionTimes=5, warmupExecutions=2,
+//			assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void testMoebelkauf(final TestResult tr) {
 		
 		tr.startCollection();

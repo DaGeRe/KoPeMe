@@ -1,5 +1,7 @@
 package de.kopeme.datacollection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
@@ -29,10 +33,12 @@ import de.kopeme.paralleltests.MethodExecution;
  * 
  */
 public class TestResult {
+	Logger log = LogManager.getLogger(TestResult.class);
+	
 	protected Map<String, Long> values;
 	protected Map<String, DataCollector> dataCollectors;
 	protected Map<String, Map<Date, Long>> historicalDataMap;
-	protected Map<String, Long> realValues[];
+	protected List<Map<String, Long>> realValues;
 	protected int index;
 	protected String filename;
 	protected Checker checker;
@@ -43,7 +49,7 @@ public class TestResult {
 	public TestResult(String filename, int executionTimes) {
 		values = new HashMap<String, Long>();
 		this.filename = filename;
-		realValues = new HashMap[executionTimes + 1];
+		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
 		index = 0;
 		
@@ -65,9 +71,9 @@ public class TestResult {
 		Set<String> s = new HashSet<String>();
 		for (DataCollector dc : dataCollectors.values())
 			s.add(dc.getName());
-		for (int i = 0; i < realValues.length; i++) {
-			if (realValues[i] != null)
-				s.addAll(realValues[i].keySet());
+		for (int i = 0; i < realValues.size(); i++) {
+			if (realValues.get(i) != null)
+				s.addAll(realValues.get(i).keySet());
 		}
 		// s.addAll(values.keySet());
 		return s;
@@ -119,8 +125,8 @@ public class TestResult {
 			dc.stopCollection();
 			runData.put(dc.getName(), dc.getValue());
 		}
-		System.out.println("Index: " + index);
-		realValues[index] = runData;
+		log.debug("Index: " + index);
+		realValues.add(runData);
 		index++;
 	}
 	
@@ -140,17 +146,15 @@ public class TestResult {
 	 * the file and Assertations over historical data are possible
 	 */
 	public void finalizeCollection() {
-		for (String s : getKeys()) {
-//			int sum = 0;
+		for (String collectorName : getKeys()) {
+			log.debug("Standardabweichung: " + getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
-			for (int i = 0; i < realValues.length-1; i++) {
-				System.out.println("I: " + i);
-				System.out.println(realValues[i].get(s));
-				localValues.add(realValues[i].get(s));
-//				sum += getValue(s);
+			for (int i = 0; i < realValues.size()-1; i++) {
+				log.debug("I: " + i+ " Value: " + realValues.get(i).get(collectorName));
+				localValues.add(realValues.get(i).get(collectorName));
 			}
 			Long result = ms.getValue(localValues);
-			values.put(s, result);
+			values.put(collectorName, result);
 		}
 
 		historicalDataMap = new HashMap<String, Map<Date, Long>>();
@@ -161,6 +165,7 @@ public class TestResult {
 
 			historicalDataMap.put(s, historicalData);
 			xds.storeValue(s, getValue(s));
+			log.info("Speichere für "+s+": " + getValue(s)+ " Relative Standardabweichung: " + getRelativeStandardDeviation(s));
 		}
 		xds.storeData();
 	}
@@ -235,6 +240,8 @@ public class TestResult {
 	 */
 	public long getAverageValue(String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
+		if (historicalData == null)
+			return 0l;
 		if (historicalData.size() > 0) {
 			long sum = 0;
 			for (Number value : historicalData.values())
@@ -320,5 +327,38 @@ public class TestResult {
 
 	public List<MethodExecution> getParallelTests() {
 		return methods;
+	}
+	
+	private double getRelativeStandardDeviation(String datacollector){
+		long []values = new long[realValues.size()];
+		for (int i=0; i < realValues.size(); i++){
+			values[i] = realValues.get(i).get(datacollector);
+		}
+		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector")){
+			System.out.println(Arrays.toString(values));
+		}
+		SummaryStatistics st = new SummaryStatistics();
+		for (Long l : values){
+			st.addValue(l);
+			
+		}
+		
+		System.out.println("Mittel: " + st.getMean() + " Standardabweichung: " + st.getStandardDeviation());
+		return st.getStandardDeviation() / st.getMean();
+	}
+
+	public boolean isRelativeStandardDeviationBelow(double maximalRelativeStandardDeviation) {
+		if (realValues.size() < 5)
+			return false;
+		boolean isRelativeDeviationBelowValue = true;
+		for (String s : getKeys()){
+			double stdDeviation = getRelativeStandardDeviation(s);
+			log.debug("Standardabweichung: " + stdDeviation);
+			if (stdDeviation > maximalRelativeStandardDeviation){
+				isRelativeDeviationBelowValue = false; break;
+			}
+		}
+		
+		return isRelativeDeviationBelowValue;
 	}
 }

@@ -17,6 +17,9 @@ public @interface PerformanceTest{
 	 * @return
 	 */
 	public int executionTimes() default 5;
+	
+	public float maximalRelativeStandardDeviation() default 0;
+	
 	/**
 	 * Marks the count of executions, that should be executed before the measuring begins. 
 	 * @return

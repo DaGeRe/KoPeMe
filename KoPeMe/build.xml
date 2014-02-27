@@ -1,5 +1,5 @@
 <project default="jar">
-	<property name="version" value="0.1" />
+	<property name="version" value="0.2" />
 	
 	<path id="classpath">
 		<fileset dir="lib" includes="**/*.jar" />
@@ -28,6 +28,7 @@
 				</section>
 			</manifest>
 		</jar>
+		<echo message="JAR ${version} buildt"/>
 	</target>
 
 </project>

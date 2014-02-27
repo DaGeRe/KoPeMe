@@ -70,13 +70,10 @@ public class ParallelTestExecution extends TestExecution {
 			List<MethodExecution> mes = tr.getParallelTests();
 			
 			tr.startCollection();
-			
 			executeOnce(mes, tr);//TODO Warmup, Parallel..
-			
 			tr.stopCollection();
 			
 			tr.finalizeCollection();
-
 			tr.checkValues();
 
 			if (!assertationvalues.isEmpty()) {

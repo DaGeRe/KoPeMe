@@ -32,8 +32,8 @@ public class DataCollectorList {
 	static {
 		STANDARD = new DataCollectorList();
 		STANDARD.addDataCollector(TimeDataCollector.class);
-		STANDARD.addDataCollector(HarddiskWriteCollector.class);
-		STANDARD.addDataCollector(HarddiskReadCollector.class);
+//		STANDARD.addDataCollector(HarddiskWriteCollector.class);
+//		STANDARD.addDataCollector(HarddiskReadCollector.class);
 		STANDARD.addDataCollector(CPUUsageCollector.class);
 		STANDARD.addDataCollector(RAMUsageCollector.class);
 		
