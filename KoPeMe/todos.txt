@@ -2,6 +2,7 @@
 - Konzept überlegen, um MaxStandardAbweichungen/Assertions(?) zu Verknüpfen (Statt jeweils und zu nehmen, irgendwie anders verknüpfen?)
 - Umstellung auf maven
 - MeasureSummarizer für jeden Datenkollektor festlegen
+- Je nach Betriebssystem Klassenpfad mit Dopppelpunkt oder Semikolon trennen!
  
 - Spring-Kompatibilität
 - Nebenläufige Tests

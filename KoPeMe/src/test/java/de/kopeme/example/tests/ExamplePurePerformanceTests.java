@@ -22,6 +22,9 @@ import de.kopeme.datacollection.TimeDataCollector;
 
 public class ExamplePurePerformanceTests {
 
+	public static void main(String args[]){
+		System.out.println("Tsst");
+	}
 //	@PerformanceTest(executionTimes=5, warmupExecutions=2,
 //		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void simpleTest(){
