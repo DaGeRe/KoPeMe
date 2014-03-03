@@ -66,5 +66,11 @@ public class HarddiskWriteCollector extends DataCollector {
 		
 		return diffWrites;
 	}
+	
+	@Override
+	public int getPriority() {
+		// TODO Automatisch generierter Methodenstub
+		return 0;
+	}
 
 }

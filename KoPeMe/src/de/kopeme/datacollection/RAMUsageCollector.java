@@ -17,6 +17,10 @@ public class RAMUsageCollector extends DataCollector {
 	MemoryMXBean mxb;
 	long usedStart, value;
 	
+	public int getPriority(){
+		return 10; // Middle-High Priority, as the RAMUsageCollector should not measure the things other DataCollectors create
+	}
+	
 	@Override
 	public void startCollection() {
 		System.gc();

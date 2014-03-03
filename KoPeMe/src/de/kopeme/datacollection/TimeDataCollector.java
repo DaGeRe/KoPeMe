@@ -14,8 +14,12 @@ public class TimeDataCollector extends DataCollector {
 //		return "TimeDataCollector";
 //	}
 
+	public int getPriority(){
+		return Integer.MAX_VALUE;
+	}
 	@Override
 	public void startCollection() {
+		System.gc();
 		start = System.nanoTime();
 	}
 

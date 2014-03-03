@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -32,15 +34,17 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(maximalRelativeStandardDeviation=0.10f, warmupExecutions=2, executionTimes=1000,
+	@PerformanceTest(maximalRelativeStandardDeviation=0.15f, warmupExecutions=10, executionTimes=100,
 		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void simpleDeviationTest(){
 		System.out.println("This is a very simple test");
 		int i = 10000;
-		for (int j = 0; j < 19000; j++ )
+		List<int[]> list = new LinkedList<>();
+		for (int j = 0; j < 100000; j++ )
 		{
 			i -= j;
-			int[] array = new int[100];
+			int[] array = new int[200];
+			list.add(array);
 		}
 		System.out.println("Test finished");
 	}

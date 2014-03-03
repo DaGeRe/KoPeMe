@@ -1,7 +1,7 @@
 package de.kopeme.datacollection;
 
 import java.lang.management.ManagementFactory;
-import com.sun.management.OperatingSystemMXBean;
+//import com.sun.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 
@@ -13,13 +13,16 @@ public class CPUUsageCollector extends DataCollector {
 	private long startTimeUser = 0, stopTimeUser = 0;
 	private long startTime= 0, stopTime = 0;
 	ThreadMXBean mxb;
-	OperatingSystemMXBean oxb;
+//	OperatingSystemMXBean oxb;
 	
+	public int getPriority(){
+		return 5;
+	}
 	
 	@Override
 	public void startCollection() {
 		mxb = ManagementFactory.getThreadMXBean();
-		oxb = ManagementFactory.getOperatingSystemMXBean();
+//		oxb = ManagementFactory.getOperatingSystemMXBean();
 		
 //		ManagementFactory.getMemoryManagerMXBeans().get(0).;
 		startTimeCpu = mxb.getCurrentThreadCpuTime();

@@ -2,7 +2,9 @@ package de.kopeme.datacollection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,8 +111,37 @@ public class TestResult {
 //			throw new Error(
 //					"Sie sollten TestResult.setCollectors aufrufen, bevor Sie anfangen, Daten zu sammeln.");
 //		}
-		for (DataCollector dc : dataCollectors.values())
+		new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Automatisch generierter Methodenstub
+				
+			}
+		};
+		Comparator<DataCollector> collector = new Comparator<DataCollector>() {
+
+			@Override
+			public int compare(DataCollector arg0, DataCollector arg1) {
+				// TODO Automatisch generierter Methodenstub
+				return 0;
+			}
+		};
+		Collection<DataCollector> dcCollection = dataCollectors.values();
+		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
+		Comparator<DataCollector> comparator = new Comparator<DataCollector>(){
+			@Override
+			public int compare(DataCollector arg0, DataCollector arg1) {
+				return arg0.getPriority() - arg1.getPriority();
+			}
+		};
+		Arrays.sort(sortedCollectors, comparator);
+//		.
+		for (DataCollector dc : sortedCollectors){
+			System.out.println("Starte: " + dc.getName());
 			dc.startCollection();
+		}
+			
 	}
 
 	/**
@@ -334,7 +365,7 @@ public class TestResult {
 		for (int i=0; i < realValues.size(); i++){
 			values[i] = realValues.get(i).get(datacollector);
 		}
-		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector")){
+		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")){
 			System.out.println(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();

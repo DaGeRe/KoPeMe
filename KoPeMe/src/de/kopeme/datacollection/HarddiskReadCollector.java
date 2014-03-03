@@ -49,4 +49,10 @@ public class HarddiskReadCollector extends DataCollector{
 	public long getValue() {
 		return diffReads;
 	}
+
+	@Override
+	public int getPriority() {
+		// TODO Automatisch generierter Methodenstub
+		return 0;
+	}
 }
