@@ -1,0 +1,3 @@
+- Überprüfung der Assertions/MaxStandardAbweichungen auf Existenz des Kollektors
+- Konzept überlegen, um MaxStandardAbweichungen/Assertions(?) zu Verknüpfen (Statt jeweils und zu nehmen, irgendwie anders verknüpfen?)
+- Umstellung auf maven
