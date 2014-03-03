@@ -17,10 +17,20 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>de.kopeme.mojo</groupId>
+				<artifactId>kopememojo</artifactId>
+				<version>0.1-SNAPSHOT</version>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>de.kopeme</groupId>
+			<artifactId>kopememojo</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
@@ -61,5 +71,9 @@
 			<version>2.0-rc1</version>
 		</dependency>
 	</dependencies>
-
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	
 </project>

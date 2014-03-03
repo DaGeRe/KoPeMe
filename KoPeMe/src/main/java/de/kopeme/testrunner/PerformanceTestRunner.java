@@ -23,7 +23,7 @@ public class PerformanceTestRunner {
 	{
 		if ( args.length == 0 )
 		{
-			System.out.println("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgefÃ¼hrt werden.");
+			System.out.println("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
 			System.exit(1);
 		}
 		String klassenName = args[0];
@@ -31,7 +31,7 @@ public class PerformanceTestRunner {
 			Class c = Class.forName(klassenName);
 			runTestsWithClass(c);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Die gewÃ¼nschte Klasse " + klassenName + " wurde unglÃ¼cklicherweise nicht gefunden.");
+			System.out.println("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");
 //			e.printStackTrace();
 			System.exit(1);
 		}
