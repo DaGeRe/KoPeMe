@@ -15,17 +15,17 @@ import de.kopeme.datacollection.TimeDataCollector;
 import de.kopeme.datastorage.YAMLDataStorer;
 
 /**
- * Represents an execution of all runs of
- * one test
+ * Represents an execution of all runs of one test
+ * 
  * @author dagere
- *
+ * 
  */
 public class TestExecution {
 	protected Class klasse;
 	protected Object instanz;
 	protected Method method;
 	protected int executionTimes, warmupExecutions;
-	protected double maximalRelativeStandardDeviation;
+	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
@@ -34,32 +34,35 @@ public class TestExecution {
 		this.instanz = instance;
 		this.method = method;
 
-		PerformanceTest annotation = method
-				.getAnnotation(PerformanceTest.class);
+		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
-			maximalRelativeStandardDeviation = annotation.maximalRelativeStandardDeviation();
+			maximalRelativeStandardDeviation = new HashMap<>();
 
-			assertationvalues = new HashMap<String, Long>();
+			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
+			}
+
+			assertationvalues = new HashMap<>();
 			for (Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		}
-		
+
 		filename = klasse.getName() + "." + method.getName();
-		
-//		System.out.println("Run " + klasse);
+
+		// System.out.println("Run " + klasse);
 	}
 
 	public void runTest() {
 		try {
-			
+
 			TestResult tr = new TestResult(filename, warmupExecutions);
-			if (method.getParameterTypes().length == 1){
+			if (method.getParameterTypes().length == 1) {
 				tr = executeComplexTest(tr);
-			}else{
+			} else {
 				tr = executeSimpleTest(tr);
 			}
 
@@ -71,7 +74,7 @@ public class TestExecution {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(
-					"Testmethoden von KoPeMe müssen genau einen Parameter vom Typ TestResult enthalten.");
+				"Testmethoden von KoPeMe müssen genau einen Parameter vom Typ TestResult enthalten.");
 		} catch (IllegalAccessException e) {
 			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
@@ -85,11 +88,9 @@ public class TestExecution {
 		Object[] params = { tr };
 
 		for (int i = 1; i <= warmupExecutions; i++) {
-			System.out.println("--- Starting warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			System.out.println("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			System.out.println("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			System.out.println("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 
 		tr = new TestResult(filename, executionTimes);
@@ -101,20 +102,18 @@ public class TestExecution {
 		tr.checkValues();
 		return tr;
 	}
-	
+
 	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		Object[] params = { };
+		Object[] params = {};
 
 		for (int i = 1; i <= warmupExecutions; i++) {
-			System.out.println("--- Starting warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			System.out.println("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			System.out.println("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			System.out.println("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 
 		tr = new TestResult(filename, executionTimes);
-		
+
 		runMainExecution(tr, params, true);
 
 		tr.finalizeCollection();
@@ -125,31 +124,38 @@ public class TestExecution {
 
 	private void runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException,
 		InvocationTargetException {
-		
-		if (maximalRelativeStandardDeviation == 0.0f){
-			for (int i = 1; i <= executionTimes; i++) {
-				
-				System.out.println("--- Starting execution " + i + "/"
-						+ executionTimes + " ---");
-				if (simple) tr.startCollection();
-				method.invoke(instanz, params);
-				if (simple) tr.stopCollection();
-				System.out.println("--- Stopping execution " + i + "/"
-						+ executionTimes + " ---");
+
+		// if (maximalRelativeStandardDeviation == 0.0f){
+		for (int i = 1; i <= executionTimes; i++) {
+
+			System.out.println("--- Starting execution " + i + "/" + executionTimes + " ---");
+			if (simple)
+				tr.startCollection();
+			method.invoke(instanz, params);
+			if (simple)
+				tr.stopCollection();
+			System.out.println("--- Stopping execution " + i + "/" + executionTimes + " ---");
+			if (!maximalRelativeStandardDeviation.isEmpty() &&
+				tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)){
+				break;
 			}
 		}
-		else{
-			System.out.println("--- Starting execution until standard deviation is below " + maximalRelativeStandardDeviation + " ---");
-			int i = 1;
-			while (!tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation) && i < executionTimes){
-				System.out.println("--- Starting execution " + i + " ---");
-				if (simple) tr.startCollection();
-				method.invoke(instanz, params);
-				if (simple) tr.stopCollection();
-				System.out.println("--- Stopping execution " + i + " ---");
-				i++;
-			}
-		}
-		
+		// }
+		// else{
+		// System.out.println("--- Starting execution until standard deviation is below "
+		// + maximalRelativeStandardDeviation + " ---");
+		// int i = 1;
+		// while
+		// (!tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)
+		// && i < executionTimes){
+		// System.out.println("--- Starting execution " + i + " ---");
+		// if (simple) tr.startCollection();
+		// method.invoke(instanz, params);
+		// if (simple) tr.stopCollection();
+		// System.out.println("--- Stopping execution " + i + " ---");
+		// i++;
+		// }
+		// }
+
 	}
 }

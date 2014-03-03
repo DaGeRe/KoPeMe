@@ -13,6 +13,7 @@ import org.hamcrest.Matchers;
 
 import de.kopeme.Assertion;
 import de.kopeme.Checker;
+import de.kopeme.MaximalRelativeStandardDeviation;
 import de.kopeme.PerformanceTest;
 import de.kopeme.datacollection.CPUUsageCollector;
 import de.kopeme.datacollection.DataCollectorList;
@@ -34,8 +35,11 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(maximalRelativeStandardDeviation=0.15f, warmupExecutions=10, executionTimes=100,
-		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
+	@PerformanceTest(warmupExecutions=10, executionTimes=100,
+		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
+		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
+					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
+					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.4)})
 	public void simpleDeviationTest(){
 		System.out.println("This is a very simple test");
 		int i = 10000;

@@ -18,7 +18,7 @@ public @interface PerformanceTest{
 	 */
 	public int executionTimes() default 5;
 	
-	public float maximalRelativeStandardDeviation() default 0;
+//	public float maximalRelativeStandardDeviation() default 0;
 	
 	/**
 	 * Marks the count of executions, that should be executed before the measuring begins. 
@@ -27,4 +27,6 @@ public @interface PerformanceTest{
 	public int warmupExecutions() default 1;
 	
 	public Assertion[] assertions() default {};
+	
+	public MaximalRelativeStandardDeviation[] deviations() default {};
 }

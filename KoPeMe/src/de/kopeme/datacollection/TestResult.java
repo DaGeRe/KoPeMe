@@ -124,7 +124,7 @@ public class TestResult {
 			@Override
 			public int compare(DataCollector arg0, DataCollector arg1) {
 				// TODO Automatisch generierter Methodenstub
-				return 0;
+				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
 		Collection<DataCollector> dcCollection = dataCollectors.values();
@@ -378,15 +378,18 @@ public class TestResult {
 		return st.getStandardDeviation() / st.getMean();
 	}
 
-	public boolean isRelativeStandardDeviationBelow(double maximalRelativeStandardDeviation) {
+	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
 		if (realValues.size() < 5)
 			return false;
 		boolean isRelativeDeviationBelowValue = true;
-		for (String s : getKeys()){
-			double stdDeviation = getRelativeStandardDeviation(s);
-			log.debug("Standardabweichung: " + stdDeviation);
-			if (stdDeviation > maximalRelativeStandardDeviation){
-				isRelativeDeviationBelowValue = false; break;
+		for (String collectorName : getKeys()){
+			Double aimStdDeviation = deviations.get(collectorName);
+			if (aimStdDeviation != null){
+				double stdDeviation = getRelativeStandardDeviation(collectorName);
+				log.info("Standardabweichung: " + stdDeviation + " Ziel-Standardabweichung: " + aimStdDeviation);
+				if (stdDeviation > aimStdDeviation){
+					isRelativeDeviationBelowValue = false; break;
+				}
 			}
 		}
 		
