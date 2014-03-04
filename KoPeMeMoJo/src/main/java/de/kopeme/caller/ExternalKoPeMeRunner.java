@@ -129,7 +129,7 @@ public class ExternalKoPeMeRunner {
 				command += "-Djava.library.path="+libraryPath;
 			command = command + " de.kopeme.testrunner.PerformanceTestRunner " + s;
 			
-			System.out.println(command);
+//			System.out.println(command);
 			Process p = Runtime.getRuntime().exec(command);
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
@@ -192,7 +192,7 @@ public class ExternalKoPeMeRunner {
 //				"-sourcepath "+sourceDirName+ " " +
 				"-d " + (compileFolder != null ? compileFolder : ".") + " " +
 				compileFolder +"/" +fileName;
-		System.out.println(command);
+//		System.out.println(command);
 		Runtime.getRuntime().exec(command).waitFor();
 	}
 }

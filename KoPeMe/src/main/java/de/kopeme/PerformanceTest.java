@@ -16,7 +16,7 @@ public @interface PerformanceTest{
 	 * Marks the counts of executions, that should be executed and measured for real data.
 	 * @return
 	 */
-	public int executionTimes() default 5;
+	public int executionTimes() default 10;
 	
 //	public float maximalRelativeStandardDeviation() default 0;
 	
@@ -27,6 +27,8 @@ public @interface PerformanceTest{
 	public int warmupExecutions() default 1;
 	
 	public Assertion[] assertions() default {};
+	
+	public int minEarlyStopExecutions() default 10;
 	
 	public MaximalRelativeStandardDeviation[] deviations() default {};
 }

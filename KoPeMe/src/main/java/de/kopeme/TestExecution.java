@@ -29,7 +29,7 @@ public class TestExecution {
 	protected Class klasse;
 	protected Object instanz;
 	protected Method method;
-	protected int executionTimes, warmupExecutions;
+	protected int executionTimes, warmupExecutions, minEarlyStopExecutions;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
@@ -44,6 +44,7 @@ public class TestExecution {
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
+			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
 			maximalRelativeStandardDeviation = new HashMap<>();
 
 			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
@@ -138,7 +139,8 @@ public class TestExecution {
 			if (simple)
 				tr.stopCollection();
 			log.info("--- Stopping execution " + i + "/" + executionTimes + " ---");
-			if (!maximalRelativeStandardDeviation.isEmpty() &&
+			if (i >= minEarlyStopExecutions && 
+				!maximalRelativeStandardDeviation.isEmpty() &&
 				tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)){
 				break;
 			}

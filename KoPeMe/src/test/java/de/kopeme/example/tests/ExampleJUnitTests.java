@@ -16,7 +16,7 @@ import de.kopeme.testrunner.PerformanceTestRunnerJUnit;
 public class ExampleJUnitTests {
 
 	@Test
-	@PerformanceTest
+	@PerformanceTest(executionTimes=5)
 	public void testMoebelkauf(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
 		tr.startCollection();

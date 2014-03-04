@@ -22,10 +22,6 @@ import de.kopeme.datacollection.TimeDataCollector;
 
 public class ExamplePurePerformanceTests {
 
-	public static void main(String args[]){
-		System.out.println("Tsst");
-	}
-	
 //	@PerformanceTest(executionTimes=5, warmupExecutions=2,
 //		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
 	public void simpleTest(){
@@ -39,8 +35,9 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(warmupExecutions=10, executionTimes=100,
+	@PerformanceTest(warmupExecutions=3, executionTimes=100,
 		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
+		minEarlyStopExecutions=15,
 		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.3)})
@@ -51,7 +48,7 @@ public class ExamplePurePerformanceTests {
 		for (int j = 0; j < 100000; j++ )
 		{
 			i -= j;
-			int[] array = new int[200];
+			int[] array = new int[100];
 			list.add(array);
 		}
 		System.out.println("Test finished");
@@ -91,7 +88,7 @@ public class ExamplePurePerformanceTests {
 	
 //	@PerformanceTest(executionTimes=5, warmupExecutions=2,
 //			assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)} )
-	public void testMoebelkauf(final TestResult tr) {
+	public void AtestMoebelkauf(final TestResult tr) {
 		
 		tr.startCollection();
 		int anzahl = 1000 + (int) (Math.random() * 10);
@@ -140,10 +137,6 @@ public class ExamplePurePerformanceTests {
 		});
 	}
 
-//	@PerformanceTest
-//	public void testMoebelkauf2(final TestResult tr) {
-//
-//	}
 }
 
 // TODO: So was wie "AdditionalCollectorSet"
