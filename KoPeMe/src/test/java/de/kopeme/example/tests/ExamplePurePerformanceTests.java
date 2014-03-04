@@ -36,9 +36,9 @@ public class ExamplePurePerformanceTests {
 	}
 	
 	@PerformanceTest(warmupExecutions=3, executionTimes=100,
-		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
+		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollectorA", maxvalue=1750)},
 		minEarlyStopExecutions=15,
-		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
+		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollectorA", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.3)})
 	public void simpleDeviationTest(){

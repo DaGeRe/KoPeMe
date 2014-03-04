@@ -167,7 +167,7 @@ public class TestResult {
 			log.debug("Standardabweichung: " + getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size()-1; i++) {
-				log.debug("I: " + i+ " Value: " + realValues.get(i).get(collectorName));
+//				log.debug("I: " + i+ " Value: " + realValues.get(i).get(collectorName));
 				localValues.add(realValues.get(i).get(collectorName));
 			}
 			Long result = ms.getValue(localValues);

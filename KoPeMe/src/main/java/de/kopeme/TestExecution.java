@@ -87,6 +87,30 @@ public class TestExecution {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Tests weather the collectors given in the assertions and the maximale relative standard
+	 * deviations are correct
+	 * @param tr
+	 * @return
+	 */
+	private boolean checkCollectorValidity(TestResult tr){
+		log.info("Checking DataCollector validity");
+		boolean valid = true;
+		for (String collectorName : assertationvalues.keySet()){
+			if (!tr.getKeys().contains(collectorName)){
+				valid = false; 
+				log.warn("Invalid Collector for assertion: " + collectorName);
+			}
+		}
+		for (String collectorName : maximalRelativeStandardDeviation.keySet()){
+			if (!tr.getKeys().contains(collectorName)){
+				valid = false;
+				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName);
+			}
+		}
+		return valid;
+	}
 
 	private TestResult executeComplexTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		Object[] params = { tr };
@@ -95,6 +119,10 @@ public class TestExecution {
 			log.info("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+		}
+		
+		if (!checkCollectorValidity(tr)){
+			log.warn("Not all Collectors are valid!");
 		}
 
 		tr = new TestResult(filename, executionTimes);
@@ -118,6 +146,10 @@ public class TestExecution {
 
 		tr = new TestResult(filename, executionTimes);
 
+		if (!checkCollectorValidity(tr)){
+			log.warn("Not all Collectors are valid!");
+		}
+		
 		runMainExecution(tr, params, true);
 
 		tr.finalizeCollection();
