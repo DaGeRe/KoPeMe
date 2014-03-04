@@ -19,6 +19,8 @@ import de.kopeme.datacollection.CPUUsageCollector;
 import de.kopeme.datacollection.DataCollectorList;
 import de.kopeme.datacollection.TestResult;
 import de.kopeme.datacollection.TimeDataCollector;
+import de.kopeme.measuresummarizing.MaximumSummarizer;
+import de.kopeme.measuresummarizing.MedianSummarizer;
 
 public class ExamplePurePerformanceTests {
 
@@ -36,9 +38,9 @@ public class ExamplePurePerformanceTests {
 	}
 	
 	@PerformanceTest(warmupExecutions=3, executionTimes=100,
-		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollectorA", maxvalue=1750)},
+		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750l)},
 		minEarlyStopExecutions=15,
-		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollectorA", maxvalue=0.1),
+		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.3)})
 	public void simpleDeviationTest(){
@@ -54,8 +56,15 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-//	@PerformanceTest(executionTimes=5, warmupExecutions=2 )
+	@PerformanceTest(warmupExecutions=3, executionTimes=100,
+		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
+		minEarlyStopExecutions=15,
+		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
+					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
+					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.3)})
 	public void complexTest(TestResult tr){
+		tr.setMeasureSummarizer("de.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
+		tr.setMeasureSummarizer("de.kopeme.datacollection.RAMUsageCollector", new MedianSummarizer());
 		tr.startCollection();
 		int i = 10000;
 		for (int j = 0; j < 9000; j++ )
@@ -72,12 +81,13 @@ public class ExamplePurePerformanceTests {
 
 			@Override
 			public void checkValues(TestResult tr) {
+				System.out.println("Prüfe komplexe Performanz");
 				String CPUUSage = CPUUsageCollector.class.getName();
 				MatcherAssert.assertThat(tr.getValue(CPUUSage),
 						Matchers.greaterThan(10L));
 				MatcherAssert.assertThat(tr.getValue(CPUUSage),
 						Matchers.greaterThan((long) (tr.getLastRunsAverage(
-								CPUUSage, 5) * 0.80)));
+								CPUUSage, 5) * 0.60)));
 				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class
 						.getName()), Matchers.lessThan((long) (tr
 						.getLastRunsAverage(TimeDataCollector.class.getName(),

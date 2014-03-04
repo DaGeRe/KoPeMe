@@ -46,7 +46,7 @@ public class TestResult {
 	protected Checker checker;
 	private List<MethodExecution> methods;
 	
-	private MeasureSummarizer ms;
+	private Map<String, MeasureSummarizer> ms;
 
 	public TestResult(String filename, int executionTimes) {
 		values = new HashMap<String, Long>();
@@ -55,7 +55,7 @@ public class TestResult {
 		methods = new LinkedList<MethodExecution>();
 		index = 0;
 		
-		ms = new AverageSummerizer();
+		ms = new HashMap<>();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
 		// realValues = new HashMap<String, Long>[executionTimes];
 	}
@@ -152,9 +152,9 @@ public class TestResult {
 	 * should be summarized, e.g. as average, median, maximum, ...
 	 * @param ms
 	 */
-	public void setMeasureSummarizer(MeasureSummarizer ms)
+	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms)
 	{
-		this.ms = ms;
+		this.ms.put(datacollector, ms);
 	}
 
 	/**
@@ -163,6 +163,7 @@ public class TestResult {
 	 * the file and Assertations over historical data are possible
 	 */
 	public void finalizeCollection() {
+		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
 			log.debug("Standardabweichung: " + getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
@@ -170,7 +171,12 @@ public class TestResult {
 //				log.debug("I: " + i+ " Value: " + realValues.get(i).get(collectorName));
 				localValues.add(realValues.get(i).get(collectorName));
 			}
-			Long result = ms.getValue(localValues);
+			Long result;
+			if (ms.containsKey(collectorName)){
+				result = ms.get(collectorName).getValue(localValues);
+			} else {
+				result = as.getValue(localValues);
+			}
 			values.put(collectorName, result);
 		}
 
