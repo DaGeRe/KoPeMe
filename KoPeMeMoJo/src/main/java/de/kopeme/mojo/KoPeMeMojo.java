@@ -37,6 +37,9 @@ import de.kopeme.caller.ExternalKoPeMeRunner;
  */
 public class KoPeMeMojo extends AbstractMojo {
 
+	private static String CPPATHSEPERATOR = ":";
+	private static String PATHSEPERATOR = "/";
+
 	/**
 	 * The current Maven session.
 	 * 
@@ -110,7 +113,16 @@ public class KoPeMeMojo extends AbstractMojo {
 	 * Main-method, that is executed when the tests are executed
 	 */
 	public void execute() throws MojoExecutionException {
-		getLog().info("Start");
+		
+		
+		getLog().info("Start, BS: " + System.getProperty("os.name"));
+		if (System.getProperty("os.name").contains("indows")){
+			CPPATHSEPERATOR = ";";
+			PATHSEPERATOR="\\";
+		}else{
+			CPPATHSEPERATOR=":";
+			PATHSEPERATOR="/";
+		}
 		System.out.println("Execute: " + standardoutput);
 		tests = 0;
 		failure = 0;
@@ -141,7 +153,7 @@ public class KoPeMeMojo extends AbstractMojo {
 		project = project.getExecutionProject();
 		runTestFile(dir, fileFilter);
 
-		getLog().info("Tests: " + tests + " Fehlschl‰ge: " + failure
+		getLog().info("Tests: " + tests + " Fehlschl√§ge: " + failure
 				+ " Fehler: " + error);
 
 	}
@@ -154,7 +166,7 @@ public class KoPeMeMojo extends AbstractMojo {
 				List<String> classpathElements = project
 						.getCompileClasspathElements();
 				for (String s : classpathElements) {
-					classpath += s + ":";
+					classpath += s + CPPATHSEPERATOR;
 				}
 				classpath = classpath.substring(0, classpath.length() - 1);
 
@@ -170,8 +182,8 @@ public class KoPeMeMojo extends AbstractMojo {
 				System.out.println("Nach Substr: " + fileName);
 				int returnValue;
 				try{
-					ExternalKoPeMeRunner ekr = new ExternalKoPeMeRunner(fileName, "target/test-classes/", "", classpath+":target/test-classes/");
-					ekr = new ExternalKoPeMeRunner(fileName, "target/test-classes/", classpath+":target/test-classes/", "target/lib/");
+					ExternalKoPeMeRunner ekr;// = new ExternalKoPeMeRunner(fileName, "target/test-classes/", "", classpath+":target/test-classes/");
+					ekr = new ExternalKoPeMeRunner(fileName, "target"+PATHSEPERATOR + "test-classes"+PATHSEPERATOR, classpath);
 					ekr.setExternalOutputFile(standardoutput);
 					returnValue = ekr.run();
 				}catch (Exception e){

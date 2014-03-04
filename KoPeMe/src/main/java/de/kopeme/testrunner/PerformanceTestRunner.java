@@ -27,6 +27,7 @@ public class PerformanceTestRunner {
 			System.exit(1);
 		}
 		String klassenName = args[0];
+		
 		try {
 			Class c = Class.forName(klassenName);
 			runTestsWithClass(c);

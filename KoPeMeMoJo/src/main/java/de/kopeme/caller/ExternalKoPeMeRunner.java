@@ -101,7 +101,13 @@ public class ExternalKoPeMeRunner {
 			}
 			
 			
-			String s = fileName.replace("/", ".");
+			String separator = "/";
+			String cpseperator = ":";
+			if (System.getProperty("os.name").contains("indows")){
+				separator = "\\";
+				cpseperator = ";";
+			}
+			String s = fileName.replace(separator, ".");
 			if ( ".java".equals(s.substring(s.length()-5)))
 			{
 				s = s.substring(0, s.length()-5); // .java Entfernen
@@ -114,9 +120,9 @@ public class ExternalKoPeMeRunner {
 			
 			String localClasspath = classpath;
 			if (compileFolder != null)
-				localClasspath = localClasspath + ":" + compileFolder;
+				localClasspath = localClasspath + cpseperator + compileFolder;
 //			System.out.println("Compilefolder: " + compileFolder);
-			String command = "java -cp "+localClasspath+":Tests/ ";
+			String command = "java -cp "+localClasspath;
 			if (libraryPath != null && libraryPath!= "")
 				command += "-Djava.library.path="+libraryPath;
 			command = command + " de.kopeme.testrunner.PerformanceTestRunner " + s;
