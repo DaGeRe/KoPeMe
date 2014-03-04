@@ -64,7 +64,7 @@ public class YAMLDataStorer implements DataStorer{
 			fw = new FileWriter(f);
 			fw.write(yam.dump(data));
 			fw.flush();
-			System.out.println("Schreibe: " + data.size() + " Werte in " + f.getPath());
+			log.debug("Schreibe: {} Werte in {}", data.size(), f.getPath());
 		} catch (IOException e) {
 			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();

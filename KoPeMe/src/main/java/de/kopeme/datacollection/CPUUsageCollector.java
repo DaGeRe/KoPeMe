@@ -7,7 +7,13 @@ import java.lang.management.ThreadMXBean;
 
 import javax.management.MBeanServer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class CPUUsageCollector extends DataCollector {
+	
+	private Logger log = LogManager.getLogger(CPUUsageCollector.class);
+	
 	private long startTimeCpu = 0, stopTimeCpu = 0;
 //	private long startTimeCpu2 = 0, stopTimeCpu2 = 0;
 	private long startTimeUser = 0, stopTimeUser = 0;
@@ -42,9 +48,7 @@ public class CPUUsageCollector extends DataCollector {
 		
 		long cpuTime = stopTimeCpu - startTimeCpu;
 		long time = stopTime - startTime;
-		System.out.println("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
-//		long timeUser = stopTimeUser - startTimeUser;
-//		System.out.println("User: " + (1000*timeUser / time) + " CPU: " + (1000*cpuTime / time));
+		log.debug("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
 		if ( !mxb.isCurrentThreadCpuTimeSupported() ) return -1;
 		return (1000 * cpuTime) / time;
 		

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 /**
  * Runs the KoPeMe-Testrunner on the commandline. The runs can be parameterized by
@@ -15,6 +16,9 @@ import java.io.InputStreamReader;
  * 
  */
 public class ExternalKoPeMeRunner {
+	
+//	private static Logger log = LogMana
+	
 	private String fileName;
 	private String sourceDirName;
 	private boolean compile;
@@ -96,7 +100,6 @@ public class ExternalKoPeMeRunner {
 			
 			if ( compile )
 			{
-//				System.out.println("Compiling..");
 				compile();
 			}
 			
@@ -121,7 +124,6 @@ public class ExternalKoPeMeRunner {
 			String localClasspath = classpath;
 			if (compileFolder != null)
 				localClasspath = localClasspath + cpseperator + compileFolder;
-//			System.out.println("Compilefolder: " + compileFolder);
 			String command = "java -cp "+localClasspath;
 			if (libraryPath != null && libraryPath!= "")
 				command += "-Djava.library.path="+libraryPath;

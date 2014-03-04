@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.kopeme.datacollection.CPUUsageCollector;
 import de.kopeme.datacollection.DataCollector;
 import de.kopeme.datacollection.TestResult;
@@ -20,6 +23,9 @@ import de.kopeme.datastorage.YAMLDataStorer;
  * 
  */
 public class TestExecution {
+	
+	private Logger log = LogManager.getLogger(TestExecution.class);
+	
 	protected Class klasse;
 	protected Object instanz;
 	protected Method method;
@@ -51,8 +57,6 @@ public class TestExecution {
 		}
 
 		filename = klasse.getName() + "." + method.getName();
-
-		// System.out.println("Run " + klasse);
 	}
 
 	public void runTest() {
@@ -69,7 +73,7 @@ public class TestExecution {
 				tr.checkValues(assertationvalues);
 			}
 
-			System.out.println("Beendet");
+			log.info("Test {} beendet", filename);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(
@@ -87,9 +91,9 @@ public class TestExecution {
 		Object[] params = { tr };
 
 		for (int i = 1; i <= warmupExecutions; i++) {
-			System.out.println("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			System.out.println("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 
 		tr = new TestResult(filename, executionTimes);
@@ -106,9 +110,9 @@ public class TestExecution {
 		Object[] params = {};
 
 		for (int i = 1; i <= warmupExecutions; i++) {
-			System.out.println("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			System.out.println("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 
 		tr = new TestResult(filename, executionTimes);
@@ -127,34 +131,18 @@ public class TestExecution {
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		for (int i = 1; i <= executionTimes; i++) {
 
-			System.out.println("--- Starting execution " + i + "/" + executionTimes + " ---");
+			log.info("--- Starting execution " + i + "/" + executionTimes + " ---");
 			if (simple)
 				tr.startCollection();
 			method.invoke(instanz, params);
 			if (simple)
 				tr.stopCollection();
-			System.out.println("--- Stopping execution " + i + "/" + executionTimes + " ---");
+			log.info("--- Stopping execution " + i + "/" + executionTimes + " ---");
 			if (!maximalRelativeStandardDeviation.isEmpty() &&
 				tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)){
 				break;
 			}
 		}
-		// }
-		// else{
-		// System.out.println("--- Starting execution until standard deviation is below "
-		// + maximalRelativeStandardDeviation + " ---");
-		// int i = 1;
-		// while
-		// (!tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)
-		// && i < executionTimes){
-		// System.out.println("--- Starting execution " + i + " ---");
-		// if (simple) tr.startCollection();
-		// method.invoke(instanz, params);
-		// if (simple) tr.stopCollection();
-		// System.out.println("--- Stopping execution " + i + " ---");
-		// i++;
-		// }
-		// }
 
 	}
 }

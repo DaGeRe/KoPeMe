@@ -94,8 +94,6 @@ public class TestResult {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
 				if (dc.getName().equals(entry.getKey())) {
-					// System.out.println("prüfe " + dc.getName() + " Soll: " +
-					// entry.getValue() + " Ist: " + dc.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName()
 							+ " besitzt Wert " + dc.getValue()
 							+ ", Wert sollte aber unter " + entry.getValue()
@@ -107,18 +105,6 @@ public class TestResult {
 	}
 
 	public void startCollection() {
-//		if (dataCollectors == null) {
-//			throw new Error(
-//					"Sie sollten TestResult.setCollectors aufrufen, bevor Sie anfangen, Daten zu sammeln.");
-//		}
-		new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Automatisch generierter Methodenstub
-				
-			}
-		};
 		Comparator<DataCollector> collector = new Comparator<DataCollector>() {
 
 			@Override
@@ -138,7 +124,7 @@ public class TestResult {
 		Arrays.sort(sortedCollectors, comparator);
 //		.
 		for (DataCollector dc : sortedCollectors){
-			System.out.println("Starte: " + dc.getName());
+			log.debug("Starte: {}", dc.getName());
 			dc.startCollection();
 		}
 			
@@ -192,7 +178,6 @@ public class TestResult {
 		YAMLDataStorer xds = new YAMLDataStorer(filename);
 		for (String s : getKeys()) {
 			Map<Date, Long> historicalData = xds.getHistoricalData(s);
-			// System.out.println("String: " + s);
 
 			historicalDataMap.put(s, historicalData);
 			xds.storeValue(s, getValue(s));
@@ -222,7 +207,6 @@ public class TestResult {
 	 * @return
 	 */
 	public long getValue(String name) {
-		// System.out.println("Name: " + name);
 		return values.get(name) != null ? values.get(name) : dataCollectors
 				.get(name).getValue();
 	}
@@ -366,7 +350,7 @@ public class TestResult {
 			values[i] = realValues.get(i).get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")){
-			System.out.println(Arrays.toString(values));
+			log.debug(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();
 		for (Long l : values){
@@ -374,7 +358,7 @@ public class TestResult {
 			
 		}
 		
-		System.out.println("Mittel: " + st.getMean() + " Standardabweichung: " + st.getStandardDeviation());
+		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
 		return st.getStandardDeviation() / st.getMean();
 	}
 

@@ -25,7 +25,6 @@ public class YamlToCSVConverter {
 			is = new FileInputStream(f);
 			y = new Yaml();
 			Object o = y.load(is);
-			System.out.println("O: " + o);
 			data = (Map<String, Map<Date, Long>>) o;
 		} catch (FileNotFoundException e) {
 			// TODO Automatisch generierter Erfassungsblock

@@ -7,6 +7,9 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.kopeme.PerformanceTest;
 import de.kopeme.TestExecution;
 import de.kopeme.datacollection.TimeDataCollector;
@@ -19,11 +22,14 @@ import de.kopeme.paralleltests.ParallelTestExecution;
  *
  */
 public class PerformanceTestRunner {
+	
+	private static Logger log = LogManager.getFormatterLogger(PerformanceTestRunner.class);
+	
 	public static void main( String args[] )
 	{
 		if ( args.length == 0 )
 		{
-			System.out.println("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
+			log.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgefï¿½hrt werden.");
 			System.exit(1);
 		}
 		String klassenName = args[0];
@@ -32,7 +38,7 @@ public class PerformanceTestRunner {
 			Class c = Class.forName(klassenName);
 			runTestsWithClass(c);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");
+			log.error("Die gewÃ¼nschte Klasse " + klassenName + " wurde unglÃ¼cklicherweise nicht gefunden.");
 //			e.printStackTrace();
 			System.exit(1);
 		}
@@ -50,7 +56,7 @@ public class PerformanceTestRunner {
 		}
 		if ( instance == null )
 		{
-			System.out.println("Fehler");
+			log.error("Klasseninstanziierung nicht mÃ¶glich");
 			return;
 		}
 		boolean failed = false;
@@ -58,11 +64,6 @@ public class PerformanceTestRunner {
 		for ( Method method : c.getMethods() )
 		{
 			try{
-//				System.out.println("Methode: " + method);
-//				for ( Annotation a : method.getAnnotations())
-//				{
-//					System.out.println("Annotation: " + a);
-//				}
 				if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
 				{
 					TestExecution te = new TestExecution(c, instance, method);
@@ -70,7 +71,6 @@ public class PerformanceTestRunner {
 				}
 				if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
-					System.out.println("FÃ¼hre aus");
 					ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
 					te.runTest();
 				}
@@ -80,13 +80,10 @@ public class PerformanceTestRunner {
 				errors.add(ae);
 			}
 		}
-//		if ( failed ) throw errors.get(0);
 		if (failed){
 			for (AssertionError ae : errors){
-				System.out.println("Exception: " + ae.getLocalizedMessage());
-				for (StackTraceElement ste: ae.getStackTrace()){
-					System.out.println(ste);
-				}
+				log.error("Exception: " + ae.getLocalizedMessage());
+				ae.printStackTrace();
 			}
 		}
 	}
