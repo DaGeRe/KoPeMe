@@ -56,21 +56,19 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(warmupExecutions=3, executionTimes=100,
+	@PerformanceTest(warmupExecutions=3, executionTimes=20,
 		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
 		minEarlyStopExecutions=15,
 		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
 					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.RAMUsageCollector", maxvalue=0.1),
-					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.3)})
+					@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.CPUUsageCollector", maxvalue=0.4)})
 	public void complexTest(TestResult tr){
 		tr.setMeasureSummarizer("de.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
 		tr.setMeasureSummarizer("de.kopeme.datacollection.RAMUsageCollector", new MedianSummarizer());
 		tr.startCollection();
-		int i = 10000;
-		for (int j = 0; j < 9000; j++ )
+		for (int j = 0; j < 1000; j++ )
 		{
-			i -= j;
-			int[] array = new int[100];
+			int[] array = new int[1000];
 		}
 
 		tr.stopCollection();

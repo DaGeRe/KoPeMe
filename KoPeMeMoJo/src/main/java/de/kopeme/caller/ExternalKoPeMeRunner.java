@@ -152,7 +152,7 @@ public class ExternalKoPeMeRunner {
 			{
 				if ( bw == null)
 				{
-					System.out.println("Ausgabe: " + line);
+					System.out.println(line);
 				}
 				else
 				{
