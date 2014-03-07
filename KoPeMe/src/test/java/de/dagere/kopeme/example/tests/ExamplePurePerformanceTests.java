@@ -56,7 +56,7 @@ public class ExamplePurePerformanceTests {
 		System.out.println("Test finished");
 	}
 	
-	@PerformanceTest(warmupExecutions=3, executionTimes=100,
+	@PerformanceTest(warmupExecutions=3, executionTimes=20,
 		assertions={@Assertion(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=1750)},
 		minEarlyStopExecutions=15,
 		deviations={@MaximalRelativeStandardDeviation(collectorname="de.kopeme.datacollection.TimeDataCollector", maxvalue=0.1),
@@ -66,6 +66,7 @@ public class ExamplePurePerformanceTests {
 		tr.setMeasureSummarizer("de.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
 		tr.setMeasureSummarizer("de.kopeme.datacollection.RAMUsageCollector", new MedianSummarizer());
 		tr.startCollection();
+<<<<<<< HEAD:KoPeMe/src/test/java/de/dagere/kopeme/example/tests/ExamplePurePerformanceTests.java
 		int i = 10000;
 		List<int[]> list = new LinkedList<>();
 		for (int j = 0; j < 100000; j++ )
@@ -73,6 +74,11 @@ public class ExamplePurePerformanceTests {
 			i -= j;
 			int[] array = new int[100];
 			list.add(array);
+=======
+		for (int j = 0; j < 1000; j++ )
+		{
+			int[] array = new int[1000];
+>>>>>>> master:KoPeMe/src/test/java/de/kopeme/example/tests/ExamplePurePerformanceTests.java
 		}
 
 		tr.stopCollection();
