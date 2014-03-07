@@ -6,3 +6,9 @@
  
 - Spring-Kompatibilität
 - Nebenläufige Tests
+
+- Lokalisierung aller Ausgaben
+
+- Debugausgaben umstellen
+- Fehlschlag ändern?!
+- Hochladen ins Maven Central
