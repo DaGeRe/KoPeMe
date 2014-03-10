@@ -119,7 +119,7 @@
 
 	<scm>			 
 		<url>scm:git:https://github.com:DaGeRe/KoPeMe.git</url>
-		<developerConnection>scm:git:https://github.com:DaGeRe/KoPeMe.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
 		<connection>git@github.com:DaGeRe/KoPeMe.git</connection>
 	</scm>
 
