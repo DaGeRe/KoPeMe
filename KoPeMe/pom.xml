@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-core</artifactId>
-	<version>0.3</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>KoPeMe</name>
@@ -114,7 +114,7 @@
 	</properties>
 
 	<scm>			 
-		<url>scm:git:https://git@github.com:DaGeRe/KoPeMe.git</url>
+		<url>scm:git:git@github.com:DaGeRe/KoPeMe.git</url>
 		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
 		<connection>git@github.com:DaGeRe/KoPeMe.git</connection>
 	</scm>
