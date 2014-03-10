@@ -114,9 +114,9 @@
 	</properties>
 
 	<scm>			 
-		<url>scm:git:git@github.com:DaGeRe/KoPeMe.git</url>
-		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
-		<connection>git@github.com:DaGeRe/KoPeMe.git</connection>
+		<connection>scm:git:git@github.com:DaGeRe/KoPeMe.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:DaGeRe/KoPeMe.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
 	</scm>
 
 	<distributionManagement>
