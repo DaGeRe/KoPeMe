@@ -4,7 +4,7 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.kopeme</groupId>
+    <groupId>de.dagere.kopeme</groupId>
     <artifactId>kopeme-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
@@ -30,12 +30,7 @@
         </pluginManagement>
     </build>
 	
-	<scm>			 
-		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
-		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
-		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
-	</scm>
-
+	
     <dependencies>
         <dependency>
 			<groupId>junit</groupId>
@@ -43,4 +38,45 @@
 			<version>4.11</version>
 		</dependency>
     </dependencies>
+	
+	<scm>			 
+		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
+	</scm>
+	
+	<developers>
+		<developer>
+			<id>DaGeRe</id>
+			<name>David Georg Reichelt</name>
+			<email>kopeme@dagere.de</email>
+		</developer>
+	</developers>
+	
+	<licenses>
+		<license>
+			<name>European Union Public License v1.1</name>
+			<url>https://joinup.ec.europa.eu/software/page/eupl/licence-eupl</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<distributionManagement>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus snapshot repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<name>Sonatype Nexus release repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+	
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 </project>

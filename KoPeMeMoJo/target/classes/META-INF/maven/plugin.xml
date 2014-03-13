@@ -4,8 +4,8 @@
 
 <plugin>
   <name>KoPeMeMoJo</name>
-  <description>Executes KoPeMe-Tests</description>
-  <groupId>de.kopeme</groupId>
+  <description>Mojo for executing KoPeMe-Tests</description>
+  <groupId>de.dagere.kopeme</groupId>
   <artifactId>kopememojo</artifactId>
   <version>0.1</version>
   <goalPrefix>kopememojo</goalPrefix>
