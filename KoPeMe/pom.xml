@@ -117,7 +117,8 @@
 		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
 		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
 		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
-	</scm>
+	    <tag>kopeme-parent-0.1</tag>
+    </scm>
 
 	<distributionManagement>
 		<snapshotRepository>

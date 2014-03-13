@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.kopeme</groupId>
+    <artifactId>kopeme-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.1-SNAPSHOT</version>
+    <name>KoPeMe - Parent</name>
+
+    <modules>
+        <module>KoPeMe</module>
+        <module>KoPeMeMoJo</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+	
+	<scm>			 
+		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
+	</scm>
+
+    <dependencies>
+        <dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+    </dependencies>
+</project>
