@@ -2,21 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-core</artifactId>
-	<version>0.4-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>KoPeMe</name>
 	<description>Continous Performance Measurement and Checking Framework</description>
 	<url>http://dagere.de/KoPeMe</url>
-
-	<licenses>
-		<license>
-			<name>European Union Public License v1.1</name>
-			<url>https://joinup.ec.europa.eu/software/page/eupl/licence-eupl</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -112,6 +104,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+	
+	<licenses>
+		<license>
+			<name>European Union Public License v1.1</name>
+			<url>https://joinup.ec.europa.eu/software/page/eupl/licence-eupl</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<scm>			 
 		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>

@@ -4,7 +4,7 @@
     <groupId>de.dagere.kopeme</groupId>
     <artifactId>kopeme-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <name>KoPeMe - Parent</name>
 
     <modules>
@@ -14,15 +14,75 @@
 
     <build>
         <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.7</source>
+						<target>1.7</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.4</version>
+					<executions>
+						<execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<quiet>true</quiet>
+						<nonavbar>true</nonavbar>
+						<notree>true</notree>
+						<nocomment>true</nocomment>
+						<nohelp>true</nohelp>
+					</configuration>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				  <plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.6</version>
+					<configuration>
+					  <verbose>false</verbose>
+					  <addSvnKeyWords>false</addSvnKeyWords>
+					</configuration>
+					<executions>
+					  <execution>
+						<id>first</id>
+						<goals>
+						  <goal>update-file-header</goal>
+						</goals>
+						<phase>process-sources</phase>
+						<configuration>
+						  <licenseName>eupl_v1</licenseName>
+						  <roots>
+							<root>src/main/java</root>
+							<root>src/test</root>
+						  </roots>
+						</configuration>
+					  </execution>
+					</executions>
+				  </plugin>
             </plugins>
         </pluginManagement>
     </build>
