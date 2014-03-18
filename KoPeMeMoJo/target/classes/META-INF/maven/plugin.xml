@@ -7,7 +7,7 @@
   <description>Mojo for executing KoPeMe-Tests</description>
   <groupId>de.dagere.kopeme</groupId>
   <artifactId>kopememojo</artifactId>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
   <goalPrefix>kopememojo</goalPrefix>
   <isolatedRealm>false</isolatedRealm>
   <inheritedByDefault>true</inheritedByDefault>
