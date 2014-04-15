@@ -23,9 +23,9 @@ import de.dagere.kopeme.datastorage.YAMLDataStorer;
  * 
  */
 public class TestExecution {
-	
+
 	private Logger log = LogManager.getLogger(TestExecution.class);
-	
+
 	protected Class klasse;
 	protected Object instanz;
 	protected Method method;
@@ -87,24 +87,25 @@ public class TestExecution {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Tests weather the collectors given in the assertions and the maximale relative standard
-	 * deviations are correct
+	 * Tests weather the collectors given in the assertions and the maximale
+	 * relative standard deviations are correct
+	 * 
 	 * @param tr
 	 * @return
 	 */
-	private boolean checkCollectorValidity(TestResult tr){
+	private boolean checkCollectorValidity(TestResult tr) {
 		log.info("Checking DataCollector validity");
 		boolean valid = true;
-		for (String collectorName : assertationvalues.keySet()){
-			if (!tr.getKeys().contains(collectorName)){
-				valid = false; 
+		for (String collectorName : assertationvalues.keySet()) {
+			if (!tr.getKeys().contains(collectorName)) {
+				valid = false;
 				log.warn("Invalid Collector for assertion: " + collectorName);
 			}
 		}
-		for (String collectorName : maximalRelativeStandardDeviation.keySet()){
-			if (!tr.getKeys().contains(collectorName)){
+		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
+			if (!tr.getKeys().contains(collectorName)) {
 				valid = false;
 				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName);
 			}
@@ -120,8 +121,8 @@ public class TestExecution {
 			method.invoke(instanz, params);
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
-		
-		if (!checkCollectorValidity(tr)){
+
+		if (!checkCollectorValidity(tr)) {
 			log.warn("Not all Collectors are valid!");
 		}
 
@@ -138,20 +139,23 @@ public class TestExecution {
 	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		Object[] params = {};
 
-		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
-			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+		try {
+			for (int i = 1; i <= warmupExecutions; i++) {
+				log.info("--- Starting warmup execution " + i + "/" + warmupExecutions + " ---");
+				method.invoke(instanz, params);
+				log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			}
+
+			tr = new TestResult(filename, executionTimes);
+
+			if (!checkCollectorValidity(tr)) {
+				log.warn("Not all Collectors are valid!");
+			}
+
+			runMainExecution(tr, params, true);
+		} catch (Throwable t) {
+			t.printStackTrace();
 		}
-
-		tr = new TestResult(filename, executionTimes);
-
-		if (!checkCollectorValidity(tr)){
-			log.warn("Not all Collectors are valid!");
-		}
-		
-		runMainExecution(tr, params, true);
-
 		tr.finalizeCollection();
 
 		tr.checkValues();
@@ -170,10 +174,13 @@ public class TestExecution {
 			method.invoke(instanz, params);
 			if (simple)
 				tr.stopCollection();
+
 			log.debug("--- Stopping execution " + i + "/" + executionTimes + " ---");
-			if (i >= minEarlyStopExecutions && 
-				!maximalRelativeStandardDeviation.isEmpty() &&
-				tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)){
+			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+				log.debug("Entry: {} {}", entry.getKey(), entry.getValue());
+			}
+			if (i >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+				&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
 		}

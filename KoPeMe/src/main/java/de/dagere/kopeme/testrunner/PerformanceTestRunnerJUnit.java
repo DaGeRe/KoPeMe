@@ -31,19 +31,18 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to
  * got the parameter TestResult. This does not work without another runner, e.g.
- * the TheorieRunner. 
- * An alternative implementation, e.g. via Rules, which would make it possible
- * to include Theories, is not possible, because one needs to change the signature
- * of test methods to get KoPeMe-Tests running.
+ * the TheorieRunner. An alternative implementation, e.g. via Rules, which would
+ * make it possible to include Theories, is not possible, because one needs to
+ * change the signature of test methods to get KoPeMe-Tests running.
+ * 
  * @author dagere
- *
+ * 
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	private String klasse;
-	
-	public PerformanceTestRunnerJUnit(Class<?> klasse)
-			throws InitializationError {
+
+	public PerformanceTestRunnerJUnit(Class<?> klasse) throws InitializationError {
 		super(klasse);
 		this.klasse = klasse.getName();
 	}
@@ -54,29 +53,28 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		if (a != null)
 			super.runChild(method, notifier);
 		else {
-			Description testBeschreibung = Description.createTestDescription(
-					this.getTestClass().getJavaClass(), method.getName());
+			Description testBeschreibung = Description.createTestDescription(this.getTestClass().getJavaClass(),
+				method.getName());
 			notifier.fireTestIgnored(testBeschreibung);
 		}
 	}
 
 	@Override
-    protected void validateTestMethods(List<Throwable> errors) {
-        for (FrameworkMethod each : computeTestMethods()) {
-        	if ( each.getMethod().getParameterTypes().length != 1)
-        	{
-        		errors.add(new Exception("Method " + each.getName()
-                + " is supposed to have exactly one parameter, who's type is TestResult"));
-        	}
-        	if ( each.getMethod().getParameterTypes()[0] != TestResult.class)
-        	{
-        		errors.add(new Exception("Method " + each.getName()
-                        + " has wrong parameter Type: " + each.getMethod().getParameterTypes()[0]));
-        	}
-        }
-    }
-	
-	
+	protected void validateTestMethods(List<Throwable> errors) {
+		for (FrameworkMethod each : computeTestMethods()) {
+			if (each.getMethod().getParameterTypes().length > 1) {
+				errors.add(new Exception("Method " + each.getName()
+					+ " is supposed to have one or zero parameters, who's type is TestResult"));
+			} else {
+				if (each.getMethod().getParameterTypes().length == 1 && 
+					each.getMethod().getParameterTypes()[0] != TestResult.class) {
+					errors.add(new Exception("Method " + each.getName() + " has wrong parameter Type: "
+						+ each.getMethod().getParameterTypes()[0]));
+				}
+			}
+		}
+	}
+
 	@Override
 	protected Statement methodInvoker(FrameworkMethod method, Object test) {
 		return new PerformanceExecutionStatement(method, test);
@@ -87,8 +85,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		private final FrameworkMethod fTestMethod;
 		private Object fTarget;
 
-		public PerformanceExecutionStatement(FrameworkMethod testMethod,
-				Object target) {
+		public PerformanceExecutionStatement(FrameworkMethod testMethod, Object target) {
 			fTestMethod = testMethod;
 			fTarget = target;
 		}
@@ -96,19 +93,16 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		@Override
 		public void evaluate() throws Throwable {
 			TestExecution te;
-			if (fTestMethod.getAnnotation(ParallelPerformanceTest.class) != null)
-			{
+			if (fTestMethod.getAnnotation(ParallelPerformanceTest.class) != null) {
 				te = new ParallelTestExecution(fTarget.getClass(), fTarget, fTestMethod.getMethod());
-			}
-			else
-			{
+			} else {
 				te = new TestExecution(fTarget.getClass(), fTarget, fTestMethod.getMethod());
 			}
 			te.runTest();
-//			String filename = klasse + "::" + fTestMethod.getName() + ".yml";
-//			int executions = 5;
-//			TestResult tr = new TestResult(filename, false, executions);
-//			fTestMethod.invokeExplosively(fTarget, tr);
+			// String filename = klasse + "::" + fTestMethod.getName() + ".yml";
+			// int executions = 5;
+			// TestResult tr = new TestResult(filename, false, executions);
+			// fTestMethod.invokeExplosively(fTarget, tr);
 		}
 	}
 }
