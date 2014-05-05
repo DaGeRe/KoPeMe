@@ -10,8 +10,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTest;
 import de.dagere.kopeme.TestExecution;
+import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelTestExecution;
@@ -25,7 +25,7 @@ public class PerformanceTestRunner {
 	
 	private static Logger log = LogManager.getFormatterLogger(PerformanceTestRunner.class);
 	
-	public static void main( String args[] )
+	public static void main( String args[] ) throws Throwable
 	{
 		if ( args.length == 0 )
 		{
@@ -44,7 +44,7 @@ public class PerformanceTestRunner {
 		}
 	}
 	
-	public static void runTestsWithClass( Class c )
+	public static void runTestsWithClass( Class c ) throws Throwable
 	{
 		Object instance = null;
 		try {

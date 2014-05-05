@@ -1,13 +1,13 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.annotations;
 import java.lang.annotation.*;
 
+import de.dagere.kopeme.Assertion;
+import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 
 
 
 import static java.lang.annotation.ElementType.*;
-
-
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { METHOD } )
@@ -17,6 +17,9 @@ public @interface PerformanceTest{
 	 * @return
 	 */
 	public int executionTimes() default 10;
+	
+	public int timeout() default 100000;
+	public boolean failAfterTimeout() default false;
 	
 //	public float maximalRelativeStandardDeviation() default 0;
 	

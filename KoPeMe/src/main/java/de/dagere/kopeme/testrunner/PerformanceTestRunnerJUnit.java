@@ -22,8 +22,9 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
-import de.dagere.kopeme.PerformanceTest;
 import de.dagere.kopeme.TestExecution;
+import de.dagere.kopeme.TimeoutWaiter;
+import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelTestExecution;
@@ -46,10 +47,27 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		super(klasse);
 		this.klasse = klasse.getName();
 	}
+	
+	@Override
+	public void run(RunNotifier notifier) {
+		
+		Thread t = new Thread(new TimeoutWaiter(null, timeout));
+		super.run(notifier);
+		System.out.println("Ende");
+	}
+	
+	@Override
+	protected Statement methodBlock(FrameworkMethod method) {
+		Statement methodBlock = super.methodBlock(method);
+//		Statement statementNew = 
+		System.out.println("Methode: " + method.getName() + " " + methodBlock.toString());
+		return methodBlock;
+	}
 
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		PerformanceTest a = method.getAnnotation(PerformanceTest.class);
+		
 		if (a != null)
 			super.runChild(method, notifier);
 		else {

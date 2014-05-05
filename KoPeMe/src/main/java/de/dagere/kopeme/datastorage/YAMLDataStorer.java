@@ -26,8 +26,8 @@ public class YAMLDataStorer implements DataStorer{
 	
 	public YAMLDataStorer( String filename )
 	{
-		loadData(filename);
-		f = new File(filename);
+		loadData("target/" + filename + ".yaml");
+		f = new File("target/" + filename + ".yaml");
 	}
 	
 	private void loadData( String filename )

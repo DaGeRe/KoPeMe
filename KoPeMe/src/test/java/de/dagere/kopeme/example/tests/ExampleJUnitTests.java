@@ -6,12 +6,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.dagere.kopeme.Checker;
-import de.dagere.kopeme.PerformanceTest;
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
 
+@PerformanceTestingClass
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleJUnitTests {
 
