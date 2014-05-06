@@ -1,4 +1,4 @@
-package de.dagere.kopeme.example.tests.timeouttests;
+package de.dagere.kopeme.exampletests.junit;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

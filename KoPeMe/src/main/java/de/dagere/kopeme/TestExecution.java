@@ -23,7 +23,7 @@ import de.dagere.kopeme.datastorage.YAMLDataStorer;
  */
 public class TestExecution {
 
-	private Logger log = LogManager.getLogger(TestExecution.class);
+	private static Logger log = LogManager.getLogger(TestExecution.class);
 
 	protected Class klasse;
 	protected Object instanz;
@@ -65,8 +65,8 @@ public class TestExecution {
 	}
 
 	public void runTest() throws Throwable {
+		long startZeit = System.currentTimeMillis();
 		final Thread mainThread = new Thread(new Runnable() {
-
 			@Override
 			public void run() {
 				TestResult tr = new TestResult(filename, warmupExecutions);
@@ -84,16 +84,16 @@ public class TestExecution {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 			}
 		});
 
-		Thread waitForTimeoutThread = new Thread(new TimeoutWaiter( mainThread, timeout));
-
-		waitForTimeoutThread.start();
-		mainThread.start();
 		
-		mainThread.join();
+		mainThread.start();
+		mainThread.join(timeout);
+		if (mainThread.isAlive())
+		{
+			mainThread.interrupt();
+		}
 
 		log.info("Test {} beendet", filename);
 	}

@@ -1,5 +1,6 @@
 package de.dagere.kopeme.testrunner;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +24,6 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 import de.dagere.kopeme.TestExecution;
-import de.dagere.kopeme.TimeoutWaiter;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -51,8 +51,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	
 	@Override
 	public void run(final RunNotifier notifier) {
+		System.out.println("PerformanceTestRunnerJUnit.run: " + System.currentTimeMillis());
 		long start = System.nanoTime();
-		System.out.println("Beginne");
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null){
 			Thread mainThread = new Thread(new Runnable() {
@@ -73,16 +73,17 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}else{
+			System.out.println("PerformanceTestRunnerJUnit.run(2): " + System.currentTimeMillis());
 			super.run(notifier);
 		}
-		
+		System.out.println("PerformanceTestRunnerJUnit.run(E): " + System.currentTimeMillis());
 		
 	}
 	
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
+		System.out.println("PerformanceTestRunnerJUnit.runChild: " + System.currentTimeMillis());
 		PerformanceTest a = method.getAnnotation(PerformanceTest.class);
 		
 		if (a != null)
@@ -92,6 +93,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				method.getName());
 			notifier.fireTestIgnored(testBeschreibung);
 		}
+		System.out.println("PerformanceTestRunnerJUnit.runChild(2): " + System.currentTimeMillis());
 	}
 
 	@Override
@@ -128,16 +130,15 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		@Override
 		public void evaluate() throws Throwable {
 			TestExecution te;
+			Class<? extends Object> clazz = fTarget.getClass();
+			Method method = fTestMethod.getMethod();
 			if (fTestMethod.getAnnotation(ParallelPerformanceTest.class) != null) {
-				te = new ParallelTestExecution(fTarget.getClass(), fTarget, fTestMethod.getMethod());
+				te = new ParallelTestExecution(clazz, fTarget, method);
 			} else {
-				te = new TestExecution(fTarget.getClass(), fTarget, fTestMethod.getMethod());
+				System.out.println("PerformanceExecutionStatement.evaluate(1.2): " + System.currentTimeMillis());
+				te = new TestExecution(clazz, fTarget, method);
 			}
 			te.runTest();
-			// String filename = klasse + "::" + fTestMethod.getName() + ".yml";
-			// int executions = 5;
-			// TestResult tr = new TestResult(filename, false, executions);
-			// fTestMethod.invokeExplosively(fTarget, tr);
 		}
 	}
 }
