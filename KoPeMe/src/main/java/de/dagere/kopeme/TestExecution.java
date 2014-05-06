@@ -3,8 +3,6 @@ package de.dagere.kopeme;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -90,7 +88,7 @@ public class TestExecution {
 			}
 		});
 
-		Thread waitForTimeoutThread = new Thread(new TimeoutWaiter(this, mainThread, timeout));
+		Thread waitForTimeoutThread = new Thread(new TimeoutWaiter( mainThread, timeout));
 
 		waitForTimeoutThread.start();
 		mainThread.start();
@@ -125,14 +123,14 @@ public class TestExecution {
 		}
 		return valid;
 	}
-
+ 
 	private TestResult executeComplexTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
 		Object[] params = { tr };
-
+		String methodString = method.getClass().getName()+ "." + method.getName();
+		log.info("Methodstring: " + methodString);
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
 			log.info("--- Stopping warmup execution " + i + "/"
 					+ warmupExecutions + " ---");
@@ -155,9 +153,10 @@ public class TestExecution {
 	private TestResult executeSimpleTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
 		Object[] params = {};
-
+		String methodString = method.getClass().getName()+ "." + method.getName();
+		log.info("Methodstring: " + methodString);
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + i + "/"
+			log.info("--- Starting warmup execution " + methodString + i + "/"
 					+ warmupExecutions + " ---");
 			method.invoke(instanz, params);
 			log.info("--- Stopping warmup execution " + i + "/"

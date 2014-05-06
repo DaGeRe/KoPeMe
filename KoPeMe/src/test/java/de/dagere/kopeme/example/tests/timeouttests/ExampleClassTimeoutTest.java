@@ -14,6 +14,7 @@ public class ExampleClassTimeoutTest {
 	
 	@BeforeClass
 	public static void veryLongSetup(){
+		System.out.println("Starte...");
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -23,8 +24,9 @@ public class ExampleClassTimeoutTest {
 	
 	@Test
 	@PerformanceTest(executionTimes=5, warmupExecutions=2)
-	public void testVeryLong() {
+	public void testMethod() {
 		System.out.println("Sleep Example");
+		Thread.dumpStack();
 		try {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
@@ -32,14 +34,4 @@ public class ExampleClassTimeoutTest {
 		}
 	}
 	
-	@Test
-	@PerformanceTest(executionTimes=5, warmupExecutions=2)
-	public void testVeryShort() {
-		System.out.println("Sleep Example");
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
 }

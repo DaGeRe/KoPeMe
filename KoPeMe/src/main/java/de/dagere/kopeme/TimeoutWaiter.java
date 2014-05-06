@@ -17,14 +17,16 @@ public class TimeoutWaiter implements Runnable{
 	
 	@Override
 	public void run() {
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		try {
 			Thread.sleep(timeout);
 		} catch (InterruptedException e) {
 		}
 		System.out.println("Test timed out after " + timeout + " ms.");
 		while (mainThread.isAlive()){
+//			System.out.println("Interrupt..");
 			mainThread.interrupt();
 		}
+		System.out.println("Thread killed");
 	}
 }

@@ -25,6 +25,7 @@ import org.junit.runners.model.TestClass;
 import de.dagere.kopeme.TestExecution;
 import de.dagere.kopeme.TimeoutWaiter;
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelTestExecution;
@@ -41,29 +42,45 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
-	private String klasse;
+	private Class klasse;
 
 	public PerformanceTestRunnerJUnit(Class<?> klasse) throws InitializationError {
 		super(klasse);
-		this.klasse = klasse.getName();
+		this.klasse = klasse;
 	}
 	
 	@Override
-	public void run(RunNotifier notifier) {
+	public void run(final RunNotifier notifier) {
+		long start = System.nanoTime();
+		System.out.println("Beginne");
+		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
+		if (ptc != null){
+			Thread mainThread = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					PerformanceTestRunnerJUnit.super.run(notifier);
+				}
+			});
+			System.out.println("Timeout: " + ptc.overallTimeout());
+			mainThread.start();
+			
+			try {
+				mainThread.join(ptc.overallTimeout());
+				mainThread.interrupt();
+			} catch (InterruptedException e) {
+				System.out.println("Zeit: " + (System.nanoTime() - start) / 10E5);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}else{
+			super.run(notifier);
+		}
 		
-		Thread t = new Thread(new TimeoutWaiter(null, timeout));
-		super.run(notifier);
-		System.out.println("Ende");
+		
 	}
 	
-	@Override
-	protected Statement methodBlock(FrameworkMethod method) {
-		Statement methodBlock = super.methodBlock(method);
-//		Statement statementNew = 
-		System.out.println("Methode: " + method.getName() + " " + methodBlock.toString());
-		return methodBlock;
-	}
-
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
 		PerformanceTest a = method.getAnnotation(PerformanceTest.class);
