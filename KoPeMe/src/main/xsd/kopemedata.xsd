@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="kopemedata">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice>
+					<xs:element name="configuration" type="configType" />
+					<xs:element name="testcase" type="testcaseType" />
+				</xs:choice>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="configType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="cpu" type="xs:string" />
+			<xs:element name="ram" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="testcaseType">
+		<xs:sequence>
+			<xs:element name="result">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="date" type="xs:string" />
+						<xs:element name="value" type="xs:string" />
+					</xs:sequence>
+					<xs:attribute name="configuration" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
