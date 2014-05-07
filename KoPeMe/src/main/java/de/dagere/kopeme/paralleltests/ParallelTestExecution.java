@@ -1,23 +1,15 @@
 package de.dagere.kopeme.paralleltests;
 
-import static java.lang.annotation.ElementType.METHOD;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import de.dagere.kopeme.Assertion;
 import de.dagere.kopeme.TestExecution;
 import de.dagere.kopeme.datacollection.TestResult;
 
 public class ParallelTestExecution extends TestExecution {
 
-	public ParallelTestExecution(Class klasse, Object instance, Method method) {
+	public ParallelTestExecution(Class<?> klasse, Object instance, Method method) {
 		super(klasse, instance, method);
 
 		ParallelPerformanceTest annotation = method
@@ -62,7 +54,7 @@ public class ParallelTestExecution extends TestExecution {
 
 	public void runTest() {
 		try {
-			TestResult tr = new TestResult(filename, warmupExecutions);
+			TestResult tr = new TestResult(method.getName(), filename, warmupExecutions);
 			Object[] params = { tr };
 
 			method.invoke(instanz, params);

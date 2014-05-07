@@ -19,7 +19,7 @@ import org.yaml.snakeyaml.representer.Representer;
 
 public class YAMLDataStorer implements DataStorer{
 	
-	Logger log = LogManager.getLogger(YAMLDataStorer.class);
+	private static Logger log = LogManager.getLogger(YAMLDataStorer.class);
 	
 	private Map<String, Map<Date, Long>> data;
 	private File f;

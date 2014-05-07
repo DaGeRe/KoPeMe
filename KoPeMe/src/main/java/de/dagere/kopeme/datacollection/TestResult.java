@@ -21,6 +21,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.dagere.kopeme.Checker;
+import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.datastorage.YAMLDataStorer;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
@@ -45,14 +46,16 @@ public class TestResult {
 	protected String filename;
 	protected Checker checker;
 	private List<MethodExecution> methods;
+	private String testcase;
 
 	private Map<String, MeasureSummarizer> ms;
 
-	public TestResult(String filename, int executionTimes) {
+	public TestResult(String testcase, String filename, int executionTimes) {
 		values = new HashMap<String, Long>();
 		this.filename = filename;
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
+		this.testcase = testcase;
 		index = 0;
 
 		ms = new HashMap<>();
@@ -77,7 +80,6 @@ public class TestResult {
 			if (realValues.get(i) != null)
 				s.addAll(realValues.get(i).keySet());
 		}
-		// s.addAll(values.keySet());
 		return s;
 	}
 
@@ -156,6 +158,7 @@ public class TestResult {
 	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
 		this.ms.put(datacollector, ms);
 	}
+	
 
 	/**
 	 * Called when the collection of data is finally finished, i.e. also the
@@ -182,15 +185,6 @@ public class TestResult {
 		}
 
 		historicalDataMap = new HashMap<String, Map<Date, Long>>();
-		YAMLDataStorer xds = new YAMLDataStorer(filename);
-		for (String s : getKeys()) {
-			Map<Date, Long> historicalData = xds.getHistoricalData(s);
-
-			historicalDataMap.put(s, historicalData);
-			xds.storeValue(s, getValue(s));
-			log.info("{}: {}, (rel. Standardabweichung: {})", s, getValue(s), getRelativeStandardDeviation(s));
-		}
-		xds.storeData();
 	}
 
 	/**
@@ -348,7 +342,7 @@ public class TestResult {
 		return methods;
 	}
 
-	private double getRelativeStandardDeviation(String datacollector) {
+	public double getRelativeStandardDeviation(String datacollector) {
 		long[] values = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
 			values[i] = realValues.get(i).get(datacollector);

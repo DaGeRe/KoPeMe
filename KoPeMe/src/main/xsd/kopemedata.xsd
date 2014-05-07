@@ -3,10 +3,22 @@
 	<xs:element name="kopemedata">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:choice>
-					<xs:element name="configuration" type="configType" />
-					<xs:element name="testcase" type="testcaseType" />
-				</xs:choice>
+				<xs:element name="configurations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="configuration" type="configType"
+								maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="testcases" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="testcase" type="testcaseType"
+								maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -19,15 +31,25 @@
 	</xs:complexType>
 	<xs:complexType name="testcaseType">
 		<xs:sequence>
-			<xs:element name="result">
+			<xs:element name="datacollector" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="date" type="xs:string" />
-						<xs:element name="value" type="xs:string" />
+						<xs:element name="result" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="value" type="xs:string" />
+									<xs:element name="deviation" type="xs:double" />
+									<xs:element name="executionTimes" type="xs:long"/>
+								</xs:sequence>
+								<xs:attribute name="configuration" />
+								<xs:attribute name="date" type="xs:long" />
+							</xs:complexType>
+						</xs:element>
 					</xs:sequence>
-					<xs:attribute name="configuration" />
+					<xs:attribute name="name" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" />
 	</xs:complexType>
 </xs:schema>

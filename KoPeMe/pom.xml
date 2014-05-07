@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-core</artifactId>
@@ -8,7 +9,7 @@
 	<name>KoPeMe</name>
 	<description>Continous Performance Measurement and Checking Framework</description>
 	<url>http://dagere.de/KoPeMe</url>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -16,8 +17,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -33,6 +34,22 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>xjc</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<packageName>de.dagere.kopeme.generated</packageName> <!-- The name of your generated source package -->
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -54,17 +71,17 @@
 				</executions>
 			</plugin>
 			<plugin>
-				  <groupId>org.apache.maven.plugins</groupId>
-				  <artifactId>maven-source-plugin</artifactId>
-				  <executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
 					<execution>
-					  <id>attach-sources</id>
-					  <goals>
-						<goal>jar</goal>
-					  </goals>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
 					</execution>
-				  </executions>
-				</plugin>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -116,7 +133,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	
+
 	<licenses>
 		<license>
 			<name>European Union Public License v1.1</name>
@@ -125,12 +142,12 @@
 		</license>
 	</licenses>
 
-	<scm>			 
+	<scm>
 		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
 		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
 		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
-	    <tag>kopeme-parent-0.1</tag>
-    </scm>
+		<tag>kopeme-parent-0.1</tag>
+	</scm>
 
 	<distributionManagement>
 		<snapshotRepository>
