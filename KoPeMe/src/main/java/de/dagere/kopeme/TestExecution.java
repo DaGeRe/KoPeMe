@@ -62,7 +62,7 @@ public class TestExecution {
 			}
 		}
 
-		filename = klasse.getName() + "." + method.getName();
+		filename = klasse.getName();
 	}
 
 	public void runTest() throws Throwable {
@@ -127,54 +127,67 @@ public class TestExecution {
  
 	private TestResult executeComplexTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
-		Object[] params = { tr };
-		String methodString = method.getClass().getName()+ "." + method.getName();
-		log.info("Methodstring: " + methodString + " Warmup-Executions: " + warmupExecutions);
-		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
-			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+		int executions = 0;
+		try{
+			Object[] params = { tr };
+			String methodString = method.getClass().getName()+ "." + method.getName();
+			log.info("Methodstring: " + methodString + " Warmup-Executions: " + warmupExecutions);
+			for (int i = 1; i <= warmupExecutions; i++) {
+				log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
+				method.invoke(instanz, params);
+				log.info("--- Stopping warmup execution " + i + "/"
+						+ warmupExecutions + " ---");
+			}
+
+			if (!checkCollectorValidity(tr)) {
+				log.warn("Not all Collectors are valid!");
+			}
+
+			tr = new TestResult(method.getName(), filename, executionTimes);
+			params[0] = tr;
+			executions = runMainExecution(tr, params, false);
+
+			tr.finalizeCollection();
+		} catch (Throwable t){
+			saveData(method.getName(), tr, executions);
+			throw t;
 		}
-
-		if (!checkCollectorValidity(tr)) {
-			log.warn("Not all Collectors are valid!");
-		}
-
-		tr = new TestResult(method.getName(), filename, executionTimes);
-		params[0] = tr;
-		int executions = runMainExecution(tr, params, false);
-
-		tr.finalizeCollection();
 		saveData(method.getName(), tr, executions);
+		
 		tr.checkValues();
 		return tr;
 	}
 
 	private TestResult executeSimpleTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
-		Object[] params = {};
-		String methodString = method.getClass().getName()+ "." + method.getName();
-		log.info("Methodstring: " + methodString);
-		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + i + "/"
-					+ warmupExecutions + " ---");
-			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+		int executions = 0;
+		try{
+			Object[] params = {};
+			String methodString = method.getClass().getName()+ "." + method.getName();
+			log.info("Methodstring: " + methodString);
+			for (int i = 1; i <= warmupExecutions; i++) {
+				log.info("--- Starting warmup execution " + methodString + i + "/"
+						+ warmupExecutions + " ---");
+				method.invoke(instanz, params);
+				log.info("--- Stopping warmup execution " + i + "/"
+						+ warmupExecutions + " ---");
+			}
+
+			tr = new TestResult(method.getName(), filename, executionTimes);
+
+			if (!checkCollectorValidity(tr)) {
+				log.warn("Not all Collectors are valid!");
+			}
+
+			executions = runMainExecution(tr, params, true);
+			tr.finalizeCollection();
 		}
-
-		tr = new TestResult(method.getName(), filename, executionTimes);
-
-		if (!checkCollectorValidity(tr)) {
-			log.warn("Not all Collectors are valid!");
+		catch (Throwable t){
+			saveData(method.getName(), tr, executions);
+			throw t;
 		}
-
-		int executions = runMainExecution(tr, params, true);
-		tr.finalizeCollection();
-		
 		saveData(method.getName(), tr, executions);
-
+		
 		tr.checkValues();
 		return tr;
 	}

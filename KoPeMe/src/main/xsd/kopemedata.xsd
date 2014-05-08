@@ -40,6 +40,7 @@
 									<xs:element name="value" type="xs:string" />
 									<xs:element name="deviation" type="xs:double" />
 									<xs:element name="executionTimes" type="xs:long"/>
+									<xs:element name="version" type="versioninfo"/>
 								</xs:sequence>
 								<xs:attribute name="configuration" />
 								<xs:attribute name="date" type="xs:long" />
@@ -51,5 +52,12 @@
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="versioninfo">
+		<xs:choice>
+			<xs:element name="gitversion"/>
+			<xs:element name="committer"/>
+			<xs:element name="time"/>
+		</xs:choice>
 	</xs:complexType>
 </xs:schema>

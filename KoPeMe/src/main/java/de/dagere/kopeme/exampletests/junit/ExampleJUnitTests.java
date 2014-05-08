@@ -1,4 +1,4 @@
-package de.dagere.kopeme.example.tests;
+package de.dagere.kopeme.exampletests.junit;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
