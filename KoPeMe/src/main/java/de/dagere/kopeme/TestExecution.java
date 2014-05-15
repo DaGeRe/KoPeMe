@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,6 +15,7 @@ import de.dagere.kopeme.datacollection.CPUUsageCollector;
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.datastorage.YAMLDataStorer;
 
@@ -158,12 +161,16 @@ public class TestExecution {
 			params[0] = tr;
 			executions = runMainExecution(tr, params, false);
 
+		} catch(AssertionFailedError t){
 			tr.finalizeCollection();
+			saveData(method.getName(), tr, executions, true, false);
+			throw t;
 		} catch (Throwable t) {
-			saveData(method.getName(), tr, executions);
+			tr.finalizeCollection();
+			saveData(method.getName(), tr, executions, false, true);
 			throw t;
 		}
-		saveData(method.getName(), tr, executions);
+		saveData(method.getName(), tr, executions, false, false);
 
 		tr.checkValues();
 		return tr;
@@ -192,13 +199,17 @@ public class TestExecution {
 		}
 		try {
 			executions = runMainExecution(tr, params, true);
+		} catch(AssertionFailedError t){
+			tr.finalizeCollection();
+			saveData(method.getName(), tr, executions, true, false);
+			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			saveData(method.getName(), tr, executions);
+			saveData(method.getName(), tr, executions, false, true);
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(method.getName(), tr, executions);
+		saveData(method.getName(), tr, executions, false, false);
 
 		tr.checkValues();
 		return tr;
@@ -238,7 +249,7 @@ public class TestExecution {
 	/**
 	 * Saves the measured data
 	 */
-	public void saveData(String testcasename, TestResult tr, int executions) {
+	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
 		XMLDataStorer xds = new XMLDataStorer(filename);
 		for (String s : tr.getKeys()) {
 			double relativeStandardDeviation = tr
@@ -246,8 +257,8 @@ public class TestExecution {
 			long value = tr.getValue(s);
 			long min = tr.getMinumumCurrentValue(s);
 			long max = tr.getMaximumCurrentValue(s);
-			xds.storeValue(testcasename, s, value, relativeStandardDeviation,
-					executions, min, max);
+			xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation,
+					executions, min, max));
 			// xds.storeValue(s, getValue(s));
 			log.info("{}: {}, (rel. Standardabweichung: {})", s, value,
 					relativeStandardDeviation);

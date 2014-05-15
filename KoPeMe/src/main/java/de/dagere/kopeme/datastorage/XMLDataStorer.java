@@ -45,33 +45,33 @@ public class XMLDataStorer implements DataStorer{
 		log.error("Speichere Wert falsch");
 	}
 	
-	public void storeValue(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max) {
+	public void storeValue(PerformanceDataMeasure performanceDataMeasure) {
 		TestcaseType test = null;
 		if (data.getTestcases() == null)
 			data.setTestcases(new Testcases());
 		for (TestcaseType tc : data.getTestcases().getTestcase()){
 			
-			if (tc.getName().equals(testcase)){
+			if (tc.getName().equals(performanceDataMeasure.testcase)){
 				test = tc;
 			}
 		}
 		if (test == null){
 			log.debug("Test == null, füge hinzu");
 			test = new TestcaseType();
-			test.setName(testcase);
+			test.setName(performanceDataMeasure.testcase);
 			data.getTestcases().getTestcase().add(test);
 		}
 		
 		Result r = new Result();
 		r.setDate(new Date().getTime());
-		r.setValue(""+value);
-		r.setDeviation(deviation);
-		r.setExecutionTimes(executionTimes);
+		r.setValue(""+performanceDataMeasure.value);
+		r.setDeviation(performanceDataMeasure.deviation);
+		r.setExecutionTimes(performanceDataMeasure.executionTimes);
 		
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()){
-			System.out.println("Name: " + dc2.getName() + " Collectorname: " + collectorname);
-			if (dc2.getName().equals(collectorname)){
+			System.out.println("Name: " + dc2.getName() + " Collectorname: " + performanceDataMeasure.collectorname);
+			if (dc2.getName().equals(performanceDataMeasure.collectorname)){
 				System.out.println("Equals");
 				dc = dc2;
 			}
@@ -80,7 +80,7 @@ public class XMLDataStorer implements DataStorer{
 		if (dc == null){
 			System.out.println("Erstelle neu");
 			dc = new Datacollector();
-			dc.setName(collectorname);
+			dc.setName(performanceDataMeasure.collectorname);
 			test.getDatacollector().add(dc);
 		}
 		dc.getResult().add(r);

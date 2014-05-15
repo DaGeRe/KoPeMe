@@ -43,9 +43,12 @@
 									<xs:element name="version" type="versioninfo"/>
 									<xs:element name="min" type="xs:long"/>
 									<xs:element name="max" type="xs:long"/>
+									<xs:element name="stacktrace" type="xs:string"/>
 								</xs:sequence>
 								<xs:attribute name="configuration" />
 								<xs:attribute name="date" type="xs:long" />
+								<xs:attribute name="failure" type="xs:boolean"/>
+								<xs:attribute name="error" type="xs:boolean"/>
 							</xs:complexType>
 						</xs:element>
 					</xs:sequence>

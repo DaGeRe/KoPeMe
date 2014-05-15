@@ -73,6 +73,48 @@
                     <min>0</min>
                     <max>0</max>
                 </result>
+                <result date="1400164397054">
+                    <value>-4544</value>
+                    <deviation>-2.3053880653762224</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397249">
+                    <value>112</value>
+                    <deviation>0.0</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397441">
+                    <value>173138</value>
+                    <deviation>2.2342601773724557</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652470">
+                    <value>-1796</value>
+                    <deviation>-2.413132183862895</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652665">
+                    <value>112</value>
+                    <deviation>0.0</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652860">
+                    <value>173138</value>
+                    <deviation>2.2342601773724557</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
             </datacollector>
             <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollector">
                 <result date="1400163880814">
@@ -139,6 +181,48 @@
                     <max>0</max>
                 </result>
                 <result date="1400164088001">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397054">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397249">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397441">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652470">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652666">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652860">
                     <value>0</value>
                     <deviation>NaN</deviation>
                     <executionTimes>6</executionTimes>
@@ -213,6 +297,48 @@
                 <result date="1400164088001">
                     <value>12</value>
                     <deviation>0.7687334140423383</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397055">
+                    <value>10</value>
+                    <deviation>0.29154759474226505</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397249">
+                    <value>5</value>
+                    <deviation>0.31180478223116176</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164397441">
+                    <value>12</value>
+                    <deviation>0.7683408106198735</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652470">
+                    <value>9</value>
+                    <deviation>0.22275979925999131</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652666">
+                    <value>7</value>
+                    <deviation>0.19954935379083028</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1400164652860">
+                    <value>12</value>
+                    <deviation>0.502703152152116</deviation>
                     <executionTimes>6</executionTimes>
                     <min>0</min>
                     <max>0</max>
