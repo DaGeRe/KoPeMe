@@ -20,20 +20,18 @@ public class TestJUnitTimeoutExecutions {
 	
 	@Test(timeout=500)
 	public void testClassTimeout(){
-		log.debug("Teste Klassen-Timeout");
 		JUnitCore jc = new JUnitCore();
 		jc.run(ExampleClassTimeoutTest.class);
 	}
 	
 	@Test(timeout=1600)
 	public void testMethodTimeout(){
-		log.debug("Teste Methoden-Timeout");
 		JUnitCore jc = new JUnitCore();
 		jc.run(ExampleMethodTimeoutTest.class);
 	}
 	
-	public void testNormalJUnitExecution(){
-		JUnitCore jc = new JUnitCore();
-		jc.run(ExampleJUnitTests.class);
-	}
+//	public void testNormalJUnitExecution(){
+//		JUnitCore jc = new JUnitCore();
+//		jc.run(ExampleJUnitTests.class);
+//	}
 }

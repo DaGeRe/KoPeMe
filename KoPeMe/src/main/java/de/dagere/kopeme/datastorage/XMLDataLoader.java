@@ -12,6 +12,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dagere.kopeme.generated.Kopemedata;
@@ -19,25 +21,26 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
 public class XMLDataLoader implements DataLoader {
-
+	private static final Logger log = LogManager.getLogger(XMLDataLoader.class);
+	
 	private File f;
 	private Kopemedata data;
 
 	public XMLDataLoader(String filename) {
 		f = new File(filename);
-
+		log.info("Laden von {}", f.getAbsoluteFile());
+		
 		if (!f.exists()) {
+			log.info("Datei existiert nicht");
 			data = new Kopemedata();
-//			f.
 		}else{
 			JAXBContext jc;
 			try {
 				jc = JAXBContext.newInstance(Kopemedata.class);
 				Unmarshaller unmarshaller = jc.createUnmarshaller();
-
 				data = (Kopemedata) unmarshaller.unmarshal(f);
+				log.info("Daten geladen, Daten: " + data);
 			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -51,7 +51,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	
 	@Override
 	public void run(final RunNotifier notifier) {
-		System.out.println("PerformanceTestRunnerJUnit.run: " + System.currentTimeMillis());
+//		System.out.println("PerformanceTestRunnerJUnit.run: " + System.currentTimeMillis());
 		long start = System.nanoTime();
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null){
@@ -74,16 +74,16 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				e.printStackTrace();
 			}
 		}else{
-			System.out.println("PerformanceTestRunnerJUnit.run(2): " + System.currentTimeMillis());
+//			System.out.println("PerformanceTestRunnerJUnit.run(2): " + System.currentTimeMillis());
 			super.run(notifier);
 		}
-		System.out.println("PerformanceTestRunnerJUnit.run(E): " + System.currentTimeMillis());
+//		System.out.println("PerformanceTestRunnerJUnit.run(E): " + System.currentTimeMillis());
 		
 	}
 	
 	@Override
 	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		System.out.println("PerformanceTestRunnerJUnit.runChild: " + System.currentTimeMillis());
+//		System.out.println("PerformanceTestRunnerJUnit.runChild: " + System.currentTimeMillis());
 		PerformanceTest a = method.getAnnotation(PerformanceTest.class);
 		
 		if (a != null)
@@ -93,7 +93,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				method.getName());
 			notifier.fireTestIgnored(testBeschreibung);
 		}
-		System.out.println("PerformanceTestRunnerJUnit.runChild(2): " + System.currentTimeMillis());
+//		System.out.println("PerformanceTestRunnerJUnit.runChild(2): " + System.currentTimeMillis());
 	}
 
 	@Override

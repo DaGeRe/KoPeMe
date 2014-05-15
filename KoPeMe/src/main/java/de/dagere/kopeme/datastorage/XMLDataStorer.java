@@ -19,34 +19,33 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
+/**
+ * Manages the storing of resultdata of KoPeMe-tests in the
+ * KoPeMe-XML-format
+ * @author reichelt
+ *
+ */
 public class XMLDataStorer implements DataStorer{
 
 	Logger log = LogManager.getLogger(XMLDataStorer.class);
 	
 	private File f;
-	
 	private Kopemedata data;
 	
-	
-	public XMLDataStorer( String filename )
+	public XMLDataStorer( String classname )
 	{
-		loadData("target/" + filename + ".yaml");
-		f = new File("target/" + filename + ".yaml");
-	}
-	
-	private void loadData(String filename) {
+		String filename = classname+ ".yaml";
 		XMLDataLoader loader = new XMLDataLoader(filename);
 		data = loader.getFullData();
+		f = new File(filename);
 	}
-	
-	
 
 	@Override
 	public void storeValue(String name, long value) {
 		log.error("Speichere Wert falsch");
 	}
 	
-	public void storeValue(String testcase, String collectorname, long value, double deviation, int executionTimes) {
+	public void storeValue(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max) {
 		TestcaseType test = null;
 		if (data.getTestcases() == null)
 			data.setTestcases(new Testcases());
@@ -92,6 +91,7 @@ public class XMLDataStorer implements DataStorer{
 	public void storeData() {
 		JAXBContext jaxbContext;
 		try {
+			log.info("Storing data to: {}", f.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );  

@@ -41,6 +41,8 @@
 									<xs:element name="deviation" type="xs:double" />
 									<xs:element name="executionTimes" type="xs:long"/>
 									<xs:element name="version" type="versioninfo"/>
+									<xs:element name="min" type="xs:long"/>
+									<xs:element name="max" type="xs:long"/>
 								</xs:sequence>
 								<xs:attribute name="configuration" />
 								<xs:attribute name="date" type="xs:long" />

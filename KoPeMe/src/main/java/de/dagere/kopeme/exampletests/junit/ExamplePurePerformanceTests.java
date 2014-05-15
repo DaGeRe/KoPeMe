@@ -1,4 +1,4 @@
-package de.dagere.kopeme.example.tests;
+package de.dagere.kopeme.exampletests.junit;
 
 import java.io.File;
 import java.io.FileInputStream;

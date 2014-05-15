@@ -96,9 +96,11 @@ public class TestResult {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
 				if (dc.getName().equals(entry.getKey())) {
-					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue()
-						+ ", Wert sollte aber unter " + entry.getValue() + " liegen.", dc.getValue(),
-						Matchers.lessThan(entry.getValue()));
+					MatcherAssert.assertThat("Kollektor " + dc.getName()
+							+ " besitzt Wert " + dc.getValue()
+							+ ", Wert sollte aber unter " + entry.getValue()
+							+ " liegen.", dc.getValue(),
+							Matchers.lessThan(entry.getValue()));
 				}
 			}
 		}
@@ -114,7 +116,8 @@ public class TestResult {
 			}
 		};
 		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
+		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection
+				.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(DataCollector arg0, DataCollector arg1) {
@@ -158,7 +161,6 @@ public class TestResult {
 	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
 		this.ms.put(datacollector, ms);
 	}
-	
 
 	/**
 	 * Called when the collection of data is finally finished, i.e. also the
@@ -168,7 +170,8 @@ public class TestResult {
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
-			log.debug("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+			log.debug("Standardabweichung {}: {}", collectorName,
+					getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
@@ -195,7 +198,9 @@ public class TestResult {
 	 */
 	public void addValue(String name, long value) {
 		if (dataCollectors.get(name) != null)
-			throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
+			throw new Error(
+					"A self-defined value should not have the name of a DataCollector, name: "
+							+ name);
 		values.put(name, value);
 	}
 
@@ -206,7 +211,8 @@ public class TestResult {
 	 * @return
 	 */
 	public long getValue(String name) {
-		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
+		return values.get(name) != null ? values.get(name) : dataCollectors
+				.get(name).getValue();
 	}
 
 	/**
@@ -348,7 +354,8 @@ public class TestResult {
 			values[i] = realValues.get(i).get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector")
-			|| datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
+				|| datacollector
+						.equals("de.kopeme.datacollection.TimeDataCollector")) {
 			log.trace(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();
@@ -357,11 +364,13 @@ public class TestResult {
 
 		}
 
-		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
+		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(),
+				st.getStandardDeviation());
 		return st.getStandardDeviation() / st.getMean();
 	}
 
-	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
+	public boolean isRelativeStandardDeviationBelow(
+			Map<String, Double> deviations) {
 		if (realValues.size() < 5)
 			return false;
 		boolean isRelativeDeviationBelowValue = true;
@@ -369,7 +378,9 @@ public class TestResult {
 			Double aimStdDeviation = deviations.get(collectorName);
 			if (aimStdDeviation != null) {
 				double stdDeviation = getRelativeStandardDeviation(collectorName);
-				log.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
+				log.debug(
+						"Standardabweichung {}: {} Ziel-Standardabweichung: {}",
+						collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
 					isRelativeDeviationBelowValue = false;
 					break;
@@ -378,5 +389,23 @@ public class TestResult {
 		}
 
 		return isRelativeDeviationBelowValue;
+	}
+
+	public long getMinumumCurrentValue(String key) {
+		long min = Long.MAX_VALUE;
+		for (int i = 0; i < realValues.size(); i++) {
+			if (realValues.get(i).get(key) < min)
+				min = realValues.get(i).get(key);
+		}
+		return min;
+	}
+
+	public long getMaximumCurrentValue(String key) {
+		long max = 0;
+		for (int i = 0; i < realValues.size(); i++) {
+			if (realValues.get(i).get(key) > max)
+				max = realValues.get(i).get(key);
+		}
+		return max;
 	}
 }

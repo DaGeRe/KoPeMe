@@ -1,5 +1,7 @@
 package de.dagere.kopeme.exampletests.junit;
 
+import org.junit.Assert;
+
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -16,7 +18,6 @@ import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
 @PerformanceTestingClass
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleJUnitTests {
-
 	@Test
 	@PerformanceTest(executionTimes=5)
 	public void testMoebelkauf(final TestResult tr) {

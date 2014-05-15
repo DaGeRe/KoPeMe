@@ -63,13 +63,15 @@ public class TestExecution {
 		}
 
 		filename = klasse.getName();
+		log.info("Filename: " + filename);
 	}
 
 	public void runTest() throws Throwable {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), filename, warmupExecutions);
+				TestResult tr = new TestResult(method.getName(), filename,
+						warmupExecutions);
 				try {
 					if (method.getParameterTypes().length == 1) {
 						tr = executeComplexTest(tr);
@@ -87,17 +89,15 @@ public class TestExecution {
 			}
 		});
 
-		
 		mainThread.start();
 		mainThread.join(timeout);
-		if (mainThread.isAlive())
-		{
+		if (mainThread.isAlive()) {
 			mainThread.interrupt();
 		}
 
 		log.info("Test {} beendet", filename);
 	}
-	
+
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale
 	 * relative standard deviations are correct
@@ -114,26 +114,37 @@ public class TestExecution {
 				log.warn("Invalid Collector for assertion: " + collectorName);
 			}
 		}
+		String keys = "";
+		for (String key : tr.getKeys()) {
+			keys += key + " ";
+		}
 		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
 			if (!tr.getKeys().contains(collectorName)) {
 				valid = false;
 				log.warn("Invalid Collector for maximale relative standard deviation: "
-						+ collectorName);
+						+ collectorName + " Available Keys: " + keys);
+				for (String key : tr.getKeys()) {
+					System.out.println(key + " - " + collectorName + ": "
+							+ key.equals(collectorName));
+				}
 			}
 		}
-		log.info("... "+valid);
+		log.info("... " + valid);
 		return valid;
 	}
- 
+
 	private TestResult executeComplexTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
 		int executions = 0;
-		try{
+		try {
 			Object[] params = { tr };
-			String methodString = method.getClass().getName()+ "." + method.getName();
-			log.info("Methodstring: " + methodString + " Warmup-Executions: " + warmupExecutions);
+			String methodString = method.getClass().getName() + "."
+					+ method.getName();
+			log.info("Methodstring: " + methodString + " Warmup-Executions: "
+					+ warmupExecutions);
 			for (int i = 1; i <= warmupExecutions; i++) {
-				log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
+				log.info("--- Starting warmup execution " + methodString + " "
+						+ i + "/" + warmupExecutions + " ---");
 				method.invoke(instanz, params);
 				log.info("--- Stopping warmup execution " + i + "/"
 						+ warmupExecutions + " ---");
@@ -148,12 +159,12 @@ public class TestExecution {
 			executions = runMainExecution(tr, params, false);
 
 			tr.finalizeCollection();
-		} catch (Throwable t){
+		} catch (Throwable t) {
 			saveData(method.getName(), tr, executions);
 			throw t;
 		}
 		saveData(method.getName(), tr, executions);
-		
+
 		tr.checkValues();
 		return tr;
 	}
@@ -161,33 +172,34 @@ public class TestExecution {
 	private TestResult executeSimpleTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
 		int executions = 0;
-		try{
-			Object[] params = {};
-			String methodString = method.getClass().getName()+ "." + method.getName();
-			log.info("Methodstring: " + methodString);
-			for (int i = 1; i <= warmupExecutions; i++) {
-				log.info("--- Starting warmup execution " + methodString + i + "/"
-						+ warmupExecutions + " ---");
-				method.invoke(instanz, params);
-				log.info("--- Stopping warmup execution " + i + "/"
-						+ warmupExecutions + " ---");
-			}
+		String methodString = method.getClass().getName() + "."
+				+ method.getName();
+		log.info("Methodstring: " + methodString);
 
-			tr = new TestResult(method.getName(), filename, executionTimes);
-
-			if (!checkCollectorValidity(tr)) {
-				log.warn("Not all Collectors are valid!");
-			}
-
-			executions = runMainExecution(tr, params, true);
-			tr.finalizeCollection();
+		Object[] params = {};
+		for (int i = 1; i <= warmupExecutions; i++) {
+			log.info("--- Starting warmup execution " + methodString + i + "/"
+					+ warmupExecutions + " ---");
+			method.invoke(instanz, params);
+			log.info("--- Stopping warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
 		}
-		catch (Throwable t){
+
+		tr = new TestResult(method.getName(), filename, executionTimes);
+
+		if (!checkCollectorValidity(tr)) {
+			log.warn("Not all Collectors are valid!");
+		}
+		try {
+			executions = runMainExecution(tr, params, true);
+		} catch (Throwable t) {
+			tr.finalizeCollection();
 			saveData(method.getName(), tr, executions);
 			throw t;
 		}
+		tr.finalizeCollection();
 		saveData(method.getName(), tr, executions);
-		
+
 		tr.checkValues();
 		return tr;
 	}
@@ -199,16 +211,16 @@ public class TestExecution {
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
-			log.debug("--- Starting execution " + executions + "/" + executionTimes
-					+ " ---");
+			log.debug("--- Starting execution " + executions + "/"
+					+ executionTimes + " ---");
 			if (simple)
 				tr.startCollection();
 			method.invoke(instanz, params);
 			if (simple)
 				tr.stopCollection();
 
-			log.debug("--- Stopping execution " + executions + "/" + executionTimes
-					+ " ---");
+			log.debug("--- Stopping execution " + executions + "/"
+					+ executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation
 					.entrySet()) {
 				log.debug("Entry: {} {}", entry.getKey(), entry.getValue());
@@ -222,18 +234,23 @@ public class TestExecution {
 		log.debug("Executions: " + executions);
 		return executions;
 	}
-	
+
 	/**
 	 * Saves the measured data
 	 */
 	public void saveData(String testcasename, TestResult tr, int executions) {
 		XMLDataStorer xds = new XMLDataStorer(filename);
 		for (String s : tr.getKeys()) {
-			double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
+			double relativeStandardDeviation = tr
+					.getRelativeStandardDeviation(s);
 			long value = tr.getValue(s);
-			xds.storeValue(testcasename, s, value, relativeStandardDeviation, executions);
-//			xds.storeValue(s, getValue(s));
-			log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+			long min = tr.getMinumumCurrentValue(s);
+			long max = tr.getMaximumCurrentValue(s);
+			xds.storeValue(testcasename, s, value, relativeStandardDeviation,
+					executions, min, max);
+			// xds.storeValue(s, getValue(s));
+			log.info("{}: {}, (rel. Standardabweichung: {})", s, value,
+					relativeStandardDeviation);
 		}
 		xds.storeData();
 	}
