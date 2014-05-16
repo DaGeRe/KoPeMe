@@ -9,6 +9,11 @@ public class TimeDataCollector extends DataCollector {
 	private long start;
 	private long stop;
 	
+	public TimeDataCollector(){
+		start = 0;
+		stop = 0;
+	}
+	
 //	@Override
 //	public String getName() {
 //		return "TimeDataCollector";
@@ -30,7 +35,8 @@ public class TimeDataCollector extends DataCollector {
 
 	@Override
 	public long getValue() {
-		return (stop - start)/1000000;
+		return (stop - start)/1000;
+		//Divisionen: 1 - Nano, 1E3 - Mikro, 1E6 - Milli
 	}
 
 }
