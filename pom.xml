@@ -8,7 +8,7 @@
     <name>KoPeMe - Parent</name>
 
     <modules>
-        <module>KoPeMe</module>
+        <module>kopeme-core</module>
         <module>KoPeMeMoJo</module>
     </modules>
 
