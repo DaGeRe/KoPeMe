@@ -52,7 +52,7 @@ public class ParallelTestExecution extends TestExecution {
 		}
 	}
 
-	public void runTest() {
+	public void evaluate() {
 		try {
 			TestResult tr = new TestResult(method.getName(), filename, warmupExecutions);
 			Object[] params = { tr };

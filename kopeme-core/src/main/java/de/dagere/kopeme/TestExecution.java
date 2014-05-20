@@ -25,7 +25,7 @@ import de.dagere.kopeme.datastorage.YAMLDataStorer;
  * @author dagere
  * 
  */
-public class TestExecution {
+public class TestExecution extends TestExecutor{
 
 	private static Logger log = LogManager.getLogger(TestExecution.class);
 
@@ -69,7 +69,7 @@ public class TestExecution {
 		log.info("Filename: " + filename);
 	}
 
-	public void runTest() throws Throwable {
+	public void evaluate() throws Throwable {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -99,41 +99,6 @@ public class TestExecution {
 		}
 
 		log.info("Test {} beendet", filename);
-	}
-
-	/**
-	 * Tests weather the collectors given in the assertions and the maximale
-	 * relative standard deviations are correct
-	 * 
-	 * @param tr
-	 * @return
-	 */
-	private boolean checkCollectorValidity(TestResult tr) {
-		log.info("Checking DataCollector validity...");
-		boolean valid = true;
-		for (String collectorName : assertationvalues.keySet()) {
-			if (!tr.getKeys().contains(collectorName)) {
-				valid = false;
-				log.warn("Invalid Collector for assertion: " + collectorName);
-			}
-		}
-		String keys = "";
-		for (String key : tr.getKeys()) {
-			keys += key + " ";
-		}
-		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
-			if (!tr.getKeys().contains(collectorName)) {
-				valid = false;
-				log.warn("Invalid Collector for maximale relative standard deviation: "
-						+ collectorName + " Available Keys: " + keys);
-				for (String key : tr.getKeys()) {
-					System.out.println(key + " - " + collectorName + ": "
-							+ key.equals(collectorName));
-				}
-			}
-		}
-		log.info("... " + valid);
-		return valid;
 	}
 
 	private TestResult executeComplexTest(TestResult tr)
@@ -244,25 +209,5 @@ public class TestExecution {
 		}
 		log.debug("Executions: " + executions);
 		return executions;
-	}
-
-	/**
-	 * Saves the measured data
-	 */
-	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
-		XMLDataStorer xds = new XMLDataStorer(filename);
-		for (String s : tr.getKeys()) {
-			double relativeStandardDeviation = tr
-					.getRelativeStandardDeviation(s);
-			long value = tr.getValue(s);
-			long min = tr.getMinumumCurrentValue(s);
-			long max = tr.getMaximumCurrentValue(s);
-			xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation,
-					executions, min, max));
-			// xds.storeValue(s, getValue(s));
-			log.info("{}: {}, (rel. Standardabweichung: {})", s, value,
-					relativeStandardDeviation);
-		}
-		xds.storeData();
 	}
 }

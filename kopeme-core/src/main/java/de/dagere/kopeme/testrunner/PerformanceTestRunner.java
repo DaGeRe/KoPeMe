@@ -67,12 +67,12 @@ public class PerformanceTestRunner {
 				if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
 				{
 					TestExecution te = new TestExecution(c, instance, method);
-					te.runTest();
+					te.evaluate();
 				}
 				if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
 					ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
-					te.runTest();
+					te.evaluate();
 				}
 			}
 			catch (AssertionError ae){
