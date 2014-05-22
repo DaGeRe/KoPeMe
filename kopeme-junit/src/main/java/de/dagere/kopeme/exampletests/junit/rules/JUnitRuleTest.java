@@ -11,11 +11,22 @@ import de.dagere.kopeme.testrunner.RunRule;
 
 public class JUnitRuleTest {
 	@Rule
-	public TestRule screenshot = new RunRule();
+	public TestRule rule = new RunRule();
+	
+	@Test(timeout=400)
+	@PerformanceTest(executionTimes = 5, timeout=1000)
+	public void testTimeout() {
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	@Test
-	@PerformanceTest(executionTimes = 5)
-	public void testAddition() {
+	@PerformanceTest(executionTimes = 5, timeout=1000)
+	public void testNormal() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {
 			a += i;
