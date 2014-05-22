@@ -8,7 +8,8 @@
     <name>KoPeMe - Parent</name>
 
     <modules>
-        <module>KoPeMe</module>
+        <module>kopeme-core</module>
+		  <module>kopeme-junit</module>
         <module>KoPeMeMoJo</module>
     </modules>
 
@@ -101,7 +102,6 @@
 	
 	
     <dependencies>
-<dependency><groupId>de.dagere.kopeme</groupId><artifactId>kopeme-core</artifactId><version>0.4-SNAPSHOT</version></dependency>/g
         <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

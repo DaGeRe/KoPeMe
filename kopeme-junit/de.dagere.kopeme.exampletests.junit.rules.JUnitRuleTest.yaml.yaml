@@ -3,27 +3,27 @@
     <testcases>
         <testcase name="testAddition">
             <datacollector name="de.dagere.kopeme.datacollection.RAMUsageCollector">
-                <result date="1400605356967">
-                    <value>46512</value>
-                    <deviation>1.3963740807006348</deviation>
+                <result date="1400774280296">
+                    <value>90284</value>
+                    <deviation>3.962551794258075E-4</deviation>
                     <executionTimes>6</executionTimes>
                     <min>0</min>
                     <max>0</max>
                 </result>
             </datacollector>
             <datacollector name="de.dagere.kopeme.datacollection.CPUUsageCollector">
-                <result date="1400605356967">
-                    <value>0</value>
-                    <deviation>NaN</deviation>
+                <result date="1400774280297">
+                    <value>9</value>
+                    <deviation>0.15797657175107396</deviation>
                     <executionTimes>6</executionTimes>
                     <min>0</min>
                     <max>0</max>
                 </result>
             </datacollector>
             <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollector">
-                <result date="1400605356967">
-                    <value>137</value>
-                    <deviation>1.0855935114578066</deviation>
+                <result date="1400774280297">
+                    <value>119</value>
+                    <deviation>0.6832551589954508</deviation>
                     <executionTimes>6</executionTimes>
                     <min>0</min>
                     <max>0</max>

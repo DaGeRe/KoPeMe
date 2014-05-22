@@ -1,4 +1,4 @@
-package de.dagere.kopeme.exampletests.junit;
+package de.dagere.kopeme.exampletests.junit.rules;
 
 import org.junit.Assert;
 import org.junit.Rule;

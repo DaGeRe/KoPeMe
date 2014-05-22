@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 
 	<name>KoPeMe</name>
-	<description>KoPeMe performance testing core</description>
+	<description>Continous Performance Measurement and Checking Framework</description>
 	<url>http://dagere.de/KoPeMe</url>
 
 	<build>
