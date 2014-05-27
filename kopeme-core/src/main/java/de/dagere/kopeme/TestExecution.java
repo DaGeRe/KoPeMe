@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +23,7 @@ import de.dagere.kopeme.datastorage.YAMLDataStorer;
  * @author dagere
  * 
  */
-public class TestExecution extends TestExecutor{
+public class TestExecution{
 
 	private static Logger log = LogManager.getLogger(TestExecution.class);
 
@@ -38,6 +36,53 @@ public class TestExecution extends TestExecutor{
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
+	/**
+	 * Tests weather the collectors given in the assertions and the maximale
+	 * relative standard deviations are correct
+	 * 
+	 * @param tr
+	 * @return
+	 */
+	protected boolean checkCollectorValidity(TestResult tr) {
+		log.info("Checking DataCollector validity...");
+		boolean valid = true;
+		for (String collectorName : assertationvalues.keySet()) {
+			if (!tr.getKeys().contains(collectorName)) {
+				valid = false;
+				log.warn("Invalid Collector for assertion: " + collectorName);
+			}
+		}
+		String keys = "";
+		for (String key : tr.getKeys()) {
+			keys += key + " ";
+		}
+		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
+			if (!tr.getKeys().contains(collectorName)) {
+				valid = false;
+				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
+				for (String key : tr.getKeys()) {
+					System.out.println(key + " - " + collectorName + ": " + key.equals(collectorName));
+				}
+			}
+		}
+		log.info("... " + valid);
+		return valid;
+	}
+	
+	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
+		XMLDataStorer xds = new XMLDataStorer(filename);
+		for (String s : tr.getKeys()) {
+			double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
+			long value = tr.getValue(s);
+			long min = tr.getMinumumCurrentValue(s);
+			long max = tr.getMaximumCurrentValue(s);
+			xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max));
+			// xds.storeValue(s, getValue(s));
+			log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+		}
+		xds.storeData();
+	}
+	
 	public TestExecution(Class klasse, Object instance, Method method) {
 		this.klasse = klasse;
 		this.instanz = instance;
@@ -126,10 +171,10 @@ public class TestExecution extends TestExecutor{
 			params[0] = tr;
 			executions = runMainExecution(tr, params, false);
 
-		} catch(AssertionFailedError t){
-			tr.finalizeCollection();
-			saveData(method.getName(), tr, executions, true, false);
-			throw t;
+//		} catch(AssertionFailedError t){
+//			tr.finalizeCollection();
+//			saveData(method.getName(), tr, executions, true, false);
+//			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			saveData(method.getName(), tr, executions, false, true);
@@ -164,10 +209,10 @@ public class TestExecution extends TestExecutor{
 		}
 		try {
 			executions = runMainExecution(tr, params, true);
-		} catch(AssertionFailedError t){
-			tr.finalizeCollection();
-			saveData(method.getName(), tr, executions, true, false);
-			throw t;
+//		} catch(AssertionFailedError t){
+//			tr.finalizeCollection();
+//			saveData(method.getName(), tr, executions, true, false);
+//			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			saveData(method.getName(), tr, executions, false, true);

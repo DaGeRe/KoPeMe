@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+    <testcases>
+        <testcase name="testMethod">
+            <datacollector name="de.dagere.kopeme.datacollection.RAMUsageCollector">
+                <result date="1401115728221">
+                    <value>1404180</value>
+                    <deviation>0.22605216525752012</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401115781901">
+                    <value>1492544</value>
+                    <deviation>0.6735797982617668</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181184871">
+                    <value>1360926</value>
+                    <deviation>0.17395111921057163</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181322641">
+                    <value>1292160</value>
+                    <deviation>0.12146015470542794</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+            </datacollector>
+            <datacollector name="de.dagere.kopeme.datacollection.CPUUsageCollector">
+                <result date="1401115728221">
+                    <value>10</value>
+                    <deviation>0.14582452777022212</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401115781902">
+                    <value>9</value>
+                    <deviation>0.13608276348795434</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181184871">
+                    <value>9</value>
+                    <deviation>0.16109486985446062</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181322641">
+                    <value>9</value>
+                    <deviation>0.133044947044952</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+            </datacollector>
+            <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollector">
+                <result date="1401115728222">
+                    <value>50801</value>
+                    <deviation>0.002902902309668447</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401115781902">
+                    <value>50647</value>
+                    <deviation>0.2656821774933121</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181184871">
+                    <value>50662</value>
+                    <deviation>0.0028776596228827535</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1401181322641">
+                    <value>50757</value>
+                    <deviation>0.0025533359392517535</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+            </datacollector>
+        </testcase>
+    </testcases>
+</kopemedata>

@@ -1,5 +1,4 @@
-package de.dagere.kopeme.ruletests;
-
+package de.dagere.kopeme.example.tests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,10 +7,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import de.dagere.kopeme.exampletests.junit.rules.JUnitRuleTest;
-import de.dagere.kopeme.exampletests.junit.runner.ExampleClassTimeoutTest;
-import de.dagere.kopeme.exampletests.junit.runner.ExampleJUnitTests;
 import de.dagere.kopeme.exampletests.junit.runner.ExampleMethodTimeoutTest;
+import de.dagere.kopeme.exampletests.junit.runner.ExampleClassTimeoutTest;
 
 /**
  * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende
@@ -20,17 +17,27 @@ import de.dagere.kopeme.exampletests.junit.runner.ExampleMethodTimeoutTest;
  * @author reichelt
  * 
  */
-public class TestJUnitRuleExecutions {
+public class TestJUnitTimeoutExecutions {
 
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
-	public static Logger log = LogManager.getLogger(TestJUnitRuleExecutions.class);
+	public static Logger log = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
 
-	@Test(timeout = 2300)
-	public void testMethodTimeout() {
+	@Test(timeout = 500)
+	public void testClassTimeout() {
 		JUnitCore jc = new JUnitCore();
-		jc.run(JUnitRuleTest.class);
+		jc.run(ExampleClassTimeoutTest.class);
 	}
 
+	@Test(timeout = 1600)
+	public void testMethodTimeout() {
+		JUnitCore jc = new JUnitCore();
+		jc.run(ExampleMethodTimeoutTest.class);
+	}
+
+	// public void testNormalJUnitExecution(){
+	// JUnitCore jc = new JUnitCore();
+	// jc.run(ExampleJUnitTests.class);
+	// }
 }
