@@ -36,7 +36,6 @@ public class ExampleJUnitTests {
 		tr.addValue("Anzahl", (int)(1000 + Math.random()*100));
 
 		tr.setChecker(new Checker() {
-
 			@Override
 			public void checkValues(TestResult tr) {
 				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class
@@ -45,7 +44,5 @@ public class ExampleJUnitTests {
 								5) * 1.10)));
 			}
 		});
-
 	}
-
 }
