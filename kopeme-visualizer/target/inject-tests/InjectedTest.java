@@ -7,10 +7,10 @@ import java.util.*;
 public class InjectedTest extends junit.framework.TestCase {
   public static junit.framework.Test suite() throws Exception {
     Map parameters = new HashMap();
-    parameters.put("basedir","/home/reichelt/workspaces/dissworkspace/KoPeMe/kopeme-visualizer");
+    parameters.put("basedir","C:\\Users\\DaGeRe\\workspaces\\dissworkspace\\KoPeMe\\kopeme-visualizer");
     parameters.put("artifactId","kopemevisualizer");
-    parameters.put("outputDirectory","/home/reichelt/workspaces/dissworkspace/KoPeMe/kopeme-visualizer/target/classes");
-    parameters.put("testOutputDirectory","/home/reichelt/workspaces/dissworkspace/KoPeMe/kopeme-visualizer/target/test-classes");
+    parameters.put("outputDirectory","C:\\Users\\DaGeRe\\workspaces\\dissworkspace\\KoPeMe\\kopeme-visualizer\\target\\classes");
+    parameters.put("testOutputDirectory","C:\\Users\\DaGeRe\\workspaces\\dissworkspace\\KoPeMe\\kopeme-visualizer\\target\\test-classes");
     parameters.put("requirePI","false");
     return new org.jvnet.hudson.test.PluginAutomaticTestBuilder().build(parameters);
   }

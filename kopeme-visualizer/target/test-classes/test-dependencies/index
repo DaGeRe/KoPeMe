@@ -1,6 +1,6 @@
-subversion
 javadoc
 maven-plugin
 mailer
-ant
 ui-samples-plugin
+ant
+subversion
