@@ -15,8 +15,9 @@ import java.util.TreeSet;
  * 
  */
 public class GraphVisualizer {
-	Map<String, Map<Date, Long>> dataMap;
-	Set<String> viewable;
+	
+	private Map<String, Map<Date, Long>> dataMap;
+	private Set<String> viewable;
 	boolean useMultipleAxis;
 	private int valueCount;
 

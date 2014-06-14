@@ -32,7 +32,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import de.dagere.kopeme.Testcase;
-import de.dagere.kopeme.VisualizeAction;
 
 /**
  * The publisher for KoPeMe, which takes the input from the user

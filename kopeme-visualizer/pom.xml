@@ -12,7 +12,7 @@
 	<name>KoPeMe-Visualizer-Plugin</name>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>hpi</packaging>
-	
+
 	<url>http://kopeme.dagere.de</url>
 	<description>Dieses Plugin ermöglicht es, KoPeMe-Performanzdaten zu visualisieren.</description>
 
@@ -29,14 +29,19 @@
 			<version>1.0.7</version>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.opencsv</groupId>
-			<artifactId>opencsv</artifactId>
-			<version>1.7</version>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>xmlgraphics-commons</artifactId>
+			<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 			<version>1.12</version>
+		</dependency>
+		<dependency>
+			<groupId>de.dagere.kopeme</groupId>
+			<artifactId>kopeme-core</artifactId>
+			<version>0.5-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
