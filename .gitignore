@@ -1,5 +1,2 @@
-target/
-kopeme-core/target
-kopeme-junit/target
-kopeme-mojo/target
-kopeme-visualizer/target
+target/*
+*/target/*
