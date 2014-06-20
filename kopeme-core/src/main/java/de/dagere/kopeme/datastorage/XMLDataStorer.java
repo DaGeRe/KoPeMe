@@ -32,7 +32,7 @@ public class XMLDataStorer implements DataStorer{
 	private File f;
 	private Kopemedata data;
 	
-	public XMLDataStorer( String classname )
+	public XMLDataStorer( String classname ) throws JAXBException
 	{
 		String filename = classname+ ".yaml";
 		XMLDataLoader loader = new XMLDataLoader(filename);

@@ -4,11 +4,11 @@ de/dagere/kopeme/exampletests/junit/runner/JUnitAdditionTest.class
 de/dagere/kopeme/exampletests/junit/runner/ExampleJUnitTests$1.class
 de/dagere/kopeme/exampletests/junit/runner/ExampleMethodTimeoutTest.class
 de/dagere/kopeme/testrunner/KoPeMeRule$1.class
-de/dagere/kopeme/testrunner/KoPeMeRule$PerformanceStatement.class
-de/dagere/kopeme/testrunner/PerformanceTestRunnerJUnit$1.class
 de/dagere/kopeme/TestExecutor.class
+de/dagere/kopeme/testrunner/PerformanceTestRunnerJUnit$1.class
+de/dagere/kopeme/testrunner/KoPeMeRule$PerformanceStatement.class
 de/dagere/kopeme/testrunner/PerformanceExecutionStatement.class
 de/dagere/kopeme/testrunner/ParameterlessTestExecution$1.class
 de/dagere/kopeme/testrunner/ParameterlessTestExecution.class
-de/dagere/kopeme/testrunner/KoPeMeRule.class
 de/dagere/kopeme/testrunner/PerformanceTestRunnerJUnit.class
+de/dagere/kopeme/testrunner/KoPeMeRule.class

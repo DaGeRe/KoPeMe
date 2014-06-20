@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -70,17 +72,23 @@ public class TestExecution{
 	}
 	
 	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
-		XMLDataStorer xds = new XMLDataStorer(filename);
-		for (String s : tr.getKeys()) {
-			double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
-			long value = tr.getValue(s);
-			long min = tr.getMinumumCurrentValue(s);
-			long max = tr.getMaximumCurrentValue(s);
-			xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max));
-			// xds.storeValue(s, getValue(s));
-			log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+		try{
+			XMLDataStorer xds = new XMLDataStorer(filename);
+			for (String s : tr.getKeys()) {
+				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
+				long value = tr.getValue(s);
+				long min = tr.getMinumumCurrentValue(s);
+				long max = tr.getMaximumCurrentValue(s);
+				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max));
+				// xds.storeValue(s, getValue(s));
+				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+			}
+			xds.storeData();
 		}
-		xds.storeData();
+		catch (JAXBException e){
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public TestExecution(Class klasse, Object instance, Method method) {

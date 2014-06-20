@@ -5,17 +5,14 @@ import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Hudson;
 import hudson.model.Project;
 import hudson.model.Result;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor.FormException;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
-import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -23,12 +20,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -70,8 +65,6 @@ public class KoPeMePublisher extends Recorder {
 		return "test";
 	}
 
-
-
 	public BuildStepMonitor getRequiredMonitorService() {
 		return BuildStepMonitor.NONE;
 	}
@@ -88,11 +81,18 @@ public class KoPeMePublisher extends Recorder {
 	
 	@Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-		if ( project instanceof Project )
+		LOGGER.info("Gebe Projektaktion aus" + project.getClass() + " " + (project instanceof Project));
+		if ( project instanceof AbstractProject )
 		{
-			VisualizeAction va = new VisualizeAction((Project)project, this);
+			VisualizeAction va = new VisualizeAction((AbstractProject)project, this);
+			LOGGER.info("Aktion: " +va);
 			return va;
 		}
+//		if (project instanceof MavenModuleSet){
+//			MavenModuleSet mms = (MavenModuleSet) project;
+////			mms.getWorkspace()
+////			mms.getPro
+//		}
 		return null;
     }
 	
@@ -134,8 +134,11 @@ public class KoPeMePublisher extends Recorder {
 		@Override
 		public KoPeMePublisher newInstance(StaplerRequest req, JSONObject formData)
 				throws FormException {
+			
 			KoPeMePublisher publisher = new KoPeMePublisher();
-            for (Object data : getArray(formData.get("testcases"))) {
+            JSONArray dataArray = getArray(formData.get("testcases"));
+            LOGGER.info("Erzeuge neue Publisher-Instanz, Daten: " + dataArray);
+			for (Object data : dataArray) {
             	LOGGER.info("Füge hinzu für " + data);
             	if ( data instanceof JSONObject )
             	{

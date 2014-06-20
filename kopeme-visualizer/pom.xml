@@ -15,11 +15,11 @@
 
 	<description>Dieses Plugin ermöglicht es, KoPeMe-Performanzdaten zu visualisieren.</description>
 
-	<properties>
-		<projectName>kopemevisualizer</projectName>
-		<projectHome>/home/dagere/workspace/jenkins/kopemevisualizer/</projectHome>
-		<pluginsHome>/home/jenkins/plugins/</pluginsHome>
-	</properties>
+<!-- 	<properties> -->
+<!-- 		<projectName>kopemevisualizer</projectName> -->
+<!-- 		<projectHome>/home/dagere/workspace/jenkins/kopemevisualizer/</projectHome> -->
+<!-- 		<pluginsHome>/home/jenkins/plugins/</pluginsHome> -->
+<!-- 	</properties> -->
 
 	<dependencies>
 		<dependency>
@@ -42,9 +42,19 @@
 			<artifactId>xmlgraphics-commons</artifactId>
 			<version>1.5</version>
 		</dependency>
+		<dependency>
+			<groupId>de.dagere.kopeme</groupId>
+			<artifactId>kopeme-core</artifactId>
+			<version>0.5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>3.2.2</version>
+		</dependency>
 	</dependencies>
 
-<build>
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

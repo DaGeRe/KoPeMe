@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
@@ -26,32 +27,35 @@ public class XMLDataLoader implements DataLoader {
 	private File f;
 	private Kopemedata data;
 
-	public XMLDataLoader(String filename) {
+	public XMLDataLoader(String filename) throws JAXBException{
 		f = new File(filename);
 		log.info("Laden von {}", f.getAbsoluteFile());
-		
+		loadData();
+	}
+	
+	public XMLDataLoader(File f) throws JAXBException{
+		this.f = f;
+		loadData();
+	}
+
+	private void loadData() throws JAXBException {
 		if (!f.exists()) {
 			log.info("Datei existiert nicht");
 			data = new Kopemedata();
-		}else{
+		} else {
 			JAXBContext jc;
-			try {
-				jc = JAXBContext.newInstance(Kopemedata.class);
-				Unmarshaller unmarshaller = jc.createUnmarshaller();
-				data = (Kopemedata) unmarshaller.unmarshal(f);
-				log.info("Daten geladen, Daten: " + data);
-			} catch (JAXBException e) {
-				e.printStackTrace();
-			}
+			jc = JAXBContext.newInstance(Kopemedata.class);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			data = (Kopemedata) unmarshaller.unmarshal(f);
+			log.info("Daten geladen, Daten: " + data);
 		}
-		
-
 	}
 
 	@Override
 	public Map<String, Map<Date, Long>> getData() {
 		Map<String, Map<Date, Long>> map = new HashMap<>();
-		for (TestcaseType tct : data.getTestcases().getTestcase()){
+		Testcases testcases = data.getTestcases();
+		for (TestcaseType tct : testcases.getTestcase()){
 			Map<Date, Long> measures = new HashMap<>();
 			for (Result s : tct.getDatacollector().get(0).getResult() ){
 				measures.put(new Date(s.getDate()), new Long(s.getValue()));

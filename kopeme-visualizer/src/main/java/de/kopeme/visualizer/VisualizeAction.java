@@ -2,8 +2,11 @@ package de.kopeme.visualizer;
 
 import hudson.FilePath;
 import hudson.model.Action;
+import hudson.model.AbstractProject;
 import hudson.model.Project;
 import hudson.util.Graph;
+
+import javax.xml.bind.JAXBException;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -39,6 +42,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.util.Log;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.w3c.dom.DOMImplementation;
@@ -49,6 +53,8 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.DefaultImageContext;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
+
+import de.dagere.kopeme.datastorage.XMLDataLoader;
 
 //import hudson.util.
 
@@ -62,7 +68,7 @@ public class VisualizeAction implements Action, Serializable {
 
 	private static transient Logger logger = Logger
 			.getLogger(VisualizeAction.class.getName());
-	private transient final Project project;
+	private transient final AbstractProject project;
 
 	// transient Map<String, Map<String, Map<Date, Long>>> dataMap;
 	transient KoPeMePublisher publisher;
@@ -71,7 +77,7 @@ public class VisualizeAction implements Action, Serializable {
 	// Map<String, Set<String>> viewable = null;
 	int width = 800, height = 500;
 
-	public VisualizeAction(Project project, KoPeMePublisher publisher) {
+	public VisualizeAction(AbstractProject project, KoPeMePublisher publisher) {
 		// logger.log(Level.INFO, "Konstruktor Visualizeaction");
 		this.project = project;
 		this.publisher = publisher;
@@ -79,7 +85,7 @@ public class VisualizeAction implements Action, Serializable {
 		loadData();
 	}
 
-	public Project getProject() {
+	public AbstractProject getProject() {
 		return project;
 	}
 
@@ -145,7 +151,9 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	private void loadData() {
+		logger.info("Lade Daten");
 		try {
+			
 			Yaml yaml = new Yaml();
 			project.getLastBuild();
 
@@ -155,17 +163,29 @@ public class VisualizeAction implements Action, Serializable {
 				graphMap = new HashMap<String, GraphVisualizer>();
 
 			for (Testcase testcase : publisher.getTestcases()) {
-				String file = testcase.getName();
+				String testcaseName = testcase.getName();
 				FilePath workspace = project.getSomeWorkspace();
 				if (workspace != null) // prevent error, when workspace for
 										// project isn't initialized
 				{
-					FilePath[] list = workspace.list(file);
+					FilePath[] list = workspace.list(testcaseName);
 					if (list != null && list.length > 0) {
 						InputStream is = list[0].read();
-						Map<String, Map<Date, Long>> temp = (Map<String, Map<Date, Long>>) yaml
-								.load(is);
-						graphMap.put(file, new GraphVisualizer(temp, true));
+						File file = new File(project.getSomeWorkspace() + "/" + testcaseName);
+//						logger.info("Lade Daten von: " + testcaseName + " " + file.exists() + " " + file.getAbsolutePath());
+						try{
+							XMLDataLoader xdl = new XMLDataLoader(file);
+							Map<String, Map<Date, Long>> temp = xdl.getData();
+							Log.info("Daten für " + file.getAbsolutePath() + " geladen");
+							graphMap.put(testcaseName, new GraphVisualizer(temp, true));
+						}catch (JAXBException e){
+							e.printStackTrace();
+						}
+						
+						
+//						Map<String, Map<Date, Long>> temp = (Map<String, Map<Date, Long>>) yaml
+//								.load(is);
+						
 					}
 				}
 
@@ -219,12 +239,15 @@ public class VisualizeAction implements Action, Serializable {
 	 */
 	public Graph getSummaryGraph(String file) {
 		loadData();
+		
+		logger.info("Lade Daten für: " + file);
 		Map<String, Map<Date, Long>> subMap = graphMap.get(file).getDatamap();
 		
 		JFreeChart chart = null;
 		
 		int i = 0;
 		for (String s : graphMap.get(file).getViewable()) {
+			Log.info("Erstelle Graph für " + s + " " + (dc instanceof NormalDateConverter));
 			if (dc instanceof NormalDateConverter)
 			{
 				TimeSeriesCollection collection = new TimeSeriesCollection();
@@ -297,40 +320,40 @@ public class VisualizeAction implements Action, Serializable {
 			}
 			
 		}
-
+		logger.info("Graph geladen");
 		
 		chart.setBackgroundPaint(Color.white);
 		
 //		Image image = chart.createBufferedImage(width, height);
 		
 		final JFreeChart chart2 = chart;
-		
-		try {
-			String filename = project.getSomeWorkspace().getParent() + "/" + file + ".eps";
-			File outputFile = new File(filename);
-			FileOutputStream fos = new FileOutputStream(outputFile);
-			
-			ImageManager manager = new ImageManager(new DefaultImageContext());
-			
-			EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-			g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
-
-			//Set up the document size
-			g2d.setupDocument(fos, width, height); //400pt x 200pt
-			BufferedImage im = chart2.createBufferedImage(width, height);
-			g2d.drawRenderedImage(im, new AffineTransform());
-			
-			g2d.finish();
-			
-			
-			ImageIO.write(im, "eps", fos);
-		} catch (FileNotFoundException e) {
-			// TODO Automatisch generierter Erfassungsblock
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Automatisch generierter Erfassungsblock
-			e.printStackTrace();
-		}
+//		
+//		try {
+//			String filename = project.getSomeWorkspace().getParent() + "/" + file + ".eps";
+//			File outputFile = new File(filename);
+//			FileOutputStream fos = new FileOutputStream(outputFile);
+//			
+//			ImageManager manager = new ImageManager(new DefaultImageContext());
+//			
+//			EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+//			g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+//
+//			//Set up the document size
+//			g2d.setupDocument(fos, width, height); //400pt x 200pt
+//			BufferedImage im = chart2.createBufferedImage(width, height);
+//			g2d.drawRenderedImage(im, new AffineTransform());
+//			
+//			g2d.finish();
+//			
+//			
+//			ImageIO.write(im, "eps", fos);
+//		} catch (FileNotFoundException e) {
+//			// TODO Automatisch generierter Erfassungsblock
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Automatisch generierter Erfassungsblock
+//			e.printStackTrace();
+//		}
 		
 		return new Graph(-1, width, height) {
 
