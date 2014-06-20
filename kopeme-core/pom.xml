@@ -7,7 +7,7 @@
 
 	<name>KoPeMe</name>
 	<description>KoPeMe performance testing core</description>
-	<url>http://dagere.de/KoPeMe</url>
+	<url>http://kopeme.dagere.de</url>
 
 	<build>
 		<plugins>
