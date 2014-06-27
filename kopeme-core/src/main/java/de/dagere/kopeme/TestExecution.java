@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
 import de.dagere.kopeme.datacollection.DataCollector;
+import de.dagere.kopeme.datacollection.TemperatureCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
@@ -79,7 +80,7 @@ public class TestExecution{
 				long value = tr.getValue(s);
 				long min = tr.getMinumumCurrentValue(s);
 				long max = tr.getMaximumCurrentValue(s);
-				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max));
+				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature()));
 				// xds.storeValue(s, getValue(s));
 				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
 			}

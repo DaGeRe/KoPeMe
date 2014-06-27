@@ -9,9 +9,10 @@ public class PerformanceDataMeasure {
 	public long min;
 	public long max;
 	public boolean failure, error;
+	public int temperature;
 
 	public PerformanceDataMeasure(String testcase, String collectorname,
-			long value, double deviation, int executionTimes, long min, long max) {
+			long value, double deviation, int executionTimes, long min, long max, int temperature) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;
@@ -19,11 +20,12 @@ public class PerformanceDataMeasure {
 		this.executionTimes = executionTimes;
 		this.min = min;
 		this.max = max;
+		this.temperature = temperature;
 	}
 	
 	public PerformanceDataMeasure(String testcase, String collectorname,
 			long value, double deviation, int executionTimes, long min, long max,
-			boolean failure, boolean error) {
+			boolean failure, boolean error, int temperature) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;
@@ -33,5 +35,6 @@ public class PerformanceDataMeasure {
 		this.max = max;
 		this.failure = failure;
 		this.error = error;
+		this.temperature = temperature;
 	}
 }
