@@ -44,6 +44,7 @@ public class KoPeMePublisher extends Recorder {
 	}
 	
 	private Object readResolve() {
+		LOGGER.info("Lade alte Testfälle: " + testcases.size());
 		setTestcases(testcases);
         return this;
     }
@@ -54,7 +55,7 @@ public class KoPeMePublisher extends Recorder {
 	}
 	
 	public List<Testcase> getTestcases() {
-		LOGGER.info("Getting Testcases" + testcases.size());
+		LOGGER.info("Getting Testcases, Anzahl: " + testcases.size());
 		return testcases;
 	}
 
@@ -83,7 +84,7 @@ public class KoPeMePublisher extends Recorder {
 	
 	@Override
     public Action getProjectAction(AbstractProject<?, ?> project) {
-		LOGGER.info("Gebe Projektaktion aus" + project.getClass() + " " + (project instanceof Project));
+		LOGGER.info("Gebe Projektaktion aus, Klasse: " + project.getClass() + " Instanz von Projekt: " + (project instanceof Project));
 		if ( project instanceof AbstractProject )
 		{
 			VisualizeAction va = new VisualizeAction((AbstractProject)project, this);
@@ -151,6 +152,9 @@ public class KoPeMePublisher extends Recorder {
             		publisher.addTestcase(new Testcase());
             	}
             }
+			if (publisher.getTestcases().isEmpty()){
+				publisher.addTestcase(new Testcase());
+			}
 			return publisher;
 		}
 	}

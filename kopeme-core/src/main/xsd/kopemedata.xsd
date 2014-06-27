@@ -49,6 +49,7 @@
 								<xs:attribute name="date" type="xs:long" />
 								<xs:attribute name="failure" type="xs:boolean"/>
 								<xs:attribute name="error" type="xs:boolean"/>
+								<xs:attribute name="cputemperature" type="xs:long"/>
 							</xs:complexType>
 						</xs:element>
 					</xs:sequence>

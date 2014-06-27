@@ -1,26 +1,13 @@
 package de.dagere.kopeme.testrunner;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.experimental.theories.ParameterSignature;
-import org.junit.experimental.theories.ParametersSuppliedBy;
-import org.junit.experimental.theories.Theory;
-import org.junit.experimental.theories.Theories.TheoryAnchor;
-import org.junit.experimental.theories.internal.Assignments;
-import org.junit.internal.AssumptionViolatedException;
-import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.statements.Fail;
-import org.junit.internal.runners.statements.InvokeMethod;
 import org.junit.runner.Description;
-import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
