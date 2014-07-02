@@ -8,7 +8,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
-import de.dagere.kopeme.TestExecution;
+import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelTestExecution;
@@ -29,7 +29,7 @@ public class KoPeMeRule implements TestRule{
 		}
 		@Override
 		public void evaluate() throws Throwable {
-			TestExecution te;
+			PerformanceTestRunner te;
 		}
 		
 	}

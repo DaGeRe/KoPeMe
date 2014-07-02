@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
 import de.dagere.kopeme.datacollection.DataCollector;
@@ -26,9 +27,9 @@ import de.dagere.kopeme.datastorage.YAMLDataStorer;
  * @author dagere
  * 
  */
-public class TestExecution{
+public class PerformanceTestRunner{
 
-	private static Logger log = LogManager.getLogger(TestExecution.class);
+	private static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
 
 	protected Class klasse;
 	protected Object instanz;
@@ -38,61 +39,8 @@ public class TestExecution{
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
-
-	/**
-	 * Tests weather the collectors given in the assertions and the maximale
-	 * relative standard deviations are correct
-	 * 
-	 * @param tr
-	 * @return
-	 */
-	protected boolean checkCollectorValidity(TestResult tr) {
-		log.info("Checking DataCollector validity...");
-		boolean valid = true;
-		for (String collectorName : assertationvalues.keySet()) {
-			if (!tr.getKeys().contains(collectorName)) {
-				valid = false;
-				log.warn("Invalid Collector for assertion: " + collectorName);
-			}
-		}
-		String keys = "";
-		for (String key : tr.getKeys()) {
-			keys += key + " ";
-		}
-		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
-			if (!tr.getKeys().contains(collectorName)) {
-				valid = false;
-				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
-				for (String key : tr.getKeys()) {
-					System.out.println(key + " - " + collectorName + ": " + key.equals(collectorName));
-				}
-			}
-		}
-		log.info("... " + valid);
-		return valid;
-	}
 	
-	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
-		try{
-			XMLDataStorer xds = new XMLDataStorer(filename);
-			for (String s : tr.getKeys()) {
-				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
-				long value = tr.getValue(s);
-				long min = tr.getMinumumCurrentValue(s);
-				long max = tr.getMaximumCurrentValue(s);
-				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature()));
-				// xds.storeValue(s, getValue(s));
-				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
-			}
-			xds.storeData();
-		}
-		catch (JAXBException e){
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public TestExecution(Class klasse, Object instance, Method method) {
+	public PerformanceTestRunner(Class klasse, Object instance, Method method) {
 		this.klasse = klasse;
 		this.instanz = instance;
 		this.method = method;
@@ -127,8 +75,7 @@ public class TestExecution{
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), filename,
-						warmupExecutions);
+				TestResult tr = new TestResult(method.getName(), warmupExecutions);
 				try {
 					if (method.getParameterTypes().length == 1) {
 						tr = executeComplexTest(tr);
@@ -151,45 +98,30 @@ public class TestExecution{
 		if (mainThread.isAlive()) {
 			mainThread.interrupt();
 		}
+		
+		System.gc();
 
 		log.info("Test {} beendet", filename);
 	}
 
 	private TestResult executeComplexTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
+		Object[] params = { tr };
+		runWarmup(params);
 		int executions = 0;
 		try {
-			Object[] params = { tr };
-			String methodString = method.getClass().getName() + "."
-					+ method.getName();
-			log.info("Methodstring: " + methodString + " Warmup-Executions: "
-					+ warmupExecutions);
-			for (int i = 1; i <= warmupExecutions; i++) {
-				log.info("--- Starting warmup execution " + methodString + " "
-						+ i + "/" + warmupExecutions + " ---");
-				method.invoke(instanz, params);
-				log.info("--- Stopping warmup execution " + i + "/"
-						+ warmupExecutions + " ---");
-			}
-
-			if (!checkCollectorValidity(tr)) {
+			if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 				log.warn("Not all Collectors are valid!");
 			}
-
-			tr = new TestResult(method.getName(), filename, executionTimes);
+			tr = new TestResult(method.getName(),executionTimes);
 			params[0] = tr;
 			executions = runMainExecution(tr, params, false);
-
-//		} catch(AssertionFailedError t){
-//			tr.finalizeCollection();
-//			saveData(method.getName(), tr, executions, true, false);
-//			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			saveData(method.getName(), tr, executions, false, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename);
 			throw t;
 		}
-		saveData(method.getName(), tr, executions, false, false);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename);
 
 		tr.checkValues();
 		return tr;
@@ -197,63 +129,59 @@ public class TestExecution{
 
 	private TestResult executeSimpleTest(TestResult tr)
 			throws IllegalAccessException, InvocationTargetException {
-		int executions = 0;
-		String methodString = method.getClass().getName() + "."
-				+ method.getName();
-		log.info("Methodstring: " + methodString);
-
 		Object[] params = {};
-		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + i + "/"
-					+ warmupExecutions + " ---");
-			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
-		}
+		runWarmup(params);
+		int executions = 0;
+		tr = new TestResult(method.getName(), executionTimes);
 
-		tr = new TestResult(method.getName(), filename, executionTimes);
-
-		if (!checkCollectorValidity(tr)) {
+		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
 			executions = runMainExecution(tr, params, true);
-//		} catch(AssertionFailedError t){
-//			tr.finalizeCollection();
-//			saveData(method.getName(), tr, executions, true, false);
-//			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			saveData(method.getName(), tr, executions, false, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename);
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(method.getName(), tr, executions, false, false);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename);
 
 		tr.checkValues();
 		return tr;
 	}
 
+	private void runWarmup(Object[] params)
+			throws IllegalAccessException, InvocationTargetException {
+		String methodString = method.getClass().getName() + "."
+				+ method.getName();
+		for (int i = 1; i <= warmupExecutions; i++) {
+			log.info("--- Starting warmup execution " + methodString + " - " + i + "/"
+					+ warmupExecutions + " ---");
+			method.invoke(instanz, params);
+			log.info("--- Stopping warmup execution " + i + "/"
+					+ warmupExecutions + " ---");
+		}
+	}
+
 	private int runMainExecution(TestResult tr, Object[] params, boolean simple)
 			throws IllegalAccessException, InvocationTargetException {
-
+		String methodString = method.getClass().getName() + "."
+				+ method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
-			log.debug("--- Starting execution " + executions + "/"
+			log.debug("--- Starting execution " + methodString + " "+ executions + "/"
 					+ executionTimes + " ---");
-			if (simple)
-				tr.startCollection();
-			method.invoke(instanz, params);
-			if (simple)
-				tr.stopCollection();
-
+			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, simple, params, tr);
+			pts.evaluate();
+			
 			log.debug("--- Stopping execution " + executions + "/"
 					+ executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation
 					.entrySet()) {
-				log.debug("Entry: {} {}", entry.getKey(), entry.getValue());
+				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
 			}
 			if (executions >= minEarlyStopExecutions
 					&& !maximalRelativeStandardDeviation.isEmpty()

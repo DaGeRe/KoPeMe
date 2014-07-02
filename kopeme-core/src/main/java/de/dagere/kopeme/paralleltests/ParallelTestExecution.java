@@ -4,10 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import de.dagere.kopeme.TestExecution;
+import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.datacollection.TestResult;
 
-public class ParallelTestExecution extends TestExecution {
+public class ParallelTestExecution extends PerformanceTestRunner {
 
 	public ParallelTestExecution(Class<?> klasse, Object instance, Method method) {
 		super(klasse, instance, method);

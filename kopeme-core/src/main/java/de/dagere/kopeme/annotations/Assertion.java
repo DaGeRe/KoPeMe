@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

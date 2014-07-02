@@ -43,16 +43,14 @@ public class TestResult {
 	protected Map<String, Map<Date, Long>> historicalDataMap;
 	protected List<Map<String, Long>> realValues;
 	protected int index;
-	protected String filename;
 	protected Checker checker;
 	private List<MethodExecution> methods;
 	private String testcase;
 
 	private Map<String, MeasureSummarizer> ms;
 
-	public TestResult(String testcase, String filename, int executionTimes) {
+	public TestResult(String testcase, int executionTimes) {
 		values = new HashMap<String, Long>();
-		this.filename = filename;
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
 		this.testcase = testcase;

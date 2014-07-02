@@ -1,7 +1,6 @@
 package de.dagere.kopeme.annotations;
 import java.lang.annotation.*;
 
-import de.dagere.kopeme.Assertion;
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 

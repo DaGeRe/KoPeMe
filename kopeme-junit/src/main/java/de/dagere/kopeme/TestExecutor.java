@@ -59,24 +59,4 @@ public abstract class TestExecutor extends Statement {
 		log.info("... " + valid);
 		return valid;
 	}
-	
-	public void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error) {
-		try{
-			XMLDataStorer xds = new XMLDataStorer(filename);
-			for (String s : tr.getKeys()) {
-				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
-				long value = tr.getValue(s);
-				long min = tr.getMinumumCurrentValue(s);
-				long max = tr.getMaximumCurrentValue(s);
-				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max));
-				// xds.storeValue(s, getValue(s));
-				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
-			}
-			xds.storeData();
-		}catch (JAXBException e){
-			e.printStackTrace();
-		}
-		
-	}
-
 }

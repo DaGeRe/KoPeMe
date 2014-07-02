@@ -11,9 +11,9 @@ import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
-import de.dagere.kopeme.Assertion;
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
+import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
 import de.dagere.kopeme.datacollection.DataCollectorList;

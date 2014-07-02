@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.TestExecution;
+import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
@@ -66,7 +66,7 @@ public class KoPeMePerformanceTestRunner {
 			try{
 				if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
 				{
-					TestExecution te = new TestExecution(c, instance, method);
+					PerformanceTestRunner te = new PerformanceTestRunner(c, instance, method);
 					te.evaluate();
 				}
 				if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
