@@ -54,7 +54,7 @@ public class ParallelTestExecution extends PerformanceTestRunner {
 
 	public void evaluate() {
 		try {
-			TestResult tr = new TestResult(method.getName(), filename, warmupExecutions);
+			TestResult tr = new TestResult(method.getName(), warmupExecutions);
 			Object[] params = { tr };
 
 			method.invoke(instanz, params);

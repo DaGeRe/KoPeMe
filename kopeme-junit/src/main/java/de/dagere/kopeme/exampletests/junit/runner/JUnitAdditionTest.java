@@ -1,6 +1,9 @@
 package de.dagere.kopeme.exampletests.junit.runner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -9,6 +12,13 @@ import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class JUnitAdditionTest {
+	private final static Logger log = LogManager.getLogger(JUnitAdditionTest.class);
+	
+	@Before
+	public void setup(){
+		log.debug("Before wird aufgerufen");
+	}
+	
 	@Test
 	@PerformanceTest(executionTimes = 5)
 	public void testAddition() {
@@ -17,5 +27,6 @@ public class JUnitAdditionTest {
 			a += i;
 		}
 		Assert.assertEquals(10000 * 9999 / 2, a);
+		log.debug("Addition beendet");
 	}
 }

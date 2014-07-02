@@ -70,7 +70,7 @@ public class PerformanceTestRunner{
 		filename = klasse.getName();
 		log.info("Filename: " + filename);
 	}
-
+	
 	public void evaluate() throws Throwable {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
@@ -93,13 +93,8 @@ public class PerformanceTestRunner{
 			}
 		});
 
-		mainThread.start();
-		mainThread.join(timeout);
-		if (mainThread.isAlive()) {
-			mainThread.interrupt();
-		}
-		
-		System.gc();
+		TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+		tbe.execute();
 
 		log.info("Test {} beendet", filename);
 	}

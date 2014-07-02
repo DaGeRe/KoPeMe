@@ -26,7 +26,7 @@ public class ExampleClassTimeoutTest {
 	@PerformanceTest(executionTimes=5, warmupExecutions=2)
 	public void testMethod() {
 		System.out.println("Sleep Example");
-		Thread.dumpStack();
+//		Thread.dumpStack();
 		try {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
