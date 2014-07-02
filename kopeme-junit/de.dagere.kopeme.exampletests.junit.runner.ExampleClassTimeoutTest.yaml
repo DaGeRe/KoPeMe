@@ -31,6 +31,13 @@
                     <min>0</min>
                     <max>0</max>
                 </result>
+                <result date="1404316538705">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
             </datacollector>
             <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollector">
                 <result date="1403801183859">
@@ -61,6 +68,13 @@
                     <min>0</min>
                     <max>0</max>
                 </result>
+                <result date="1404316538713">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
             </datacollector>
             <datacollector name="de.dagere.kopeme.datacollection.CPUUsageCollector">
                 <result date="1403801183860">
@@ -85,6 +99,13 @@
                     <max>0</max>
                 </result>
                 <result date="1404315308190">
+                    <value>0</value>
+                    <deviation>NaN</deviation>
+                    <executionTimes>6</executionTimes>
+                    <min>0</min>
+                    <max>0</max>
+                </result>
+                <result date="1404316538709">
                     <value>0</value>
                     <deviation>NaN</deviation>
                     <executionTimes>6</executionTimes>

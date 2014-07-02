@@ -20,6 +20,7 @@ import org.junit.runners.model.Statement;
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.PerformanceKoPeMeStatement;
 import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
@@ -140,6 +141,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				final Thread mainThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
+						
 						try {
 							runWarmup(callee);
 							executeSimpleTest(callee);
@@ -149,6 +151,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 						}
 					}
 				});
+				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+				tbe.execute();
 
 			}
 		};
