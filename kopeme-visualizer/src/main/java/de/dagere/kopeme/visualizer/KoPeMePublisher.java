@@ -1,5 +1,5 @@
 
-package de.dagere.kopeme.visualizer.jenkinsPlugin;
+package de.dagere.kopeme.visualizer;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -20,13 +20,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
 
-import de.dagere.kopeme.Testcase;
+import de.dagere.kopeme.visualizer.data.Testcase;
 
 /**
  * The publisher for KoPeMe, which takes the input from the user

@@ -32,5 +32,4 @@ public class TestJUnitRuleExecutions {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitRuleTest.class);
 	}
-
 }

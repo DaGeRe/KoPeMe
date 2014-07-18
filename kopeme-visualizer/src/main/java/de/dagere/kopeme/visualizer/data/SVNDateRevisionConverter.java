@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.visualizer.data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import de.dagere.kopeme.DateConverter;
+import de.dagere.kopeme.visualizer.data.DateConverter;
 
 
 

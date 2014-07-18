@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.visualizer.data;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.jfree.util.Log;
 
 /**
  * Saves the data for one graph, i.e. for one part of a VisualizeAction
@@ -55,26 +57,27 @@ public class GraphVisualizer {
 		if (valueCount <= 0)
 			return dataMap;
 		Map<String, Map<Date, Long>> newMap = new HashMap<String, Map<Date, Long>>();
-		for (Map.Entry<String, Map<Date, Long>> entry : dataMap.entrySet()) {
-			Set<Date> unOrderedSet = entry.getValue().keySet();
-			TreeSet<Date> orderedSet = new TreeSet<Date>( new Comparator<Date>() {
+		for (Map.Entry<String, Map<Date, Long>> performanceMeasure : dataMap.entrySet()) {
+			Log.info("Füge Key hinzu: " + performanceMeasure.getKey());
+			Set<Date> unOrderedSet = performanceMeasure.getValue().keySet();
+			TreeSet<Date> measuredDates = new TreeSet<Date>( new Comparator<Date>() {
 
 				public int compare(Date o1, Date o2) {
 					return -o1.compareTo(o2);
 				}
 			});
-			orderedSet.addAll(unOrderedSet);
+			measuredDates.addAll(unOrderedSet);
 			Map<Date, Long> newSubMap = new HashMap<Date, Long>();
 			int i = 0;
-			dateLoop: for ( Date d : orderedSet)
+			dateLoop: for ( Date d : measuredDates)
 			{
-				newSubMap.put(d, entry.getValue().get(d));
+				newSubMap.put(d, performanceMeasure.getValue().get(d));
 				if ( i > valueCount )
 					break dateLoop;
 				i++;
 				System.out.println("Datum: " + d);
 			}
-			newMap.put(entry.getKey(), newSubMap);
+			newMap.put(performanceMeasure.getKey(), newSubMap);
 		}
 		return newMap;
 	}

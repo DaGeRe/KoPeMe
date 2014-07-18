@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.visualizer.data;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 

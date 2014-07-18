@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.visualizer.data;
 
 import java.util.Date;
 

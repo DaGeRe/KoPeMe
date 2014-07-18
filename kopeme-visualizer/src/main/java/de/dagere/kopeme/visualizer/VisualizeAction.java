@@ -1,4 +1,4 @@
-package de.dagere.kopeme.visualizer.jenkinsPlugin;
+package de.dagere.kopeme.visualizer;
 
 import hudson.FilePath;
 import hudson.model.Action;
@@ -57,10 +57,10 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.DateConverter;
-import de.dagere.kopeme.GraphVisualizer;
-import de.dagere.kopeme.NormalDateConverter;
-import de.dagere.kopeme.Testcase;
+import de.dagere.kopeme.visualizer.data.DateConverter;
+import de.dagere.kopeme.visualizer.data.GraphVisualizer;
+import de.dagere.kopeme.visualizer.data.NormalDateConverter;
+import de.dagere.kopeme.visualizer.data.Testcase;
 
 //import hudson.util.
 
@@ -161,11 +161,7 @@ public class VisualizeAction implements Action, Serializable {
 	private void loadData() {
 		logger.info("VisualizeAction.loadData - Lade Daten");
 		try {
-
-			Yaml yaml = new Yaml();
 			project.getLastBuild();
-
-			// String file = "datei.yml";
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
@@ -186,11 +182,14 @@ public class VisualizeAction implements Action, Serializable {
 								+ file.exists() + " " + file.getAbsolutePath());
 						try {
 							XMLDataLoader xdl = new XMLDataLoader(file);
-							Map<String, Map<Date, Long>> temp = xdl.getData();
-							logger.info("Daten für " + file.getAbsolutePath()
-									+ " geladen");
-							graphMap.put(testcaseName, new GraphVisualizer(
-									temp, true));
+							for (String collector : xdl.getCollectors()){
+								Map<String, Map<Date, Long>> temp = xdl.getData(collector);
+								logger.info("Daten für " + file.getAbsolutePath()
+										+ "(" + collector + ") geladen");
+								graphMap.put(testcaseName + "(" + collector + ")", new GraphVisualizer(
+										temp, true));
+							}
+							
 						} catch (JAXBException e) {
 							e.printStackTrace();
 						}
@@ -256,21 +255,27 @@ public class VisualizeAction implements Action, Serializable {
 		loadData();
 
 		logger.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);
-		Map<String, Map<Date, Long>> subMap = graphMap.get(file).getDatamap();
+		
+		GraphVisualizer graphVisualizer = graphMap.get(file);
+		if (graphVisualizer == null){
+			logger.info("Fehler: " + file + " nicht vorhanden");
+			return null;
+		}
+		Map<String, Map<Date, Long>> subMap = graphVisualizer.getDatamap();
 
 		JFreeChart chart = null;
 
 		logger.info("In Graphmap ist: " + graphMap.size());
 
 		int i = 0;
-		for (String s : graphMap.get(file).getViewable()) {
-			Log.info("Erstelle Graph für " + s + " "
+		for (String viewable : graphVisualizer.getViewable()) {
+			logger.info("Erstelle Graph für " + viewable + " "
 					+ (dc instanceof NormalDateConverter));
 			if (dc instanceof NormalDateConverter) {
 				TimeSeriesCollection collection = new TimeSeriesCollection();
-				TimeSeries serie = new TimeSeries(s, Minute.class);
-				logger.info("Suche Eintrag für " + s);
-				for (Map.Entry<Date, Long> entry : subMap.get(s).entrySet()) {
+				TimeSeries serie = new TimeSeries(viewable, Minute.class);
+				logger.info("Suche Eintrag für " + viewable);
+				for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
 					serie.addOrUpdate(new Minute(entry.getKey()),
 							entry.getValue());
 				}
@@ -281,7 +286,7 @@ public class VisualizeAction implements Action, Serializable {
 				} else {
 					if (isMultipleAxis(file)) {
 						XYPlot plot = chart.getXYPlot();
-						NumberAxis axis2 = new NumberAxis(s);
+						NumberAxis axis2 = new NumberAxis(viewable);
 						plot.setRangeAxis(i, axis2);
 						plot.setDataset(i, collection);
 						plot.setRenderer(i, new StandardXYItemRenderer());
