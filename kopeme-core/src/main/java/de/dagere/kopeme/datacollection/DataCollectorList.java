@@ -27,7 +27,7 @@ public class DataCollectorList {
 	 */
 	public static final DataCollectorList NONE;
 	
-	private Set<Class> collectors;
+	private Set<Class<DataCollector>> collectors;
 
 	static {
 		STANDARD = new DataCollectorList();
@@ -44,7 +44,7 @@ public class DataCollectorList {
 	}
 
 	protected DataCollectorList() {
-		collectors = new HashSet<Class>();
+		collectors = new HashSet<Class<DataCollector>>();
 	}
 
 	protected void addDataCollector(Class collectorName) {
@@ -65,10 +65,8 @@ public class DataCollectorList {
 				dc = c.newInstance();
 				collectorsRet.put(dc.getName(), dc);
 			} catch (InstantiationException e) {
-				// TODO Automatisch generierter Erfassungsblock
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Automatisch generierter Erfassungsblock
 				e.printStackTrace();
 			}
 		}

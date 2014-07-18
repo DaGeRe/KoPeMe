@@ -1,8 +1,5 @@
 package de.dagere.kopeme.testrunner;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelTestExecution;
 

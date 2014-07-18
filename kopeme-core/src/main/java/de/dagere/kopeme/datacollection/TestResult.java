@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +20,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.dagere.kopeme.Checker;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.datastorage.YAMLDataStorer;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 import de.dagere.kopeme.paralleltests.MethodExecution;
@@ -45,7 +42,6 @@ public class TestResult {
 	protected int index;
 	protected Checker checker;
 	private List<MethodExecution> methods;
-	private String testcase;
 
 	private Map<String, MeasureSummarizer> ms;
 
@@ -53,7 +49,6 @@ public class TestResult {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
-		this.testcase = testcase;
 		index = 0;
 
 		ms = new HashMap<>();

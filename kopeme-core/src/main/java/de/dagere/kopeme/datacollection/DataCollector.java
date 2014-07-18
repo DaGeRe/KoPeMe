@@ -1,8 +1,5 @@
 package de.dagere.kopeme.datacollection;
 
-import java.util.Date;
-import java.util.Map;
-
 public abstract class DataCollector {
 //	protected Map<Date, Long> historicalData;
 

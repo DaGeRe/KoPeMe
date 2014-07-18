@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
@@ -38,10 +37,8 @@ public class YAMLDataLoader implements DataLoader{
 				return m;
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
 		}
-		// TODO Automatisch generierter Methodenstub
 		return null;
 	}
 }

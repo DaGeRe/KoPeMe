@@ -12,8 +12,8 @@ public class ParallelTestExecution extends PerformanceTestRunner {
 	public ParallelTestExecution(Class<?> klasse, Object instance, Method method) {
 		super(klasse, instance, method);
 
-		ParallelPerformanceTest annotation = method
-				.getAnnotation(ParallelPerformanceTest.class);
+//		ParallelPerformanceTest annotation = method
+//				.getAnnotation(ParallelPerformanceTest.class);
 	}
 	
 	public Thread createThread(final MethodExecution me, final TestResult tr)

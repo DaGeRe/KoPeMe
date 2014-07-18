@@ -1,12 +1,7 @@
 package de.dagere.kopeme.datacollection;
 
 import java.lang.management.ManagementFactory;
-//import com.sun.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
-
-import javax.management.MBeanServer;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

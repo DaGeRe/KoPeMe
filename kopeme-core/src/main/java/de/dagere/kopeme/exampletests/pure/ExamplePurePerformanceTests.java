@@ -1,7 +1,6 @@
 package de.dagere.kopeme.exampletests.pure;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,10 +15,8 @@ import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.measuresummarizing.MaximumSummarizer;
 import de.dagere.kopeme.measuresummarizing.MedianSummarizer;
 
 public class ExamplePurePerformanceTests {
@@ -33,6 +30,7 @@ public class ExamplePurePerformanceTests {
 		{
 			i -= j;
 			int[] array = new int[100];
+			array[0] = i;
 		}
 		System.out.println("Test finished");
 	}
@@ -72,6 +70,7 @@ public class ExamplePurePerformanceTests {
 			i -= j;
 			int[] array = new int[100];
 			list.add(array);
+			array[0] = i;
 		}
 
 		tr.stopCollection();

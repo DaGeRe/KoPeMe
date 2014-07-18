@@ -12,7 +12,6 @@ public class TemperatureCollector {
 			try {
 				p.waitFor();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -23,7 +22,6 @@ public class TemperatureCollector {
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

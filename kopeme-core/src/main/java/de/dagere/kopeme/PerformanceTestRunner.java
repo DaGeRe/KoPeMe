@@ -5,21 +5,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.datacollection.CPUUsageCollector;
-import de.dagere.kopeme.datacollection.DataCollector;
-import de.dagere.kopeme.datacollection.TemperatureCollector;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.datastorage.YAMLDataStorer;
 
 /**
  * Represents an execution of all runs of one test

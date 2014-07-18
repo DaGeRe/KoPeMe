@@ -19,8 +19,8 @@ public class PerformanceTestUtils {
 	 * Tests weather the collectors given in the assertions and the maximale
 	 * relative standard deviations are correct
 	 * 
-	 * @param tr
-	 * @return
+	 * @param tr Testresult, that should be tested
+	 * @return Weather the collector is valid or not
 	 */
 	public static boolean checkCollectorValidity(TestResult tr, Map<String, Long> assertationvalues, Map<String, Double> maximalRelativeStandardDeviation) {
 		log.info("Checking DataCollector validity...");

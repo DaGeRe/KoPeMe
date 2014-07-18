@@ -2,7 +2,6 @@ package de.dagere.kopeme.datastorage;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,7 +10,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.sun.corba.se.spi.orb.DataCollector;
 
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
