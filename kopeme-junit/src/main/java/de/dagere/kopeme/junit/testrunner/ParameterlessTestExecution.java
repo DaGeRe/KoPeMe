@@ -1,4 +1,4 @@
-package de.dagere.kopeme.testrunner;
+package de.dagere.kopeme.junit.testrunner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TestExecutor;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
@@ -21,6 +20,7 @@ import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.YAMLDataStorer;
+import de.dagere.kopeme.junit.TestExecutor;
 
 /**
  * Represents an execution of all runs of one test

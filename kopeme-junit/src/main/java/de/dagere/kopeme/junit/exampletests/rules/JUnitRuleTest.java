@@ -1,4 +1,4 @@
-package de.dagere.kopeme.exampletests.junit.rules;
+package de.dagere.kopeme.junit.exampletests.rules;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,7 +8,7 @@ import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.testrunner.KoPeMeRule;
+import de.dagere.kopeme.junit.testrunner.KoPeMeRule;
 
 /**
  * An example test für testing weather the KoPeMe-TestRule works

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.testrunner;
+package de.dagere.kopeme.junit.testrunner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

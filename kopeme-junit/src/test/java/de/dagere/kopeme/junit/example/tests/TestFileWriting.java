@@ -1,4 +1,4 @@
-package de.dagere.kopeme.example.tests;
+package de.dagere.kopeme.junit.example.tests;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import de.dagere.kopeme.exampletests.junit.runner.JUnitAdditionTest;
+import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 
 public class TestFileWriting {
 	

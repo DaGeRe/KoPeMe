@@ -1,4 +1,4 @@
-package de.dagere.kopeme.ruletests;
+package de.dagere.kopeme.junit.ruletests;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -8,10 +8,10 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import de.dagere.kopeme.exampletests.junit.rules.JUnitRuleTest;
-import de.dagere.kopeme.exampletests.junit.runner.ExampleClassTimeoutTest;
-import de.dagere.kopeme.exampletests.junit.runner.ExampleJUnitTests;
-import de.dagere.kopeme.exampletests.junit.runner.ExampleMethodTimeoutTest;
+import de.dagere.kopeme.junit.exampletests.rules.JUnitRuleTest;
+import de.dagere.kopeme.junit.exampletests.runner.ExampleClassTimeoutTest;
+import de.dagere.kopeme.junit.exampletests.runner.ExampleJUnitTests;
+import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
 
 /**
  * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende

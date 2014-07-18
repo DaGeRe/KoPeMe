@@ -1,4 +1,4 @@
-package de.dagere.kopeme.exampletests.junit.runner;
+package de.dagere.kopeme.junit.exampletests.runner;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
-import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
+import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
 @PerformanceTestingClass(overallTimeout=400)

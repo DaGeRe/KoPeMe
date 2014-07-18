@@ -1,11 +1,11 @@
-package de.dagere.kopeme.exampletests.junit.runner;
+package de.dagere.kopeme.junit.exampletests.runner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
+import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleMethodTimeoutTest {

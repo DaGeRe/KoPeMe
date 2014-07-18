@@ -1,7 +1,6 @@
-package de.dagere.kopeme.exampletests.junit.runner;
+package de.dagere.kopeme.junit.exampletests.runner;
 
 import org.junit.Assert;
-
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -13,7 +12,7 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.testrunner.PerformanceTestRunnerJUnit;
+import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 @PerformanceTestingClass
 @RunWith(PerformanceTestRunnerJUnit.class)
