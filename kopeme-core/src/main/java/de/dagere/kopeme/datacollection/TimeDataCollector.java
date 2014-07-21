@@ -35,6 +35,7 @@ public class TimeDataCollector extends DataCollector {
 
 	@Override
 	public long getValue() {
+		System.out.println("Stop: " + stop + " Start: " + start);
 		return (stop - start)/1000;
 		//Divisionen: 1 - Nano, 1E3 - Mikro, 1E6 - Milli
 	}

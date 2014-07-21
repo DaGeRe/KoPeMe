@@ -223,10 +223,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
-
+			
 			log.debug("--- Starting execution " + methodString + " "
 					+ executions + "/" + executionTimes + " ---");
+			if (simple)
+				tr.startCollection();
 			callee.evaluate();
+			if (simple)
+				tr.stopCollection();
 
 			log.debug("--- Stopping execution " + executions + "/"
 					+ executionTimes + " ---");

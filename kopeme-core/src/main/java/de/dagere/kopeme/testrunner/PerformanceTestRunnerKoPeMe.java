@@ -17,9 +17,9 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
  * @author dagere
  *
  */
-public class KoPeMePerformanceTestRunner {
+public class PerformanceTestRunnerKoPeMe {
 	
-	private static Logger log = LogManager.getFormatterLogger(KoPeMePerformanceTestRunner.class);
+	private static Logger log = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
 	
 	public static void main( String args[] ) throws Throwable
 	{
