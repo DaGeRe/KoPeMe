@@ -65,6 +65,8 @@ public class XMLDataStorer implements DataStorer{
 		r.setValue(""+performanceDataMeasure.value);
 		r.setDeviation(performanceDataMeasure.deviation);
 		r.setExecutionTimes(performanceDataMeasure.executionTimes);
+		r.setMax(performanceDataMeasure.max);
+		r.setMin(performanceDataMeasure.min);
 		
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()){

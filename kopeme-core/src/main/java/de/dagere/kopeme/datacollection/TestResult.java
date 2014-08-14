@@ -390,6 +390,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) < min)
 				min = realValues.get(i).get(key);
 		}
+		log.info("Minimum ermittelt: " + min);
 		return min;
 	}
 
@@ -399,6 +400,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) > max)
 				max = realValues.get(i).get(key);
 		}
+		log.debug("Maximum ermittelt: " + max);
 		return max;
 	}
 }

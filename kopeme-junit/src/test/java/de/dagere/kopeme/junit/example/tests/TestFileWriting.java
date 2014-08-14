@@ -91,7 +91,11 @@ public class TestFileWriting {
 			
 			for (Result r: timeCollector.getResult()){
 				int val = new Integer(r.getValue());
+				int min = (int) r.getMin();
+				int max = (int) r.getMax();
 				Assert.assertThat(val, Matchers.greaterThan(0));
+				Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
+				Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
 			}
 			
 		} catch (JAXBException e1) {

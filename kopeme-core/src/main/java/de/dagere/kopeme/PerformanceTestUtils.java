@@ -54,7 +54,9 @@ public class PerformanceTestUtils {
 			for (String s : tr.getKeys()) {
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
 				long value = tr.getValue(s);
+				log.info("Ermittle Minimum");
 				long min = tr.getMinumumCurrentValue(s);
+				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
 				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature()));
 				// xds.storeValue(s, getValue(s));
