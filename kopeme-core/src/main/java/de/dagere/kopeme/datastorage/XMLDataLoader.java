@@ -42,6 +42,10 @@ public class XMLDataLoader implements DataLoader {
 		if (!f.exists()) {
 			log.info("Datei existiert nicht");
 			data = new Kopemedata();
+			data.setTestcases(new Testcases());
+			Testcases tc = data.getTestcases();
+			System.out.println("TC: " + tc);
+			tc.setClazz(f.getName());
 		} else {
 			JAXBContext jc;
 			jc = JAXBContext.newInstance(Kopemedata.class);

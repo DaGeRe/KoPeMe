@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
@@ -71,8 +72,11 @@ public class TestFileWriting {
 		
 		try {
 			Kopemedata kd = new XMLDataLoader(f).getFullData();
+			Testcases tc = kd.getTestcases();
+			Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
+			
 			TestcaseType tct = null;
-			for (TestcaseType t : kd.getTestcases().getTestcase()){
+			for (TestcaseType t : tc.getTestcase()){
 				if (t.getName().equals("testMultiplication")){
 					tct = t;
 					break;

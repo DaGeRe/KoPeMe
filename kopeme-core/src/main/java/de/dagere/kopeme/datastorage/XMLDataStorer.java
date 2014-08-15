@@ -10,7 +10,6 @@ import javax.xml.bind.Marshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -33,9 +32,21 @@ public class XMLDataStorer implements DataStorer{
 	public XMLDataStorer( String classname ) throws JAXBException
 	{
 		String filename = classname+ ".yaml";
+		f = new File(filename);
+		if (!f.exists()){
+			createXMLData(classname);
+		}
 		XMLDataLoader loader = new XMLDataLoader(filename);
 		data = loader.getFullData();
-		f = new File(filename);
+		
+	}
+	
+	public void createXMLData(String classname){
+		data = new Kopemedata();
+		data.setTestcases(new Testcases());
+		Testcases tc = data.getTestcases();
+		tc.setClazz(classname);
+		storeData();
 	}
 
 	@Override
