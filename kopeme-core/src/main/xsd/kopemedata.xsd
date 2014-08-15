@@ -17,6 +17,7 @@
 							<xs:element name="testcase" type="testcaseType"
 								maxOccurs="unbounded" />
 						</xs:sequence>
+						<xs:attribute name="class"/>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
