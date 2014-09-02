@@ -45,6 +45,13 @@
 									<xs:element name="min" type="xs:long"/>
 									<xs:element name="max" type="xs:long"/>
 									<xs:element name="stacktrace" type="xs:string"/>
+									<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
+										<xs:complexType>
+											<xs:sequence minOccurs="1" maxOccurs="unbounded">
+												<xs:element name="value" type="xs:string" />
+											</xs:sequence>
+										</xs:complexType>
+									</xs:element>
 								</xs:sequence>
 								<xs:attribute name="configuration" />
 								<xs:attribute name="date" type="xs:long" />

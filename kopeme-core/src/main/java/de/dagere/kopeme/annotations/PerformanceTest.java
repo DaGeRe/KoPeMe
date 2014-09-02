@@ -20,6 +20,8 @@ public @interface PerformanceTest{
 	public int timeout() default 100000;
 	public boolean failAfterTimeout() default false;
 	
+	public boolean logFullData() default false;
+	
 //	public float maximalRelativeStandardDeviation() default 0;
 	
 	/**
