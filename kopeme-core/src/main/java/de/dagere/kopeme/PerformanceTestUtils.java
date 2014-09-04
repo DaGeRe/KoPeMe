@@ -58,7 +58,8 @@ public class PerformanceTestUtils {
 				long min = tr.getMinumumCurrentValue(s);
 				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
-				xds.storeValue(new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature()));
+				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature());
+				xds.storeValue(performanceDataMeasure, tr.getValues(s));
 				// xds.storeValue(s, getValue(s));
 				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
 			}

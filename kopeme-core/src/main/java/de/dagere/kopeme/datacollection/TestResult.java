@@ -403,4 +403,12 @@ public class TestResult {
 		log.debug("Maximum ermittelt: " + max);
 		return max;
 	}
+	
+	public List<Long> getValues(String key){
+		List<Long> values = new LinkedList<Long>();
+		for (int i = 0; i < realValues.size(); i++) {
+			values.add(realValues.get(i).get(key));
+		}
+		return values;
+	}
 }
