@@ -10,4 +10,12 @@ public @interface PerformanceTestingClass{
 	 */
 	public int overallTimeout() default 1000000;
 	
+	
+	/**
+	 * Weather the test should log data of all executions or
+	 * only statistical values
+	 * @return
+	 */
+	public boolean logFullData() default false;
+	
 }

@@ -1,5 +1,7 @@
 package de.dagere.kopeme;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -48,7 +50,7 @@ public class PerformanceTestUtils {
 		return valid;
 	}
 	
-	public static void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error, String filename) {
+	public static void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error, String filename, boolean saveValues) {
 		try{
 			XMLDataStorer xds = new XMLDataStorer(filename);
 			for (String s : tr.getKeys()) {
@@ -59,7 +61,8 @@ public class PerformanceTestUtils {
 				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min, max, TemperatureCollector.getTemperature());
-				xds.storeValue(performanceDataMeasure, tr.getValues(s));
+				List<Long> values = saveValues ? tr.getValues(s) : null;
+				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
 				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
 			}

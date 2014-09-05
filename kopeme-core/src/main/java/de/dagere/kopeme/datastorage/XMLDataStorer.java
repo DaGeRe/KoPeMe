@@ -80,11 +80,14 @@ public class XMLDataStorer implements DataStorer {
 		r.setExecutionTimes(performanceDataMeasure.executionTimes);
 		r.setMax(performanceDataMeasure.max);
 		r.setMin(performanceDataMeasure.min);
-		Fulldata f = new Fulldata();
-		for (Long l : values){
-			f.getValue().add(""+l);
+		if (values != null){
+		    Fulldata f = new Fulldata();
+			for (Long l : values){
+				f.getValue().add(""+l);
+			}
+			r.setFulldata(f);
 		}
-		r.setFulldata(f);
+		
 
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()) {

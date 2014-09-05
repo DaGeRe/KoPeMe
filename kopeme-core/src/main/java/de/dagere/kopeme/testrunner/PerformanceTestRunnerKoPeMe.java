@@ -19,13 +19,13 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
  */
 public class PerformanceTestRunnerKoPeMe {
 	
-	private static Logger log = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
+	private static final Logger log = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
 	
 	public static void main( String args[] ) throws Throwable
 	{
 		if ( args.length == 0 )
 		{
-			log.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgef�hrt werden.");
+			log.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
 			System.exit(1);
 		}
 		String klassenName = args[0];

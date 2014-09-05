@@ -62,6 +62,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					PerformanceTestRunnerJUnit.super.run(notifier);
 				}
 			});
+			saveFullData = ptc.logFullData();
 			System.out.println("Timeout: " + ptc.overallTimeout());
 			mainThread.start();
 
@@ -160,6 +161,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		return st;
 	}
 
+	protected boolean saveFullData;
 	protected Method method;
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions,
 			timeout;
@@ -205,12 +207,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), tr, executions,
-					false, true, filename);
+					false, true, filename, saveFullData);
 			throw t;
 		}
 		tr.finalizeCollection();
 		PerformanceTestUtils.saveData(method.getName(), tr, executions, false,
-				false, filename);
+				false, filename, saveFullData);
 
 		tr.checkValues();
 		return tr;

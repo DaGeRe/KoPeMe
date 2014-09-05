@@ -104,10 +104,10 @@ public class PerformanceTestRunner{
 			executions = runMainExecution(tr, params, false);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
 			throw t;
 		}
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
 
 		tr.checkValues();
 		return tr;
@@ -127,11 +127,12 @@ public class PerformanceTestRunner{
 			executions = runMainExecution(tr, params, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
+		//TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden sollen
 
 		tr.checkValues();
 		return tr;
