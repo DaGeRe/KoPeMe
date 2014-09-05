@@ -113,15 +113,15 @@ public class ParameterlessTestExecution extends TestExecutor{
 			executions = runMainExecution(tr, params, true);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, true, false, filename);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, true, false, filename, true);
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
 
 		tr.checkValues();
 		return tr;
