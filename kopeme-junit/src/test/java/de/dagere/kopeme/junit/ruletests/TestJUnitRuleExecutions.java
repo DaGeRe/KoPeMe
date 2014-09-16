@@ -9,9 +9,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.junit.exampletests.rules.JUnitRuleTest;
-import de.dagere.kopeme.junit.exampletests.runner.ExampleClassTimeoutTest;
-import de.dagere.kopeme.junit.exampletests.runner.ExampleJUnitTests;
-import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
 
 /**
  * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende

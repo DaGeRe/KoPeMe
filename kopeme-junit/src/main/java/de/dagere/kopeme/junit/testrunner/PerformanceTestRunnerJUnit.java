@@ -1,6 +1,5 @@
 package de.dagere.kopeme.junit.testrunner;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +7,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -18,7 +15,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
-import de.dagere.kopeme.PerformanceKoPeMeStatement;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.annotations.Assertion;
@@ -142,7 +138,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				final Thread mainThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
-						
+
 						try {
 							runWarmup(callee);
 							executeSimpleTest(callee);
@@ -152,7 +148,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 						}
 					}
 				});
-				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread,
+						timeout);
 				tbe.execute();
 
 			}
@@ -225,7 +222,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
-			
+
 			log.debug("--- Starting execution " + methodString + " "
 					+ executions + "/" + executionTimes + " ---");
 			if (simple)
@@ -236,12 +233,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 			log.debug("--- Stopping execution " + executions + "/"
 					+ executionTimes + " ---");
-//			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation
-//					.entrySet()) {
-//				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(),
-//						entry.getValue(),
-//						tr.getRelativeStandardDeviation(entry.getKey()));
-//			}
+			// for (Map.Entry<String, Double> entry :
+			// maximalRelativeStandardDeviation
+			// .entrySet()) {
+			// log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(),
+			// entry.getValue(),
+			// tr.getRelativeStandardDeviation(entry.getKey()));
+			// }
 			if (executions >= minEarlyStopExecutions
 					&& !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {

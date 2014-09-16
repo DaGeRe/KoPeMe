@@ -1,6 +1,5 @@
 package de.dagere.kopeme.junit.exampletests.runner;
 
-import org.junit.Assert;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -18,7 +17,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleJUnitTests {
 	@Test
-	@PerformanceTest(executionTimes=5)
+	@PerformanceTest(executionTimes = 5)
 	public void testMoebelkauf(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
 		tr.startCollection();
@@ -32,7 +31,7 @@ public class ExampleJUnitTests {
 		}
 
 		tr.stopCollection();
-		tr.addValue("Anzahl", (int)(1000 + Math.random()*100));
+		tr.addValue("Anzahl", (int) (1000 + Math.random() * 100));
 
 		tr.setChecker(new Checker() {
 			@Override
