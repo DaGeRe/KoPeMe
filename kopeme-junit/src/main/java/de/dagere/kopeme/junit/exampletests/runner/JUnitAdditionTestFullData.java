@@ -12,15 +12,16 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
-@PerformanceTestingClass(logFullData=true)
+@PerformanceTestingClass(overallTimeout = 100000, logFullData = true)
 public class JUnitAdditionTestFullData {
-	private final static Logger log = LogManager.getLogger(JUnitAdditionTestFullData.class);
-	
+	private final static Logger log = LogManager
+			.getLogger(JUnitAdditionTestFullData.class);
+
 	@Before
-	public void setup(){
+	public void setup() {
 		log.debug("Before wird aufgerufen");
 	}
-	
+
 	@Test
 	@PerformanceTest(executionTimes = 5)
 	public void testAddition() {
