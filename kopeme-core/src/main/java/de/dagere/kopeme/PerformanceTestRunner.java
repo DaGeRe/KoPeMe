@@ -18,26 +18,24 @@ import de.dagere.kopeme.datacollection.TestResult;
  * @author dagere
  * 
  */
-public class PerformanceTestRunner{
+public class PerformanceTestRunner {
 
 	private static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
 
 	protected Class klasse;
 	protected Object instanz;
 	protected Method method;
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions,
-			timeout;
+	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
-	
+
 	public PerformanceTestRunner(Class klasse, Object instance, Method method) {
 		this.klasse = klasse;
 		this.instanz = instance;
 		this.method = method;
 
-		PerformanceTest annotation = method
-				.getAnnotation(PerformanceTest.class);
+		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
@@ -46,10 +44,8 @@ public class PerformanceTestRunner{
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
 
-			for (MaximalRelativeStandardDeviation maxDev : annotation
-					.deviations()) {
-				maximalRelativeStandardDeviation.put(maxDev.collectorname(),
-						maxDev.maxvalue());
+			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
 			assertationvalues = new HashMap<>();
@@ -61,7 +57,7 @@ public class PerformanceTestRunner{
 		filename = klasse.getName();
 		log.info("Filename: " + filename);
 	}
-	
+
 	public void evaluate() throws Throwable {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
@@ -90,8 +86,7 @@ public class PerformanceTestRunner{
 		log.info("Test {} beendet", filename);
 	}
 
-	private TestResult executeComplexTest(TestResult tr)
-			throws IllegalAccessException, InvocationTargetException {
+	private TestResult executeComplexTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		Object[] params = { tr };
 		runWarmup(params);
 		int executions = 0;
@@ -99,9 +94,10 @@ public class PerformanceTestRunner{
 			if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 				log.warn("Not all Collectors are valid!");
 			}
-			tr = new TestResult(method.getName(),executionTimes);
+			tr = new TestResult(method.getName(), executionTimes);
 			params[0] = tr;
-			executions = runMainExecution(tr, params, false);
+			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, tr);
+			executions = runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
@@ -113,8 +109,7 @@ public class PerformanceTestRunner{
 		return tr;
 	}
 
-	private TestResult executeSimpleTest(TestResult tr)
-			throws IllegalAccessException, InvocationTargetException {
+	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		Object[] params = {};
 		runWarmup(params);
 		int executions = 0;
@@ -124,7 +119,8 @@ public class PerformanceTestRunner{
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
-			executions = runMainExecution(tr, params, true);
+			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
+			executions = runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
@@ -132,46 +128,35 @@ public class PerformanceTestRunner{
 		}
 		tr.finalizeCollection();
 		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
-		//TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden sollen
+		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden
+		// sollen
 
 		tr.checkValues();
 		return tr;
 	}
 
-	private void runWarmup(Object[] params)
-			throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "."
-				+ method.getName();
+	private void runWarmup(Object[] params) throws IllegalAccessException, InvocationTargetException {
+		String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + " - " + i + "/"
-					+ warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 	}
 
-	private int runMainExecution(TestResult tr, Object[] params, boolean simple)
-			throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "."
-				+ method.getName();
+	private int runMainExecution(PerformanceKoPeMeStatement pts, TestResult tr, Object[] params) throws IllegalAccessException, InvocationTargetException {
+		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
-		for (executions = 1; executions <= executionTimes; executions++) {
 
-			log.debug("--- Starting execution " + methodString + " "+ executions + "/"
-					+ executionTimes + " ---");
-			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, simple, params, tr);
+		for (executions = 1; executions <= executionTimes; executions++) {
+			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
 			pts.evaluate();
-			
-			log.debug("--- Stopping execution " + executions + "/"
-					+ executionTimes + " ---");
-			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation
-					.entrySet()) {
+			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
 			}
-			if (executions >= minEarlyStopExecutions
-					&& !maximalRelativeStandardDeviation.isEmpty()
+			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}

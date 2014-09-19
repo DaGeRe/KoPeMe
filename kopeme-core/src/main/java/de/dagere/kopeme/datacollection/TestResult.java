@@ -41,6 +41,9 @@ public class TestResult {
 	protected List<Map<String, Long>> realValues;
 	protected int index;
 	protected Checker checker;
+
+	private String testcase;
+
 	private List<MethodExecution> methods;
 
 	private Map<String, MeasureSummarizer> ms;
@@ -50,10 +53,15 @@ public class TestResult {
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
 		index = 0;
+		this.testcase = testcase;
 
 		ms = new HashMap<>();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
 		// realValues = new HashMap<String, Long>[executionTimes];
+	}
+
+	public String getTestcase() {
+		return testcase;
 	}
 
 	public void setCollectors(DataCollectorList dcl) {
@@ -89,11 +97,8 @@ public class TestResult {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
 				if (dc.getName().equals(entry.getKey())) {
-					MatcherAssert.assertThat("Kollektor " + dc.getName()
-							+ " besitzt Wert " + dc.getValue()
-							+ ", Wert sollte aber unter " + entry.getValue()
-							+ " liegen.", dc.getValue(),
-							Matchers.lessThan(entry.getValue()));
+					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
+							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
 			}
 		}
@@ -101,8 +106,7 @@ public class TestResult {
 
 	public void startCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection
-				.toArray(new DataCollector[0]);
+		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(DataCollector arg0, DataCollector arg1) {
@@ -155,8 +159,7 @@ public class TestResult {
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
-			log.debug("Standardabweichung {}: {}", collectorName,
-					getRelativeStandardDeviation(collectorName));
+			log.debug("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
@@ -183,9 +186,7 @@ public class TestResult {
 	 */
 	public void addValue(String name, long value) {
 		if (dataCollectors.get(name) != null)
-			throw new Error(
-					"A self-defined value should not have the name of a DataCollector, name: "
-							+ name);
+			throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
 		values.put(name, value);
 	}
 
@@ -196,8 +197,7 @@ public class TestResult {
 	 * @return
 	 */
 	public long getValue(String name) {
-		return values.get(name) != null ? values.get(name) : dataCollectors
-				.get(name).getValue();
+		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
 	}
 
 	/**
@@ -338,9 +338,7 @@ public class TestResult {
 		for (int i = 0; i < realValues.size(); i++) {
 			values[i] = realValues.get(i).get(datacollector);
 		}
-		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector")
-				|| datacollector
-						.equals("de.kopeme.datacollection.TimeDataCollector")) {
+		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
 			log.trace(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();
@@ -348,13 +346,11 @@ public class TestResult {
 			st.addValue(l);
 		}
 
-		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(),
-				st.getStandardDeviation());
+		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
 		return st.getStandardDeviation() / st.getMean();
 	}
 
-	public boolean isRelativeStandardDeviationBelow(
-			Map<String, Double> deviations) {
+	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
 		if (realValues.size() < 5)
 			return false;
 		boolean isRelativeDeviationBelowValue = true;
@@ -362,9 +358,7 @@ public class TestResult {
 			Double aimStdDeviation = deviations.get(collectorName);
 			if (aimStdDeviation != null) {
 				double stdDeviation = getRelativeStandardDeviation(collectorName);
-				log.debug(
-						"Standardabweichung {}: {} Ziel-Standardabweichung: {}",
-						collectorName, stdDeviation, aimStdDeviation);
+				log.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
 					isRelativeDeviationBelowValue = false;
 					break;

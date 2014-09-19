@@ -14,8 +14,7 @@ import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 
 public class PerformanceTestUtils {
-	private static final Logger log = LogManager
-			.getLogger(PerformanceTestUtils.class);
+	private static final Logger log = LogManager.getLogger(PerformanceTestUtils.class);
 
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale
@@ -25,9 +24,7 @@ public class PerformanceTestUtils {
 	 *            Testresult, that should be tested
 	 * @return Weather the collector is valid or not
 	 */
-	public static boolean checkCollectorValidity(TestResult tr,
-			Map<String, Long> assertationvalues,
-			Map<String, Double> maximalRelativeStandardDeviation) {
+	public static boolean checkCollectorValidity(TestResult tr, Map<String, Long> assertationvalues, Map<String, Double> maximalRelativeStandardDeviation) {
 		log.info("Checking DataCollector validity...");
 		boolean valid = true;
 		for (String collectorName : assertationvalues.keySet()) {
@@ -43,11 +40,9 @@ public class PerformanceTestUtils {
 		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
 			if (!tr.getKeys().contains(collectorName)) {
 				valid = false;
-				log.warn("Invalid Collector for maximale relative standard deviation: "
-						+ collectorName + " Available Keys: " + keys);
+				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
 				for (String key : tr.getKeys()) {
-					System.out.println(key + " - " + collectorName + ": "
-							+ key.equals(collectorName));
+					System.out.println(key + " - " + collectorName + ": " + key.equals(collectorName));
 				}
 			}
 		}
@@ -55,28 +50,22 @@ public class PerformanceTestUtils {
 		return valid;
 	}
 
-	public static void saveData(String testcasename, TestResult tr,
-			int executions, boolean failure, boolean error, String filename,
-			boolean saveValues) {
+	public static void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error, String filename, boolean saveValues) {
 		try {
 			XMLDataStorer xds = new XMLDataStorer(filename);
 			for (String s : tr.getKeys()) {
-				double relativeStandardDeviation = tr
-						.getRelativeStandardDeviation(s);
+				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
 				long value = tr.getValue(s);
 				log.info("Ermittle Minimum");
 				long min = tr.getMinumumCurrentValue(s);
 				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
-				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(
-						testcasename, s, value, relativeStandardDeviation,
-						executions, min, max,
-						TemperatureCollector.getTemperature());
+				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min,
+						max, TemperatureCollector.getTemperature());
 				List<Long> values = saveValues ? tr.getValues(s) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
-				log.info("{}: {}, (rel. Standardabweichung: {})", s, value,
-						relativeStandardDeviation);
+				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
 			}
 			xds.storeData();
 		} catch (JAXBException e) {
