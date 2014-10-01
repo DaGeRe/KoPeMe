@@ -34,13 +34,11 @@ import de.dagere.kopeme.datacollection.TestResult;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
-	private final static Logger log = LogManager
-			.getLogger(PerformanceTestRunnerJUnit.class);
+	private final static Logger log = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private Class klasse;
 
-	public PerformanceTestRunnerJUnit(Class<?> klasse)
-			throws InitializationError {
+	public PerformanceTestRunnerJUnit(Class<?> klasse) throws InitializationError {
 		super(klasse);
 		this.klasse = klasse;
 	}
@@ -48,8 +46,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	@Override
 	public void run(final RunNotifier notifier) {
 		long start = System.nanoTime();
-		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse
-				.getAnnotation(PerformanceTestingClass.class);
+		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null) {
 			Thread mainThread = new Thread(new Runnable() {
 
@@ -66,8 +63,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				mainThread.join(ptc.overallTimeout());
 				mainThread.interrupt();
 			} catch (InterruptedException e) {
-				System.out.println("Zeit: " + (System.nanoTime() - start)
-						/ 10E5);
+				System.out.println("Zeit: " + (System.nanoTime() - start) / 10E5);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -83,8 +79,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		if (a != null)
 			super.runChild(method, notifier);
 		else {
-			Description testBeschreibung = Description.createTestDescription(
-					this.getTestClass().getJavaClass(), method.getName());
+			Description testBeschreibung = Description.createTestDescription(this.getTestClass().getJavaClass(), method.getName());
 			notifier.fireTestIgnored(testBeschreibung);
 		}
 	}
@@ -93,16 +88,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected void validateTestMethods(List<Throwable> errors) {
 		for (FrameworkMethod each : computeTestMethods()) {
 			if (each.getMethod().getParameterTypes().length > 1) {
-				errors.add(new Exception(
-						"Method "
-								+ each.getName()
-								+ " is supposed to have one or zero parameters, who's type is TestResult"));
+				errors.add(new Exception("Method " + each.getName() + " is supposed to have one or zero parameters, who's type is TestResult"));
 			} else {
-				if (each.getMethod().getParameterTypes().length == 1
-						&& each.getMethod().getParameterTypes()[0] != TestResult.class) {
-					errors.add(new Exception("Method " + each.getName()
-							+ " has wrong parameter Type: "
-							+ each.getMethod().getParameterTypes()[0]));
+				if (each.getMethod().getParameterTypes().length == 1 && each.getMethod().getParameterTypes()[0] != TestResult.class) {
+					errors.add(new Exception("Method " + each.getName() + " has wrong parameter Type: " + each.getMethod().getParameterTypes()[0]));
 				}
 			}
 		}
@@ -121,8 +110,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			@Override
 			public void evaluate() throws Throwable {
 				log.debug("Evaluiere..");
-				Statement oldStatement = PerformanceTestRunnerJUnit.super
-						.methodBlock(method);
+				Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
 				oldStatement.evaluate();
 
 			}
@@ -148,8 +136,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 						}
 					}
 				});
-				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread,
-						timeout);
+				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
 				tbe.execute();
 
 			}
@@ -160,16 +147,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	protected boolean saveFullData;
 	protected Method method;
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions,
-			timeout;
+	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
 	private void initValues(Method method) {
 		this.method = method;
-		PerformanceTest annotation = method
-				.getAnnotation(PerformanceTest.class);
+		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
@@ -177,10 +162,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
 
-			for (MaximalRelativeStandardDeviation maxDev : annotation
-					.deviations()) {
-				maximalRelativeStandardDeviation.put(maxDev.collectorname(),
-						maxDev.maxvalue());
+			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
 			assertationvalues = new HashMap<>();
@@ -195,44 +178,36 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		int executions = 0;
 		TestResult tr = new TestResult(method.getName(), executionTimes);
 
-		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues,
-				maximalRelativeStandardDeviation)) {
+		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
 			executions = runMainExecution(tr, callee, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions,
-					false, true, filename, saveFullData);
+			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, saveFullData);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false,
-				false, filename, saveFullData);
+		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, saveFullData);
 
 		tr.checkValues();
 		return tr;
 	}
 
-	private int runMainExecution(TestResult tr, Statement callee, boolean simple)
-			throws Throwable {
-		String methodString = method.getClass().getName() + "."
-				+ method.getName();
+	private int runMainExecution(TestResult tr, Statement callee, boolean simple) throws Throwable {
+		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
-			log.debug("--- Starting execution " + methodString + " "
-					+ executions + "/" + executionTimes + " ---");
+			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
 			if (simple)
 				tr.startCollection();
 			callee.evaluate();
 			if (simple)
 				tr.stopCollection();
-
-			log.debug("--- Stopping execution " + executions + "/"
-					+ executionTimes + " ---");
+			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			// for (Map.Entry<String, Double> entry :
 			// maximalRelativeStandardDeviation
 			// .entrySet()) {
@@ -240,8 +215,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			// entry.getValue(),
 			// tr.getRelativeStandardDeviation(entry.getKey()));
 			// }
-			if (executions >= minEarlyStopExecutions
-					&& !maximalRelativeStandardDeviation.isEmpty()
+			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
@@ -251,14 +225,11 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	}
 
 	private void runWarmup(Statement callee) throws Throwable {
-		String methodString = method.getClass().getName() + "."
-				+ method.getName();
+		String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + " - "
-					+ i + "/" + warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			callee.evaluate();
-			log.info("--- Stopping warmup execution " + i + "/"
-					+ warmupExecutions + " ---");
+			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 	}
 }

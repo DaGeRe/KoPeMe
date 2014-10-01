@@ -18,4 +18,20 @@ public class JUnitAdditionTest extends KoPeMeTestcase {
 		Assert.assertEquals(10000 * 9999 / 2, a);
 		log.debug("Addition beendet");
 	}
+
+	@Override
+	protected int getWarmupExecutions() {
+		return 2;
+	}
+
+	@Override
+	protected int getExecutionTimes() {
+		return 50;
+	}
+
+	@Override
+	protected boolean logFullData() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.example.tests;
+package de.dagere.kopeme.junit3.example.tests;
 
 import java.io.File;
 
@@ -19,6 +19,7 @@ public class TestFileWriting extends TestCase {
 	}
 
 	public void testDoubleWriting() {
+		TestRunner.run(JUnitAdditionTest.class);
 		TestRunner.run(JUnitAdditionTest.class);
 
 		String name = JUnitAdditionTest.class.getName() + ".yaml";

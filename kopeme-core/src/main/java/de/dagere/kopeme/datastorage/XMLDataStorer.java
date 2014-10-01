@@ -39,7 +39,6 @@ public class XMLDataStorer implements DataStorer {
 		}
 		XMLDataLoader loader = new XMLDataLoader(filename);
 		data = loader.getFullData();
-
 	}
 
 	public void createXMLData(String classname) {

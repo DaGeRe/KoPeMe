@@ -13,8 +13,14 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 
-public class KoPeMeTestcase extends TestCase {
+public abstract class KoPeMeTestcase extends TestCase {
 	private static final Logger log = LogManager.getLogger(KoPeMeTestcase.class);
+
+	protected abstract int getWarmupExecutions();
+
+	protected abstract int getExecutionTimes();
+
+	protected abstract boolean logFullData();
 
 	protected void runTest() throws Throwable {
 		Runnable testCase = new Runnable() {
@@ -30,7 +36,8 @@ public class KoPeMeTestcase extends TestCase {
 			}
 		};
 
-		final int warmupExecutions = 2, executionTimes = 50;
+		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
+		final boolean fullData = logFullData();
 
 		int executions = 0;
 
@@ -44,20 +51,19 @@ public class KoPeMeTestcase extends TestCase {
 		TestResult tr = new TestResult(this.getClass().getName(), executionTimes);
 		tr.setCollectors(DataCollectorList.STANDARD);
 		try {
-
 			executions = runMainExecution(testCase, this.getClass().getName(), tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, true, false, getName(), true);
+			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, true, false, getName(), fullData);
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, false, true, getName(), true);
+			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, false, true, getName(), fullData);
 			throw t;
 		}
 		tr.finalizeCollection();
 		System.out.println("Speichere nach: " + this.getClass().getName());
-		PerformanceTestUtils.saveData(getName(), tr, executions, false, false, this.getClass().getName(), true);
+		PerformanceTestUtils.saveData(getName(), tr, executions, false, false, this.getClass().getName(), fullData);
 	}
 
 	private int runMainExecution(Runnable run, String name, TestResult tr, int executionTimes) throws IllegalAccessException, InvocationTargetException {
@@ -66,7 +72,9 @@ public class KoPeMeTestcase extends TestCase {
 
 		for (executions = 1; executions <= executionTimes; executions++) {
 			log.debug("--- Starting execution " + name + " " + executions + "/" + executionTimes + " ---");
+			tr.startCollection();
 			run.run();
+			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 		}

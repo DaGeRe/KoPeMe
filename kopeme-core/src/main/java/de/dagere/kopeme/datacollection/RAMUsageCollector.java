@@ -32,8 +32,7 @@ public class RAMUsageCollector extends DataCollector {
 		// long used = mxb.getHeapMemoryUsage().getUsed();
 		// long used2 = mxb.getNonHeapMemoryUsage().getUsed();
 
-		usedStart = Runtime.getRuntime().totalMemory()
-				- Runtime.getRuntime().freeMemory();
+		usedStart = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 	}
 
@@ -42,8 +41,7 @@ public class RAMUsageCollector extends DataCollector {
 		// long used = mxb.getHeapMemoryUsage().getUsed();
 		// long used2 = mxb.getNonHeapMemoryUsage().getUsed();
 
-		long nowVal = Runtime.getRuntime().totalMemory()
-				- Runtime.getRuntime().freeMemory();
+		long nowVal = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 		value = nowVal - usedStart;
 	}
