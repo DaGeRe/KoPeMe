@@ -336,7 +336,8 @@ public class TestResult {
 	public double getRelativeStandardDeviation(String datacollector) {
 		long[] values = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
-			values[i] = realValues.get(i).get(datacollector);
+			Map<String, Long> map = realValues.get(i);
+			values[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
 			log.trace(Arrays.toString(values));

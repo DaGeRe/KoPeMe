@@ -26,7 +26,7 @@ public class JUnitAdditionTest extends KoPeMeTestcase {
 
 	@Override
 	protected int getExecutionTimes() {
-		return 50;
+		return 10;
 	}
 
 	@Override

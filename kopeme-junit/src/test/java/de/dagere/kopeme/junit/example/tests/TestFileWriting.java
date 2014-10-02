@@ -30,7 +30,7 @@ public class TestFileWriting {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".yaml";
+		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		f.delete();
@@ -43,7 +43,7 @@ public class TestFileWriting {
 
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".yaml";
+		String name = JUnitAdditionTest.class.getName() + "." + "testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		f.delete();
@@ -54,16 +54,14 @@ public class TestFileWriting {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitMultiplicationTest.class);
 
-		String name = JUnitMultiplicationTest.class.getName() + ".yaml";
+		String name = JUnitMultiplicationTest.class.getName() + ".testMultiplication" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 
 		try {
 			Kopemedata kd = new XMLDataLoader(f).getFullData();
 			Testcases tc = kd.getTestcases();
-			Assert.assertEquals(
-					JUnitMultiplicationTest.class.getCanonicalName(),
-					tc.getClazz());
+			Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
 
 			TestcaseType tct = null;
 			for (TestcaseType t : tc.getTestcase()) {
@@ -76,8 +74,7 @@ public class TestFileWriting {
 
 			Datacollector timeCollector = null;
 			for (Datacollector dc : tct.getDatacollector()) {
-				if (dc.getName().equals(
-						"de.dagere.kopeme.datacollection.TimeDataCollector")) {
+				if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
 					timeCollector = dc;
 					break;
 				}

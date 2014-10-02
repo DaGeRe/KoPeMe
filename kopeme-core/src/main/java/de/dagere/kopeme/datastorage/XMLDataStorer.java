@@ -31,8 +31,8 @@ public class XMLDataStorer implements DataStorer {
 	private File f;
 	private Kopemedata data;
 
-	public XMLDataStorer(String classname) throws JAXBException {
-		String filename = classname + ".yaml";
+	public XMLDataStorer(String classname, String methodname) throws JAXBException {
+		String filename = classname + "." + methodname + ".yaml";
 		f = new File(filename);
 		if (!f.exists()) {
 			createXMLData(classname);
@@ -54,8 +54,7 @@ public class XMLDataStorer implements DataStorer {
 		log.error("Speichere Wert falsch");
 	}
 
-	public void storeValue(PerformanceDataMeasure performanceDataMeasure,
-			List<Long> values) {
+	public void storeValue(PerformanceDataMeasure performanceDataMeasure, List<Long> values) {
 		TestcaseType test = null;
 		if (data.getTestcases() == null)
 			data.setTestcases(new Testcases());
@@ -79,19 +78,18 @@ public class XMLDataStorer implements DataStorer {
 		r.setExecutionTimes(performanceDataMeasure.executionTimes);
 		r.setMax(performanceDataMeasure.max);
 		r.setMin(performanceDataMeasure.min);
-		if (values != null){
-		    Fulldata f = new Fulldata();
-			for (Long l : values){
-				f.getValue().add(""+l);
+		r.setFirst10Percentile(performanceDataMeasure.first10percentile);
+		if (values != null) {
+			Fulldata fd = new Fulldata();
+			for (Long l : values) {
+				fd.getValue().add("" + l);
 			}
-			r.setFulldata(f);
+			r.setFulldata(fd);
 		}
-		
 
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()) {
-			System.out.println("Name: " + dc2.getName() + " Collectorname: "
-					+ performanceDataMeasure.collectorname);
+			System.out.println("Name: " + dc2.getName() + " Collectorname: " + performanceDataMeasure.collectorname);
 			if (dc2.getName().equals(performanceDataMeasure.collectorname)) {
 				System.out.println("Equals");
 				dc = dc2;
@@ -114,8 +112,7 @@ public class XMLDataStorer implements DataStorer {
 			log.info("Storing data to: {}", f.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 			jaxbMarshaller.marshal(data, f);
 		} catch (JAXBException e) {

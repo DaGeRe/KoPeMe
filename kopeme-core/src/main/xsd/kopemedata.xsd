@@ -44,6 +44,7 @@
 									<xs:element name="version" type="versioninfo"/>
 									<xs:element name="min" type="xs:long"/>
 									<xs:element name="max" type="xs:long"/>
+									<xs:element name="first10percentile" type="xs:double"/>
 									<xs:element name="stacktrace" type="xs:string"/>
 									<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 										<xs:complexType>

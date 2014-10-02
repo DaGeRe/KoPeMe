@@ -12,7 +12,7 @@ public class TestFileWriting extends TestCase {
 	public void testNormalWriting() {
 		TestRunner.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".yaml";
+		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		// f.delete();
@@ -22,7 +22,7 @@ public class TestFileWriting extends TestCase {
 		TestRunner.run(JUnitAdditionTest.class);
 		TestRunner.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".yaml";
+		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		// f.delete();

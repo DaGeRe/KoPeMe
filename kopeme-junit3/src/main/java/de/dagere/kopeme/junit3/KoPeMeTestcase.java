@@ -14,6 +14,14 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 
 public abstract class KoPeMeTestcase extends TestCase {
+	public KoPeMeTestcase() {
+
+	}
+
+	public KoPeMeTestcase(String name) {
+		super(name);
+	}
+
 	private static final Logger log = LogManager.getLogger(KoPeMeTestcase.class);
 
 	protected abstract int getWarmupExecutions();

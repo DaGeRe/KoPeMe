@@ -5,11 +5,13 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.TemperatureCollector;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 
@@ -52,7 +54,7 @@ public class PerformanceTestUtils {
 
 	public static void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error, String filename, boolean saveValues) {
 		try {
-			XMLDataStorer xds = new XMLDataStorer(filename);
+			DataStorer xds = new XMLDataStorer(filename, testcasename);
 			for (String s : tr.getKeys()) {
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
 				long value = tr.getValue(s);
@@ -60,8 +62,9 @@ public class PerformanceTestUtils {
 				long min = tr.getMinumumCurrentValue(s);
 				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
+				double first10percentile = getPercentile(tr.getValues(s), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min,
-						max, TemperatureCollector.getTemperature());
+						max, first10percentile, TemperatureCollector.getTemperature());
 				List<Long> values = saveValues ? tr.getValues(s) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
@@ -72,6 +75,21 @@ public class PerformanceTestUtils {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static double getPercentile(List<Long> values, int percentil) {
+		double wertArray[] = new double[values.size()];
+		int i = 0;
+		for (Long l : values) {
+			wertArray[i] = l;
+			System.out.println("Wert: " + wertArray[i] + " " + l);
+			i++;
+		}
+
+		Percentile p = new Percentile(percentil);
+		double evaluate = p.evaluate(wertArray);
+		log.debug("Perzentil: " + evaluate);
+		return evaluate;
 	}
 
 }
