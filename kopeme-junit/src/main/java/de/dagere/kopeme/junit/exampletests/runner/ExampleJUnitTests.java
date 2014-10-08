@@ -18,7 +18,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class ExampleJUnitTests {
 	@Test
 	@PerformanceTest(executionTimes = 5)
-	public void testMoebelkauf(final TestResult tr) {
+	public void testCallWithParameter(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
 		tr.startCollection();
 		int anzahl = 1000 + (int) (Math.random() * 10);

@@ -104,13 +104,20 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod method) {
+		final Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
+
+		try {
+			oldStatement.evaluate();
+		} catch (Throwable e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		final Statement callee = new Statement() {
 
 			@Override
 			public void evaluate() throws Throwable {
 				log.debug("Evaluiere..");
-				Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
 				oldStatement.evaluate();
 
 			}
@@ -120,7 +127,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		Method m = method.getMethod();
 		initValues(m);
 
-		Statement st = new Statement() {
+		final Statement st = new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
 				final Thread mainThread = new Thread(new Runnable() {
@@ -131,14 +138,18 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 							runWarmup(callee);
 							executeSimpleTest(callee);
 						} catch (Throwable e) {
+							if (e instanceof IllegalArgumentException) {
+								throw (IllegalArgumentException) e;
+							}
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 				});
 				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+				System.out.println("ads");
 				tbe.execute();
-
+				System.out.println("Ende");
 			}
 		};
 
