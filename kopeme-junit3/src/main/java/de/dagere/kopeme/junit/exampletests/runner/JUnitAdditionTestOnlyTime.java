@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
-public class JUnitAdditionTestFullData extends KoPeMeTestcase {
-	private final static Logger log = LogManager.getLogger(JUnitAdditionTestFullData.class);
+public class JUnitAdditionTestOnlyTime extends KoPeMeTestcase {
+	private final static Logger log = LogManager.getLogger(JUnitAdditionTestOnlyTime.class);
 
 	public void testAddition() {
 		int a = 0;
@@ -32,11 +32,12 @@ public class JUnitAdditionTestFullData extends KoPeMeTestcase {
 
 	@Override
 	protected boolean logFullData() {
-		return true;
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
 	protected DataCollectorList getDataCollectors() {
-		return DataCollectorList.STANDARD;
+		return DataCollectorList.ONLYTIME;
 	}
 }

@@ -30,6 +30,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	protected abstract boolean logFullData();
 
+	protected DataCollectorList getDataCollectors() {
+		return DataCollectorList.STANDARD;
+	}
+
 	protected void runTest() throws Throwable {
 		Runnable testCase = new Runnable() {
 
@@ -57,7 +61,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		}
 
 		TestResult tr = new TestResult(this.getClass().getName(), executionTimes);
-		tr.setCollectors(DataCollectorList.STANDARD);
+		tr.setCollectors(getDataCollectors());
 		try {
 			executions = runMainExecution(testCase, this.getClass().getName(), tr, executionTimes);
 		} catch (AssertionFailedError t) {
