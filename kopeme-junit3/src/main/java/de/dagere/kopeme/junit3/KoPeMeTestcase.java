@@ -30,12 +30,22 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	protected abstract boolean logFullData();
 
+	/**
+	 * Returns the time all testcase executions may take *in sum*. -1 means
+	 * unbounded
+	 * 
+	 * @return
+	 */
+	protected int getMaximalTime() {
+		return 10000;
+	}
+
 	protected DataCollectorList getDataCollectors() {
 		return DataCollectorList.STANDARD;
 	}
 
 	protected void runTest() throws Throwable {
-		Runnable testCase = new Runnable() {
+		final Runnable testCase = new Runnable() {
 
 			@Override
 			public void run() {
@@ -50,36 +60,63 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
+		final int timeoutTime = getMaximalTime();
 
-		int executions = 0;
+		final TestResult tr = new TestResult(this.getClass().getName(), executionTimes);
+		tr.setCollectors(getDataCollectors());
+		Thread thread = new Thread(new Runnable() {
 
-		Object[] params = {};
+			@Override
+			public void run() {
+				try {
+					runTestCase(tr, testCase, warmupExecutions, executionTimes, fullData);
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (AssertionFailedError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				tr.finalizeCollection();
+			}
+		});
+
+		thread.start();
+
+		thread.join(timeoutTime);
+		while (thread.isAlive()) {
+			thread.interrupt();
+		}
+
+		System.out.println("Speichere nach: " + this.getClass().getName());
+		PerformanceTestUtils.saveData(getName(), tr, false, false, this.getClass().getName(), fullData);
+	}
+
+	private void runTestCase(TestResult tr, Runnable testCase, final int warmupExecutions, final int executionTimes, final boolean fullData)
+			throws AssertionFailedError, InvocationTargetException, IllegalAccessException {
 		for (int i = 1; i <= warmupExecutions; i++) {
 			log.info("--- Starting warmup execution " + this.getClass().getName() + i + "/" + warmupExecutions + " ---");
 			testCase.run();
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 
-		TestResult tr = new TestResult(this.getClass().getName(), executionTimes);
-		tr.setCollectors(getDataCollectors());
 		try {
-			executions = runMainExecution(testCase, this.getClass().getName(), tr, executionTimes);
+			runMainExecution(testCase, this.getClass().getName(), tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, true, false, getName(), fullData);
+			PerformanceTestUtils.saveData(this.getClass().getName(), tr, true, false, getName(), fullData);
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, executions, false, true, getName(), fullData);
+			PerformanceTestUtils.saveData(this.getClass().getName(), tr, false, true, getName(), fullData);
 			throw t;
 		}
-		tr.finalizeCollection();
-		System.out.println("Speichere nach: " + this.getClass().getName());
-		PerformanceTestUtils.saveData(getName(), tr, executions, false, false, this.getClass().getName(), fullData);
 	}
 
-	private int runMainExecution(Runnable run, String name, TestResult tr, int executionTimes) throws IllegalAccessException, InvocationTargetException {
-		// if (maximalRelativeStandardDeviation == 0.0f){
+	private void runMainExecution(Runnable run, String name, TestResult tr, int executionTimes) throws IllegalAccessException, InvocationTargetException {
 		int executions;
 
 		for (executions = 1; executions <= executionTimes; executions++) {
@@ -91,6 +128,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 		}
 		log.debug("Executions: " + executions);
-		return executions;
+		tr.setRealExecutions(executions);
 	}
 }

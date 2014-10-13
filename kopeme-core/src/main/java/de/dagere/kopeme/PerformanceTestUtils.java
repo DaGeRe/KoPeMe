@@ -52,7 +52,7 @@ public class PerformanceTestUtils {
 		return valid;
 	}
 
-	public static void saveData(String testcasename, TestResult tr, int executions, boolean failure, boolean error, String filename, boolean saveValues) {
+	public static void saveData(String testcasename, TestResult tr, boolean failure, boolean error, String filename, boolean saveValues) {
 		try {
 			DataStorer xds = new XMLDataStorer(filename, testcasename);
 			for (String s : tr.getKeys()) {
@@ -63,8 +63,8 @@ public class PerformanceTestUtils {
 				log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
 				double first10percentile = getPercentile(tr.getValues(s), 10);
-				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation, executions, min,
-						max, first10percentile, TemperatureCollector.getTemperature());
+				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation,
+						tr.getRealExecutions(), min, max, first10percentile, TemperatureCollector.getTemperature());
 				List<Long> values = saveValues ? tr.getValues(s) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));

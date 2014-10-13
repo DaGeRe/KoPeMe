@@ -97,13 +97,13 @@ public class PerformanceTestRunner {
 			tr = new TestResult(method.getName(), executionTimes);
 			params[0] = tr;
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, tr);
-			executions = runMainExecution(pts, tr, params);
+			runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
 			throw t;
 		}
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
+		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 
 		tr.checkValues();
 		return tr;
@@ -120,14 +120,14 @@ public class PerformanceTestRunner {
 		}
 		try {
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
-			executions = runMainExecution(pts, tr, params);
+			runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
+		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden
 		// sollen
 
@@ -144,7 +144,7 @@ public class PerformanceTestRunner {
 		}
 	}
 
-	private int runMainExecution(PerformanceKoPeMeStatement pts, TestResult tr, Object[] params) throws IllegalAccessException, InvocationTargetException {
+	private void runMainExecution(PerformanceKoPeMeStatement pts, TestResult tr, Object[] params) throws IllegalAccessException, InvocationTargetException {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
@@ -162,6 +162,6 @@ public class PerformanceTestRunner {
 			}
 		}
 		log.debug("Executions: " + executions);
-		return executions;
+		tr.setRealExecutions(executions);
 	}
 }

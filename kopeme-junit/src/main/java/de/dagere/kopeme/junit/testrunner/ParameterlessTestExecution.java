@@ -106,24 +106,24 @@ public class ParameterlessTestExecution extends TestExecutor {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
-			executions = runMainExecution(tr, params, true);
+			runMainExecution(tr, params, true);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, true, false, filename, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, true);
+			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, true);
+		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 
 		tr.checkValues();
 		return tr;
 	}
 
-	private int runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException, InvocationTargetException {
+	private void runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException, InvocationTargetException {
 
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
@@ -146,6 +146,6 @@ public class ParameterlessTestExecution extends TestExecutor {
 			}
 		}
 		log.debug("Executions: " + executions);
-		return executions;
+		tr.setRealExecutions(executions);
 	}
 }

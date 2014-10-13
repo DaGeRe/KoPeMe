@@ -41,6 +41,7 @@ public class TestResult {
 	protected List<Map<String, Long>> realValues;
 	protected int index;
 	protected Checker checker;
+	private int realExecutions;
 
 	private String testcase;
 
@@ -396,5 +397,13 @@ public class TestResult {
 			values.add(realValues.get(i).get(key));
 		}
 		return values;
+	}
+
+	public int getRealExecutions() {
+		return realExecutions;
+	}
+
+	public void setRealExecutions(int realExecutions) {
+		this.realExecutions = realExecutions;
 	}
 }

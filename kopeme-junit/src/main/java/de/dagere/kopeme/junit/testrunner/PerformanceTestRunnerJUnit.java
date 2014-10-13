@@ -193,20 +193,20 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
-			executions = runMainExecution(tr, callee, true);
+			runMainExecution(tr, callee, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, executions, false, true, filename, saveFullData);
+			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, saveFullData);
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, executions, false, false, filename, saveFullData);
+		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, saveFullData);
 
 		tr.checkValues();
 		return tr;
 	}
 
-	private int runMainExecution(TestResult tr, Statement callee, boolean simple) throws Throwable {
+	private void runMainExecution(TestResult tr, Statement callee, boolean simple) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
@@ -219,20 +219,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			if (simple)
 				tr.stopCollection();
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
-			// for (Map.Entry<String, Double> entry :
-			// maximalRelativeStandardDeviation
-			// .entrySet()) {
-			// log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(),
-			// entry.getValue(),
-			// tr.getRelativeStandardDeviation(entry.getKey()));
-			// }
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
 		}
 		log.debug("Executions: " + executions);
-		return executions;
+		tr.setRealExecutions(executions);
 	}
 
 	private void runWarmup(Statement callee) throws Throwable {
