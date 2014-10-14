@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit3;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.AssertionFailedError;
@@ -81,6 +82,18 @@ public abstract class KoPeMeTestcase extends TestCase {
 					e.printStackTrace();
 				}
 				tr.finalizeCollection();
+			}
+		});
+
+		thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				if (e instanceof OutOfMemoryError) {
+					while (t.isAlive())
+						t.interrupt();
+				}
+				fail();
 			}
 		});
 
