@@ -26,7 +26,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
  */
 public class XMLDataStorer implements DataStorer {
 
-	Logger log = LogManager.getLogger(XMLDataStorer.class);
+	private static final Logger log = LogManager.getLogger(XMLDataStorer.class);
 
 	private File f;
 	private Kopemedata data;
@@ -115,6 +115,20 @@ public class XMLDataStorer implements DataStorer {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 			jaxbMarshaller.marshal(data, f);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void storeData(File file, Kopemedata currentdata) {
+		JAXBContext jaxbContext;
+		try {
+			log.info("Storing data to: {}", file.getAbsoluteFile());
+			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
+			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+			jaxbMarshaller.marshal(currentdata, file);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
