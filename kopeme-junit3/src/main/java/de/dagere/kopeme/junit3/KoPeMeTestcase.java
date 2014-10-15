@@ -32,13 +32,13 @@ public abstract class KoPeMeTestcase extends TestCase {
 	protected abstract boolean logFullData();
 
 	/**
-	 * Returns the time all testcase executions may take *in sum*. -1 means
-	 * unbounded
+	 * Returns the time all testcase executions may take *in sum* in ms. -1
+	 * means unbounded; Standard is set to 120 s
 	 * 
 	 * @return
 	 */
 	protected int getMaximalTime() {
-		return 10000;
+		return 120000;
 	}
 
 	protected DataCollectorList getDataCollectors() {
@@ -93,6 +93,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 					while (t.isAlive())
 						t.interrupt();
 				}
+				e.printStackTrace();
 				fail();
 			}
 		});
@@ -110,14 +111,15 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	private void runTestCase(TestResult tr, Runnable testCase, final int warmupExecutions, final int executionTimes, final boolean fullData)
 			throws AssertionFailedError, InvocationTargetException, IllegalAccessException {
+		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + this.getClass().getName() + i + "/" + warmupExecutions + " ---");
+			log.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			testCase.run();
-			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			log.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 		}
 
 		try {
-			runMainExecution(testCase, this.getClass().getName(), tr, executionTimes);
+			runMainExecution(testCase, fullName, tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(this.getClass().getName(), tr, true, false, getName(), fullData);
@@ -131,14 +133,15 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	private void runMainExecution(Runnable run, String name, TestResult tr, int executionTimes) throws IllegalAccessException, InvocationTargetException {
 		int executions;
-
+		String firstPart = "--- Starting execution " + name + " ";
+		String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
-			log.debug("--- Starting execution " + name + " " + executions + "/" + executionTimes + " ---");
+			log.debug(firstPart + executions + endPart);
 			tr.startCollection();
 			run.run();
 			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
-			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			log.debug("--- Stopping execution " + executions + endPart);
 		}
 		log.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);

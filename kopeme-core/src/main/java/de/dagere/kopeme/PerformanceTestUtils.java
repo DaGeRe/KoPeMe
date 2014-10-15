@@ -58,9 +58,9 @@ public class PerformanceTestUtils {
 			for (String s : tr.getKeys()) {
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
 				long value = tr.getValue(s);
-				log.info("Ermittle Minimum");
+				// log.info("Ermittle Minimum");
 				long min = tr.getMinumumCurrentValue(s);
-				log.info("Min: " + min);
+				// log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(s);
 				double first10percentile = getPercentile(tr.getValues(s), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation,
@@ -82,7 +82,7 @@ public class PerformanceTestUtils {
 		int i = 0;
 		for (Long l : values) {
 			wertArray[i] = l;
-			System.out.println("Wert: " + wertArray[i] + " " + l);
+			// System.out.println("Wert: " + wertArray[i] + " " + l);
 			i++;
 		}
 
