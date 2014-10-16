@@ -23,17 +23,17 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
 public class XMLDataLoader implements DataLoader {
 	private static final Logger log = LogManager.getLogger(XMLDataLoader.class);
-	
+
 	private File f;
 	private Kopemedata data;
 
-	public XMLDataLoader(String filename) throws JAXBException{
+	public XMLDataLoader(String filename) throws JAXBException {
 		f = new File(filename);
 		log.info("Laden von {}", f.getAbsoluteFile());
 		loadData();
 	}
-	
-	public XMLDataLoader(File f) throws JAXBException{
+
+	public XMLDataLoader(File f) throws JAXBException {
 		this.f = f;
 		loadData();
 	}
@@ -51,7 +51,7 @@ public class XMLDataLoader implements DataLoader {
 			jc = JAXBContext.newInstance(Kopemedata.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(f);
-			log.info("Daten geladen, Daten: " + data);
+			log.debug("Daten geladen, Daten: " + data);
 		}
 	}
 
@@ -59,32 +59,32 @@ public class XMLDataLoader implements DataLoader {
 	public Map<String, Map<Date, Long>> getData() {
 		Map<String, Map<Date, Long>> map = new HashMap<>();
 		Testcases testcases = data.getTestcases();
-		for (TestcaseType tct : testcases.getTestcase()){
+		for (TestcaseType tct : testcases.getTestcase()) {
 			Map<Date, Long> measures = new HashMap<>();
-			for (Result s : tct.getDatacollector().get(0).getResult() ){
+			for (Result s : tct.getDatacollector().get(0).getResult()) {
 				measures.put(new Date(s.getDate()), new Long(s.getValue()));
 			}
 			map.put(tct.getName(), measures);
 		}
 		return map;
 	}
-	
+
 	public Map<String, Map<Date, Long>> getData(String collectorName) {
 		Map<String, Map<Date, Long>> map = new HashMap<>();
 		Testcases testcases = data.getTestcases();
-		for (TestcaseType tct : testcases.getTestcase()){
+		for (TestcaseType tct : testcases.getTestcase()) {
 			Map<Date, Long> measures = new HashMap<>();
 			List<Datacollector> collectorMap = tct.getDatacollector();
 			Datacollector collector = null;
-			for (Datacollector dc : collectorMap){
-				if (dc.getName().equals(collectorName)){
+			for (Datacollector dc : collectorMap) {
+				if (dc.getName().equals(collectorName)) {
 					collector = dc;
 				}
 			}
-			if (collector == null){
+			if (collector == null) {
 				log.error("Achtung: Datenkollektor " + collectorName + " nicht vorhanden");
-			}else{
-				for (Result s : collector.getResult() ){
+			} else {
+				for (Result s : collector.getResult()) {
 					measures.put(new Date(s.getDate()), new Long(s.getValue()));
 				}
 				map.put(tct.getName(), measures);
@@ -92,12 +92,12 @@ public class XMLDataLoader implements DataLoader {
 		}
 		return map;
 	}
-	
-	public Set<String> getCollectors(){
+
+	public Set<String> getCollectors() {
 		Set<String> collectors = new HashSet<String>();
 		Testcases testcases = data.getTestcases();
-		for (TestcaseType tct : testcases.getTestcase()){
-			for (Datacollector collector : tct.getDatacollector()){
+		for (TestcaseType tct : testcases.getTestcase()) {
+			for (Datacollector collector : tct.getDatacollector()) {
 				collectors.add(collector.getName());
 			}
 		}

@@ -25,7 +25,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	private static final Logger log = LogManager.getLogger(KoPeMeTestcase.class);
 
-	protected abstract int getWarmupExecutions();
+	protected int getWarmupExecutions() {
+		return 5;
+	}
 
 	protected abstract int getExecutionTimes();
 

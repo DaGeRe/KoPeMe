@@ -123,7 +123,7 @@ public class XMLDataStorer implements DataStorer {
 	public static void storeData(File file, Kopemedata currentdata) {
 		JAXBContext jaxbContext;
 		try {
-			log.info("Storing data to: {}", file.getAbsoluteFile());
+			// log.debug("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

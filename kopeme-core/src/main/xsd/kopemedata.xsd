@@ -70,9 +70,9 @@
 	</xs:complexType>
 	<xs:complexType name="versioninfo">
 		<xs:choice>
-			<xs:element name="gitversion"/>
-			<xs:element name="committer"/>
-			<xs:element name="time"/>
+			<xs:element name="gitversion" type="xs:string"/>
+			<xs:element name="committer" type="xs:string"/>
+			<xs:element name="time" type="xs:long"/>
 		</xs:choice>
 	</xs:complexType>
 </xs:schema>
