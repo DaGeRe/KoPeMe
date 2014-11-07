@@ -14,6 +14,12 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 
+/**
+ * Base class for KoPeMe-JUnit3-Testcases
+ * 
+ * @author reichelt
+ *
+ */
 public abstract class KoPeMeTestcase extends TestCase {
 	public KoPeMeTestcase() {
 
@@ -40,7 +46,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * @return
 	 */
 	protected int getMaximalTime() {
-		return 120000;
+		System.out.println("test2");
+		return 2000;
 	}
 
 	protected DataCollectorList getDataCollectors() {
@@ -101,10 +108,13 @@ public abstract class KoPeMeTestcase extends TestCase {
 		});
 
 		thread.start();
-
+		log.debug("Waiting for test-completion for {}", timeoutTime);
 		thread.join(timeoutTime);
+		log.debug("Test should be finished, is killed now...");
 		while (thread.isAlive()) {
+			log.debug("Kill Thread..");
 			thread.interrupt();
+			thread.stop();
 		}
 
 		System.out.println("Speichere nach: " + this.getClass().getName());
