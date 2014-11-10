@@ -137,7 +137,7 @@ public class TestResult {
 		for (DataCollector dc : dataCollectors.values()) {
 			runData.put(dc.getName(), dc.getValue());
 		}
-		log.debug("Index: " + index);
+		// log.debug("Index: " + index);
 		realValues.add(runData);
 		index++;
 	}
