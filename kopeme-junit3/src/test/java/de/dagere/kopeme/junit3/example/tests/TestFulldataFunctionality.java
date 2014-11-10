@@ -19,7 +19,7 @@ public class TestFulldataFunctionality extends TestCase {
 	public void testFullWriting() {
 		TestRunner.run(JUnitAdditionTestFullData.class);
 
-		String name = JUnitAdditionTestFullData.class.getName() + ".yaml";
+		String name = JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 

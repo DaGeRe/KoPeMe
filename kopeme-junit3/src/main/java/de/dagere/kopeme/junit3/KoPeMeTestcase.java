@@ -47,7 +47,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 */
 	protected int getMaximalTime() {
 		System.out.println("test2");
-		return 2000;
+		return 120000;
 	}
 
 	protected DataCollectorList getDataCollectors() {
