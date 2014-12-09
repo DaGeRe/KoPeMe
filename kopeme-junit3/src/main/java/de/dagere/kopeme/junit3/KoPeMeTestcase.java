@@ -46,7 +46,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * @return
 	 */
 	protected int getMaximalTime() {
-		System.out.println("test2");
 		return 120000;
 	}
 
@@ -110,9 +109,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 		thread.start();
 		log.debug("Waiting for test-completion for {}", timeoutTime);
 		thread.join(timeoutTime);
-		log.debug("Test should be finished, is killed now...");
+		log.debug("Test should be finished...");
 		while (thread.isAlive()) {
-			log.debug("Kill Thread..");
+			log.debug("Thread not finished, is kill now..");
 			thread.interrupt();
 			thread.stop();
 		}

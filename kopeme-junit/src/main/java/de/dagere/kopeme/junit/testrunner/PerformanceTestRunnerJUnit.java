@@ -97,27 +97,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 	}
 
-	// @Override
-	// protected Statement methodInvoker(FrameworkMethod method, Object test) {
-	// return new PerformanceJUnitStatement(method, test);
-	// }
-
 	@Override
 	protected Statement methodBlock(final FrameworkMethod method) {
 		final Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
-
-		try {
-			oldStatement.evaluate();
-		} catch (Throwable e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
 		final Statement callee = new Statement() {
 
 			@Override
 			public void evaluate() throws Throwable {
-				log.debug("Evaluiere..");
 				oldStatement.evaluate();
 
 			}
@@ -133,13 +120,19 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				final Thread mainThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
-
 						try {
 							runWarmup(callee);
-							executeSimpleTest(callee);
+							TestResult tr = executeSimpleTest(callee);
+							tr.checkValues();
+							if (!assertationvalues.isEmpty()) {
+								tr.checkValues(assertationvalues);
+							}
 						} catch (Throwable e) {
 							if (e instanceof IllegalArgumentException) {
 								throw (IllegalArgumentException) e;
+							}
+							if (e instanceof AssertionError) {
+								throw (AssertionError) e;
 							}
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -147,7 +140,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					}
 				});
 				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
-				System.out.println("ads");
+				System.out.println("Start");
 				tbe.execute();
 				System.out.println("Ende");
 			}
@@ -201,8 +194,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 		tr.finalizeCollection();
 		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, saveFullData);
-
-		tr.checkValues();
 		return tr;
 	}
 

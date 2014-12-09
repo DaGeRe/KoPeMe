@@ -1,0 +1,24 @@
+package de.dagere.kopeme.junit.exampletests.runner;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import de.dagere.kopeme.annotations.Assertion;
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
+
+@RunWith(PerformanceTestRunnerJUnit.class)
+public class ExampleAssertionTest {
+
+	@Test
+	@PerformanceTest(executionTimes = 10, assertions =
+	{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 30) })
+	public void testAddition() {
+		int a = 0;
+		for (int i = 0; i < 100000; i++) {
+			a += i;
+		}
+		Assert.assertEquals(100000 * 99999 / 2, a);
+	}
+}

@@ -20,30 +20,30 @@ import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
 
 public class TestFulldataFunctionality {
-	
+
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
-	
+
 	@Test
-	public void testNoFullWriting(){
+	public void testNoFullWriting() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
-		
+
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".yaml";
+		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
 		try {
 			xdl = new XMLDataLoader(f);
 			TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-			for (Datacollector dc : testcase.getDatacollector()){
-				for (Result r : dc.getResult()){
+			for (Datacollector dc : testcase.getDatacollector()) {
+				for (Result r : dc.getResult()) {
 					Fulldata fd = r.getFulldata();
-					if (fd == null){
+					if (fd == null) {
 						Assert.assertTrue(true);
-					}else{
+					} else {
 						Assert.assertEquals(0, fd.getValue().size());
 					}
 				}
@@ -52,26 +52,26 @@ public class TestFulldataFunctionality {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		f.delete();
 	}
-	
+
 	@Test
-	public void testFullWriting(){
+	public void testFullWriting() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTestFullData.class);
-		
+
 		jc.run(JUnitAdditionTestFullData.class);
 
-		String name = JUnitAdditionTestFullData.class.getName() + ".yaml";
+		String name = JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
 		try {
 			xdl = new XMLDataLoader(f);
 			TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-			for (Datacollector dc : testcase.getDatacollector()){
-				for (Result r : dc.getResult()){
+			for (Datacollector dc : testcase.getDatacollector()) {
+				for (Result r : dc.getResult()) {
 					Fulldata fd = r.getFulldata();
 					Assert.assertNotNull(fd);
 					Assert.assertThat(fd.getValue().size(), Matchers.greaterThan(0));
@@ -81,8 +81,8 @@ public class TestFulldataFunctionality {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		f.delete();
 	}
-	
+
 }
