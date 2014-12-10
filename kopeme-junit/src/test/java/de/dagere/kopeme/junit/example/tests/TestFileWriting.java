@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
@@ -30,7 +31,7 @@ public class TestFileWriting {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		f.delete();
@@ -43,7 +44,7 @@ public class TestFileWriting {
 
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + "." + "testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTest.class.getName() + "." + "testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		f.delete();
@@ -54,7 +55,7 @@ public class TestFileWriting {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitMultiplicationTest.class);
 
-		String name = JUnitMultiplicationTest.class.getName() + ".testMultiplication" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitMultiplicationTest.class.getName() + ".testMultiplication" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 

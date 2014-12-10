@@ -15,6 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -23,7 +24,6 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
 public class XMLDataLoader implements DataLoader {
 	private static final Logger log = LogManager.getLogger(XMLDataLoader.class);
-
 	private File f;
 	private Kopemedata data;
 
@@ -39,6 +39,11 @@ public class XMLDataLoader implements DataLoader {
 	}
 
 	private void loadData() throws JAXBException {
+
+		if (!f.getAbsolutePath().contains(PerformanceTestUtils.PERFORMANCEFOLDER)) {
+			f = new File(f.getParentFile(), PerformanceTestUtils.PERFORMANCEFOLDER + "/" + f.getName());
+		}
+
 		if (!f.exists()) {
 			log.info("Datei existiert nicht");
 			data = new Kopemedata();

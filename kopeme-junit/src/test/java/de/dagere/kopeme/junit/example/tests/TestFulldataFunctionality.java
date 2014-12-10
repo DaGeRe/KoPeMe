@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
@@ -31,7 +32,7 @@ public class TestFulldataFunctionality {
 
 		jc.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + File.separator + JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
@@ -63,7 +64,7 @@ public class TestFulldataFunctionality {
 
 		jc.run(JUnitAdditionTestFullData.class);
 
-		String name = JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
@@ -84,5 +85,4 @@ public class TestFulldataFunctionality {
 
 		f.delete();
 	}
-
 }

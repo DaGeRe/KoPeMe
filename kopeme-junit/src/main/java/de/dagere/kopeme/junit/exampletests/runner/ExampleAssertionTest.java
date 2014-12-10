@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.dagere.kopeme.MaximalRelativeStandardDeviation;
+import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
@@ -12,9 +12,9 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class ExampleAssertionTest {
 
 	@Test
-	@PerformanceTest(executionTimes = 10, warmupExecutions = 10, timeout = 1000, deviations =
-	{ @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.1),
-			@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.CPUUsageCollector", maxvalue = 0.4) })
+	@PerformanceTest(executionTimes = 10, warmupExecutions = 10,
+			assertions =
+			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) })
 	public void testAssertionAddition() {
 		int a = 0;
 		for (int i = 0; i < 100000; i++) {

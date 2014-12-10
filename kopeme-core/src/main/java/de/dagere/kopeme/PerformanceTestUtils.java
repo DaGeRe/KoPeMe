@@ -1,5 +1,6 @@
 package de.dagere.kopeme;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,12 @@ public class PerformanceTestUtils {
 
 	public static void saveData(String testcasename, TestResult tr, boolean failure, boolean error, String filename, boolean saveValues) {
 		try {
-			DataStorer xds = new XMLDataStorer(filename, testcasename);
+			File f = new File(PERFORMANCEFOLDER);
+			if (!f.exists())
+			{
+				f.mkdir();
+			}
+			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
 			for (String s : tr.getKeys()) {
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
 				long value = tr.getValue(s);
@@ -91,5 +97,7 @@ public class PerformanceTestUtils {
 		log.debug("Perzentil: " + evaluate);
 		return evaluate;
 	}
+
+	public final static String PERFORMANCEFOLDER = "performanceresults";
 
 }
