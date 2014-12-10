@@ -152,4 +152,7 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+  <properties>
+    <additionalparam>-Xdoclint:none</additionalparam>
+  </properties>
 </project>

@@ -99,12 +99,11 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod method) {
-		final Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
-
 		final Statement callee = new Statement() {
 
 			@Override
 			public void evaluate() throws Throwable {
+				Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
 				oldStatement.evaluate();
 
 			}
@@ -125,6 +124,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 							TestResult tr = executeSimpleTest(callee);
 							tr.checkValues();
 							if (!assertationvalues.isEmpty()) {
+								log.info("Checking: " + assertationvalues.size());
 								tr.checkValues(assertationvalues);
 							}
 						} catch (Throwable e) {
@@ -140,9 +140,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					}
 				});
 				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
-				System.out.println("Start");
+				log.debug("Start");
 				tbe.execute();
-				System.out.println("Ende");
+				log.debug("Ende");
 			}
 		};
 

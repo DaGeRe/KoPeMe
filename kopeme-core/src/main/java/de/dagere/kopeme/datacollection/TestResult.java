@@ -97,7 +97,9 @@ public class TestResult {
 	public void checkValues(Map<String, Long> assertationvalues) {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
+				log.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
+					log.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}

@@ -27,8 +27,6 @@ public class PerformanceJUnitStatement extends Statement {
 		if (fTestMethod.getAnnotation(ParallelPerformanceTest.class) != null) {
 			te = new ParallelTestExecution(clazz, fTarget, method);
 		} else {
-			System.out.println("PerformanceExecutionStatement.evaluate(1.2): "
-					+ System.currentTimeMillis());
 			te = new PerformanceTestRunner(clazz, fTarget, method);
 		}
 		te.evaluate();

@@ -46,7 +46,6 @@ public class KoPeMeRule implements TestRule {
 					try {
 						stmt.evaluate();
 					} catch (Throwable e) {
-						// TODO Automatisch generierter Erfassungsblock
 						e.printStackTrace();
 					}
 				}

@@ -41,12 +41,17 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.6-SNAPSHOT</version>
+			<version>0.7-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>3.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
 		</dependency>
 	</dependencies>
 
@@ -61,72 +66,22 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			<!--<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1.1</version>
-				  <executions>
-					<execution>
-						<id>my-exec-stop</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<executable>/etc/init.d/tomcat7</executable>
-							<arguments>
-								<argument>stop</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>removeoldplugin</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<executable>rm</executable>
-							<arguments>
-								<argument>${pluginsHome}${projectName}/</argument>
-								<argument>-R</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copyplugin</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<executable>cp</executable>
-							<arguments>
-								<argument>${projectHome}target/${projectName}.hpi</argument>
-								<argument>${pluginsHome}</argument>
-								<argument>-R</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>my-exec-start</id>
-						<phase>install</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<executable>/etc/init.d/tomcat7</executable>
-							<arguments>
-								<argument>start</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>-->
+			<!--<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId> 
+				<version>1.1.1</version> <executions> <execution> <id>my-exec-stop</id> <phase>verify</phase> 
+				<goals> <goal>exec</goal> </goals> <inherited>false</inherited> <configuration> 
+				<executable>/etc/init.d/tomcat7</executable> <arguments> <argument>stop</argument> 
+				</arguments> </configuration> </execution> <execution> <id>removeoldplugin</id> 
+				<phase>install</phase> <goals> <goal>exec</goal> </goals> <inherited>false</inherited> 
+				<configuration> <executable>rm</executable> <arguments> <argument>${pluginsHome}${projectName}/</argument> 
+				<argument>-R</argument> </arguments> </configuration> </execution> <execution> 
+				<id>copyplugin</id> <phase>install</phase> <goals> <goal>exec</goal> </goals> 
+				<inherited>false</inherited> <configuration> <executable>cp</executable> 
+				<arguments> <argument>${projectHome}target/${projectName}.hpi</argument> 
+				<argument>${pluginsHome}</argument> <argument>-R</argument> </arguments> 
+				</configuration> </execution> <execution> <id>my-exec-start</id> <phase>install</phase> 
+				<goals> <goal>exec</goal> </goals> <inherited>false</inherited> <configuration> 
+				<executable>/etc/init.d/tomcat7</executable> <arguments> <argument>start</argument> 
+				</arguments> </configuration> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 
