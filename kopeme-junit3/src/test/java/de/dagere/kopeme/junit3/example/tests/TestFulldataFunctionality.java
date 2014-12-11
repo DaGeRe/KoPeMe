@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
@@ -19,7 +20,7 @@ public class TestFulldataFunctionality extends TestCase {
 	public void testFullWriting() {
 		TestRunner.run(JUnitAdditionTestFullData.class);
 
-		String name = JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + File.separator + JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 

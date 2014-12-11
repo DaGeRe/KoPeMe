@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
@@ -19,7 +20,7 @@ public class TestFileWriting extends TestCase {
 	public void testOnlyTimeWriting() {
 		TestRunner.run(JUnitAdditionTestOnlyTime.class);
 
-		String name = JUnitAdditionTestOnlyTime.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + File.separator + JUnitAdditionTestOnlyTime.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 
@@ -40,7 +41,7 @@ public class TestFileWriting extends TestCase {
 	public void testNormalWriting() {
 		TestRunner.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + File.separator + JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 
@@ -63,7 +64,7 @@ public class TestFileWriting extends TestCase {
 		TestRunner.run(JUnitAdditionTest.class);
 		TestRunner.run(JUnitAdditionTest.class);
 
-		String name = JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
+		String name = PerformanceTestUtils.PERFORMANCEFOLDER + File.separator + JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);
 		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
 		// f.delete();
