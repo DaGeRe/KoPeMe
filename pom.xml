@@ -10,10 +10,10 @@
 
     <modules>
         <module>kopeme-core</module>
-		  <module>kopeme-junit</module>
+        <module>kopeme-junit</module>
 	<module>kopeme-junit3</module>
         <module>kopeme-mojo</module>
-		  <module>kopeme-visualizer</module>
+	<!--<module>kopeme-visualizer</module>-->
     </modules>
 
     <build>
