@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <version>0.2-SNAPSHOT</version>
     <name>KoPeMe - Parent</name>
-	 <description>Continous Performance Testing Framework</description>
+    <description>Continous Performance Testing Framework</description>
 
     <modules>
         <module>kopeme-core</module>
