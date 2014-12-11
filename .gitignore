@@ -1,7 +1,10 @@
-target/*
-*/target/*
+/target
+\target
+
+target/**/* 
 *~
 *.yaml
-*.project
-*.classpath
-*.prefs
+.settings/
+**/.settings/
+**/.classpath/
+**/.project/
