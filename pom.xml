@@ -4,7 +4,7 @@
     <groupId>de.dagere.kopeme</groupId>
     <artifactId>kopeme-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <name>KoPeMe - Parent</name>
     <description>Continous Performance Testing Framework</description>
 
