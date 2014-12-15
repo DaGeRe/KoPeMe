@@ -41,11 +41,14 @@ public class XMLDataLoader implements DataLoader {
 	private void loadData() throws JAXBException {
 
 		if (!f.getAbsolutePath().contains(PerformanceTestUtils.PERFORMANCEFOLDER)) {
-			f = new File(f.getParentFile(), PerformanceTestUtils.PERFORMANCEFOLDER + "/" + f.getName());
+			File temp = new File(f.getParentFile(), PerformanceTestUtils.PERFORMANCEFOLDER + "/" + f.getName());
+			if (temp.exists()) {
+				f = temp;
+			}
 		}
 
 		if (!f.exists()) {
-			log.info("Datei existiert nicht");
+			log.info("Datei {} existiert nicht", f.getAbsolutePath());
 			data = new Kopemedata();
 			data.setTestcases(new Testcases());
 			Testcases tc = data.getTestcases();
