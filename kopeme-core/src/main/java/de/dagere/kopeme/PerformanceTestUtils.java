@@ -19,6 +19,8 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 public class PerformanceTestUtils {
 	private static final Logger log = LogManager.getLogger(PerformanceTestUtils.class);
 
+	public final static String PERFORMANCEFOLDER = "performanceresults";
+
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
 	 * 
@@ -43,7 +45,7 @@ public class PerformanceTestUtils {
 				valid = false;
 				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
 				for (String key : tr.getKeys()) {
-					System.out.println(key + " - " + collectorName + ": " + key.equals(collectorName));
+					log.warn(key + " - " + collectorName + ": " + key.equals(collectorName));
 				}
 			}
 		}
@@ -72,7 +74,7 @@ public class PerformanceTestUtils {
 				List<Long> values = saveValues ? tr.getValues(s) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
-				log.info("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+				log.trace("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
 			}
 			xds.storeData();
 		} catch (JAXBException e) {
@@ -86,16 +88,12 @@ public class PerformanceTestUtils {
 		int i = 0;
 		for (Long l : values) {
 			wertArray[i] = l;
-			// System.out.println("Wert: " + wertArray[i] + " " + l);
 			i++;
 		}
 
 		Percentile p = new Percentile(percentil);
 		double evaluate = p.evaluate(wertArray);
-		log.debug("Perzentil: " + evaluate);
+		log.trace("Perzentil: " + evaluate);
 		return evaluate;
 	}
-
-	public final static String PERFORMANCEFOLDER = "performanceresults";
-
 }

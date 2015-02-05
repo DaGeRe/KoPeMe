@@ -83,7 +83,7 @@ public class PerformanceTestRunner {
 		TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
 		tbe.execute();
 
-		log.info("Test {} beendet", filename);
+		log.trace("Test {} beendet", filename);
 	}
 
 	private TestResult executeComplexTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
@@ -127,7 +127,7 @@ public class PerformanceTestRunner {
 			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
 			throw t;
 		}
-		System.out.println("Zeit: " + (System.currentTimeMillis() - start));
+		log.trace("Zeit: " + (System.currentTimeMillis() - start));
 		tr.finalizeCollection();
 		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden
@@ -149,9 +149,7 @@ public class PerformanceTestRunner {
 
 	private void runMainExecution(PerformanceKoPeMeStatement pts, TestResult tr, Object[] params) throws IllegalAccessException, InvocationTargetException {
 		String methodString = method.getClass().getName() + "." + method.getName();
-		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
-
 		for (executions = 1; executions <= executionTimes; executions++) {
 			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
 			pts.evaluate();

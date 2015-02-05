@@ -29,7 +29,7 @@ public class XMLDataLoader implements DataLoader {
 
 	public XMLDataLoader(String filename) throws JAXBException {
 		f = new File(filename);
-		log.info("Laden von {}", f.getAbsoluteFile());
+		log.trace("Laden von {}", f.getAbsoluteFile());
 		loadData();
 	}
 
@@ -52,7 +52,7 @@ public class XMLDataLoader implements DataLoader {
 			data = new Kopemedata();
 			data.setTestcases(new Testcases());
 			Testcases tc = data.getTestcases();
-			System.out.println("TC: " + tc);
+			log.trace("TC: " + tc);
 			tc.setClazz(f.getName());
 		} else {
 			JAXBContext jc;

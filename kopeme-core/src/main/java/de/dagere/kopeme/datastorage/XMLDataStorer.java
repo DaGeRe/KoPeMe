@@ -89,15 +89,15 @@ public class XMLDataStorer implements DataStorer {
 
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()) {
-			System.out.println("Name: " + dc2.getName() + " Collectorname: " + performanceDataMeasure.collectorname);
+			log.trace("Name: {} Collectorname: {}", dc2.getName(), performanceDataMeasure.collectorname);
 			if (dc2.getName().equals(performanceDataMeasure.collectorname)) {
-				System.out.println("Equals");
+				log.trace("Equals");
 				dc = dc2;
 			}
 		}
 
 		if (dc == null) {
-			System.out.println("Erstelle neu");
+			log.trace("Erstelle neu");
 			dc = new Datacollector();
 			dc.setName(performanceDataMeasure.collectorname);
 			test.getDatacollector().add(dc);

@@ -96,7 +96,6 @@ public class ExternalKoPeMeRunner {
 			
 			if ( compile )
 			{
-//				System.out.println("Compiling..");
 				compile();
 			}
 			
@@ -115,13 +114,11 @@ public class ExternalKoPeMeRunner {
 			String localClasspath = classpath;
 			if (compileFolder != null)
 				localClasspath = localClasspath + ":" + compileFolder;
-//			System.out.println("Compilefolder: " + compileFolder);
 			String command = "java -cp "+localClasspath+":Tests/ ";
 			if ( libraryPath!= "")
 				command += "-Djava.library.path="+libraryPath;
 			command = command + " de.kopeme.testrunner.PerformanceTestRunner " + s;
 			
-//			System.out.println(command);
 			Process p = Runtime.getRuntime().exec(command);
 			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;

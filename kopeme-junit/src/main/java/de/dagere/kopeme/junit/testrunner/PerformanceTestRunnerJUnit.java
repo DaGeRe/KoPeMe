@@ -23,10 +23,8 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 
 /**
- * Runs a Performance Test with JUnit. The method which should be tested has to
- * got the parameter TestResult. This does not work without another runner, e.g.
- * the TheorieRunner. An alternative implementation, e.g. via Rules, which would
- * make it possible to include Theories, is not possible, because one needs to
+ * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
+ * the TheorieRunner. An alternative implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to
  * change the signature of test methods to get KoPeMe-Tests running.
  * 
  * @author dagere
@@ -56,14 +54,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				}
 			});
 			saveFullData = ptc.logFullData();
-			System.out.println("Timeout: " + ptc.overallTimeout());
+			log.info("Class-Timeout: " + ptc.overallTimeout());
 			mainThread.start();
 
 			try {
 				mainThread.join(ptc.overallTimeout());
 				mainThread.interrupt();
 			} catch (InterruptedException e) {
-				System.out.println("Zeit: " + (System.nanoTime() - start) / 10E5);
+				log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

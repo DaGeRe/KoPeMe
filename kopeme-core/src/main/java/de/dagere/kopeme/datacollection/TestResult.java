@@ -98,7 +98,7 @@ public class TestResult {
 			for (DataCollector dc : dataCollectors.values()) {
 				log.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
-					log.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
+					log.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
@@ -155,7 +155,7 @@ public class TestResult {
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
-			log.debug("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+			log.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +

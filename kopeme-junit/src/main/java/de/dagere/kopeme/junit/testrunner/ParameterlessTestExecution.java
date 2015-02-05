@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
-import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -26,7 +25,7 @@ import de.dagere.kopeme.junit.TestExecutorJUnit;
  */
 public class ParameterlessTestExecution extends TestExecutorJUnit {
 
-	static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
+	static Logger log = LogManager.getLogger(ParameterlessTestExecution.class);
 
 	protected Method method;
 
@@ -58,7 +57,7 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 			}
 		}
 
-		log.info("Filename: " + filename);
+		log.trace("Filename: " + filename);
 	}
 
 	@Override
@@ -89,13 +88,12 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 	}
 
 	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		int executions = 0;
 		String methodString = method.getClass().getName() + "." + method.getName();
-		log.info("Methodstring: " + methodString);
+		log.trace("Methodstring: " + methodString);
 
 		Object[] params = {};
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + i + "/" + warmupExecutions + " ---");
+			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
 			performanceTestThing.run();
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
@@ -124,8 +122,6 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 	}
 
 	private void runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException, InvocationTargetException {
-
-		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
@@ -138,7 +134,7 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-				log.debug("Entry: {} {}", entry.getKey(), entry.getValue());
+				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
