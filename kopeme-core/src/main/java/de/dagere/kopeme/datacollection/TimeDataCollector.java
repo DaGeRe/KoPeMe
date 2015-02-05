@@ -16,11 +16,6 @@ public class TimeDataCollector extends DataCollector {
 		stop = 0;
 	}
 
-	// @Override
-	// public String getName() {
-	// return "TimeDataCollector";
-	// }
-
 	public int getPriority() {
 		return Integer.MAX_VALUE;
 	}

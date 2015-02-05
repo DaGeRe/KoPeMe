@@ -12,14 +12,16 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
+import de.dagere.kopeme.measuresummarizing.MaximumSummarizer;
 
-@PerformanceTestingClass
+@PerformanceTestingClass(overallTimeout = Integer.MAX_VALUE)
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleJUnitTests {
 	@Test
 	@PerformanceTest(executionTimes = 5)
 	public void testCallWithParameter(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
+		tr.setMeasureSummarizer("de.dagere.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
 		tr.startCollection();
 		int anzahl = 1000 + (int) (Math.random() * 10);
 		for (int i = 0; i < anzahl; i++) {

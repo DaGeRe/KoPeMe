@@ -20,15 +20,13 @@ public class PerformanceTestUtils {
 	private static final Logger log = LogManager.getLogger(PerformanceTestUtils.class);
 
 	/**
-	 * Tests weather the collectors given in the assertions and the maximale
-	 * relative standard deviations are correct
+	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
 	 * 
-	 * @param tr
-	 *            Testresult, that should be tested
+	 * @param tr Testresult, that should be tested
 	 * @return Weather the collector is valid or not
 	 */
 	public static boolean checkCollectorValidity(TestResult tr, Map<String, Long> assertationvalues, Map<String, Double> maximalRelativeStandardDeviation) {
-		log.info("Checking DataCollector validity...");
+		log.trace("Checking DataCollector validity...");
 		boolean valid = true;
 		for (String collectorName : assertationvalues.keySet()) {
 			if (!tr.getKeys().contains(collectorName)) {
@@ -49,7 +47,7 @@ public class PerformanceTestUtils {
 				}
 			}
 		}
-		log.info("... " + valid);
+		log.trace("... " + valid);
 		return valid;
 	}
 

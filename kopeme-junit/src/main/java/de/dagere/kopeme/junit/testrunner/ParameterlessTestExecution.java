@@ -16,7 +16,7 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.junit.TestExecutor;
+import de.dagere.kopeme.junit.TestExecutorJUnit;
 
 /**
  * Represents an execution of all runs of one test
@@ -24,7 +24,7 @@ import de.dagere.kopeme.junit.TestExecutor;
  * @author dagere
  * 
  */
-public class ParameterlessTestExecution extends TestExecutor {
+public class ParameterlessTestExecution extends TestExecutorJUnit {
 
 	static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
 

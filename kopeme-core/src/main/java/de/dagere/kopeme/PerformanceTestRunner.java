@@ -55,7 +55,7 @@ public class PerformanceTestRunner {
 		}
 
 		filename = klasse.getName();
-		log.info("Filename: " + filename);
+		log.info("Executing Performancetest: " + filename);
 	}
 
 	public void evaluate() throws Throwable {
@@ -89,7 +89,6 @@ public class PerformanceTestRunner {
 	private TestResult executeComplexTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		Object[] params = { tr };
 		runWarmup(params);
-		int executions = 0;
 		try {
 			if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 				log.warn("Not all Collectors are valid!");
@@ -110,6 +109,7 @@ public class PerformanceTestRunner {
 	}
 
 	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+
 		Object[] params = {};
 		runWarmup(params);
 		int executions = 0;
@@ -118,6 +118,7 @@ public class PerformanceTestRunner {
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			log.warn("Not all Collectors are valid!");
 		}
+		long start = System.currentTimeMillis();
 		try {
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
 			runMainExecution(pts, tr, params);
@@ -126,12 +127,14 @@ public class PerformanceTestRunner {
 			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
 			throw t;
 		}
+		System.out.println("Zeit: " + (System.currentTimeMillis() - start));
 		tr.finalizeCollection();
 		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden
 		// sollen
 
 		tr.checkValues();
+
 		return tr;
 	}
 

@@ -25,8 +25,7 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 import de.dagere.kopeme.paralleltests.MethodExecution;
 
 /**
- * Saves the Data Collectors, and therefore has access to the current results of
- * the tests. Furthermore, by invoking stopCollection, the historical values are
+ * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are
  * inserted into the DataCollectors
  * 
  * @author dagere
@@ -117,7 +116,6 @@ public class TestResult {
 			}
 		};
 		Arrays.sort(sortedCollectors, comparator);
-		// .
 		for (DataCollector dc : sortedCollectors) {
 			log.trace("Starte: {}", dc.getName());
 			dc.startCollection();
@@ -126,10 +124,8 @@ public class TestResult {
 	}
 
 	/**
-	 * Stops the collection of data, that are collected via DataCollectors. The
-	 * collection of self-defined values isn't stopped and historical data are
-	 * not loaded, so assertations over self-defined values and historical data
-	 * is not possible. For this, call finalizeCollection
+	 * Stops the collection of data, that are collected via DataCollectors. The collection of self-defined values isn't stopped and historical data are not
+	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection
 	 */
 	public void stopCollection() {
 		Map<String, Long> runData = new HashMap<String, Long>();
@@ -139,14 +135,12 @@ public class TestResult {
 		for (DataCollector dc : dataCollectors.values()) {
 			runData.put(dc.getName(), dc.getValue());
 		}
-		// log.debug("Index: " + index);
 		realValues.add(runData);
 		index++;
 	}
 
 	/**
-	 * Sets the method how the different measures of different runs should be
-	 * summarized, e.g. as average, median, maximum, ...
+	 * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ...
 	 * 
 	 * @param ms
 	 */
@@ -155,9 +149,8 @@ public class TestResult {
 	}
 
 	/**
-	 * Called when the collection of data is finally finished, i.e. also the
-	 * collection of self-defined values is finished. By this time, writing into
-	 * the file and Assertations over historical data are possible
+	 * Called when the collection of data is finally finished, i.e. also the collection of self-defined values is finished. By this time, writing into the file
+	 * and Assertations over historical data are possible
 	 */
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
@@ -284,10 +277,8 @@ public class TestResult {
 	/**
 	 * Gets the average value of the performance-measure over the last runs runs
 	 * 
-	 * @param measurement
-	 *            measurment, for which the value should be calculated
-	 * @param runs
-	 *            count of runs
+	 * @param measurement measurment, for which the value should be calculated
+	 * @param runs count of runs
 	 * @return
 	 */
 	public long getLastRunsAverage(String measurement, int runs) {
@@ -379,7 +370,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) < min)
 				min = realValues.get(i).get(key);
 		}
-		log.info("Minimum ermittelt: " + min);
+		log.trace("Minimum ermittelt: " + min);
 		return min;
 	}
 
@@ -389,7 +380,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) > max)
 				max = realValues.get(i).get(key);
 		}
-		log.debug("Maximum ermittelt: " + max);
+		log.trace("Maximum ermittelt: " + max);
 		return max;
 	}
 

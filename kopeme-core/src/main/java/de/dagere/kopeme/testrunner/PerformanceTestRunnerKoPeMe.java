@@ -14,33 +14,34 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
 
 /**
  * Runs a performance test via the pure test Runner, which does not need any additional librarys.
+ * 
  * @author dagere
  *
  */
 public class PerformanceTestRunnerKoPeMe {
-	
+
 	private static final Logger log = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
-	
-	public static void main( String args[] ) throws Throwable
+
+	public static void main(String args[]) throws Throwable
 	{
-		if ( args.length == 0 )
+		if (args.length == 0)
 		{
 			log.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
 			System.exit(1);
 		}
 		String klassenName = args[0];
-		
+
 		try {
 			Class c = Class.forName(klassenName);
 			runTestsWithClass(c);
 		} catch (ClassNotFoundException e) {
 			log.error("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");
-//			e.printStackTrace();
+			// e.printStackTrace();
 			System.exit(1);
 		}
 	}
-	
-	public static void runTestsWithClass( Class c ) throws Throwable
+
+	public static void runTestsWithClass(Class c) throws Throwable
 	{
 		Object instance = null;
 		try {
@@ -50,34 +51,33 @@ public class PerformanceTestRunnerKoPeMe {
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		if ( instance == null )
+		if (instance == null)
 		{
 			log.error("Klasseninstanziierung nicht möglich");
 			return;
 		}
 		boolean failed = false;
 		List<AssertionError> errors = new LinkedList<AssertionError>();
-		for ( Method method : c.getMethods() )
+		for (Method method : c.getMethods())
 		{
-			try{
-				if ( method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class) )
+			try {
+				if (method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
 					PerformanceTestRunner te = new PerformanceTestRunner(c, instance, method);
 					te.evaluate();
 				}
-				if ( method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
+				if (method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
 					ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
 					te.evaluate();
 				}
-			}
-			catch (AssertionError ae){
+			} catch (AssertionError ae) {
 				failed = true;
 				errors.add(ae);
 			}
 		}
-		if (failed){
-			for (AssertionError ae : errors){
+		if (failed) {
+			for (AssertionError ae : errors) {
 				log.error("Exception: " + ae.getLocalizedMessage());
 				ae.printStackTrace();
 			}
