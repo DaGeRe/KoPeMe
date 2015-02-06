@@ -46,12 +46,11 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
-
+			assertationvalues = new HashMap<>();
 			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
 				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
-			assertationvalues = new HashMap<>();
 			for (Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}

@@ -59,7 +59,7 @@ public class XMLDataLoader implements DataLoader {
 			jc = JAXBContext.newInstance(Kopemedata.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(f);
-			log.debug("Daten geladen, Daten: " + data);
+			log.trace("Daten geladen, Daten: " + data);
 		}
 	}
 
@@ -77,6 +77,12 @@ public class XMLDataLoader implements DataLoader {
 		return map;
 	}
 
+	/**
+	 * Returns a mapping from all testcases to their results for a certain collectorName
+	 * 
+	 * @param collectorName The name of the collector for loading the Results
+	 * @return Mapping from all testcases to their results
+	 */
 	public Map<String, Map<Date, Long>> getData(String collectorName) {
 		Map<String, Map<Date, Long>> map = new HashMap<>();
 		Testcases testcases = data.getTestcases();
@@ -101,6 +107,11 @@ public class XMLDataLoader implements DataLoader {
 		return map;
 	}
 
+	/**
+	 * Returns all datacollectors that are used in the resultfile
+	 * 
+	 * @return
+	 */
 	public Set<String> getCollectors() {
 		Set<String> collectors = new HashSet<String>();
 		Testcases testcases = data.getTestcases();
@@ -112,6 +123,11 @@ public class XMLDataLoader implements DataLoader {
 		return collectors;
 	}
 
+	/**
+	 * Returns all data
+	 * 
+	 * @return Object containing all data from the file
+	 */
 	public Kopemedata getFullData() {
 		return data;
 	}

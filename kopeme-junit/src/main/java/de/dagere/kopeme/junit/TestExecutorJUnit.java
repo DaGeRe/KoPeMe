@@ -32,28 +32,5 @@ public abstract class TestExecutorJUnit extends Statement {
 	 */
 	protected boolean checkCollectorValidity(TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
-		// log.trace("Checking DataCollector validity...");
-		// boolean valid = true;
-		// for (String collectorName : assertationvalues.keySet()) {
-		// if (!tr.getKeys().contains(collectorName)) {
-		// valid = false;
-		// log.warn("Invalid Collector for assertion: " + collectorName);
-		// }
-		// }
-		// String keys = "";
-		// for (String key : tr.getKeys()) {
-		// keys += key + " ";
-		// }
-		// for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
-		// if (!tr.getKeys().contains(collectorName)) {
-		// valid = false;
-		// log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
-		// for (String key : tr.getKeys()) {
-		// System.out.println(key + " - " + collectorName + ": " + key.equals(collectorName));
-		// }
-		// }
-		// }
-		// log.trace("... " + valid);
-		// return valid;
 	}
 }

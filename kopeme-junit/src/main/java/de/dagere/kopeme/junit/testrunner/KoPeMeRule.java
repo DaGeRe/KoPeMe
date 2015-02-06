@@ -7,13 +7,17 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * This Rule gives the possibility to test performance with a rule and without a
- * testrunner; this makes it possible to use a different testrunner
+ * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that
+ * a rule-execution does measure the time needed for @Before-Executions together with the main execution time, but not the @BeforeClass-Execution.
  * 
  * @author DaGeRe
  *
  */
 public class KoPeMeRule implements TestRule {
+
+	public KoPeMeRule() {
+		System.out.println("init");
+	}
 
 	class PerformanceStatement extends Statement {
 		private Statement oldStatement;
@@ -50,8 +54,7 @@ public class KoPeMeRule implements TestRule {
 					}
 				}
 			};
-			return new ParameterlessTestExecution(r, m, clazz.getName()
-					+ ".yaml");
+			return new ParameterlessTestExecution(r, m, clazz.getName() + ".yaml");
 		} else {
 			return stmt;
 		}

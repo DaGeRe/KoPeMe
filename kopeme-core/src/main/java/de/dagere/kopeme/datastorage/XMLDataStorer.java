@@ -59,13 +59,12 @@ public class XMLDataStorer implements DataStorer {
 		if (data.getTestcases() == null)
 			data.setTestcases(new Testcases());
 		for (TestcaseType tc : data.getTestcases().getTestcase()) {
-
 			if (tc.getName().equals(performanceDataMeasure.testcase)) {
 				test = tc;
 			}
 		}
 		if (test == null) {
-			log.debug("Test == null, füge hinzu");
+			log.trace("Test == null, füge hinzu");
 			test = new TestcaseType();
 			test.setName(performanceDataMeasure.testcase);
 			data.getTestcases().getTestcase().add(test);
