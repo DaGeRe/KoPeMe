@@ -48,15 +48,15 @@ public class TestBeforeExecution {
 		}
 		File f = new File("performanceresults/de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTest.yaml.spendTime.yaml");
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
-		Integer time = getTimeResult(f);
+		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(250 * 1000));
 		// TestcaseType kd.getTestcases().getTestca
 
 	}
 
-	private Integer getTimeResult(File f) throws JAXBException {
+	public static Integer getTimeResult(File f, String methodName) throws JAXBException {
 		Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
-		Map<Date, Long> data = collectorData.get("spendTime");
+		Map<Date, Long> data = collectorData.get(methodName);
 		Assert.assertNotNull(data);
 		Integer time = data.entrySet().iterator().next().getValue().intValue();
 		return time;
@@ -73,7 +73,7 @@ public class TestBeforeExecution {
 
 		File f = new File("performanceresults/de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest.yaml.spendTime.yaml");
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
-		Integer time = getTimeResult(f);
+		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
 	}
 
@@ -89,7 +89,7 @@ public class TestBeforeExecution {
 
 		File f = new File("performanceresults/de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest.yaml.spendTime.yaml");
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
-		Integer time = getTimeResult(f);
+		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
 	}
 }

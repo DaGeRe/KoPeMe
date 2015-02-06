@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit.testrunner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,9 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -27,6 +31,8 @@ import de.dagere.kopeme.datacollection.TestResult;
  * the TheorieRunner. An alternative implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to
  * change the signature of test methods to get KoPeMe-Tests running.
  * 
+ * This test runner does not measure the time before and after are taking; but time rules take to execute are added to the overall-time of the method-execution
+ * 
  * @author dagere
  * 
  */
@@ -35,6 +41,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	private final static Logger log = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private Class klasse;
+	protected boolean saveFullData;
+	protected Method method;
+	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
+	protected Map<String, Double> maximalRelativeStandardDeviation;
+	protected Map<String, Long> assertationvalues;
+	protected String filename;
 
 	public PerformanceTestRunnerJUnit(Class<?> klasse) throws InitializationError {
 		super(klasse);
@@ -47,7 +59,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null) {
 			Thread mainThread = new Thread(new Runnable() {
-
 				@Override
 				public void run() {
 					PerformanceTestRunnerJUnit.super.run(notifier);
@@ -95,64 +106,97 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 	}
 
-	@Override
-	protected Statement methodBlock(final FrameworkMethod method) {
-		final Statement callee = new Statement() {
+	private PerformanceJUnitStatement getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
+			IllegalAccessException,
+			IllegalArgumentException,
+			InvocationTargetException {
+		Object test;
+		try {
+			test = new ReflectiveCallable() {
+				@Override
+				protected Object runReflectiveCall() throws Throwable {
+					return createTest();
+				}
+			}.run();
+		} catch (Throwable e) {
+			return new PerformanceFail(e);
+		}
 
-			@Override
-			public void evaluate() throws Throwable {
-				Statement oldStatement = PerformanceTestRunnerJUnit.super.methodBlock(method);
-				oldStatement.evaluate();
+		Statement statement = methodInvoker(currentMethod, test);
 
-			}
-		};
-		log.debug("Im methodBlock für " + method.getName());
-
-		Method m = method.getMethod();
-		initValues(m);
-
-		final Statement st = new Statement() {
-			@Override
-			public void evaluate() throws Throwable {
-				final Thread mainThread = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							runWarmup(callee);
-							TestResult tr = executeSimpleTest(callee);
-							tr.checkValues();
-							if (!assertationvalues.isEmpty()) {
-								log.info("Checking: " + assertationvalues.size());
-								tr.checkValues(assertationvalues);
-							}
-						} catch (Throwable e) {
-							if (e instanceof IllegalArgumentException) {
-								throw (IllegalArgumentException) e;
-							}
-							if (e instanceof AssertionError) {
-								throw (AssertionError) e;
-							}
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				});
-				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
-				log.debug("Start");
-				tbe.execute();
-				log.debug("Ende");
-			}
-		};
-
-		return st;
+		statement = possiblyExpectingExceptions(currentMethod, test, statement);
+		statement = withPotentialTimeout(currentMethod, test, statement);
+		Method method2 = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
+		method2.setAccessible(true);
+		statement = (Statement) method2.invoke(this, new Object[] { method, test, statement });
+		PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(statement, test);
+		List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
+		List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
+		perfStatement.setBefores(befores);
+		perfStatement.setAfters(afters);
+		// statement = withBefores(currentMethod, test, statement);
+		// statement = withAfters(currentMethod, test, statement);
+		// List<TestRule> testRules = getTestRules(test);
+		// for (org.junit.rules.MethodRule each : getMethodRules(target)) {
+		// if (!testRules.contains(each)) {
+		// result = each.apply(result, method, target);
+		// }
+		// }
+		// perfStatement.setTestRules(testRules);
+		/* This is the original JUnit statement - unfortunatley it is private */
+		// statement = withRules(method, test, statement);
+		return perfStatement;
 	}
 
-	protected boolean saveFullData;
-	protected Method method;
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
-	protected Map<String, Double> maximalRelativeStandardDeviation;
-	protected Map<String, Long> assertationvalues;
-	protected String filename;
+	@Override
+	protected Statement methodBlock(final FrameworkMethod currentMethod) {
+		try {
+			final PerformanceJUnitStatement callee = getStatement(currentMethod);
+
+			log.debug("Im methodBlock für " + currentMethod.getName());
+
+			Method m = currentMethod.getMethod();
+			initValues(m);
+
+			final Statement st = new Statement() {
+				@Override
+				public void evaluate() throws Throwable {
+					final Thread mainThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								runWarmup(callee);
+								TestResult tr = executeSimpleTest(callee);
+								tr.checkValues();
+								if (!assertationvalues.isEmpty()) {
+									log.info("Checking: " + assertationvalues.size());
+									tr.checkValues(assertationvalues);
+								}
+							} catch (Throwable e) {
+								if (e instanceof IllegalArgumentException) {
+									throw (IllegalArgumentException) e;
+								}
+								if (e instanceof AssertionError) {
+									throw (AssertionError) e;
+								}
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+					TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+					log.debug("Start");
+					tbe.execute();
+					log.debug("Ende");
+				}
+			};
+			return st;
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+	}
 
 	private void initValues(Method method) {
 		this.method = method;
@@ -176,8 +220,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		filename = klasse.getName();
 	}
 
-	private TestResult executeSimpleTest(Statement callee) throws Throwable {
-		int executions = 0;
+	private TestResult executeSimpleTest(PerformanceJUnitStatement callee) throws Throwable {
 		TestResult tr = new TestResult(method.getName(), executionTimes);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
@@ -195,12 +238,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		return tr;
 	}
 
-	private void runMainExecution(TestResult tr, Statement callee, boolean simple) throws Throwable {
+	private void runMainExecution(TestResult tr, PerformanceJUnitStatement callee, boolean simple) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
+			callee.preEvaluate();
 			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
 			if (simple)
 				tr.startCollection();
@@ -208,6 +252,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			if (simple)
 				tr.stopCollection();
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			callee.postEvaluate();
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
@@ -217,12 +262,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		tr.setRealExecutions(executions);
 	}
 
-	private void runWarmup(Statement callee) throws Throwable {
+	private void runWarmup(PerformanceJUnitStatement callee) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
+			callee.preEvaluate();
 			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			callee.evaluate();
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			callee.postEvaluate();
 		}
 	}
 }

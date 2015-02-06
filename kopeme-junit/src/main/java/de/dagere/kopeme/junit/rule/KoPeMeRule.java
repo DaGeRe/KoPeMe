@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.testrunner;
+package de.dagere.kopeme.junit.rule;
 
 import java.lang.reflect.Method;
 

@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit.testrunner.KoPeMeRule;
+import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
 public class ExampleNoBeforeTest {
 	@Rule
