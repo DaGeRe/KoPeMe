@@ -9,6 +9,12 @@ import org.junit.runners.model.Statement;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
 
+/**
+ * Should once become base class of several TestExecutingStatements - isn't yet.
+ * 
+ * @author reichelt
+ *
+ */
 public abstract class TestExecutorJUnit extends Statement {
 
 	private static final Logger log = LogManager.getLogger(TestExecutorJUnit.class);

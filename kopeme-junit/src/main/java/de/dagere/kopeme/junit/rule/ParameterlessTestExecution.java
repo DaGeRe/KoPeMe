@@ -20,6 +20,8 @@ import de.dagere.kopeme.junit.TestExecutorJUnit;
 /**
  * Represents an execution of all runs of one test
  * 
+ * TODO: Overthing weather directly configure test runs in KoPeMeRule would be more nice
+ * 
  * @author dagere
  * 
  */
@@ -29,14 +31,17 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 
 	protected Method method;
 
-	protected Runnable performanceTestThing;
+	protected Runnable performanceTestThing, beforeExecutions, afterExecutions;
 
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 
-	public ParameterlessTestExecution(Runnable timeTestThing, Method method, String filename) {
+	public ParameterlessTestExecution(Runnable timeTestThing, Runnable beforeExecutions, Runnable afterExecutions, Method method, String filename) {
 		this.performanceTestThing = timeTestThing;
 		this.filename = filename;
 		this.method = method;
+
+		this.beforeExecutions = beforeExecutions;
+		this.afterExecutions = afterExecutions;
 
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
@@ -54,6 +59,8 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 			for (Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
+		} else {
+			log.error("No @PerformanceTest-Annotation present!");
 		}
 
 		log.trace("Filename: " + filename);
@@ -92,9 +99,11 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 
 		Object[] params = {};
 		for (int i = 1; i <= warmupExecutions; i++) {
+			beforeExecutions.run();
 			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
 			performanceTestThing.run();
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			afterExecutions.run();
 		}
 
 		tr = new TestResult(method.getName(), executionTimes);
@@ -103,7 +112,7 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, params, true);
+			runMainExecution(tr, params);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
@@ -120,16 +129,14 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 		return tr;
 	}
 
-	private void runMainExecution(TestResult tr, Object[] params, boolean simple) throws IllegalAccessException, InvocationTargetException {
+	private void runMainExecution(TestResult tr, Object[] params) throws IllegalAccessException, InvocationTargetException {
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
-			if (simple)
-				tr.startCollection();
+			beforeExecutions.run();
 			performanceTestThing.run();
-			if (simple)
-				tr.stopCollection();
+			afterExecutions.run();
 
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {

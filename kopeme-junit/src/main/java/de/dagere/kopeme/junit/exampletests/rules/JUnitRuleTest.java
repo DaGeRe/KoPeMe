@@ -17,7 +17,7 @@ import de.dagere.kopeme.junit.rule.KoPeMeRule;
  */
 public class JUnitRuleTest {
 	@Rule
-	public TestRule rule = new KoPeMeRule();
+	public TestRule rule = new KoPeMeRule(this);
 
 	@Before
 	public void setUp() {

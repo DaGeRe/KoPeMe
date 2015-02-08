@@ -16,6 +16,20 @@
 	<!--<module>kopeme-visualizer</module>-->
     </modules>
 
+   <profiles>
+    <profile>
+      <activation>
+         <activeByDefault>true</activeByDefault>
+      </activation>
+      <id>excludeMojoProfile</id>
+      <modules>
+        <module>kopeme-core</module>
+        <module>kopeme-junit</module>
+	<module>kopeme-junit3</module>
+      </modules>
+    </profile>
+   </profiles>
+
     <build>
         <pluginManagement>
 			<plugins>

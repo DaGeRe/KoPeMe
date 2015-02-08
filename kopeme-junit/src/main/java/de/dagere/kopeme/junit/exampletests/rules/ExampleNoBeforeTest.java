@@ -9,7 +9,7 @@ import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
 public class ExampleNoBeforeTest {
 	@Rule
-	public TestRule rule = new KoPeMeRule();
+	public TestRule rule = new KoPeMeRule(this);
 
 	@Test
 	@PerformanceTest

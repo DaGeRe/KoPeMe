@@ -11,7 +11,7 @@ import de.dagere.kopeme.junit.rule.KoPeMeRule;
 public class ExampleBeforeTest {
 
 	@Rule
-	public TestRule rule = new KoPeMeRule();
+	public TestRule rule = new KoPeMeRule(this);
 
 	@Before
 	public void init() throws InterruptedException {
