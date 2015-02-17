@@ -1,9 +1,6 @@
 package de.dagere.kopeme.junit.rule;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,75 +31,26 @@ public class KoPeMeRule implements TestRule {
 			Method testMethod = null;
 			Class<?> testClass = null;
 			try {
-				testClass = Class.forName(descr.getClassName());
+				// testClass = Class.forName(descr.getClassName());
+				testClass = testObject.getClass();
 				testMethod = testClass.getMethod(descr.getMethodName());
-			} catch (ClassNotFoundException | NoSuchMethodException
-					| SecurityException e) {
+			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
+			TestRunnables runnables = new TestRunnables(new Runnable() {
 
-			final List<Method> beforeMethods = new LinkedList<>();
-			final List<Method> afterMethods = new LinkedList<>();
-			log.debug("Klasse: {}", testClass);
-			for (Method classMethod : testClass.getMethods()) {
-				log.debug("Prüfe: {}", classMethod);
-				if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
-					if (classMethod.getParameterTypes().length > 0) {
-						throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
-					}
-					beforeMethods.add(classMethod);
-				}
-				if (classMethod.getAnnotation(AfterNoMeasurement.class) != null) {
-					if (classMethod.getParameterTypes().length > 0) {
-						throw new RuntimeException("AfterNoMeasurement-methods must not have arguments");
-					}
-					afterMethods.add(classMethod);
-				}
-			}
-
-			Runnable beforeRunnable = new Runnable() {
-
-				@Override
-				public void run() {
-					for (Method m : beforeMethods) {
-						try {
-							m.invoke(testObject);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-
-				}
-			};
-
-			Runnable afterRunnable = new Runnable() {
-
-				@Override
-				public void run() {
-					for (Method m : afterMethods) {
-						try {
-							m.invoke(testObject);
-						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-
-				}
-			};
-
-			Runnable testRunnable = new Runnable() {
 				@Override
 				public void run() {
 					try {
 						stmt.evaluate();
 					} catch (Throwable e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-			};
-			return new ParameterlessTestExecution(testRunnable, beforeRunnable, afterRunnable, testMethod, testClass.getName() + ".yaml");
+			}, testClass, testObject);
+
+			return new ParameterlessKoPeMeStatement(runnables, testMethod, testClass.getName() + ".yaml");
 		} else {
 			return stmt;
 		}

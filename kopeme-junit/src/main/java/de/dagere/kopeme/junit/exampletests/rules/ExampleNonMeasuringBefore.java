@@ -5,9 +5,9 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit.rule.AfterNoMeasurement;
-import de.dagere.kopeme.junit.rule.BeforeNoMeasurement;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
+import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
 
 public class ExampleNonMeasuringBefore {
 

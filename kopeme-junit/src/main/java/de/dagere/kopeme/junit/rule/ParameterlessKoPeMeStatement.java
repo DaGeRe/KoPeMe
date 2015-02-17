@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit.rule;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.AssertionFailedError;
@@ -10,12 +9,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.annotations.Assertion;
-import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.junit.TestExecutorJUnit;
 
 /**
  * Represents an execution of all runs of one test
@@ -25,45 +20,12 @@ import de.dagere.kopeme.junit.TestExecutorJUnit;
  * @author dagere
  * 
  */
-public class ParameterlessTestExecution extends TestExecutorJUnit {
+public class ParameterlessKoPeMeStatement extends KoPeMeBasicStatement {
 
-	static Logger log = LogManager.getLogger(ParameterlessTestExecution.class);
+	static Logger log = LogManager.getLogger(ParameterlessKoPeMeStatement.class);
 
-	protected Method method;
-
-	protected Runnable performanceTestThing, beforeExecutions, afterExecutions;
-
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
-
-	public ParameterlessTestExecution(Runnable timeTestThing, Runnable beforeExecutions, Runnable afterExecutions, Method method, String filename) {
-		this.performanceTestThing = timeTestThing;
-		this.filename = filename;
-		this.method = method;
-
-		this.beforeExecutions = beforeExecutions;
-		this.afterExecutions = afterExecutions;
-
-		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-
-		if (annotation != null) {
-			executionTimes = annotation.executionTimes();
-			warmupExecutions = annotation.warmupExecutions();
-			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
-			timeout = annotation.timeout();
-			maximalRelativeStandardDeviation = new HashMap<>();
-			assertationvalues = new HashMap<>();
-			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
-				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
-			}
-
-			for (Assertion a : annotation.assertions()) {
-				assertationvalues.put(a.collectorname(), a.maxvalue());
-			}
-		} else {
-			log.error("No @PerformanceTest-Annotation present!");
-		}
-
-		log.trace("Filename: " + filename);
+	public ParameterlessKoPeMeStatement(TestRunnables runnables, Method method, String filename) {
+		super(runnables, method, filename);
 	}
 
 	@Override
@@ -99,11 +61,11 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 
 		Object[] params = {};
 		for (int i = 1; i <= warmupExecutions; i++) {
-			beforeExecutions.run();
+			runnables.getBeforeRunnable().run();
 			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
-			performanceTestThing.run();
+			runnables.getTestRunnable().run();
 			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
-			afterExecutions.run();
+			runnables.getAfterRunnable().run();
 		}
 
 		tr = new TestResult(method.getName(), executionTimes);
@@ -134,9 +96,9 @@ public class ParameterlessTestExecution extends TestExecutorJUnit {
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
-			beforeExecutions.run();
-			performanceTestThing.run();
-			afterExecutions.run();
+			runnables.getBeforeRunnable().run();
+			runnables.getTestRunnable().run();
+			runnables.getAfterRunnable().run();
 
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {

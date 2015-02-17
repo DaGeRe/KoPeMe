@@ -50,6 +50,7 @@ public class TestBeforeExecution {
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
 		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(250 * 1000));
+		Assert.assertThat(time, Matchers.greaterThan(100 * 1000));
 	}
 
 	public static Integer getTimeResult(File f, String methodName) throws JAXBException {
@@ -73,6 +74,7 @@ public class TestBeforeExecution {
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
 		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
+		Assert.assertThat(time, Matchers.greaterThan(100 * 1000));
 	}
 
 	@Test
@@ -89,6 +91,7 @@ public class TestBeforeExecution {
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
 		Integer time = getTimeResult(f, "spendTime");
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
+		Assert.assertThat(time, Matchers.greaterThan(100 * 1000));
 	}
 
 }
