@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit.rule;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,5 +71,39 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	 */
 	protected boolean checkCollectorValidity(TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
+	}
+
+	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+		int executions;
+		for (executions = 1; executions <= executionTimes; executions++) {
+
+			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
+			runnables.getBeforeRunnable().run();
+			tr.startCollection();
+			runnables.getTestRunnable().run();
+			tr.stopCollection();
+			runnables.getAfterRunnable().run();
+
+			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+			}
+			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+				break;
+			}
+		}
+		log.debug("Executions: " + executions);
+		tr.setRealExecutions(executions);
+	}
+
+	protected void runWarmup(String methodString) {
+		for (int i = 1; i <= warmupExecutions; i++) {
+			runnables.getBeforeRunnable().run();
+			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
+			runnables.getTestRunnable().run();
+			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			runnables.getAfterRunnable().run();
+		}
 	}
 }
