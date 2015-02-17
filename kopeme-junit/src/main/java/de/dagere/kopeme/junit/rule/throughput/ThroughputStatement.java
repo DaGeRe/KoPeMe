@@ -16,8 +16,14 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 
 	private static final Logger log = LogManager.getLogger(ThroughputStatement.class);
 
-	public ThroughputStatement(TestRunnables runnables, Method method, String filename) {
+	private final int stepsize, maxsize;
+	private final IOberserveExecutionTimes oberserver;
+
+	public ThroughputStatement(TestRunnables runnables, Method method, String filename, int stepsize, int maxsize, IOberserveExecutionTimes oberserver) {
 		super(runnables, method, filename);
+		this.stepsize = stepsize;
+		this.maxsize = maxsize;
+		this.oberserver = oberserver;
 	}
 
 	@Override
@@ -25,23 +31,30 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
-		TestResult tr = new TestResult(method.getName(), executionTimes);
+		while (executionTimes < maxsize) {
+			TestResult tr = new TestResult(method.getName(), executionTimes);
 
-		if (!checkCollectorValidity(tr)) {
-			log.warn("Not all Collectors are valid!");
-		}
-		try {
-			runMainExecution(tr);
-		} catch (AssertionFailedError t) {
+			if (!checkCollectorValidity(tr)) {
+				log.warn("Not all Collectors are valid!");
+			}
+
+			try {
+				runMainExecution(tr);
+			} catch (AssertionFailedError t) {
+				tr.finalizeCollection();
+				PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
+				throw t;
+			} catch (Throwable t) {
+				tr.finalizeCollection();
+				PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+				throw t;
+			}
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
-			throw t;
-		} catch (Throwable t) {
-			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
-			throw t;
+
+			executionTimes += stepsize;
+			oberserver.setSize(executionTimes);
 		}
-		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
+
+		// PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 	}
 }

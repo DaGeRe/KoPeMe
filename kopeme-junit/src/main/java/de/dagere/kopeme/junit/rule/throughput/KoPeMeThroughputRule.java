@@ -8,7 +8,7 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
-public class KoPeMeThroughputRule implements TestRule {
+public class KoPeMeThroughputRule implements TestRule, IOberserveExecutionTimes {
 
 	private final int maxsize, stepsize, startvalue;
 	private int currentsize;
@@ -52,10 +52,15 @@ public class KoPeMeThroughputRule implements TestRule {
 				}
 			}, testClass, testObject);
 
-			return new ThroughputStatement(runnables, testMethod, testClass.getName() + ".yaml");
+			return new ThroughputStatement(runnables, testMethod, testClass.getName() + ".yaml", stepsize, maxsize, this);
 		} else {
 			return stmt;
 		}
+	}
+
+	@Override
+	public void setSize(int size) {
+		currentsize = size;
 	}
 
 }

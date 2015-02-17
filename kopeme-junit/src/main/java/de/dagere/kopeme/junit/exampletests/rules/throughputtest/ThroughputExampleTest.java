@@ -9,13 +9,11 @@ import de.dagere.kopeme.junit.rule.throughput.KoPeMeThroughputRule;
 public class ThroughputExampleTest {
 
 	@Rule
-	private KoPeMeThroughputRule rule = new KoPeMeThroughputRule(5, 5, 100, this);
+	public KoPeMeThroughputRule rule = new KoPeMeThroughputRule(5, 5, 100, this);
 
 	@Test
 	@PerformanceTest
 	public void testSomething() throws InterruptedException {
-		for (int i = 0; i < rule.getCurrentSize(); i++) {
-			Thread.sleep(10);
-		}
+		Thread.sleep(10);
 	}
 }
