@@ -65,7 +65,7 @@ public class TestFulldataFunctionality {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTestFullData.class);
 
-		jc.run(JUnitAdditionTestFullData.class);
+		// jc.run(JUnitAdditionTestFullData.class);
 
 		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTestFullData.class.getName() + ".testAddition" + ".yaml";
 		File f = new File(name);

@@ -63,7 +63,7 @@ public class PerformanceTestUtils {
 			}
 			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
 			for (String key : tr.getKeys()) {
-				log.info("Key: " + key);
+				log.trace("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
 				long value = tr.getValue(key);
 				// log.info("Ermittle Minimum");
