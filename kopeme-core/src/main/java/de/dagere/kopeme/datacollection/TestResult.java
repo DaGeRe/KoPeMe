@@ -74,14 +74,14 @@ public class TestResult {
 	}
 
 	public Set<String> getKeys() {
-		Set<String> s = new HashSet<String>();
+		Set<String> keySet = new HashSet<String>();
 		for (DataCollector dc : dataCollectors.values())
-			s.add(dc.getName());
+			keySet.add(dc.getName());
 		for (int i = 0; i < realValues.size(); i++) {
 			if (realValues.get(i) != null)
-				s.addAll(realValues.get(i).keySet());
+				keySet.addAll(realValues.get(i).keySet());
 		}
-		return s;
+		return keySet;
 	}
 
 	public void setChecker(Checker c) {
@@ -206,6 +206,10 @@ public class TestResult {
 		if (dataCollectors.get(name) != null)
 			throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
 		values.put(name, value);
+	}
+
+	public Set<String> getAdditionValueKeys() {
+		return values.keySet();
 	}
 
 	/**

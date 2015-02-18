@@ -14,16 +14,20 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
-public class ThroughputStatement extends KoPeMeBasicStatement {
+public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 
-	private static final Logger log = LogManager.getLogger(ThroughputStatement.class);
+	private static final Logger log = LogManager.getLogger(ComplexThroughputStatement.class);
 
 	private final int stepsize, maxsize;
+	private int currentsize;
+	private final IOberserveExecutionTimes oberserver;
 
-	public ThroughputStatement(TestRunnables runnables, Method method, String filename, int stepsize, int maxsize) {
+	public ComplexThroughputStatement(TestRunnables runnables, Method method, String filename, int startsize, int stepsize, int maxsize, IOberserveExecutionTimes oberserver) {
 		super(runnables, method, filename);
 		this.stepsize = stepsize;
 		this.maxsize = maxsize;
+		this.oberserver = oberserver;
+		this.currentsize = startsize;
 	}
 
 	@Override
@@ -31,7 +35,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
-		while (executionTimes <= maxsize) {
+		while (currentsize <= maxsize) {
 			TestResult tr = new TestResult(method.getName(), executionTimes);
 
 			if (!checkCollectorValidity(tr)) {
@@ -50,12 +54,14 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 				throw t;
 			}
 			tr.finalizeCollection();
+			tr.addValue("size", currentsize);
 			PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, false);
 			if (!assertationvalues.isEmpty()) {
 				tr.checkValues(assertationvalues);
 			}
 
-			executionTimes += stepsize;
+			currentsize += stepsize;
+			oberserver.setSize(currentsize);
 		}
 
 		// PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
@@ -67,7 +73,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 
 			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
 			runnables.getBeforeRunnable().run();
-			tr.startOrRestartCollection();
+			tr.startCollection();
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();

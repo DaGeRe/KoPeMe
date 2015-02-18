@@ -8,24 +8,22 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
-/**
- * This rule enables measuring, how often a method can be called meeting certain performance requirements. The method is called as often as given by the
- * parameters, where the execution times increase every call. The first test execution, where the *sum* of a performance measurement does not meet one
- * assertion, is marked as failed.
- * 
- * @author reichelt
- *
- */
-public class KoPeMeThroughputRule implements TestRule {
+public class KoPeMeComplexThroughtputRule implements TestRule, IOberserveExecutionTimes {
 
 	private final int maxsize, stepsize;
+	private int currentsize;
 
 	private Object testObject;
 
-	public KoPeMeThroughputRule(int stepsize, int maxsize, Object testObject) {
+	public KoPeMeComplexThroughtputRule(int startvalue, int stepsize, int maxsize, Object testObject) {
 		this.stepsize = stepsize;
 		this.maxsize = maxsize;
+		currentsize = startvalue;
 		this.testObject = testObject;
+	}
+
+	public int getCurrentSize() {
+		return currentsize;
 	}
 
 	@Override
@@ -53,10 +51,15 @@ public class KoPeMeThroughputRule implements TestRule {
 				}
 			}, testClass, testObject);
 
-			return new ThroughputStatement(runnables, testMethod, testClass.getName() + ".yaml", stepsize, maxsize);
+			return new ComplexThroughputStatement(runnables, testMethod, testClass.getName() + ".yaml", currentsize, stepsize, maxsize, this);
 		} else {
 			return stmt;
 		}
+	}
+
+	@Override
+	public void setSize(int size) {
+		currentsize = size;
 	}
 
 }

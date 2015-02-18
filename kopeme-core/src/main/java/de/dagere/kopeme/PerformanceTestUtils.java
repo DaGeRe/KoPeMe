@@ -1,6 +1,7 @@
 package de.dagere.kopeme;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,21 +62,29 @@ public class PerformanceTestUtils {
 				f.mkdir();
 			}
 			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
-			for (String s : tr.getKeys()) {
-				double relativeStandardDeviation = tr.getRelativeStandardDeviation(s);
-				long value = tr.getValue(s);
+			for (String key : tr.getKeys()) {
+				log.info("Key: " + key);
+				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
+				long value = tr.getValue(key);
 				// log.info("Ermittle Minimum");
-				long min = tr.getMinumumCurrentValue(s);
+				long min = tr.getMinumumCurrentValue(key);
 				// log.info("Min: " + min);
-				long max = tr.getMaximumCurrentValue(s);
-				double first10percentile = getPercentile(tr.getValues(s), 10);
-				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, s, value, relativeStandardDeviation,
+				long max = tr.getMaximumCurrentValue(key);
+				double first10percentile = getPercentile(tr.getValues(key), 10);
+				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
 						tr.getRealExecutions(), min, max, first10percentile, TemperatureCollector.getTemperature());
-				List<Long> values = saveValues ? tr.getValues(s) : null;
+				List<Long> values = saveValues ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
-				log.trace("{}: {}, (rel. Standardabweichung: {})", s, value, relativeStandardDeviation);
+				log.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
 			}
+			for (String additionalKey : tr.getAdditionValueKeys()) {
+				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
+						tr.getRealExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey), TemperatureCollector.getTemperature());
+				List<Long> vales = new LinkedList<Long>();
+				xds.storeValue(performanceDataMeasure, vales);
+			}
+
 			xds.storeData();
 		} catch (JAXBException e) {
 			e.printStackTrace();

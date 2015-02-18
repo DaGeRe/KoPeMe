@@ -11,7 +11,7 @@ import de.dagere.kopeme.junit.rule.throughput.KoPeMeThroughputRule;
 public class SimpleThroughputExampleTest {
 
 	@Rule
-	public KoPeMeThroughputRule rule = new KoPeMeThroughputRule(10, 10, 100, this);
+	public KoPeMeThroughputRule rule = new KoPeMeThroughputRule(10, 100, this);
 
 	@Test
 	@PerformanceTest(assertions = { @Assertion(collectorname = TimeDataCollector.NAME, maxvalue = 400000) })
