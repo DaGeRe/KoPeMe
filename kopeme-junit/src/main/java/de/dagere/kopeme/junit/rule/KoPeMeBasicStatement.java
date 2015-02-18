@@ -93,8 +93,8 @@ public abstract class KoPeMeBasicStatement extends Statement {
 				break;
 			}
 		}
-		log.debug("Executions: " + executions);
-		tr.setRealExecutions(executions);
+		log.debug("Executions: " + (executions - 1));
+		tr.setRealExecutions(executions - 1);
 	}
 
 	protected void runWarmup(String methodString) {

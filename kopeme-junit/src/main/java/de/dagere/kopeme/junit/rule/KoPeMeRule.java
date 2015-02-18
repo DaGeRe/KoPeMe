@@ -50,7 +50,7 @@ public class KoPeMeRule implements TestRule {
 				}
 			}, testClass, testObject);
 
-			return new ParameterlessKoPeMeStatement(runnables, testMethod, testClass.getName() + ".yaml");
+			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName() + ".yaml");
 		} else {
 			return stmt;
 		}

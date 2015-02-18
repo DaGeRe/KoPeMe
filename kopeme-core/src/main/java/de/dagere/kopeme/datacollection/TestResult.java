@@ -106,6 +106,9 @@ public class TestResult {
 		}
 	}
 
+	/**
+	 * Starts the collection of Data for all Datacollectors
+	 */
 	public void startCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
 		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
@@ -120,7 +123,26 @@ public class TestResult {
 			log.trace("Starte: {}", dc.getName());
 			dc.startCollection();
 		}
+	}
 
+	/**
+	 * Starts or restarts the collection for all Datacollectors, e.g. if a TimeDataCollector was started and stoped before, the Time measured now is added to
+	 * the original time
+	 */
+	public void startOrRestartCollection() {
+		Collection<DataCollector> dcCollection = dataCollectors.values();
+		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
+		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
+			@Override
+			public int compare(DataCollector arg0, DataCollector arg1) {
+				return arg0.getPriority() - arg1.getPriority();
+			}
+		};
+		Arrays.sort(sortedCollectors, comparator);
+		for (DataCollector dc : sortedCollectors) {
+			log.trace("Starte: {}", dc.getName());
+			dc.startOrRestartCollection();
+		}
 	}
 
 	/**

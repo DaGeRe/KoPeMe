@@ -51,5 +51,4 @@ public class CPUUsageCollector extends DataCollector {
 		return (1000 * cpuTime) / time;
 
 	}
-
 }

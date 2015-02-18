@@ -1,6 +1,8 @@
 package de.dagere.kopeme.junit.rule.throughput;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import junit.framework.AssertionFailedError;
 
@@ -31,7 +33,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
-		while (executionTimes < maxsize) {
+		while (executionTimes <= maxsize) {
 			TestResult tr = new TestResult(method.getName(), executionTimes);
 
 			if (!checkCollectorValidity(tr)) {
@@ -50,11 +52,39 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 				throw t;
 			}
 			tr.finalizeCollection();
+			PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
+			if (!assertationvalues.isEmpty()) {
+				tr.checkValues(assertationvalues);
+			}
 
 			executionTimes += stepsize;
 			oberserver.setSize(executionTimes);
 		}
 
 		// PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
+	}
+
+	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+		int executions;
+		for (executions = 1; executions <= executionTimes; executions++) {
+
+			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
+			runnables.getBeforeRunnable().run();
+			tr.startOrRestartCollection();
+			runnables.getTestRunnable().run();
+			tr.stopCollection();
+			runnables.getAfterRunnable().run();
+
+			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+			}
+			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+				break;
+			}
+		}
+		log.debug("Executions: " + (executions - 1));
+		tr.setRealExecutions(executions - 1);
 	}
 }

@@ -24,7 +24,7 @@ public class TestRunnables {
 		final List<Method> afterMethods = new LinkedList<>();
 		log.debug("Klasse: {}", testClass);
 		for (Method classMethod : testClass.getMethods()) {
-			log.debug("Prüfe: {}", classMethod);
+			log.trace("Prüfe: {}", classMethod);
 			if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
 				if (classMethod.getParameterTypes().length > 0) {
 					throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");

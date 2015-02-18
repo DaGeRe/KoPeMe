@@ -14,16 +14,16 @@ import de.dagere.kopeme.datacollection.TestResult;
 /**
  * Represents an execution of all runs of one test
  * 
- * TODO: Overthing weather directly configure test runs in KoPeMeRule would be more nice
+ * TODO: Overthink weather directly configure test runs in KoPeMeRule would be more nice
  * 
  * @author dagere
  * 
  */
-public class ParameterlessKoPeMeStatement extends KoPeMeBasicStatement {
+public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
-	static Logger log = LogManager.getLogger(ParameterlessKoPeMeStatement.class);
+	static Logger log = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 
-	public ParameterlessKoPeMeStatement(TestRunnables runnables, Method method, String filename) {
+	public KoPeMeStandardRuleStatement(TestRunnables runnables, Method method, String filename) {
 		super(runnables, method, filename);
 	}
 

@@ -8,8 +8,11 @@ package de.dagere.kopeme.datacollection;
  */
 public class TimeDataCollector extends DataCollector {
 
+	public static final String NAME = "de.dagere.kopeme.datacollection.TimeDataCollector";
+
 	private long start;
 	private long stop;
+	private long summarizedValue = 0;
 
 	public TimeDataCollector() {
 		start = 0;
@@ -39,8 +42,15 @@ public class TimeDataCollector extends DataCollector {
 
 	@Override
 	public long getValue() {
-		return (stop - start) / 1000;
+		return summarizedValue != 0 ? summarizedValue : (stop - start) / 1000;
 		// Divisionen: 1 - Nano, 1E3 - Mikro, 1E6 - Milli
+	}
+
+	@Override
+	public void startOrRestartCollection() {
+		summarizedValue += (stop - start) / 1000;
+		System.out.println("Measured: " + summarizedValue);
+		startCollection();
 	}
 
 }
