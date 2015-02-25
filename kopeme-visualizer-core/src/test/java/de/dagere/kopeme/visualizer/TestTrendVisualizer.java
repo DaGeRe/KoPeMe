@@ -11,7 +11,7 @@ public class TestTrendVisualizer {
 
 	@Test
 	public void testVisualisation() throws JAXBException {
-		VisualizationGenerator.visualizeFile("src/test/resources/de.dagere.kopeme.junit.exampletests.runner.ExampleAssertionTest.testAssertionAddition.yaml", 1000, 1000);
+		VisualizationGenerator.visualizeFile("src/test/resources/de.dagere.kopeme.junit.exampletests.runner.ExampleAssertionTest.testAssertionAddition.yaml", 1000, 1000, "");
 
 		File f = new File("testAssertionAddition_de.dagere.kopeme.datacollection.RAMUsageCollector.png");
 		Assert.assertEquals(f.exists(), true);

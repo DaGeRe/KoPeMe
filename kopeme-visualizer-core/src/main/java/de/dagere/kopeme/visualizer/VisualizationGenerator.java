@@ -3,6 +3,7 @@ package de.dagere.kopeme.visualizer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,9 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartUtilities;
@@ -31,23 +35,32 @@ public class VisualizationGenerator {
 
 	public static void main(String args[]) throws JAXBException, ParseException {
 		Options options = new Options();
-		options.addOption(OptionBuilder.isRequired(true).hasArg().create(PERFORMANCEFILE));
+		options.addOption(OptionBuilder.isRequired(false).hasArg().create(PERFORMANCEFILE));
 		options.addOption(OptionBuilder.isRequired(false).hasArg().create("width"));
 		options.addOption(OptionBuilder.isRequired(false).hasArg().create("height"));
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = parser.parse(options, args);
 
-		String filename = cmd.getOptionValue(PERFORMANCEFILE);
 		int width = Integer.parseInt(cmd.getOptionValue("width", "600"));
 		int height = Integer.parseInt(cmd.getOptionValue("width", "600"));
 
-		log.info("Loading file: " + filename);
+		if (cmd.hasOption(PERFORMANCEFILE)) {
+			String filename = cmd.getOptionValue(PERFORMANCEFILE);
+			log.info("Loading file: " + filename);
 
-		visualizeFile(filename, width, height);
+			visualizeFile(filename, width, height, "");
+		}
+		else {
+			final Collection<File> fileList = FileUtils.listFiles(new File("performanceresults"), new WildcardFileFilter("*.yaml"), FalseFileFilter.FALSE);
+			for (File filename : fileList) {
+				visualizeFile(filename.getName(), width, height, "performanceresults/");
+			}
+		}
+
 	}
 
-	public static void visualizeFile(String filename, int width, int height) throws JAXBException {
+	public static void visualizeFile(String filename, int width, int height, String outputPrefix) throws JAXBException {
 		File inputFile = new File(filename);
 
 		XMLDataLoader xdl = new XMLDataLoader(inputFile);
@@ -62,7 +75,7 @@ public class VisualizationGenerator {
 		try {
 			for (ChartObject chart : charts) {
 				ChartUtilities
-						.writeBufferedImageAsPNG(new FileOutputStream(chart.getOutputFilename()), chart.getChart().createBufferedImage(width, height));
+						.writeBufferedImageAsPNG(new FileOutputStream(outputPrefix + chart.getOutputFilename()), chart.getChart().createBufferedImage(width, height));
 			}
 
 		} catch (IOException e) {
