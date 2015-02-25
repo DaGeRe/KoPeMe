@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -16,12 +17,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -48,14 +44,33 @@ public class VisualizationGenerator {
 
 		log.info("Loading file: " + filename);
 
-		File inputFile = new File(filename);
-
-		creatGraphs(inputFile, width, height);
+		visualizeFile(filename, width, height);
 	}
 
-	public static void creatGraphs(File file, int width, int height) throws JAXBException {
-		XMLDataLoader xdl = new XMLDataLoader(file);
+	public static void visualizeFile(String filename, int width, int height) throws JAXBException {
+		File inputFile = new File(filename);
 
+		XMLDataLoader xdl = new XMLDataLoader(inputFile);
+		Map<Long, Integer> sizes = getSizes(xdl);
+		List<ChartObject> charts;
+		if (sizes.size() != 0) {
+			charts = ThroughputVisualizer.createSizeGraphs(xdl, width, height, sizes);
+		} else {
+			charts = TrendVisualizer.createNormalGraphs(xdl, width, height);
+		}
+
+		try {
+			for (ChartObject chart : charts) {
+				ChartUtilities
+						.writeBufferedImageAsPNG(new FileOutputStream(chart.getOutputFilename()), chart.getChart().createBufferedImage(width, height));
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static Map<Long, Integer> getSizes(XMLDataLoader xdl) {
 		Map<Long, Integer> sizes = new HashMap<Long, Integer>();
 
 		for (TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
@@ -69,41 +84,6 @@ public class VisualizationGenerator {
 				}
 			}
 		}
-
-		for (TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
-			for (Datacollector dc : tc.getDatacollector()) {
-				if (!dc.getName().equals("size")) {
-					final XYSeries ts = new XYSeries(dc.getName());
-					for (Result r : dc.getResult()) {
-
-						final int value = Integer.parseInt(r.getValue());
-						log.trace("Date: {}", r.getDate());
-						final Integer count = sizes.get(r.getDate());
-						if (count != null) {
-							log.trace("Count: {} Measured Value: {}", count, value);
-							ts.add(count, (Number) value);
-						}
-					}
-					final XYSeriesCollection data = new XYSeriesCollection(ts);
-					final JFreeChart chart = ChartFactory.createXYLineChart(
-							"Performanzverlauf",
-							"Einheiten",
-							dc.getName(),
-							data,
-							PlotOrientation.VERTICAL,
-							true,
-							true,
-							false);
-					try {
-						ChartUtilities
-								.writeBufferedImageAsPNG(new FileOutputStream(new File(tc.getName() + "_" + dc.getName() + ".png")), chart.createBufferedImage(width, height));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
+		return sizes;
 	}
 }
