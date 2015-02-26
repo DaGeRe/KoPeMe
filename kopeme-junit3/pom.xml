@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-junit3</artifactId>
-	<version>0.3</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>KoPeMe - JUnit 3</name>
@@ -16,8 +16,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.8</version>
+			<version>0.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
