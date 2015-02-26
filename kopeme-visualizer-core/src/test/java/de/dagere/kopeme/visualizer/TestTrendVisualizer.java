@@ -5,10 +5,12 @@ import java.io.File;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestTrendVisualizer {
 
+	@Ignore
 	@Test
 	public void testVisualisation() throws JAXBException {
 		VisualizationGenerator.visualizeFile("src/test/resources/de.dagere.kopeme.junit.exampletests.runner.ExampleAssertionTest.testAssertionAddition.yaml", 1000, 1000, "");
