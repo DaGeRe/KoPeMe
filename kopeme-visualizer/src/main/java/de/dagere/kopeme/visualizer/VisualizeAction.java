@@ -3,58 +3,33 @@ package de.dagere.kopeme.visualizer;
 import hudson.FilePath;
 import hudson.model.Action;
 import hudson.model.AbstractProject;
-import hudson.model.Project;
 import hudson.util.Graph;
 
-import javax.xml.bind.JAXBException;
-
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
+import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.data.ComparableObjectSeries;
-import org.jfree.data.general.Dataset;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.util.Log;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.yaml.snakeyaml.Yaml;
-import org.apache.xmlgraphics.image.loader.ImageContext;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.impl.DefaultImageContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
-import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.DateConverter;
@@ -72,7 +47,7 @@ import de.dagere.kopeme.visualizer.data.Testcase;
  */
 public class VisualizeAction implements Action, Serializable {
 
-	private static transient Logger logger = Logger
+	private static transient Logger log = Logger
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
 
@@ -112,8 +87,7 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	/**
-	 * Returns, weather the measurement with the given name is viewable; called
-	 * from config.jelly.
+	 * Returns, weather the measurement with the given name is viewable; called from config.jelly.
 	 * 
 	 * @param name
 	 * @return
@@ -159,62 +133,78 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	private void loadData() {
-		logger.info("VisualizeAction.loadData - Lade Daten");
+		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
 			project.getLastBuild();
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
 
-			for (Testcase testcase : publisher.getTestcases()) {
+			final List<Testcase> testcases = publisher.getTestcases();
+			log.info("Testcases:" + testcases);
+			for (Testcase testcase : testcases) {
+				log.log(Level.FINE, "Testcase: " + testcase);
 				String testcaseName = testcase.getName();
+				log.info("Handling " + testcaseName);
 				FilePath workspace = project.getSomeWorkspace();
 				if (workspace != null) // prevent error, when workspace for
 										// project isn't initialized
 				{
+					log.info("Suche nach: " + testcaseName + " " + workspace.list().size());
+					for (FilePath path : workspace.list()) {
+						log.info("Path (1): " + path);
+						if (path != null && path.isDirectory())
+							for (FilePath fp2 : path.list()) {
+								log.info("Path (3):" + fp2);
+							}
+					}
+					for (FilePath path : workspace.list(new WildcardFileFilter("*.yaml"))) {
+						log.info("Path (2): " + path);
+					}
 					FilePath[] list = workspace.list(testcaseName);
+					log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length);
 					if (list != null && list.length > 0
 							&& testcaseName.length() != 0) {
-						InputStream is = list[0].read();
 						File file = new File(project.getSomeWorkspace() + "/"
 								+ testcaseName);
-						logger.info("Lade Daten von: " + testcaseName + " "
+						log.info("Lade Daten von: " + testcaseName + " "
 								+ file.exists() + " " + file.getAbsolutePath());
 						try {
 							XMLDataLoader xdl = new XMLDataLoader(file);
-							for (String collector : xdl.getCollectors()){
+							for (String collector : xdl.getCollectors()) {
 								Map<String, Map<Date, Long>> temp = xdl.getData(collector);
-								logger.info("Daten für " + file.getAbsolutePath()
+								log.info("Daten für " + file.getAbsolutePath()
 										+ "(" + collector + ") geladen");
 								graphMap.put(testcaseName + "(" + collector + ")", new GraphVisualizer(
 										temp, true));
 							}
-							
+
 						} catch (JAXBException e) {
+							log.info(e.getLocalizedMessage());
 							e.printStackTrace();
 						}
-						logger.info("Laden beendet");
-
-						// Map<String, Map<Date, Long>> temp = (Map<String,
-						// Map<Date, Long>>) yaml
-						// .load(is);
-
+						log.log(Level.FINE, "Laden beendet");
+					} else {
+						log.info("Error: No data available!");
 					}
+				} else {
+					log.info("Error: Workspace == null");
 				}
 			}
 
 		} catch (IOException e) {
+			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
 		} catch (InterruptedException e) {
+			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 
-		logger.info("VisualizeAction.loadData - Daten geladen");
+		log.info("VisualizeAction.loadData - Daten geladen");
 	}
 
 	/**
-	 * Returns an array of all Measurement-Names. This is called in
-	 * config.jelly.
+	 * Returns an array of all Measurement-Names. This is called in config.jelly.
 	 * 
 	 * @return
 	 */
@@ -223,8 +213,7 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	/**
-	 * Returns an array of the viewable Measurement-Names. This is called in
-	 * config.jelly.
+	 * Returns an array of the viewable Measurement-Names. This is called in config.jelly.
 	 * 
 	 * @return
 	 */
@@ -254,27 +243,27 @@ public class VisualizeAction implements Action, Serializable {
 	public Graph getSummaryGraph(String file) {
 		loadData();
 
-		logger.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);
-		
+		log.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);
+
 		GraphVisualizer graphVisualizer = graphMap.get(file);
-		if (graphVisualizer == null){
-			logger.info("Fehler: " + file + " nicht vorhanden");
+		if (graphVisualizer == null) {
+			log.info("Fehler: " + file + " nicht vorhanden");
 			return null;
 		}
 		Map<String, Map<Date, Long>> subMap = graphVisualizer.getDatamap();
 
 		JFreeChart chart = null;
 
-		logger.info("In Graphmap ist: " + graphMap.size());
+		log.info("In Graphmap ist: " + graphMap.size());
 
 		int i = 0;
 		for (String viewable : graphVisualizer.getViewable()) {
-			logger.info("Erstelle Graph für " + viewable + " "
+			log.info("Erstelle Graph für " + viewable + " "
 					+ (dc instanceof NormalDateConverter));
 			if (dc instanceof NormalDateConverter) {
 				TimeSeriesCollection collection = new TimeSeriesCollection();
 				TimeSeries serie = new TimeSeries(viewable, Minute.class);
-				logger.info("Suche Eintrag für " + viewable);
+				log.info("Suche Eintrag für " + viewable);
 				for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
 					serie.addOrUpdate(new Minute(entry.getKey()),
 							entry.getValue());
@@ -339,7 +328,7 @@ public class VisualizeAction implements Action, Serializable {
 			}
 
 		}
-		logger.info("Graph geladen");
+		log.info("Graph geladen");
 
 		chart.setBackgroundPaint(Color.white);
 
