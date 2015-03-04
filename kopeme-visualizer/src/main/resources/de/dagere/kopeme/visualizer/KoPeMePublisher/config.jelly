@@ -25,7 +25,7 @@
 				<f:repeatableDeleteButton value="Testfall entfernen" />
 			</div>
 			<table width="100%">
-				<f:entry title="Name des Testfalls">
+				<f:entry title="Name des Testfalls" field="name">
 					<f:textbox name="name" value="${testcase.name}" clazz="required" />
 				</f:entry>
 				<f:entry>

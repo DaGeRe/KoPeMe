@@ -13,8 +13,10 @@
         <module>kopeme-junit</module>
 	<module>kopeme-junit3</module>
 	<module>kopeme-visualizer-core</module>
-        <module>kopeme-mojo</module>
-	<!--<module>kopeme-visualizer</module>-->
+        <!-- <module>kopeme-mojo</module> -->
+	<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
+	<!-- <module>kopeme-visualizer</module>-->
+    	<!-- Visualizer kann nicht in Jar-Build integriert werden --> 
     </modules>
 
    <profiles>

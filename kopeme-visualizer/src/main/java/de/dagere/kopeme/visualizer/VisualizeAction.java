@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -54,7 +53,7 @@ public class VisualizeAction implements Action, Serializable {
 	// transient Map<String, Map<String, Map<Date, Long>>> dataMap;
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
-	DateConverter dc;
+	DateConverter dateconverter;
 	// Map<String, Set<String>> viewable = null;
 	int width = 800, height = 500;
 
@@ -62,7 +61,7 @@ public class VisualizeAction implements Action, Serializable {
 		// logger.log(Level.INFO, "Konstruktor Visualizeaction");
 		this.project = project;
 		this.publisher = publisher;
-		dc = new NormalDateConverter();
+		dateconverter = new NormalDateConverter();
 		loadData();
 	}
 
@@ -83,7 +82,7 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	public DateConverter getDateConverter() {
-		return dc;
+		return dateconverter;
 	}
 
 	/**
@@ -107,31 +106,6 @@ public class VisualizeAction implements Action, Serializable {
 		graphMap.get(graph).setUseMultipleAxis(axis);
 	}
 
-	private FilePath getFilePath(String name) {
-		FilePath workspace = project.getSomeWorkspace();
-		if (workspace != null) // prevent error, when workspace for project
-								// isn't initialized
-		{
-			FilePath[] list;
-			try {
-				list = workspace.list(name);
-				if (list.length > 0)
-					return list[0];
-				else
-					return null;
-			} catch (IOException e) {
-				// TODO Automatisch generierter Erfassungsblock
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Automatisch generierter Erfassungsblock
-				e.printStackTrace();
-			}
-		} else {
-			System.out.println("workspace == null");
-		}
-		return null;
-	}
-
 	private void loadData() {
 		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
@@ -151,21 +125,12 @@ public class VisualizeAction implements Action, Serializable {
 										// project isn't initialized
 				{
 					log.info("Suche nach: " + testcaseName + " " + workspace.list().size());
-					for (FilePath path : workspace.list()) {
-						log.info("Path (1): " + path);
-						if (path != null && path.isDirectory())
-							for (FilePath fp2 : path.list()) {
-								log.info("Path (3):" + fp2);
-							}
-					}
-					for (FilePath path : workspace.list(new WildcardFileFilter("*.yaml"))) {
-						log.info("Path (2): " + path);
-					}
+
 					FilePath[] list = workspace.list(testcaseName);
 					log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length);
 					if (list != null && list.length > 0
 							&& testcaseName.length() != 0) {
-						File file = new File(project.getSomeWorkspace() + "/"
+						File file = new File(project.getSomeWorkspace() + File.separator
 								+ testcaseName);
 						log.info("Lade Daten von: " + testcaseName + " "
 								+ file.exists() + " " + file.getAbsolutePath());
@@ -175,8 +140,10 @@ public class VisualizeAction implements Action, Serializable {
 								Map<String, Map<Date, Long>> temp = xdl.getData(collector);
 								log.info("Daten für " + file.getAbsolutePath()
 										+ "(" + collector + ") geladen");
-								graphMap.put(testcaseName + "(" + collector + ")", new GraphVisualizer(
-										temp, true));
+								graphMap.put(testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1)
+										+ ")",
+										new GraphVisualizer(
+												temp, true));
 							}
 
 						} catch (JAXBException e) {
@@ -228,7 +195,10 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	public int getValueCount(String file) {
-		return graphMap.get(file).getValueCount();
+		final GraphVisualizer graphVisualizer = graphMap.get(file);
+		log.info("Visualizer: " + graphVisualizer);
+		log.info("Count: " + graphVisualizer.getValueCount());
+		return graphVisualizer.getValueCount();
 	}
 
 	public void setValueCount(String file, int value) {
@@ -248,6 +218,9 @@ public class VisualizeAction implements Action, Serializable {
 		GraphVisualizer graphVisualizer = graphMap.get(file);
 		if (graphVisualizer == null) {
 			log.info("Fehler: " + file + " nicht vorhanden");
+			for (String key : graphMap.keySet()) {
+				log.info("Key vorhanden: " + key);
+			}
 			return null;
 		}
 		Map<String, Map<Date, Long>> subMap = graphVisualizer.getDatamap();
@@ -259,8 +232,8 @@ public class VisualizeAction implements Action, Serializable {
 		int i = 0;
 		for (String viewable : graphVisualizer.getViewable()) {
 			log.info("Erstelle Graph für " + viewable + " "
-					+ (dc instanceof NormalDateConverter));
-			if (dc instanceof NormalDateConverter) {
+					+ (dateconverter instanceof NormalDateConverter));
+			if (dateconverter instanceof NormalDateConverter) {
 				TimeSeriesCollection collection = new TimeSeriesCollection();
 				TimeSeries serie = new TimeSeries(viewable, Minute.class);
 				log.info("Suche Eintrag für " + viewable);
@@ -269,6 +242,7 @@ public class VisualizeAction implements Action, Serializable {
 							entry.getValue());
 				}
 				collection.addSeries(serie);
+				// collection.
 				if (i == 0) {
 					chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
 							"Wert", collection, true, true, false);
@@ -288,43 +262,7 @@ public class VisualizeAction implements Action, Serializable {
 				}
 				i++;
 			} else {
-				// ComparableObjectSeriesCollection collection = new
-				// XYSeriesCollection();
-				// ComparableObjectSeries serie = new ComparableObjectSeries(new
-				// String());
-				// logger.info("Suche Eintrag für " + s);
-				// for (Map.Entry<Date, Long> entry : subMap.get(s).entrySet())
-				// {
-				// serie.add("", 5);
-				// serie.addOrUpdate(new Minute(entry.getKey()),
-				// entry.getValue());
-				// }
-				// collection.addSeries(serie);
-				// if ( i == 0 )
-				// {
-				// chart = ChartFactory.createTimeSeriesChart("Chart",
-				// "Zeit", "Wert", collection, true, true, false);
-				// }
-				// else
-				// {
-				// if ( isMultipleAxis(file) )
-				// {
-				// XYPlot plot = chart.getXYPlot();
-				// NumberAxis axis2 = new NumberAxis(s);
-				// plot.setRangeAxis(i, axis2);
-				// plot.setDataset(i, collection);
-				// plot.setRenderer(i, new StandardXYItemRenderer());
-				// plot.mapDatasetToRangeAxis(i, i);
-				// }
-				// else
-				// {
-				// XYPlot plot = chart.getXYPlot();
-				// plot.setDataset(i, collection);
-				// plot.setRenderer(i, new StandardXYItemRenderer());
-				// }
-				// }
-				// i++;
-				// }
+				// TODO: Visualisierung mit Revisionsnummern/Tags?
 			}
 
 		}
@@ -335,35 +273,6 @@ public class VisualizeAction implements Action, Serializable {
 		// Image image = chart.createBufferedImage(width, height);
 
 		final JFreeChart chart2 = chart;
-		//
-		// try {
-		// String filename = project.getSomeWorkspace().getParent() + "/" + file
-		// + ".eps";
-		// File outputFile = new File(filename);
-		// FileOutputStream fos = new FileOutputStream(outputFile);
-		//
-		// ImageManager manager = new ImageManager(new DefaultImageContext());
-		//
-		// EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
-		// g2d.setGraphicContext(new
-		// org.apache.xmlgraphics.java2d.GraphicContext());
-		//
-		// //Set up the document size
-		// g2d.setupDocument(fos, width, height); //400pt x 200pt
-		// BufferedImage im = chart2.createBufferedImage(width, height);
-		// g2d.drawRenderedImage(im, new AffineTransform());
-		//
-		// g2d.finish();
-		//
-		//
-		// ImageIO.write(im, "eps", fos);
-		// } catch (FileNotFoundException e) {
-		// // TODO Automatisch generierter Erfassungsblock
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Automatisch generierter Erfassungsblock
-		// e.printStackTrace();
-		// }
 
 		return new Graph(-1, width, height) {
 

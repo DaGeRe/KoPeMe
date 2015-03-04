@@ -54,7 +54,7 @@ public class VisualizationGenerator {
 		else {
 			final Collection<File> fileList = FileUtils.listFiles(new File("performanceresults"), new WildcardFileFilter("*.yaml"), FalseFileFilter.FALSE);
 			for (File filename : fileList) {
-				visualizeFile(filename.getName(), width, height, "performanceresults/");
+				visualizeFile(filename.getName(), width, height, "performanceresults" + File.separatorChar);
 			}
 		}
 

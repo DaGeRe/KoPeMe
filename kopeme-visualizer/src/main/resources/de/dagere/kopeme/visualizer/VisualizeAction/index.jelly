@@ -1,6 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<l:layout title="MeinLayout">
+	<l:layout title="Performanzmaß-Visualisierung">
 		<st:include it="${it.project}" page="sidepanel.jelly" />
 		<l:main-panel>
 			<h1>Darstellung der Performanzwerte</h1>
@@ -12,19 +12,19 @@
 					<tr>
 						<td>
 							<h2>Datei: ${file}</h2>
-							<f:form method="post" action="save" name="Save">
+							<!--<f:form method="post" action="save" name="Save">
 								<j:forEach var="key" items="${it.getMeasurements(file)}">
 									<f:checkbox name="${key}" checked="${it.isViewable(file, key)}"
 										title="${key}" />
 									<br />
 								</j:forEach>
 								<hr />
-								Anzahl der Werte: <f:number name="count" type="text" value="${it.getValueCount(file)}"/><br />
+								Anzahl der Werte: <f:number name="count" type="text" value="${it.getValueCount(file)}"/><br /> 
 								<f:checkbox name="Verschiedene Skalierungen" checked="${it.isMultipleAxis(file)}"
-										title="Verschiedene Skalierungen" /><br />
+										title="Verschiedene Skalierungen" /><br /> 
 								<input name="file" type="hidden" value="${file}" />
 								<f:submit value="Ok" />
-							</f:form>
+							</f:form>-->
 
 							<!-- <f:form method="post" action="save" name="Save"> -->
 							<!-- <j:forEach var="key" items="${it.getMeasurements(file)}"> -->
@@ -34,8 +34,8 @@
 							<!-- </j:forEach> -->
 							<!-- <f:submit value="Ok" /> -->
 							<!-- </f:form> -->
-						</td>
-						<td>
+						<!--</td>
+						<td>-->
 							<img id="graph" src="${it.url}summaryGraph/${file}/png"
 								alt="Der Graph kann gerade nicht geladen werden." />
 						</td>
