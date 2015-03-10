@@ -5,11 +5,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
@@ -42,7 +44,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	private Class klasse;
 	protected boolean saveFullData;
-	protected Method method;
+	protected FrameworkMethod method;
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
@@ -58,19 +60,31 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		long start = System.nanoTime();
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null) {
+			final RunNotifier parallelNotifier = new RunNotifier();
 			Thread mainThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					PerformanceTestRunnerJUnit.super.run(notifier);
+					PerformanceTestRunnerJUnit.super.run(parallelNotifier);
 				}
 			});
 			saveFullData = ptc.logFullData();
-			log.info("Class-Timeout: " + ptc.overallTimeout());
+			log.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
 			mainThread.start();
 
 			try {
 				mainThread.join(ptc.overallTimeout());
-				mainThread.interrupt();
+				if (mainThread.isAlive()) {
+					log.debug("Call interrupt because of class-timeout");
+					mainThread.interrupt();
+					log.debug("Firing..");
+					// notifier.fireTestFailure(new Failure(getDescription(), new Exception("Test timed out because of class timeout")));
+					EachTestNotifier testNotifier = new EachTestNotifier(notifier,
+							getDescription());
+					testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
+				} else {
+					// parallelNotifier.
+				}
+
 			} catch (InterruptedException e) {
 				log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
 				// TODO Auto-generated catch block
@@ -121,6 +135,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		} catch (Throwable e) {
 			return new PerformanceFail(e);
 		}
+		log.debug("Statement: " + currentMethod.getName() + " " + method);
 
 		Statement statement = methodInvoker(currentMethod, test);
 
@@ -128,23 +143,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		statement = withPotentialTimeout(currentMethod, test, statement);
 		Method method2 = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
 		method2.setAccessible(true);
-		statement = (Statement) method2.invoke(this, new Object[] { method, test, statement });
+
+		statement = (Statement) method2.invoke(this, new Object[] { currentMethod, test, statement });
 		PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(statement, test);
 		List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
 		List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
 		perfStatement.setBefores(befores);
 		perfStatement.setAfters(afters);
-		// statement = withBefores(currentMethod, test, statement);
-		// statement = withAfters(currentMethod, test, statement);
-		// List<TestRule> testRules = getTestRules(test);
-		// for (org.junit.rules.MethodRule each : getMethodRules(target)) {
-		// if (!testRules.contains(each)) {
-		// result = each.apply(result, method, target);
-		// }
-		// }
-		// perfStatement.setTestRules(testRules);
-		/* This is the original JUnit statement - unfortunatley it is private */
-		// statement = withRules(method, test, statement);
 		return perfStatement;
 	}
 
@@ -153,10 +158,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		try {
 			final PerformanceJUnitStatement callee = getStatement(currentMethod);
 
-			log.debug("Im methodBlock für " + currentMethod.getName());
+			log.trace("Im methodBlock für " + currentMethod.getName());
 
-			Method m = currentMethod.getMethod();
-			initValues(m);
+			initValues(currentMethod);
 
 			final Statement st = new Statement() {
 				@Override
@@ -172,22 +176,22 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 									log.info("Checking: " + assertationvalues.size());
 									tr.checkValues(assertationvalues);
 								}
-							} catch (Throwable e) {
-								if (e instanceof IllegalArgumentException) {
-									throw (IllegalArgumentException) e;
+							} catch (Exception e) {
+								if (e instanceof RuntimeException) {
+									throw (RuntimeException) e;
 								}
-								if (e instanceof AssertionError) {
-									throw (AssertionError) e;
-								}
-								// TODO Auto-generated catch block
+								log.error("Catched Exception: {}", e.getLocalizedMessage());
 								e.printStackTrace();
+							} catch (Throwable t) {
+								if (t instanceof Error)
+									throw (Error) t;
+								log.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
 							}
 						}
 					});
 					TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
-					log.debug("Start");
 					tbe.execute();
-					log.debug("Ende");
+					log.debug("Timebounded execution finished");
 				}
 			};
 			return st;
@@ -198,7 +202,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		return null;
 	}
 
-	private void initValues(Method method) {
+	private void initValues(FrameworkMethod method) {
 		this.method = method;
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {

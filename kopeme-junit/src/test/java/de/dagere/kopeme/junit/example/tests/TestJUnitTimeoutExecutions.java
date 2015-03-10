@@ -2,17 +2,19 @@ package de.dagere.kopeme.junit.example.tests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
-import de.dagere.kopeme.junit.exampletests.runner.ExampleClassTimeoutTest;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
+import de.dagere.kopeme.junit.exampletests.runner.classtimeout.ExampleClassTimeoutTest;
+import de.dagere.kopeme.junit.exampletests.runner.classtimeout.MultipleCallClassTimeout;
 
 /**
- * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende
- * Ergebnisse liefern
+ * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende Ergebnisse liefern
  * 
  * @author reichelt
  * 
@@ -36,6 +38,14 @@ public class TestJUnitTimeoutExecutions {
 		jc.run(ExampleMethodTimeoutTest.class);
 	}
 
+	@Test
+	public void testMultipleClassTimeout() {
+		JUnitCore jc = new JUnitCore();
+		Result r = jc.run(MultipleCallClassTimeout.class);
+
+		Assert.assertEquals("Test timed out because of class timeout", r.getFailures().get(0).getMessage());
+
+	}
 	// public void testNormalJUnitExecution(){
 	// JUnitCore jc = new JUnitCore();
 	// jc.run(ExampleJUnitTests.class);

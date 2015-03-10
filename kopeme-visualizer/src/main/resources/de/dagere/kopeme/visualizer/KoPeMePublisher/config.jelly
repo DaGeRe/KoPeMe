@@ -16,24 +16,17 @@
 	SOFTWARE. -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-	<div>Bei dieser Aktion werden Ihre Performanzmaße dargestellt.
+	<div>Bei dieser Aktion werden Ihre Performanzmaße dargestellt.<br />
 	</div>
-	<f:entry>
-		<f:repeatable var="testcase" items="${instance.testcases}"
-			name="testcases" add="Testfall hinzufügen">
-			<div align="left">
-				<f:repeatableDeleteButton value="Testfall entfernen" />
-			</div>
-			<table width="100%">
-				<f:entry title="Name des Testfalls" field="name">
-					<f:textbox name="name" value="${testcase.name}" clazz="required" />
-				</f:entry>
-				<f:entry>
-					<f:block>
-						<hr />
-					</f:block>
-				</f:entry>
-			</table>
-		</f:repeatable>
+	<j:if test="${!instance.isInitialized()}">
+       Die Aktion ist noch nicht initialisiert, deshalb konnten noch keine KoPeMe-Performanzergebnisse gefunden werden.
+    </j:if>
+    <j:if test="${instance.isInitialized()}">
+       Bitte wählen Sie aus, welche Messergebnisse visualisiert werden sollen.
+       <f:entry>
+		<j:forEach var="key" items="${instance.testcases}">
+				<f:checkbox name="name" checked="${key.visible}" title="${key.getName()}" /><br />
+		</j:forEach>
 	</f:entry>
+    </j:if>
 </j:jelly>

@@ -7,13 +7,13 @@ import org.junit.runners.model.Statement;
 
 public class PerformanceJUnitStatement extends Statement {
 
-	private final Statement st;
+	private final Statement statement;
 	private final Object fTarget;
 	private List<FrameworkMethod> befores;
 	private List<FrameworkMethod> afters;
 
 	public PerformanceJUnitStatement(Statement statement, Object target) {
-		st = statement;
+		this.statement = statement;
 		fTarget = target;
 	}
 
@@ -41,7 +41,7 @@ public class PerformanceJUnitStatement extends Statement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		st.evaluate();
+		statement.evaluate();
 	}
 
 	public void setBefores(List<FrameworkMethod> befores) {

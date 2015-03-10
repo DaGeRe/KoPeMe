@@ -17,16 +17,23 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import de.dagere.kopeme.visualizer.data.Testcase;
-
+/**
+ * Describes the plugin
+ * 
+ * @author reichelt
+ *
+ */
 @Extension
 public final class KoPeMeDescriptor extends
 		BuildStepDescriptor<Publisher> {
 
 	static final Logger log = Logger.getLogger(KoPeMePublisher.class.getName());
 
+	private KoPeMePublisher publisher;
+
 	public KoPeMeDescriptor() {
 		super(KoPeMePublisher.class);
+		log.info("Initialize KoPeMeDescriptor");
 		load();
 	}
 
@@ -57,9 +64,8 @@ public final class KoPeMeDescriptor extends
 		return result;
 	}
 
-	private KoPeMePublisher publisher;
-
 	public FormValidation doCheckName(@QueryParameter String value) throws IOException, ServletException {
+		log.info("Checking Name: " + value);
 		if (publisher == null)
 			return FormValidation.ok();
 		if (publisher.fileExists(value)) {
@@ -72,23 +78,24 @@ public final class KoPeMeDescriptor extends
 	@Override
 	public KoPeMePublisher newInstance(StaplerRequest req, JSONObject formData)
 			throws FormException {
+		log.info("Creating new Instance");
 		publisher = new KoPeMePublisher();
 		JSONArray dataArray = getArray(formData.get("testcases"));
 		log.info("Erzeuge neue Publisher-Instanz, Daten: " + dataArray);
 		for (Object data : dataArray) {
-			log.info("Füge hinzu für " + data);
-			if (data instanceof JSONObject)
-			{
-				publisher.addTestcase(new Testcase(((JSONObject) data).getString("name")));
-			}
-			else
-			{
-				publisher.addTestcase(new Testcase());
-			}
+			log.info("Füge alte Daten hinzu für " + data);
+			// if (data instanceof JSONObject)
+			// {
+			// publisher.addTestcase(new GraphVisualizer(((JSONObject) data).getString("name")));
+			// }
+			// else
+			// {
+			// publisher.addTestcase(new GraphVisualizer());
+			// }
 		}
-		if (publisher.getTestcases().isEmpty()) {
-			publisher.addTestcase(new Testcase());
-		}
+		// if (publisher.getTestcases().isEmpty()) {
+		// publisher.addTestcase(new GraphVisualizer());
+		// }
 		return publisher;
 	}
 }

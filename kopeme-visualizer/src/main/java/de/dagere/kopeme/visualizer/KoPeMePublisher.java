@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import de.dagere.kopeme.visualizer.data.Testcase;
+import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 
 /**
  * The publisher for KoPeMe, which takes the input from the user
@@ -28,12 +28,13 @@ import de.dagere.kopeme.visualizer.data.Testcase;
 public class KoPeMePublisher extends Recorder {
 
 	private static final Logger log = Logger.getLogger(KoPeMePublisher.class.getName());
-	private List<Testcase> testcases = new LinkedList<Testcase>();
+	private List<GraphVisualizer> testcases = new LinkedList<GraphVisualizer>();
 	private AbstractProject<?, ?> lastProject = null;
+	private VisualizeAction lastVA = null;
 
 	public KoPeMePublisher() {
-		log.log(Level.INFO,
-				"Konstruktor KoPeMePublisher");
+		log.log(Level.INFO, "Constructor KoPeMePublisher");
+
 	}
 
 	private Object readResolve() {
@@ -42,17 +43,12 @@ public class KoPeMePublisher extends Recorder {
 		return this;
 	}
 
-	public void addTestcase(Testcase t)
-	{
-		testcases.add(t);
-	}
-
-	public List<Testcase> getTestcases() {
+	public List<GraphVisualizer> getTestcases() {
 		log.info("Getting Testcases, Anzahl: " + testcases.size());
 		return testcases;
 	}
 
-	public void setTestcases(List<Testcase> testcases) {
+	public void setTestcases(List<GraphVisualizer> testcases) {
 		this.testcases = testcases;
 	}
 
@@ -74,6 +70,10 @@ public class KoPeMePublisher extends Recorder {
 		return true;
 	}
 
+	public boolean isInitialized() {
+		return lastVA != null;
+	}
+
 	@Override
 	public Action getProjectAction(AbstractProject<?, ?> project) {
 		log.info("Gebe Projektaktion aus, Klasse: " + project.getClass() + " Instanz von Projekt: " + (project instanceof Project));
@@ -81,14 +81,19 @@ public class KoPeMePublisher extends Recorder {
 		{
 			lastProject = project;
 			VisualizeAction va = new VisualizeAction((AbstractProject) project, this);
+			lastVA = va;
+			log.info("Visualizer: " + va.getVisualizer().size());
+			testcases = new LinkedList<GraphVisualizer>();
+			for (GraphVisualizer gv : va.getVisualizer()) {
+				log.info("Füge Testcase hinzu: " + gv.getName());
+				testcases.add(gv);
+			}
 			log.info("Aktion: " + va);
 			return va;
 		}
-		// if (project instanceof MavenModuleSet){
-		// MavenModuleSet mms = (MavenModuleSet) project;
-		// // mms.getWorkspace()
-		// // mms.getPro
-		// }
+		else {
+			log.log(Level.ALL, "Unexpected Class: " + project.getClass());
+		}
 		return null;
 	}
 

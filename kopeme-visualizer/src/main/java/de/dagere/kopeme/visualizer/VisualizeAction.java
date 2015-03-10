@@ -11,30 +11,26 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
 import javax.xml.bind.JAXBException;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.DateConverter;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 import de.dagere.kopeme.visualizer.data.NormalDateConverter;
-import de.dagere.kopeme.visualizer.data.Testcase;
 
 //import hudson.util.
 
@@ -85,27 +81,6 @@ public class VisualizeAction implements Action, Serializable {
 		return dateconverter;
 	}
 
-	/**
-	 * Returns, weather the measurement with the given name is viewable; called from config.jelly.
-	 * 
-	 * @param name
-	 * @return
-	 */
-	public boolean isViewable(String file, String name) {
-		if (graphMap.containsKey(file))
-			return graphMap.get(file).isViewable(name);
-		else
-			return false;
-	}
-
-	public boolean isMultipleAxis(String graph) {
-		return graphMap.get(graph).isUseMultipleAxis();
-	}
-
-	public void setMultipleAxis(String graph, boolean axis) {
-		graphMap.get(graph).setUseMultipleAxis(axis);
-	}
-
 	private void loadData() {
 		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
@@ -114,49 +89,39 @@ public class VisualizeAction implements Action, Serializable {
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
 
-			final List<Testcase> testcases = publisher.getTestcases();
-			log.info("Testcases:" + testcases);
-			for (Testcase testcase : testcases) {
-				log.log(Level.FINE, "Testcase: " + testcase);
-				String testcaseName = testcase.getName();
-				log.info("Handling " + testcaseName);
-				FilePath workspace = project.getSomeWorkspace();
-				if (workspace != null) // prevent error, when workspace for
-										// project isn't initialized
-				{
-					log.info("Suche nach: " + testcaseName + " " + workspace.list().size());
-
-					FilePath[] list = workspace.list(testcaseName);
-					log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length);
-					if (list != null && list.length > 0
-							&& testcaseName.length() != 0) {
-						File file = new File(project.getSomeWorkspace() + File.separator
-								+ testcaseName);
-						log.info("Lade Daten von: " + testcaseName + " "
-								+ file.exists() + " " + file.getAbsolutePath());
-						try {
-							XMLDataLoader xdl = new XMLDataLoader(file);
-							for (String collector : xdl.getCollectors()) {
-								Map<String, Map<Date, Long>> temp = xdl.getData(collector);
-								log.info("Daten für " + file.getAbsolutePath()
-										+ "(" + collector + ") geladen");
-								graphMap.put(testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1)
-										+ ")",
-										new GraphVisualizer(
-												temp, true));
-							}
-
-						} catch (JAXBException e) {
-							log.info(e.getLocalizedMessage());
-							e.printStackTrace();
-						}
-						log.log(Level.FINE, "Laden beendet");
-					} else {
-						log.info("Error: No data available!");
+			// final List<Testcase> testcases = publisher.getTestcases();
+			// log.log(Level.FINE, "Testcases:" + testcases);
+			final FilePath workspace = project.getSomeWorkspace();
+			if (workspace != null) // prevent error, when workspace for project isn't initialized
+			{
+				for (FilePath testcaseName : workspace.list("**/*.yaml", "", false)) {
+					log.log(Level.FINE, "Lade: " + testcaseName);
+					File file = new File(testcaseName.toString());
+					log.log(Level.FINE, "File: " + file + " " + file.exists());
+					if (file.exists()) {
+						loadFileData(testcaseName.toString(), file);
 					}
-				} else {
-					log.info("Error: Workspace == null");
+					// File file = new File(project.getSomeWorkspace() + File.separator
+					// + testcaseName);
 				}
+
+				// for (Testcase testcase : testcases) {
+				// log.log(Level.FINE, "Testcase: " + testcase);
+				// String testcaseName = testcase.getName();
+				// log.log(Level.FINE, "Suche nach: " + testcaseName + " " + workspace.list().size());
+				// FilePath[] list = workspace.list(testcaseName);
+				// log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length + " Testcase: " + testcaseName);
+				// if (list != null && list.length > 0
+				// && testcaseName.length() != 0) {
+				// File file = new File(project.getSomeWorkspace() + File.separator
+				// + testcaseName);
+				// loadFileData(testcaseName, file);
+				// } else {
+				// log.info("Error: No data available!");
+				// }
+				// }
+			} else {
+				log.info("Error: Workspace == null");
 			}
 
 		} catch (IOException e) {
@@ -170,6 +135,24 @@ public class VisualizeAction implements Action, Serializable {
 		log.info("VisualizeAction.loadData - Daten geladen");
 	}
 
+	private void loadFileData(String testcaseName, File file) {
+		log.log(Level.FINE, "Lade Daten von: " + file.exists() + " " + file.getAbsolutePath());
+		try {
+			XMLDataLoader xdl = new XMLDataLoader(file);
+			for (String collector : xdl.getCollectors()) {
+				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
+				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
+				final String prettyName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1) + ")";
+				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp));
+			}
+
+		} catch (JAXBException e) {
+			log.info(e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		log.log(Level.FINE, "Laden beendet");
+	}
+
 	/**
 	 * Returns an array of all Measurement-Names. This is called in config.jelly.
 	 * 
@@ -179,30 +162,30 @@ public class VisualizeAction implements Action, Serializable {
 		return graphMap.get(file).getMeasurements();
 	}
 
-	/**
-	 * Returns an array of the viewable Measurement-Names. This is called in config.jelly.
-	 * 
-	 * @return
-	 */
-	public String[] getViewable(String file) {
-		String[] ret = graphMap.get(file).getViewable();
+	public boolean isVisible(String fileName) {
+		return graphMap.get(fileName).isVisible();
+	}
+
+	public String[] getAllFiles() {
+		log.log(Level.FINE, "GraphMap: " + graphMap);
+		String[] ret = graphMap.keySet().toArray(new String[0]);
+		log.log(Level.FINE, "Loading all Files, Size: " + ret.length);
 		return ret;
+	}
+
+	public void setVisible(String name, boolean visible) {
+
 	}
 
 	public String[] getFiles() {
-		String[] ret = graphMap.keySet().toArray(new String[0]);
+		List<String> files = new LinkedList<String>();
+		for (Map.Entry<String, GraphVisualizer> entry : graphMap.entrySet()) {
+			if (entry.getValue().isVisible()) {
+				files.add(entry.getKey());
+			}
+		}
+		String[] ret = files.toArray(new String[0]);
 		return ret;
-	}
-
-	public int getValueCount(String file) {
-		final GraphVisualizer graphVisualizer = graphMap.get(file);
-		log.info("Visualizer: " + graphVisualizer);
-		log.info("Count: " + graphVisualizer.getValueCount());
-		return graphVisualizer.getValueCount();
-	}
-
-	public void setValueCount(String file, int value) {
-		graphMap.get(file).setValueCount(value);
 	}
 
 	/**
@@ -214,8 +197,26 @@ public class VisualizeAction implements Action, Serializable {
 		loadData();
 
 		log.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);
-
 		GraphVisualizer graphVisualizer = graphMap.get(file);
+		if (graphVisualizer == null) {
+			String fileTemp = "performanceresults" + File.separator + file;
+			log.log(Level.FINE, "VisualizeAction:getSummaryGraph - Lade Daten für: " + fileTemp);
+			graphVisualizer = graphMap.get(fileTemp);
+		}
+		if (graphVisualizer == null) {
+			final String fileTemp = file.replace("^", File.separator);
+			log.log(Level.FINE, "VisualizeAction:getSummaryGraph - Lade Daten für: " + fileTemp);
+			graphVisualizer = graphMap.get(fileTemp);
+		}
+		if (graphVisualizer == null) {
+			for (Map.Entry<String, GraphVisualizer> entry : graphMap.entrySet()) {
+				log.log(Level.FINE, "Name: " + entry.getKey() + " " + entry.getKey().endsWith(file));
+				if (entry.getKey().endsWith(file)) {
+					graphVisualizer = entry.getValue();
+					break;
+				}
+			}
+		}
 		if (graphVisualizer == null) {
 			log.info("Fehler: " + file + " nicht vorhanden");
 			for (String key : graphMap.keySet()) {
@@ -230,13 +231,13 @@ public class VisualizeAction implements Action, Serializable {
 		log.info("In Graphmap ist: " + graphMap.size());
 
 		int i = 0;
-		for (String viewable : graphVisualizer.getViewable()) {
+		for (String viewable : graphVisualizer.getDatamap().keySet()) {
 			log.info("Erstelle Graph für " + viewable + " "
 					+ (dateconverter instanceof NormalDateConverter));
 			if (dateconverter instanceof NormalDateConverter) {
 				TimeSeriesCollection collection = new TimeSeriesCollection();
 				TimeSeries serie = new TimeSeries(viewable, Minute.class);
-				log.info("Suche Eintrag für " + viewable);
+				log.log(Level.FINE, "Suche Eintrag für " + viewable);
 				for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
 					serie.addOrUpdate(new Minute(entry.getKey()),
 							entry.getValue());
@@ -247,18 +248,9 @@ public class VisualizeAction implements Action, Serializable {
 					chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
 							"Wert", collection, true, true, false);
 				} else {
-					if (isMultipleAxis(file)) {
-						XYPlot plot = chart.getXYPlot();
-						NumberAxis axis2 = new NumberAxis(viewable);
-						plot.setRangeAxis(i, axis2);
-						plot.setDataset(i, collection);
-						plot.setRenderer(i, new StandardXYItemRenderer());
-						plot.mapDatasetToRangeAxis(i, i);
-					} else {
-						XYPlot plot = chart.getXYPlot();
-						plot.setDataset(i, collection);
-						plot.setRenderer(i, new StandardXYItemRenderer());
-					}
+					XYPlot plot = chart.getXYPlot();
+					plot.setDataset(i, collection);
+					plot.setRenderer(i, new StandardXYItemRenderer());
 				}
 				i++;
 			} else {
@@ -283,25 +275,9 @@ public class VisualizeAction implements Action, Serializable {
 		};
 	}
 
-	/**
-	 * Called, when the form is saved and the graph should be refreshed
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public void doSave(final StaplerRequest request,
-			final StaplerResponse response) throws IOException,
-			ServletException {
-		String file = request.getParameter("file");
-		GraphVisualizer currentGraph = graphMap.get(file);
-		currentGraph.setUseMultipleAxis("on".equals(request
-				.getParameter("Verschiedene Skalierungen")));
-		currentGraph.setValueCount(new Integer(request.getParameter("count")));
-		for (String s : currentGraph.getMeasurements()) {
-			currentGraph.setViewable(s, "on".equals(request.getParameter(s)));
-		}
-		response.sendRedirect("../" + getUrlName());
+	public List<GraphVisualizer> getVisualizer() {
+		List<GraphVisualizer> list = new LinkedList<GraphVisualizer>();
+		list.addAll(graphMap.values());
+		return list;
 	}
 }

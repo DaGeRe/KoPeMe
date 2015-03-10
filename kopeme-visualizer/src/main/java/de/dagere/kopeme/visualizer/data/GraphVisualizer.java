@@ -3,12 +3,12 @@ package de.dagere.kopeme.visualizer.data;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.jfree.util.Log;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Saves the data for one graph, i.e. for one part of a VisualizeAction
@@ -17,36 +17,25 @@ import org.jfree.util.Log;
  * 
  */
 public class GraphVisualizer {
-	
+
 	private Map<String, Map<Date, Long>> dataMap;
-	private Set<String> viewable;
-	boolean useMultipleAxis;
 	private int valueCount;
+	private boolean visible;
+	private String name;
 
-	public boolean isUseMultipleAxis() {
-		return useMultipleAxis;
+	public String getName() {
+		return name;
 	}
 
-	public void setUseMultipleAxis(boolean useMultipleAxis) {
-		this.useMultipleAxis = useMultipleAxis;
+	public GraphVisualizer() {
+
 	}
 
-	public GraphVisualizer(Map<String, Map<Date, Long>> temp,
-			boolean useMultipleAxis) {
+	@DataBoundConstructor
+	public GraphVisualizer(String name, Map<String, Map<Date, Long>> temp) {
+		this.name = name;
 		dataMap = temp;
-		viewable = new HashSet<String>();
-		for (String s : temp.keySet()) {
-			viewable.add(s);
-		}
-		this.useMultipleAxis = useMultipleAxis;
-	}
-
-	public boolean isViewable(String s) {
-		return viewable.contains(s);
-	}
-
-	public String[] getViewable() {
-		return viewable.toArray(new String[0]);
+		visible = true;
 	}
 
 	public String[] getMeasurements() {
@@ -60,7 +49,7 @@ public class GraphVisualizer {
 		for (Map.Entry<String, Map<Date, Long>> performanceMeasure : dataMap.entrySet()) {
 			Log.info("Füge Key hinzu: " + performanceMeasure.getKey());
 			Set<Date> unOrderedSet = performanceMeasure.getValue().keySet();
-			TreeSet<Date> measuredDates = new TreeSet<Date>( new Comparator<Date>() {
+			TreeSet<Date> measuredDates = new TreeSet<Date>(new Comparator<Date>() {
 
 				public int compare(Date o1, Date o2) {
 					return -o1.compareTo(o2);
@@ -69,10 +58,10 @@ public class GraphVisualizer {
 			measuredDates.addAll(unOrderedSet);
 			Map<Date, Long> newSubMap = new HashMap<Date, Long>();
 			int i = 0;
-			dateLoop: for ( Date d : measuredDates)
+			dateLoop: for (Date d : measuredDates)
 			{
 				newSubMap.put(d, performanceMeasure.getValue().get(d));
-				if ( i > valueCount )
+				if (i > valueCount)
 					break dateLoop;
 				i++;
 				System.out.println("Datum: " + d);
@@ -82,31 +71,12 @@ public class GraphVisualizer {
 		return newMap;
 	}
 
-	/**
-	 * Sets weather the values of a measure are viewable or not viewable
-	 * @param s
-	 * @param isViewable
-	 */
-	public void setViewable(String s, boolean isViewable) {
-		if (isViewable)
-			viewable.add(s);
-		else
-			viewable.remove(s);
+	public boolean isVisible() {
+		return visible;
 	}
 
-	/**
-	 * Returns how much values are displayed in the graph
-	 * @return
-	 */
-	public int getValueCount() {
-		return valueCount;
-	}
-
-	/**
-	 * Sets how much values are displayed in the graph
-	 * @param valueCount
-	 */
-	public void setValueCount(int valueCount) {
-		this.valueCount = valueCount;
+	public void setVisible(boolean isVisible) {
+		Log.info("SetVisible: " + isVisible);
+		this.visible = isVisible;
 	}
 }
