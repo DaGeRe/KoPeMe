@@ -12,6 +12,7 @@ import org.junit.runner.Result;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.ExampleClassTimeoutTest;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.MultipleCallClassTimeout;
+import de.dagere.kopeme.junit.exampletests.runner.classtimeout.NoTimeoutOutput;
 
 /**
  * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende Ergebnisse liefern
@@ -44,7 +45,14 @@ public class TestJUnitTimeoutExecutions {
 		Result r = jc.run(MultipleCallClassTimeout.class);
 
 		Assert.assertEquals("Test timed out because of class timeout", r.getFailures().get(0).getMessage());
+	}
 
+	@Test
+	public void testNoTimeout() {
+		JUnitCore jc = new JUnitCore();
+		Result r = jc.run(NoTimeoutOutput.class);
+		Assert.assertEquals(2, r.getRunCount());
+		Assert.assertEquals(0, r.getFailureCount());
 	}
 	// public void testNormalJUnitExecution(){
 	// JUnitCore jc = new JUnitCore();

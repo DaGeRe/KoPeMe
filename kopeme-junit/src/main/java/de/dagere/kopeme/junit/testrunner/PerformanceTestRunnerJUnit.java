@@ -61,6 +61,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc != null) {
 			final RunNotifier parallelNotifier = new RunNotifier();
+			parallelNotifier.addListener(new DelegatingRunListener(notifier));
 			Thread mainThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -82,6 +83,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 							getDescription());
 					testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
 				} else {
+					// notifier.fireTestRunFinished();
 					// parallelNotifier.
 				}
 

@@ -40,6 +40,8 @@ public class TimeBoundedExecution {
 		if (testError != null) {
 			if (testError instanceof Exception)
 				throw (Exception) testError;
+			else if (testError instanceof Error)
+				throw (Error) testError;
 			else
 			{
 				log.error("Unexpected behaviour");
