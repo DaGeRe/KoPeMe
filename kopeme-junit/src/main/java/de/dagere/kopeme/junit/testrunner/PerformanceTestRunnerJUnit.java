@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -98,18 +97,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		PerformanceTest a = method.getAnnotation(PerformanceTest.class);
-
-		if (a != null)
-			super.runChild(method, notifier);
-		else {
-			Description testBeschreibung = Description.createTestDescription(this.getTestClass().getJavaClass(), method.getName());
-			notifier.fireTestIgnored(testBeschreibung);
-		}
-	}
-
-	@Override
 	protected void validateTestMethods(List<Throwable> errors) {
 		for (FrameworkMethod each : computeTestMethods()) {
 			if (each.getMethod().getParameterTypes().length > 1) {
@@ -157,51 +144,57 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod currentMethod) {
-		try {
-			final PerformanceJUnitStatement callee = getStatement(currentMethod);
-
-			log.trace("Im methodBlock für " + currentMethod.getName());
-
-			initValues(currentMethod);
-
-			final Statement st = new Statement() {
-				@Override
-				public void evaluate() throws Throwable {
-					final Thread mainThread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								runWarmup(callee);
-								TestResult tr = executeSimpleTest(callee);
-								tr.checkValues();
-								if (!assertationvalues.isEmpty()) {
-									log.info("Checking: " + assertationvalues.size());
-									tr.checkValues(assertationvalues);
-								}
-							} catch (Exception e) {
-								if (e instanceof RuntimeException) {
-									throw (RuntimeException) e;
-								}
-								log.error("Catched Exception: {}", e.getLocalizedMessage());
-								e.printStackTrace();
-							} catch (Throwable t) {
-								if (t instanceof Error)
-									throw (Error) t;
-								log.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
-							}
-						}
-					});
-					TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
-					tbe.execute();
-					log.debug("Timebounded execution finished");
-				}
-			};
-			return st;
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if(currentMethod.getAnnotation(PerformanceTest.class) != null){
+			return createPerformanceStatementFromMethod(currentMethod);
+		} else {
+			return super.methodBlock(currentMethod);
 		}
-		return null;
+	}
+
+	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
+		final PerformanceJUnitStatement callee;
+		try {
+			callee = getStatement(currentMethod);
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+		log.trace("Im methodBlock für " + currentMethod.getName());
+		
+		initValues(currentMethod);
+		
+		final Statement st = new Statement() {
+			@Override
+			public void evaluate() throws Throwable {
+				final Thread mainThread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							runWarmup(callee);
+							TestResult tr = executeSimpleTest(callee);
+							tr.checkValues();
+							if (!assertationvalues.isEmpty()) {
+								log.info("Checking: " + assertationvalues.size());
+								tr.checkValues(assertationvalues);
+							}
+						} catch (Exception e) {
+							if (e instanceof RuntimeException) {
+								throw (RuntimeException) e;
+							}
+							log.error("Catched Exception: {}", e.getLocalizedMessage());
+							e.printStackTrace();
+						} catch (Throwable t) {
+							if (t instanceof Error)
+								throw (Error) t;
+							log.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
+						}
+					}
+				});
+				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+				tbe.execute();
+				log.debug("Timebounded execution finished");
+			}
+		};
+		return st;
 	}
 
 	private void initValues(FrameworkMethod method) {
