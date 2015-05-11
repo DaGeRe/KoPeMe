@@ -8,36 +8,76 @@ import java.lang.annotation.Target;
 
 import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 
+/**
+ * This annotation for <code>public void</code> methods is telling that the method is a KoPeMe-Testcase. This means that it is executed several times with
+ * performance measurements to get performance measures for the testcase. It is possible to specify the count of executions and other configuration via
+ * parameters of &#064;PerformanceTest.
+ * 
+ * A annotated method could start like following:
+ * 
+ * <pre>
+ * &#064;PerformanceTest(warmupExecutions = 3, 
+ * 			executionTimes = 10)
+ * public void simpleDeviationTest() {
+ * </pre>
+ * 
+ * This would mean that it should be executed 3 times to be warmed up (i.e. without measurement) and 10 times for real measurement.
+ * 
+ * @author reichelt
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ METHOD })
 public @interface PerformanceTest {
 	/**
-	 * Marks the counts of executions, that should be executed and measured for
-	 * real data.
+	 * Optionally specificy the count of execution which should be measured.
 	 * 
 	 * @return
 	 */
 	public int executionTimes() default 10;
 
-	public int timeout() default 100000;
-
-	public boolean failAfterTimeout() default false;
-
-	public boolean logFullData() default false;
-
-	// public float maximalRelativeStandardDeviation() default 0;
-
 	/**
-	 * Marks the count of executions, that should be executed before the
-	 * measuring begins.
+	 * Optionally specify the count of executions, that should be executed before the measuring begins.
 	 * 
 	 * @return
 	 */
 	public int warmupExecutions() default 1;
 
+	/**
+	 * Optionally specify the timeout after which the test is canceled. The test is canceled after the timeout occurs for all executions, not for a single
+	 * execution of the method.
+	 * 
+	 * @return
+	 */
+	public int timeout() default 100000;
+
+	/**
+	 * Optionally specify that all data should be logged, i.e. primarily all measured values instead of only average values.
+	 * 
+	 * @return
+	 */
+	public boolean logFullData() default false;
+
+	/**
+	 * Optionally specify which performance thresholds should be checked after the execution is completed
+	 * 
+	 * @return
+	 */
 	public Assertion[] assertions() default {};
 
-	public int minEarlyStopExecutions() default 10;
-
+	/**
+	 * Optionally specify for <emph>all<emph> datacollectors, for which maximal standard deviation an early stop is executed. This means that, if all relative
+	 * standard deviations fall below the given maximale relative deviations thresholds, the test is stoped and the measured value until the stop is the final
+	 * result.
+	 * 
+	 * @return
+	 */
 	public MaximalRelativeStandardDeviation[] deviations() default {};
+
+	/**
+	 * Optionally specify how many executions, if <code>deviations</code> is specified, are executed before an early stop is eventually happening
+	 * 
+	 * @return
+	 */
+	public int minEarlyStopExecutions() default 10;
 }
