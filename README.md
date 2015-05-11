@@ -9,14 +9,17 @@ In it's core, KoPeMe got three possibilities to enable performance tests in Java
 
 KoPeMe is in maven central, so to get started, just add
 
+```xml
 <dependency>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-junit</artifactId>
 	<version>0.4</version>
 </dependency>
+```
 
 To your maven depencies. After that, add a test class with a simple performance test:
 
+```java
         @Test
 	@PerformanceTest(executionTimes = 1000, warmupExecutions = 500,
 			assertions =
@@ -24,6 +27,7 @@ To your maven depencies. After that, add a test class with a simple performance 
 	public void testSomething() {
 	   ...
         }
+```
 
 Now just run this test with JUnit from your IDE or maven shurefire, and whatever you've writte in the method will by executed 500 times for warmup and 1000 times for real measurement. In performanceresults/ a result-file will be placed. If your execution takes more than 15 seconds, the test will fail. If you now execute this test every time in your continous build environment, you can be shure that in every new commit, your testcase will not take more than 15 seconds.
 

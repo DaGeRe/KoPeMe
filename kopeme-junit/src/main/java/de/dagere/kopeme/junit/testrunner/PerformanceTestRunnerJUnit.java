@@ -42,7 +42,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	private final static Logger log = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
-	private Class klasse;
+	private final Class klasse;
 	protected boolean saveFullData;
 	protected FrameworkMethod method;
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
