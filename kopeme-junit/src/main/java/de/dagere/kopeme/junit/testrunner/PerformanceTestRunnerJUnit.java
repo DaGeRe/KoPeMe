@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit.testrunner;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,6 +42,44 @@ import de.dagere.kopeme.datacollection.TestResult;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
+	final static PerformanceTestingClass defaultPerformanceTestingClass = new PerformanceTestingClass() {
+
+		@Override
+		public Class<? extends Annotation> annotationType() {
+			return PerformanceTestingClass.class;
+		}
+
+		@Override
+		public boolean useKieker() {
+			try {
+				return (boolean) PerformanceTestingClass.class.getMethod("useKieker").getDefaultValue();
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+
+		@Override
+		public int overallTimeout() {
+			try {
+				return (int) PerformanceTestingClass.class.getMethod("overallTimeout").getDefaultValue();
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+			return 100;
+		}
+
+		@Override
+		public boolean logFullData() {
+			try {
+				return (boolean) PerformanceTestingClass.class.getMethod("logFullData").getDefaultValue();
+			} catch (NoSuchMethodException | SecurityException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+	};
+
 	private final static Logger log = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private final Class klasse;
@@ -60,33 +99,32 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	public void run(final RunNotifier notifier) {
 		long start = System.nanoTime();
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
-		if (ptc != null) {
-			final RunNotifier parallelNotifier = new RunNotifier();
-			parallelNotifier.addListener(new DelegatingRunListener(notifier));
-			Thread mainThread = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					PerformanceTestRunnerJUnit.super.run(parallelNotifier);
-				}
-			});
-			saveFullData = ptc.logFullData();
-			log.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
-			mainThread.start();
-
-			try {
-				mainThread.join(ptc.overallTimeout());
-				if (mainThread.isAlive()) {
-					log.debug("Call interrupt because of class-timeout");
-					mainThread.interrupt();
-					log.debug("Firing..");
-					setTestsToFail(notifier);
-				}
-			} catch (InterruptedException e) {
-				log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
-				e.printStackTrace();
+		if (ptc == null) {
+			ptc = defaultPerformanceTestingClass;
+		}
+		final RunNotifier parallelNotifier = new RunNotifier();
+		parallelNotifier.addListener(new DelegatingRunListener(notifier));
+		Thread mainThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				PerformanceTestRunnerJUnit.super.run(parallelNotifier);
 			}
-		} else {
-			super.run(notifier);
+		});
+		saveFullData = ptc.logFullData();
+		log.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
+		mainThread.start();
+
+		try {
+			mainThread.join(ptc.overallTimeout());
+			if (mainThread.isAlive()) {
+				log.debug("Call interrupt because of class-timeout");
+				mainThread.interrupt();
+				log.debug("Firing..");
+				setTestsToFail(notifier);
+			}
+		} catch (InterruptedException e) {
+			log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
+			e.printStackTrace();
 		}
 	}
 

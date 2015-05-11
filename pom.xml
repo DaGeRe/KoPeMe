@@ -1,49 +1,74 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-  
-    <groupId>de.dagere.kopeme</groupId>
-    <artifactId>kopeme-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.5-SNAPSHOT</version>
-    <name>KoPeMe - Parent</name>
-    <description>Continous Performance Testing Framework</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <modules>
-        <module>kopeme-core</module>
-        <module>kopeme-junit</module>
-	<module>kopeme-junit3</module>
-	<module>kopeme-visualizer-core</module>
-        <!-- <module>kopeme-mojo</module> -->
-	<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
-	<!-- <module>kopeme-visualizer</module>-->
-    	<!-- Visualizer kann nicht in Jar-Build integriert werden --> 
-    </modules>
+	<groupId>de.dagere.kopeme</groupId>
+	<artifactId>kopeme-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.5-SNAPSHOT</version>
+	<name>KoPeMe-Parent</name>
+	<description>Continous Performance Testing Framework</description>
 
-   <profiles>
-    <profile>
-      <activation>
-         <activeByDefault>true</activeByDefault>
-      </activation>
-      <id>excludeMojoProfile</id>
-      <modules>
-        <module>kopeme-core</module>
-        <module>kopeme-junit</module>
-	<module>kopeme-junit3</module>
-	<module>kopeme-visualizer-core</module>
-      </modules>
-    </profile>
-   </profiles>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
-    <build>
-        <pluginManagement>
+	<properties>
+		<additionalparam>-Xdoclint:none</additionalparam>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<core.version>0.9-SNAPSHOT</core.version>
+		<java.version>1.7</java.version>
+	</properties>
+
+	<modules>
+		<module>kopeme-core</module>
+		<module>kopeme-junit</module>
+		<module>kopeme-junit3</module>
+		<module>kopeme-visualizer-core</module>
+		<!-- <module>kopeme-mojo</module> -->
+		<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
+		<!-- <module>kopeme-visualizer</module> -->
+		<!-- Visualizer kann nicht in Jar-Build integriert werden -->
+	</modules>
+
+	<profiles>
+		<profile>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<id>excludeMojoProfile</id>
+			<modules>
+				<module>kopeme-core</module>
+				<module>kopeme-junit</module>
+				<module>kopeme-junit3</module>
+				<module>kopeme-visualizer-core</module>
+			</modules>
+		</profile>
+	</profiles>
+
+	<build>
+		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.1</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.18.1</version>
+					<configuration>
+						<excludes>
+							<exclude>de/dagere/kopeme/junit/exampletests/**/*.java</exclude>
+						</excludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -80,70 +105,75 @@
 					</executions>
 				</plugin>
 				<plugin>
-				  <groupId>org.apache.maven.plugins</groupId>
-				  <artifactId>maven-source-plugin</artifactId>
-				  <executions>
-					<execution>
-					  <id>attach-sources</id>
-					  <goals>
-						<goal>jar</goal>
-					  </goals>
-					</execution>
-				  </executions>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>attach-sources</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 
-			  <plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>license-maven-plugin</artifactId>
-			    <version>1.6</version>
-			    <configuration>
-				  <verbose>false</verbose>
-				  <addSvnKeyWords>false</addSvnKeyWords>
-			    </configuration>
-			    <executions>
-			    <execution>
-			  	<id>first</id>
-				<goals>
-				  <goal>update-file-header</goal>
-				</goals>
-				<phase>process-sources</phase>
-			<configuration>
-			   <licenseName>eupl_v1</licenseName>
-			   <roots>
-				<root>src/main/java</root>
-				<root>src/test</root>
-		          </roots>
-			</configuration>
-		    </execution>
-		  </executions>
-		</plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-	
-	
-    <dependencies>
-        <dependency>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>1.6</version>
+					<configuration>
+						<verbose>false</verbose>
+						<addSvnKeyWords>false</addSvnKeyWords>
+					</configuration>
+					<executions>
+						<execution>
+							<id>first</id>
+							<goals>
+								<goal>update-file-header</goal>
+							</goals>
+							<phase>process-sources</phase>
+							<configuration>
+								<licenseName>eupl_v1</licenseName>
+								<roots>
+									<root>src/main/java</root>
+									<root>src/test</root>
+								</roots>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+
+	<dependencies>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 		</dependency>
-    </dependencies>
-	
-	<scm>			 
+	</dependencies>
+
+	<scm>
 		<connection>scm:git:ssh://github.com:DaGeRe/KoPeMe.git</connection>
 		<developerConnection>scm:git:git@github.com:DaGeRe/KoPeMe.git</developerConnection>
 		<url>https://git@github.com:DaGeRe/KoPeMe.git</url>
 	</scm>
-	
+
 	<developers>
 		<developer>
 			<id>DaGeRe</id>
 			<name>David Georg Reichelt</name>
 			<email>kopeme@dagere.de</email>
 		</developer>
+		<developer>
+			<id>dhaeb</id>
+			<name>Dan Häberlein</name>
+			<email>dan.elite610@yahoo.de</email>
+		</developer>
 	</developers>
-	
+
 	<licenses>
 		<license>
 			<name>European Union Public License v1.1</name>
@@ -151,7 +181,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>sonatype-nexus-snapshots</id>
@@ -164,13 +194,5 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-	
-	<parent>
-		<groupId>org.sonatype.oss</groupId>
-		<artifactId>oss-parent</artifactId>
-		<version>7</version>
-	</parent>
-  <properties>
-    <additionalparam>-Xdoclint:none</additionalparam>
-  </properties>
+
 </project>
