@@ -2,6 +2,7 @@ package de.dagere.kopeme.junit.testrunner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,14 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 
 /**
- * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
- * the TheorieRunner. An alternative implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to
+ * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. 
+ * This does not work without another runner, e.g. the TheorieRunner. 
+ * An alternative implementation, e.g. via Rules, which would make it possible to include Theories, 
+ * is not possible, because one needs to
  * change the signature of test methods to get KoPeMe-Tests running.
  * 
- * This test runner does not measure the time before and after are taking; but time rules take to execute are added to the overall-time of the method-execution
+ * This test runner does not measure the time before and after are taking; 
+ * but time rules take to execute are added to the overall-time of the method-execution.
  * 
  * @author dagere
  * 
@@ -77,22 +81,24 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					log.debug("Call interrupt because of class-timeout");
 					mainThread.interrupt();
 					log.debug("Firing..");
-					// notifier.fireTestFailure(new Failure(getDescription(), new Exception("Test timed out because of class timeout")));
-					EachTestNotifier testNotifier = new EachTestNotifier(notifier,
-							getDescription());
-					testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
-				} else {
-					// notifier.fireTestRunFinished();
-					// parallelNotifier.
-				}
-
+					setTestsToFail(notifier);
+				} 
 			} catch (InterruptedException e) {
 				log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
 			super.run(notifier);
+		}
+	}
+
+	private void setTestsToFail(final RunNotifier notifier) {
+		Description description = getDescription();
+		ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
+		toBeFailed.add(description); // the whole test class failed
+		for(Description d : toBeFailed){
+			EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
+			testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
 		}
 	}
 
