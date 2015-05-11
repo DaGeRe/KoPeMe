@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.ReflectiveCallable;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
@@ -29,14 +30,11 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 
 /**
- * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. 
- * This does not work without another runner, e.g. the TheorieRunner. 
- * An alternative implementation, e.g. via Rules, which would make it possible to include Theories, 
- * is not possible, because one needs to
+ * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
+ * the TheorieRunner. An alternative implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to
  * change the signature of test methods to get KoPeMe-Tests running.
  * 
- * This test runner does not measure the time before and after are taking; 
- * but time rules take to execute are added to the overall-time of the method-execution.
+ * This test runner does not measure the time before and after are taking; but time rules take to execute are added to the overall-time of the method-execution.
  * 
  * @author dagere
  * 
@@ -82,7 +80,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					mainThread.interrupt();
 					log.debug("Firing..");
 					setTestsToFail(notifier);
-				} 
+				}
 			} catch (InterruptedException e) {
 				log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
 				e.printStackTrace();
@@ -96,7 +94,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		Description description = getDescription();
 		ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
 		toBeFailed.add(description); // the whole test class failed
-		for(Description d : toBeFailed){
+		for (Description d : toBeFailed) {
 			EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
 			testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
 		}
@@ -150,7 +148,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod currentMethod) {
-		if(currentMethod.getAnnotation(PerformanceTest.class) != null){
+		if (currentMethod.getAnnotation(PerformanceTest.class) != null) {
 			return createPerformanceStatementFromMethod(currentMethod);
 		} else {
 			return super.methodBlock(currentMethod);
@@ -165,9 +163,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			throw new RuntimeException(e);
 		}
 		log.trace("Im methodBlock für " + currentMethod.getName());
-		
+
 		initValues(currentMethod);
-		
+
 		final Statement st = new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
