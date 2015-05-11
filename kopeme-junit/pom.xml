@@ -21,6 +21,7 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -82,6 +83,7 @@
 				<configuration>
 					<excludes>
 						<exclude>de/dagere/kopeme/junit/exampletests/**/*.java</exclude>
+						<exclude>**/Example*.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

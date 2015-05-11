@@ -43,7 +43,6 @@ public class TestJUnitTimeoutExecutions {
 	public void testMultipleClassTimeout() throws InterruptedException {
 		JUnitCore jc = new JUnitCore();
 		Result r = jc.run(MultipleCallClassTimeout.class);
-		Thread.sleep(1000);
 		Assert.assertEquals("Test timed out because of class timeout", r.getFailures().get(0).getMessage());
 	}
 
