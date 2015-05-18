@@ -1,5 +1,6 @@
 package de.dagere.kopeme.example.tests;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +35,7 @@ public class PureKoPeMeTest {
 			PerformanceTestRunnerKoPeMe.main(params);
 			long duration = System.currentTimeMillis() - start;
 			log.debug("Overall Duration: " + duration);
-			XMLDataLoader xdl = new XMLDataLoader("performanceresults/" + TestTimeTest.class.getCanonicalName() + ".simpleTest.yaml");
+			XMLDataLoader xdl = new XMLDataLoader(new File("performanceresults/" + TestTimeTest.class.getCanonicalName() + ".simpleTest.yaml"));
 			Kopemedata kd = xdl.getFullData();
 			List<Datacollector> collector = null;
 			for (TestcaseType tct : kd.getTestcases().getTestcase()) {

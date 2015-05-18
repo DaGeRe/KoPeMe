@@ -6,28 +6,31 @@ import java.lang.management.ThreadMXBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class CPUUsageCollector extends DataCollector {
+/**
+ * A collector for the CPU usage during a test.
+ * 
+ * @author reichelt
+ *
+ */
+public final class CPUUsageCollector extends DataCollector {
 
-	private Logger log = LogManager.getLogger(CPUUsageCollector.class);
+	private final static int MULTIPLICATOR_FOR_READABILITY = 1000;
+
+	private final static Logger LOG = LogManager.getLogger(CPUUsageCollector.class);
 
 	private long startTimeCpu = 0, stopTimeCpu = 0;
-	// private long startTimeCpu2 = 0, stopTimeCpu2 = 0;
 	private long startTimeUser = 0, stopTimeUser = 0;
 	private long startTime = 0, stopTime = 0;
-	ThreadMXBean mxb;
+	private ThreadMXBean mxb;
 
-	// OperatingSystemMXBean oxb;
-
+	@Override
 	public int getPriority() {
-		return 5;
+		return LOW_DATACOLLECTOR_PRIORITY;
 	}
 
 	@Override
 	public void startCollection() {
 		mxb = ManagementFactory.getThreadMXBean();
-		// oxb = ManagementFactory.getOperatingSystemMXBean();
-
-		// ManagementFactory.getMemoryManagerMXBeans().get(0).;
 		startTimeCpu = mxb.getCurrentThreadCpuTime();
 		startTimeUser = mxb.getCurrentThreadUserTime();
 		startTime = System.nanoTime();
@@ -45,10 +48,9 @@ public class CPUUsageCollector extends DataCollector {
 
 		long cpuTime = stopTimeCpu - startTimeCpu;
 		long time = stopTime - startTime;
-		log.trace("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
-		if (!mxb.isCurrentThreadCpuTimeSupported())
-			return -1;
-		return (1000 * cpuTime) / time;
+		LOG.trace("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
+		if (!mxb.isCurrentThreadCpuTimeSupported()) return -1;
+		return (MULTIPLICATOR_FOR_READABILITY * cpuTime) / time;
 
 	}
 }

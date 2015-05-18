@@ -4,16 +4,16 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Interface for loading KoPeMe-data
+ * Interface for loading KoPeMe-data.
  * 
  * @author reichelt
  *
  */
 public interface DataLoader {
 	/**
-	 * Method for loading the KoPeMe-data
+	 * Method for loading the KoPeMe-data.
 	 * 
 	 * @return KoPeMe-data
 	 */
-	public Map<String, Map<Date, Long>> getData();
+	Map<String, Map<Date, Long>> getData();
 }

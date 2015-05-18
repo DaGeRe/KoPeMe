@@ -11,16 +11,25 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datacollection.TemperatureCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 
+/**
+ * Some utils for performance testing.
+ * 
+ * @author reichelt
+ *
+ */
 public class PerformanceTestUtils {
-	private static final Logger log = LogManager.getLogger(PerformanceTestUtils.class);
+	private static final Logger LOG = LogManager.getLogger(PerformanceTestUtils.class);
 
-	public final static String PERFORMANCEFOLDER = "performanceresults";
+	public static final String PERFORMANCEFOLDER = "performanceresults";
+
+	private PerformanceTestUtils() {
+
+	}
 
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
@@ -28,13 +37,13 @@ public class PerformanceTestUtils {
 	 * @param tr Testresult, that should be tested
 	 * @return Weather the collector is valid or not
 	 */
-	public static boolean checkCollectorValidity(TestResult tr, Map<String, Long> assertationvalues, Map<String, Double> maximalRelativeStandardDeviation) {
-		log.trace("Checking DataCollector validity...");
+	public static boolean checkCollectorValidity(final TestResult tr, final Map<String, Long> assertationvalues, final Map<String, Double> maximalRelativeStandardDeviation) {
+		LOG.trace("Checking DataCollector validity...");
 		boolean valid = true;
 		for (String collectorName : assertationvalues.keySet()) {
 			if (!tr.getKeys().contains(collectorName)) {
 				valid = false;
-				log.warn("Invalid Collector for assertion: " + collectorName);
+				LOG.warn("Invalid Collector for assertion: " + collectorName);
 			}
 		}
 		String keys = "";
@@ -44,26 +53,25 @@ public class PerformanceTestUtils {
 		for (String collectorName : maximalRelativeStandardDeviation.keySet()) {
 			if (!tr.getKeys().contains(collectorName)) {
 				valid = false;
-				log.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
+				LOG.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
 				for (String key : tr.getKeys()) {
-					log.warn(key + " - " + collectorName + ": " + key.equals(collectorName));
+					LOG.warn(key + " - " + collectorName + ": " + key.equals(collectorName));
 				}
 			}
 		}
-		log.trace("... " + valid);
+		LOG.trace("... " + valid);
 		return valid;
 	}
 
-	public static void saveData(String testcasename, TestResult tr, boolean failure, boolean error, String filename, boolean saveValues) {
+	public static void saveData(final String testcasename, final TestResult tr, final boolean failure, final boolean error, final String filename, final boolean saveValues) {
 		try {
 			File f = new File(PERFORMANCEFOLDER);
-			if (!f.exists())
-			{
+			if (!f.exists()) {
 				f.mkdir();
 			}
 			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
 			for (String key : tr.getKeys()) {
-				log.trace("Key: " + key);
+				LOG.trace("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
 				long value = tr.getValue(key);
 				// log.info("Ermittle Minimum");
@@ -72,15 +80,15 @@ public class PerformanceTestUtils {
 				long max = tr.getMaximumCurrentValue(key);
 				double first10percentile = getPercentile(tr.getValues(key), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
-						tr.getRealExecutions(), min, max, first10percentile, TemperatureCollector.getTemperature());
+						tr.getRealExecutions(), min, max, first10percentile);
 				List<Long> values = saveValues ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
-				log.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
+				LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
 			}
 			for (String additionalKey : tr.getAdditionValueKeys()) {
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
-						tr.getRealExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey), TemperatureCollector.getTemperature());
+						tr.getRealExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
 				List<Long> vales = new LinkedList<Long>();
 				xds.storeValue(performanceDataMeasure, vales);
 			}
@@ -92,7 +100,14 @@ public class PerformanceTestUtils {
 
 	}
 
-	public static double getPercentile(List<Long> values, int percentil) {
+	/**
+	 * Returns a given percentil for a given list of values. The n-percentil is the value for which n % of the values are less then the percentil.
+	 * 
+	 * @param values The list of values for which the percentil should be calculated
+	 * @param percentil Percentage for the percentil
+	 * @return The percentil value
+	 */
+	public static double getPercentile(final List<Long> values, final int percentil) {
 		double wertArray[] = new double[values.size()];
 		int i = 0;
 		for (Long l : values) {
@@ -102,7 +117,7 @@ public class PerformanceTestUtils {
 
 		Percentile p = new Percentile(percentil);
 		double evaluate = p.evaluate(wertArray);
-		log.trace("Perzentil: " + evaluate);
+		LOG.trace("Perzentil: " + evaluate);
 		return evaluate;
 	}
 }

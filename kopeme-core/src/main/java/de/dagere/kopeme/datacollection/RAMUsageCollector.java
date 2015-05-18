@@ -1,7 +1,5 @@
 package de.dagere.kopeme.datacollection;
 
-import java.lang.management.MemoryMXBean;
-
 /**
  * Diese Klasse speichert Daten über die Arbeitsspeicherbenutzung. Allerdings wird hier nicht der durchschnittliche Arbeitsspeicherverbrauch oder ein Verlauf
  * gespeichert, sondern nur der Arbeitsspeicherverbrauch, der während des Methodenaufrufs hinzugekommen ist. Ein Messen des gesamten Verlaufs würde keine
@@ -12,33 +10,26 @@ import java.lang.management.MemoryMXBean;
  * @author dagere
  *
  */
-public class RAMUsageCollector extends DataCollector {
-	MemoryMXBean mxb;
-	long usedStart, value;
+public final class RAMUsageCollector extends DataCollector {
 
+	private long usedStart, value;
+
+	@Override
 	public int getPriority() {
-		return 10; // Middle-High Priority, as the RAMUsageCollector should not
-					// measure the things other DataCollectors create
+		return MIDDLE_COLLECTOR_PRIORITY; // Middle-High Priority, as the RAMUsageCollector should not
+		// measure the things other DataCollectors create
 	}
 
 	@Override
 	public void startCollection() {
 		System.gc();
-		// mxb = ManagementFactory.getMemoryMXBean();
-		// long used = mxb.getHeapMemoryUsage().getUsed();
-		// long used2 = mxb.getNonHeapMemoryUsage().getUsed();
-
 		usedStart = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 	}
 
 	@Override
 	public void stopCollection() {
-		// long used = mxb.getHeapMemoryUsage().getUsed();
-		// long used2 = mxb.getNonHeapMemoryUsage().getUsed();
-
 		long nowVal = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-
 		value = nowVal - usedStart;
 	}
 

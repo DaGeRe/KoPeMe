@@ -18,15 +18,25 @@ import de.dagere.kopeme.paralleltests.ParallelTestExecution;
  * @author dagere
  *
  */
-public class PerformanceTestRunnerKoPeMe {
+public final class PerformanceTestRunnerKoPeMe {
 
-	private static final Logger log = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
+	private static final Logger LOG = LogManager.getFormatterLogger(PerformanceTestRunnerKoPeMe.class);
 
-	public static void main(String args[]) throws Throwable
-	{
-		if (args.length == 0)
-		{
-			log.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
+	/**
+	 * Class should not be initialized.
+	 */
+	private PerformanceTestRunnerKoPeMe() {
+	}
+
+	/**
+	 * Starts testing a given class.
+	 * 
+	 * @param args Only the classname
+	 * @throws Throwable Any possible exception during testing the class
+	 */
+	public static void main(final String[] args) throws Throwable {
+		if (args.length == 0) {
+			LOG.error("Der PerformanceTestRunner muss mit einem Klassennamen als Parameter ausgeführt werden.");
 			System.exit(1);
 		}
 		String klassenName = args[0];
@@ -35,40 +45,43 @@ public class PerformanceTestRunnerKoPeMe {
 			Class c = Class.forName(klassenName);
 			runTestsWithClass(c);
 		} catch (ClassNotFoundException e) {
-			log.error("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");
+			LOG.error("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");
 			// e.printStackTrace();
 			System.exit(1);
 		}
 	}
 
-	public static void runTestsWithClass(Class c) throws Throwable
-	{
+	/**
+	 * Runs all tests for the given class.
+	 * 
+	 * @param clazz Class-Object, for which the tests should be run
+	 * @throws Throwable Any possible exception during the run
+	 */
+	public static void runTestsWithClass(final Class clazz) throws Throwable {
 		Object instance = null;
 		try {
-			instance = c.newInstance();
+			instance = clazz.newInstance();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		if (instance == null)
-		{
-			log.error("Klasseninstanziierung nicht möglich");
+		if (instance == null) {
+			LOG.error("Klasseninstanziierung nicht möglich");
 			return;
 		}
 		boolean failed = false;
 		List<AssertionError> errors = new LinkedList<AssertionError>();
-		for (Method method : c.getMethods())
-		{
+		for (Method method : clazz.getMethods()) {
 			try {
 				if (method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
-					PerformanceTestRunner te = new PerformanceTestRunner(c, instance, method);
+					PerformanceTestRunner te = new PerformanceTestRunner(clazz, instance, method);
 					te.evaluate();
 				}
 				if (method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
-					ParallelTestExecution te = new ParallelTestExecution(c, instance, method);
+					ParallelTestExecution te = new ParallelTestExecution(clazz, instance, method);
 					te.evaluate();
 				}
 			} catch (AssertionError ae) {
@@ -78,7 +91,7 @@ public class PerformanceTestRunnerKoPeMe {
 		}
 		if (failed) {
 			for (AssertionError ae : errors) {
-				log.error("Exception: " + ae.getLocalizedMessage());
+				LOG.error("Exception: " + ae.getLocalizedMessage());
 				ae.printStackTrace();
 			}
 		}

@@ -32,7 +32,7 @@ import de.dagere.kopeme.paralleltests.MethodExecution;
  * 
  */
 public class TestResult {
-	private static final Logger log = LogManager.getLogger(TestResult.class);
+	private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
 	protected Map<String, Long> values;
 	protected Map<String, DataCollector> dataCollectors;
@@ -42,11 +42,11 @@ public class TestResult {
 	protected Checker checker;
 	private int realExecutions;
 
-	private String testcase;
+	private final String testcase;
 
 	private List<MethodExecution> methods;
 
-	private Map<String, MeasureSummarizer> ms;
+	private Map<String, MeasureSummarizer> collectorSummarizerMap;
 
 	public TestResult(String testcase, int executionTimes) {
 		values = new HashMap<String, Long>();
@@ -55,11 +55,15 @@ public class TestResult {
 		index = 0;
 		this.testcase = testcase;
 
-		ms = new HashMap<>();
+		collectorSummarizerMap = new HashMap<>();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
-		// realValues = new HashMap<String, Long>[executionTimes];
 	}
 
+	/**
+	 * Returns the name of the TestCase for which the result is saved
+	 * 
+	 * @return Name of the Testcase
+	 */
 	public String getTestcase() {
 		return testcase;
 	}
@@ -96,9 +100,9 @@ public class TestResult {
 	public void checkValues(Map<String, Long> assertationvalues) {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
-				log.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
+				LOG.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
-					log.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
+					LOG.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
@@ -120,7 +124,7 @@ public class TestResult {
 		};
 		Arrays.sort(sortedCollectors, comparator);
 		for (DataCollector dc : sortedCollectors) {
-			log.trace("Starte: {}", dc.getName());
+			LOG.trace("Starte: {}", dc.getName());
 			dc.startCollection();
 		}
 	}
@@ -140,7 +144,7 @@ public class TestResult {
 		};
 		Arrays.sort(sortedCollectors, comparator);
 		for (DataCollector dc : sortedCollectors) {
-			log.trace("Starte: {}", dc.getName());
+			LOG.trace("Starte: {}", dc.getName());
 			dc.startOrRestartCollection();
 		}
 	}
@@ -167,7 +171,7 @@ public class TestResult {
 	 * @param ms
 	 */
 	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
-		this.ms.put(datacollector, ms);
+		this.collectorSummarizerMap.put(datacollector, ms);
 	}
 
 	/**
@@ -177,7 +181,7 @@ public class TestResult {
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
-			log.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+			LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
@@ -185,8 +189,8 @@ public class TestResult {
 				localValues.add(realValues.get(i).get(collectorName));
 			}
 			Long result;
-			if (ms.containsKey(collectorName)) {
-				result = ms.get(collectorName).getValue(localValues);
+			if (collectorSummarizerMap.containsKey(collectorName)) {
+				result = collectorSummarizerMap.get(collectorName).getValue(localValues);
 			} else {
 				result = as.getValue(localValues);
 			}
@@ -360,14 +364,14 @@ public class TestResult {
 			values[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
-			log.trace(Arrays.toString(values));
+			LOG.trace(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();
 		for (Long l : values) {
 			st.addValue(l);
 		}
 
-		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
+		LOG.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
 		return st.getStandardDeviation() / st.getMean();
 	}
 
@@ -379,7 +383,7 @@ public class TestResult {
 			Double aimStdDeviation = deviations.get(collectorName);
 			if (aimStdDeviation != null) {
 				double stdDeviation = getRelativeStandardDeviation(collectorName);
-				log.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
+				LOG.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
 					isRelativeDeviationBelowValue = false;
 					break;
@@ -396,7 +400,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) < min)
 				min = realValues.get(i).get(key);
 		}
-		log.trace("Minimum ermittelt: " + min);
+		LOG.trace("Minimum ermittelt: " + min);
 		return min;
 	}
 
@@ -406,7 +410,7 @@ public class TestResult {
 			if (realValues.get(i).get(key) > max)
 				max = realValues.get(i).get(key);
 		}
-		log.trace("Maximum ermittelt: " + max);
+		LOG.trace("Maximum ermittelt: " + max);
 		return max;
 	}
 
