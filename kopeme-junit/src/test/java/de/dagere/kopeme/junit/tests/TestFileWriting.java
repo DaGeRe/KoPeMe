@@ -21,6 +21,12 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
 
+/**
+ * Testet das Schreiben in Dateien
+ * 
+ * @author reichelt
+ *
+ */
 public class TestFileWriting {
 
 	@Rule
