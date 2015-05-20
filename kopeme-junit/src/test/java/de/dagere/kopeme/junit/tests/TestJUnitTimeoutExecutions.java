@@ -34,7 +34,7 @@ public class TestJUnitTimeoutExecutions {
 
 	public static Logger log = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
 
-	@Test(timeout = 500)
+	@Test(timeout = 600)
 	public void testClassTimeout() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(ExampleClassTimeoutTest.class);
