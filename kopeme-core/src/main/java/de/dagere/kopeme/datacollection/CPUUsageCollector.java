@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
  */
 public final class CPUUsageCollector extends DataCollector {
 
-	private final static int MULTIPLICATOR_FOR_READABILITY = 1000;
+	private static final int MULTIPLICATOR_FOR_READABILITY = 1000;
 
-	private final static Logger LOG = LogManager.getLogger(CPUUsageCollector.class);
+	private static final Logger LOG = LogManager.getLogger(CPUUsageCollector.class);
 
 	private long startTimeCpu = 0, stopTimeCpu = 0;
 	private long startTimeUser = 0, stopTimeUser = 0;

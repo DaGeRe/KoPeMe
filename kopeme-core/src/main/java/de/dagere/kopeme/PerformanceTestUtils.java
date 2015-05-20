@@ -22,19 +22,24 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
  * @author reichelt
  *
  */
-public class PerformanceTestUtils {
+public final class PerformanceTestUtils {
 	private static final Logger LOG = LogManager.getLogger(PerformanceTestUtils.class);
 
 	public static final String PERFORMANCEFOLDER = "performanceresults";
 
+	/**
+	 * Initializes the class.
+	 */
 	private PerformanceTestUtils() {
 
 	}
 
 	/**
-	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
+	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct.
 	 * 
 	 * @param tr Testresult, that should be tested
+	 * @param assertationvalues Assertion values for checking
+	 * @param maximalRelativeStandardDeviation Maximale stand deviation values for validity checking
 	 * @return Weather the collector is valid or not
 	 */
 	public static boolean checkCollectorValidity(final TestResult tr, final Map<String, Long> assertationvalues, final Map<String, Double> maximalRelativeStandardDeviation) {
@@ -63,6 +68,16 @@ public class PerformanceTestUtils {
 		return valid;
 	}
 
+	/**
+	 * Saves the measured performance data to the file system.
+	 * 
+	 * @param testcasename Name of the testcase
+	 * @param tr TestResult-Object that should be saved
+	 * @param failure Weather the test was a failure
+	 * @param error Weather an error occured during the test
+	 * @param filename The filename where the test should be saved
+	 * @param saveValues Weather values should be saved or only aggregates
+	 */
 	public static void saveData(final String testcasename, final TestResult tr, final boolean failure, final boolean error, final String filename, final boolean saveValues) {
 		try {
 			File f = new File(PERFORMANCEFOLDER);
@@ -108,7 +123,7 @@ public class PerformanceTestUtils {
 	 * @return The percentil value
 	 */
 	public static double getPercentile(final List<Long> values, final int percentil) {
-		double wertArray[] = new double[values.size()];
+		double[] wertArray = new double[values.size()];
 		int i = 0;
 		for (Long l : values) {
 			wertArray[i] = l;

@@ -15,7 +15,7 @@ public final class MaximumSummarizer implements MeasureSummarizer {
 	 * @return Maximum of the liste of measures
 	 */
 	@Override
-	public long getValue(List<Long> values) {
+	public long getValue(final List<Long> values) {
 		long max = 0;
 		for (Long l : values) {
 			if (l > max) max = l;

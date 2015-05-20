@@ -15,7 +15,7 @@ public final class AverageSummerizer implements MeasureSummarizer {
 	 * 
 	 * @return average of the liste of measures
 	 */
-	public long getValue(List<Long> values) {
+	public long getValue(final List<Long> values) {
 		if (values != null && values.size() != 0) {
 			long sum = 0;
 			for (Long l : values) {

@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.junit.rule.throughput.KoPeMeComplexThroughtputRule;
 
 public class ComplexThroughputExampleTest {
@@ -28,7 +27,7 @@ public class ComplexThroughputExampleTest {
 	}
 
 	@Test
-	@PerformanceTest(assertions = { @Assertion(collectorname = TimeDataCollector.NAME, maxvalue = 400000) })
+	@PerformanceTest(assertions = { @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 400000) })
 	public void throughputTest() throws InterruptedException {
 		for (Integer time : waitTimes)
 			Thread.sleep(time);

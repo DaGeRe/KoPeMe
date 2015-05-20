@@ -30,6 +30,14 @@ public final class XMLDataStorer implements DataStorer {
 	private final File file;
 	private Kopemedata data;
 
+	/**
+	 * Initializes an XMLDataStorer.
+	 * 
+	 * @param foldername Folder where the result should be saved
+	 * @param classname Name of the test class which was executed
+	 * @param methodname Name of the method which was executed
+	 * @throws JAXBException Thrown if an XML Writing error occurs
+	 */
 	public XMLDataStorer(final String foldername, final String classname, final String methodname) throws JAXBException {
 		String filename = classname + "." + methodname + ".yaml";
 		file = new File(foldername + File.separator + filename);
@@ -40,6 +48,11 @@ public final class XMLDataStorer implements DataStorer {
 		data = loader.getFullData();
 	}
 
+	/**
+	 * Initializes XML-Data.
+	 * 
+	 * @param classname Name of the testclass
+	 */
 	public void createXMLData(final String classname) {
 		data = new Kopemedata();
 		data.setTestcases(new Testcases());
@@ -53,10 +66,10 @@ public final class XMLDataStorer implements DataStorer {
 		LOG.error("Speichere Wert falsch");
 	}
 
+	@Override
 	public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final List<Long> values) {
 		TestcaseType test = null;
-		if (data.getTestcases() == null)
-			data.setTestcases(new Testcases());
+		if (data.getTestcases() == null) data.setTestcases(new Testcases());
 		for (TestcaseType tc : data.getTestcases().getTestcase()) {
 			if (tc.getName().equals(performanceDataMeasure.testcase)) {
 				test = tc;
@@ -118,6 +131,12 @@ public final class XMLDataStorer implements DataStorer {
 		}
 	}
 
+	/**
+	 * Stores the data in the given file.
+	 * 
+	 * @param file File for saving
+	 * @param currentdata Data to save
+	 */
 	public static void storeData(final File file, final Kopemedata currentdata) {
 		JAXBContext jaxbContext;
 		try {

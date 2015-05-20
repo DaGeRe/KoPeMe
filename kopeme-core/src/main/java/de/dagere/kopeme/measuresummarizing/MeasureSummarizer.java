@@ -16,5 +16,5 @@ public interface MeasureSummarizer {
 	 * @param values Values that should be summarized
 	 * @return Summarized value
 	 */
-	public long getValue(List<Long> values);
+	long getValue(List<Long> values);
 }

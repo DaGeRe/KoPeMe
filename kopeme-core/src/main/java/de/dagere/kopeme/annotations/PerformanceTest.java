@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import de.dagere.kopeme.MaximalRelativeStandardDeviation;
-
 /**
  * This annotation for <code>public void</code> methods is telling that the method is a KoPeMe-Testcase. This means that it is executed several times with
  * performance measurements to get performance measures for the testcase. It is possible to specify the count of executions and other configuration via
@@ -39,7 +37,7 @@ public @interface PerformanceTest {
 	/**
 	 * Optionally specify the count of executions, that should be executed before the measuring begins.
 	 * 
-	 * @return
+	 * @return Execution times of the test
 	 */
 	public int warmupExecutions() default 1;
 
@@ -47,21 +45,21 @@ public @interface PerformanceTest {
 	 * Optionally specify the timeout after which the test is canceled. The test is canceled after the timeout occurs for all executions, not for a single
 	 * execution of the method.
 	 * 
-	 * @return
+	 * @return Warmup executions of the test
 	 */
 	public int timeout() default 100000;
 
 	/**
 	 * Optionally specify that all data should be logged, i.e. primarily all measured values instead of only average values.
 	 * 
-	 * @return
+	 * @return Weather to log full data
 	 */
 	public boolean logFullData() default false;
 
 	/**
 	 * Optionally specify which performance thresholds should be checked after the execution is completed
 	 * 
-	 * @return
+	 * @return Assertations that should be checked
 	 */
 	public Assertion[] assertions() default {};
 
@@ -70,14 +68,14 @@ public @interface PerformanceTest {
 	 * standard deviations fall below the given maximale relative deviations thresholds, the test is stoped and the measured value until the stop is the final
 	 * result.
 	 * 
-	 * @return
+	 * @return Maximale relative standard deviation for early abortion of the test
 	 */
 	public MaximalRelativeStandardDeviation[] deviations() default {};
 
 	/**
 	 * Optionally specify how many executions, if <code>deviations</code> is specified, are executed before an early stop is eventually happening
 	 * 
-	 * @return
+	 * @return Minimal execution times for early abortion of the test
 	 */
 	public int minEarlyStopExecutions() default 10;
 }

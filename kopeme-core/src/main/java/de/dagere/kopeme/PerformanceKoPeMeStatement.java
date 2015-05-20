@@ -42,7 +42,7 @@ public class PerformanceKoPeMeStatement {
 	 * @throws IllegalAccessException Thrown if access to the testmethod is illegal
 	 * @throws InvocationTargetException Thrown if an exception occurs during invocation
 	 */
-	public void evaluate() throws IllegalAccessException, InvocationTargetException {
+	public final void evaluate() throws IllegalAccessException, InvocationTargetException {
 		if (simple) tr.startCollection();
 		fTestMethod.invoke(fTarget, params);
 		if (simple) tr.stopCollection();

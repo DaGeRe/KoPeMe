@@ -13,23 +13,23 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerformanceTestingClass {
 	/**
-	 * Optionally specifies the timeout of all test-methods including BeforeClass, Before, ...; normaly 1000000
+	 * Optionally specifies the timeout of all test-methods including BeforeClass, Before, ...; normaly 1000000.
 	 * 
 	 * @return
 	 */
-	public int overallTimeout() default 1000000;
+	int overallTimeout() default 1000000;
 
 	/**
-	 * Optionally specifies eather the test should log data of all executions or only statistical values
+	 * Optionally specifies eather the test should log data of all executions or only statistical values.
 	 * 
 	 * @return
 	 */
-	public boolean logFullData() default false;
+	boolean logFullData() default false;
 
 	/**
-	 * Optionally specifies that kieker should be used
+	 * Optionally specifies that kieker should be used.
 	 * 
 	 * @return
 	 */
-	public boolean useKieker() default false;
+	boolean useKieker() default false;
 }

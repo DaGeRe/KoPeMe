@@ -36,8 +36,8 @@ public final class XMLDataLoader implements DataLoader {
 	/**
 	 * Initializes the XMLDataLoader with the given file.
 	 * 
-	 * @param f
-	 * @throws JAXBException
+	 * @param f File that should be loaded
+	 * @throws JAXBException Thrown if the File countains errors
 	 */
 	public XMLDataLoader(final File f) throws JAXBException {
 		this.file = f;
@@ -47,7 +47,7 @@ public final class XMLDataLoader implements DataLoader {
 	/**
 	 * Loads the data.
 	 * 
-	 * @throws JAXBException
+	 * @throws JAXBException Thrown if the File countains errors
 	 */
 	private void loadData() throws JAXBException {
 
@@ -89,7 +89,7 @@ public final class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns a mapping from all testcases to their results for a certain collectorName
+	 * Returns a mapping from all testcases to their results for a certain collectorName.
 	 * 
 	 * @param collectorName The name of the collector for loading the Results
 	 * @return Mapping from all testcases to their results
@@ -119,9 +119,9 @@ public final class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns all datacollectors that are used in the resultfile
+	 * Returns all datacollectors that are used in the resultfile.
 	 * 
-	 * @return
+	 * @return Names of all datacollectors
 	 */
 	public Set<String> getCollectors() {
 		Set<String> collectors = new HashSet<String>();
@@ -135,7 +135,7 @@ public final class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns all data
+	 * Returns all data.
 	 * 
 	 * @return Object containing all data from the file
 	 */

@@ -22,10 +22,10 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import de.dagere.kopeme.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.annotations.Assertion;
+import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
