@@ -10,15 +10,21 @@ import org.junit.runner.RunWith;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
+/**
+ * Basic example test that executes additions
+ * 
+ * @author reichelt
+ *
+ */
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class JUnitAdditionTest {
 	private final static Logger log = LogManager.getLogger(JUnitAdditionTest.class);
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		log.debug("Before wird aufgerufen");
 	}
-	
+
 	@Test
 	@PerformanceTest(executionTimes = 5)
 	public void testAddition() {
