@@ -11,6 +11,12 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.throughput.KoPeMeComplexThroughtputRule;
 
+/**
+ * Beispiel für einen komplexen Durchsatztest
+ * 
+ * @author reichelt
+ *
+ */
 public class ComplexThroughputExampleTest {
 
 	@Rule
