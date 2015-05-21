@@ -22,7 +22,7 @@ import de.dagere.kopeme.datacollection.TimeDataCollector;
  */
 public abstract class KoPeMeTestcase extends TestCase {
 	/**
-	 * Initializes the testcase
+	 * Initializes the testcase.
 	 */
 	public KoPeMeTestcase() {
 
@@ -31,7 +31,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	/**
 	 * Initializes the testcase with its name.
 	 * 
-	 * @param name
+	 * @param name Name of the testcase
 	 */
 	public KoPeMeTestcase(final String name) {
 		super(name);
@@ -49,14 +49,14 @@ public abstract class KoPeMeTestcase extends TestCase {
 	}
 
 	/**
-	 * Returns the count of real executions
+	 * Returns the count of real executions.
 	 * 
 	 * @return real executions
 	 */
 	protected abstract int getExecutionTimes();
 
 	/**
-	 * Returns weather full data should be logged
+	 * Returns weather full data should be logged.
 	 * 
 	 * @return Weather full data should be logged
 	 */
@@ -124,10 +124,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 		thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 
 			@Override
-			public void uncaughtException(Thread t, Throwable e) {
+			public void uncaughtException(final Thread t, final Throwable e) {
 				if (e instanceof OutOfMemoryError) {
-					while (t.isAlive())
+					while (t.isAlive()) {
 						t.interrupt();
+					}
 				}
 				e.printStackTrace();
 				fail();

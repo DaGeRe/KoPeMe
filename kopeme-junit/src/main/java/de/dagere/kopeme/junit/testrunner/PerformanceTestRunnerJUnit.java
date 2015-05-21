@@ -135,7 +135,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	}
 
 	/**
-	 * Sets that tests are failed
+	 * Sets that tests are failed.
 	 * 
 	 * @param notifier Notifier that should be notified
 	 */
@@ -150,7 +150,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	}
 
 	@Override
-	protected void validateTestMethods(List<Throwable> errors) {
+	protected void validateTestMethods(final List<Throwable> errors) {
 		for (FrameworkMethod each : computeTestMethods()) {
 			if (each.getMethod().getParameterTypes().length > 1) {
 				errors.add(new Exception("Method " + each.getName() + " is supposed to have one or zero parameters, who's type is TestResult"));
@@ -267,6 +267,11 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		return st;
 	}
 
+	/**
+	 * Initializes the value of the PerformanceTestRunnerJUnit-Object by reading the annotations.
+	 * 
+	 * @param method The method for which the values should be initialized
+	 */
 	private void initValues(final FrameworkMethod method) {
 		this.method = method;
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
@@ -350,7 +355,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 * @param callee Statement that should be called to measure performance and execute the test
 	 * @throws Throwable Any exception that occurs during the test
 	 */
-	private void runWarmup(PerformanceJUnitStatement callee) throws Throwable {
+	private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
 			callee.preEvaluate();
