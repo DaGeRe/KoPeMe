@@ -109,6 +109,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			ptc = DEFAULTPERFORMANCETESTINGCLASS;
 		}
 		final RunNotifier parallelNotifier = new RunNotifier();
+		// TODO: Wieso wird dann nicht direkt der Notifier übergeben?
 		parallelNotifier.addListener(new DelegatingRunListener(notifier));
 		Thread mainThread = new Thread(new Runnable() {
 			@Override

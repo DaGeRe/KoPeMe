@@ -5,6 +5,12 @@ import java.util.List;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+/**
+ * A JUnit Statement that could be used for Performance Tests.
+ * 
+ * @author reichelt
+ *
+ */
 public class PerformanceJUnitStatement extends Statement {
 
 	private final Statement statement;
@@ -12,11 +18,20 @@ public class PerformanceJUnitStatement extends Statement {
 	private List<FrameworkMethod> befores;
 	private List<FrameworkMethod> afters;
 
-	public PerformanceJUnitStatement(Statement statement, Object target) {
+	/**
+	 * Initializes PerformanceJUnitStatement.
+	 * 
+	 * @param statement Statement that should be used
+	 * @param target Object for executing the performance test
+	 */
+	public PerformanceJUnitStatement(final Statement statement, final Object target) {
 		this.statement = statement;
 		fTarget = target;
 	}
 
+	/**
+	 * Called before the measuring evaluation to initialize test.
+	 */
 	public void preEvaluate() {
 		try {
 			for (FrameworkMethod before : befores) {
@@ -28,6 +43,9 @@ public class PerformanceJUnitStatement extends Statement {
 		}
 	}
 
+	/**
+	 * Called after the measuring evaluation to cleanup test.
+	 */
 	public void postEvaluate() {
 		try {
 			for (FrameworkMethod after : afters) {
@@ -44,11 +62,21 @@ public class PerformanceJUnitStatement extends Statement {
 		statement.evaluate();
 	}
 
-	public void setBefores(List<FrameworkMethod> befores) {
+	/**
+	 * Sets Before-Methods that should be executed.
+	 * 
+	 * @param befores Before-Methods
+	 */
+	public void setBefores(final List<FrameworkMethod> befores) {
 		this.befores = befores;
 	}
 
-	public void setAfters(List<FrameworkMethod> afters) {
+	/**
+	 * Sets Before-Methods that should be executed.
+	 * 
+	 * @param befores After-Methods
+	 */
+	public void setAfters(final List<FrameworkMethod> afters) {
 		this.afters = afters;
 
 	}
