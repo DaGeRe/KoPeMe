@@ -1,5 +1,7 @@
 package de.dagere.kopeme;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -11,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Represents an execution of all runs of one test
@@ -99,11 +102,10 @@ public class PerformanceTestRunner {
 			runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 			throw t;
 		}
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
-
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
 		tr.checkValues();
 		return tr;
 	}
@@ -112,7 +114,6 @@ public class PerformanceTestRunner {
 
 		Object[] params = {};
 		runWarmup(params);
-		int executions = 0;
 		tr = new TestResult(method.getName(), executionTimes);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
@@ -124,15 +125,12 @@ public class PerformanceTestRunner {
 			runMainExecution(pts, tr, params);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 			throw t;
 		}
 		log.trace("Zeit: " + (System.currentTimeMillis() - start));
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
-		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden
-		// sollen
-
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
 		tr.checkValues();
 
 		return tr;

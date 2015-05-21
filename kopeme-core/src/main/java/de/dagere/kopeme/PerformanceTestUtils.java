@@ -15,12 +15,11 @@ import de.dagere.kopeme.datacollection.TemperatureCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 
 public class PerformanceTestUtils {
 	private static final Logger log = LogManager.getLogger(PerformanceTestUtils.class);
-
-	public final static String PERFORMANCEFOLDER = "performanceresults";
 
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
@@ -54,14 +53,16 @@ public class PerformanceTestUtils {
 		return valid;
 	}
 
-	public static void saveData(String testcasename, TestResult tr, boolean failure, boolean error, String filename, boolean saveValues) {
+	public static void saveData(SaveableTestData data) {
 		try {
-			File f = new File(PERFORMANCEFOLDER);
+			File f = data.getFolder();
+			String testcasename = data.getTestcasename();
 			if (!f.exists())
 			{
-				f.mkdir();
+				f.mkdirs();
 			}
-			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
+			DataStorer xds = new XMLDataStorer(f.getAbsolutePath(), data.getFilename(), testcasename);
+			TestResult tr = data.getTr();
 			for (String key : tr.getKeys()) {
 				log.trace("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
@@ -73,7 +74,7 @@ public class PerformanceTestUtils {
 				double first10percentile = getPercentile(tr.getValues(key), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
 						tr.getRealExecutions(), min, max, first10percentile, TemperatureCollector.getTemperature());
-				List<Long> values = saveValues ? tr.getValues(key) : null;
+				List<Long> values = data.isSaveValues() ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
 				log.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
@@ -84,14 +85,13 @@ public class PerformanceTestUtils {
 				List<Long> vales = new LinkedList<Long>();
 				xds.storeValue(performanceDataMeasure, vales);
 			}
-
 			xds.storeData();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 
 	}
-
+	
 	public static double getPercentile(List<Long> values, int percentil) {
 		double wertArray[] = new double[values.size()];
 		int i = 0;

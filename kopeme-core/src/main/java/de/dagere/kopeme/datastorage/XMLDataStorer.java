@@ -32,13 +32,14 @@ public class XMLDataStorer implements DataStorer {
 	private Kopemedata data;
 
 	public XMLDataStorer(String foldername, String classname, String methodname) throws JAXBException {
-		String filename = classname + "." + methodname + ".yaml";
+		String filename = classname + "." + methodname + ".xml";
 		f = new File(foldername + File.separator + filename);
-		if (!f.exists()) {
+		if (f.exists()) {
+			XMLDataLoader loader = new XMLDataLoader(f);
+			data = loader.getFullData();
+		} else {
 			createXMLData(classname);
 		}
-		XMLDataLoader loader = new XMLDataLoader(filename);
-		data = loader.getFullData();
 	}
 
 	public void createXMLData(String classname) {

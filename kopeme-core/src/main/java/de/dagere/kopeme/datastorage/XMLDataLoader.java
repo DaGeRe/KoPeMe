@@ -15,7 +15,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -28,38 +27,30 @@ public class XMLDataLoader implements DataLoader {
 	private Kopemedata data;
 
 	public XMLDataLoader(String filename) throws JAXBException {
-		f = new File(filename);
-		log.trace("Laden von {}", f.getAbsoluteFile());
-		loadData();
+		this(new File(filename));
 	}
 
 	public XMLDataLoader(File f) throws JAXBException {
 		this.f = f;
+		log.trace("Laden von {}", f.getAbsoluteFile());
 		loadData();
 	}
 
+	
 	private void loadData() throws JAXBException {
-
-		if (!f.getAbsolutePath().contains(PerformanceTestUtils.PERFORMANCEFOLDER)) {
-			File temp = new File(f.getParentFile(), PerformanceTestUtils.PERFORMANCEFOLDER + "/" + f.getName());
-			if (temp.exists()) {
-				f = temp;
-			}
-		}
-
-		if (!f.exists()) {
+		if (f.exists()) {
+			JAXBContext jc;
+			jc = JAXBContext.newInstance(Kopemedata.class);
+			Unmarshaller unmarshaller = jc.createUnmarshaller();
+			data = (Kopemedata) unmarshaller.unmarshal(f);
+			log.trace("Daten geladen, Daten: " + data);
+		} else {
 			log.info("Datei {} existiert nicht", f.getAbsolutePath());
 			data = new Kopemedata();
 			data.setTestcases(new Testcases());
 			Testcases tc = data.getTestcases();
 			log.trace("TC: " + tc);
 			tc.setClazz(f.getName());
-		} else {
-			JAXBContext jc;
-			jc = JAXBContext.newInstance(Kopemedata.class);
-			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			data = (Kopemedata) unmarshaller.unmarshal(f);
-			log.trace("Daten geladen, Daten: " + data);
 		}
 	}
 
