@@ -75,7 +75,6 @@ public class ParallelTestRunner extends PerformanceTestRunner {
 				try {
 					threads[i].join();
 				} catch (InterruptedException e) {
-					// TODO Automatisch generierter Erfassungsblock
 					e.printStackTrace();
 				}
 			}

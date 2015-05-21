@@ -309,12 +309,12 @@ public class TestResult {
 	 */
 	public long getAverageValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null)
-			return 0l;
+		if (historicalData == null) return 0L;
 		if (historicalData.size() > 0) {
 			long sum = 0;
-			for (Number value : historicalData.values())
+			for (Number value : historicalData.values()) {
 				sum += value.longValue();
+			}
 			return sum / historicalData.size();
 		} else {
 			return 0;
@@ -343,13 +343,13 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the average value of the performance-measure over the last runs runs
+	 * Gets the average value of the performance-measure over the last runs runs.
 	 * 
 	 * @param measurement measurment, for which the value should be calculated
 	 * @param runs count of runs
 	 * @return Average value
 	 */
-	public long getLastRunsAverage(String measurement, int runs) {
+	public long getLastRunsAverage(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		List<Date> lastRunList = getLastRuns(measurement, runs);
 
@@ -368,7 +368,7 @@ public class TestResult {
 	 * @param runs count of runs
 	 * @return Last runs maximum
 	 */
-	public long getLastRunsMaximum(String measurement, int runs) {
+	public long getLastRunsMaximum(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 
 		long max = Long.MIN_VALUE;
@@ -379,13 +379,13 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the minimum value of the performance-measure over the last runs runs
+	 * Gets the minimum value of the performance-measure over the last runs runs.
 	 * 
 	 * @param measurement measurment, for which the value should be calculated
 	 * @param runs count of runs
 	 * @return Last runs minimum
 	 */
-	public long getLastRunsMinimum(String measurement, int runs) {
+	public long getLastRunsMinimum(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 
 		long min = Long.MAX_VALUE;
@@ -395,6 +395,12 @@ public class TestResult {
 		return min;
 	}
 
+	/**
+	 * Returns the relative standard deviation for the given DataColelctor
+	 * 
+	 * @param datacollector Name of the DataCollector
+	 * @return Relative standard deviation
+	 */
 	public double getRelativeStandardDeviation(String datacollector) {
 		long[] values = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
@@ -413,6 +419,12 @@ public class TestResult {
 		return st.getStandardDeviation() / st.getMean();
 	}
 
+	/**
+	 * Checks weather the given real deviations are below the maximale relative standard deviations that are given.
+	 * 
+	 * @param deviations maximale relative standard deviations
+	 * @return Weather the test can be stopped
+	 */
 	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
 		if (realValues.size() < 5)
 			return false;

@@ -44,42 +44,72 @@ public class PerformanceDataMeasure {
 		this.error = error;
 	}
 
+	/**
+	 * @return the testcase
+	 */
 	public String getTestcase() {
 		return testcase;
 	}
 
+	/**
+	 * @return the collectorname
+	 */
 	public String getCollectorname() {
 		return collectorname;
 	}
 
+	/**
+	 * @return the value
+	 */
 	public long getValue() {
 		return value;
 	}
 
+	/**
+	 * @return the deviation
+	 */
 	public double getDeviation() {
 		return deviation;
 	}
 
+	/**
+	 * @return the executionTimes
+	 */
 	public int getExecutionTimes() {
 		return executionTimes;
 	}
 
+	/**
+	 * @return the min
+	 */
 	public long getMin() {
 		return min;
 	}
 
+	/**
+	 * @return the max
+	 */
 	public long getMax() {
 		return max;
 	}
 
+	/**
+	 * @return the first10percentile
+	 */
 	public double getFirst10percentile() {
 		return first10percentile;
 	}
 
+	/**
+	 * @return the failure
+	 */
 	public boolean isFailure() {
 		return failure;
 	}
 
+	/**
+	 * @return the error
+	 */
 	public boolean isError() {
 		return error;
 	}
