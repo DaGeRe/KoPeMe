@@ -6,7 +6,6 @@
     <version>0.6-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.dagere.kopeme</groupId>
   <artifactId>kopeme-visualizer-core</artifactId>
   <name>KoPeMe-Visualizer-Core</name>
   <version>0.2-SNAPSHOT</version>
