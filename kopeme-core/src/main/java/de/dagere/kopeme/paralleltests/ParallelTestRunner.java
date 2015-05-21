@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import de.dagere.kopeme.PerformanceTestRunner;
+import de.dagere.kopeme.datacollection.ParallelTestResult;
 import de.dagere.kopeme.datacollection.TestResult;
 
 /**
@@ -13,14 +14,28 @@ import de.dagere.kopeme.datacollection.TestResult;
  * @author reichelt
  *
  */
-public class ParallelTestExecution extends PerformanceTestRunner {
+public class ParallelTestRunner extends PerformanceTestRunner {
 
-	public ParallelTestExecution(Class<?> klasse, Object instance, Method method) {
+	/**
+	 * Initializes the parallel test runner.
+	 * 
+	 * @param klasse Class that should be tested
+	 * @param instance Instance that should be tested
+	 * @param method Method that should be tested
+	 */
+	public ParallelTestRunner(final Class<?> klasse, final Object instance, final Method method) {
 		super(klasse, instance, method);
 
 	}
 
-	public Thread createThread(final MethodExecution me, final TestResult tr)
+	/**
+	 * Creates a thread for parallel exexution
+	 * 
+	 * @param me
+	 * @param tr
+	 * @return
+	 */
+	private Thread createThread(final MethodExecution me, final TestResult tr)
 	{
 		Thread t = new Thread(new Runnable() {
 
@@ -32,13 +47,24 @@ public class ParallelTestExecution extends PerformanceTestRunner {
 		return t;
 	}
 
-	public void executeOnce(List<MethodExecution> mes, TestResult tr) {
-		for (MethodExecution me : mes)
+	/**
+	 * Execute parallel tests and waits for completion.
+	 * 
+	 * @param methodexecutions Test executions
+	 * @param tr Test result that should be saved
+	 */
+	public void executeOnce(final List<MethodExecution> methodexecutions, final ParallelTestResult tr) {
+		for (final MethodExecution me : methodexecutions)
 		{
 			Thread threads[] = new Thread[me.getCallCount()];
 			for (int i = 0; i < me.getCallCount(); i++)
 			{
-				threads[i] = createThread(me, tr);
+				threads[i] = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						me.executeMethod(tr);// Wird am selben Objekt ausgeführt... muss aber ja Thread-sicher sein?!
+					}
+				});
 			}
 			for (int i = 0; i < me.getCallCount(); i++)
 			{
@@ -56,9 +82,10 @@ public class ParallelTestExecution extends PerformanceTestRunner {
 		}
 	}
 
+	@Override
 	public void evaluate() {
 		try {
-			TestResult tr = new TestResult(method.getName(), warmupExecutions);
+			ParallelTestResult tr = new ParallelTestResult(method.getName(), warmupExecutions);
 			Object[] params = { tr };
 
 			method.invoke(instanz, params);
@@ -76,13 +103,10 @@ public class ParallelTestExecution extends PerformanceTestRunner {
 				tr.checkValues(assertationvalues);
 			}
 		} catch (IllegalArgumentException e) {
-			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Automatisch generierter Erfassungsblock
 			e.printStackTrace();
 		}
 	}

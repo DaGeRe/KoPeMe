@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
-import de.dagere.kopeme.paralleltests.ParallelTestExecution;
+import de.dagere.kopeme.paralleltests.ParallelTestRunner;
 
 /**
  * Runs a performance test via the pure test Runner, which does not need any additional librarys.
@@ -81,7 +81,7 @@ public final class PerformanceTestRunnerKoPeMe {
 				}
 				if (method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
 				{
-					ParallelTestExecution te = new ParallelTestExecution(clazz, instance, method);
+					ParallelTestRunner te = new ParallelTestRunner(clazz, instance, method);
 					te.evaluate();
 				}
 			} catch (AssertionError ae) {

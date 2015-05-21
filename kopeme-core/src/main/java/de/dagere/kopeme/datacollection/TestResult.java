@@ -22,7 +22,6 @@ import org.hamcrest.Matchers;
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
-import de.dagere.kopeme.paralleltests.MethodExecution;
 
 /**
  * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are
@@ -42,7 +41,7 @@ public class TestResult {
 	protected Checker checker;
 	private int realExecutions;
 	private final String testcase;
-	private List<MethodExecution> methods;
+
 	private Map<String, MeasureSummarizer> collectorSummarizerMap;
 
 	/**
@@ -54,7 +53,6 @@ public class TestResult {
 	public TestResult(final String testcase, final int executionTimes) {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
-		methods = new LinkedList<MethodExecution>();
 		index = 0;
 		this.testcase = testcase;
 
@@ -169,7 +167,7 @@ public class TestResult {
 		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
-			public int compare(DataCollector arg0, DataCollector arg1) {
+			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
@@ -349,7 +347,7 @@ public class TestResult {
 	 * 
 	 * @param measurement measurment, for which the value should be calculated
 	 * @param runs count of runs
-	 * @return
+	 * @return Average value
 	 */
 	public long getLastRunsAverage(String measurement, int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
@@ -363,6 +361,13 @@ public class TestResult {
 		return lastRunList.size() != 0 ? sum / lastRunList.size() : 0;
 	}
 
+	/**
+	 * Gets the maximum value of the performance-measure over the last runs runs
+	 * 
+	 * @param measurement measurment, for which the value should be calculated
+	 * @param runs count of runs
+	 * @return Last runs maximum
+	 */
 	public long getLastRunsMaximum(String measurement, int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 
@@ -373,6 +378,13 @@ public class TestResult {
 		return max;
 	}
 
+	/**
+	 * Gets the minimum value of the performance-measure over the last runs runs
+	 * 
+	 * @param measurement measurment, for which the value should be calculated
+	 * @param runs count of runs
+	 * @return Last runs minimum
+	 */
 	public long getLastRunsMinimum(String measurement, int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 
@@ -381,14 +393,6 @@ public class TestResult {
 			if (min < num.longValue()) min = num.longValue();
 		}
 		return min;
-	}
-
-	public void addParallelTest(MethodExecution methodExecution) {
-		methods.add(methodExecution);
-	}
-
-	public List<MethodExecution> getParallelTests() {
-		return methods;
 	}
 
 	public double getRelativeStandardDeviation(String datacollector) {
