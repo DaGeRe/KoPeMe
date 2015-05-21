@@ -79,9 +79,8 @@ public class PerformanceTestRunner {
 				try {
 					if (method.getParameterTypes().length == 1) {
 						tr = executeComplexTest();
-
 					} else {
-						tr = executeSimpleTest(tr);
+						tr = executeSimpleTest();
 					}
 					if (!assertationvalues.isEmpty()) {
 						tr.checkValues(assertationvalues);
@@ -119,7 +118,7 @@ public class PerformanceTestRunner {
 			newResult = new TestResult(method.getName(), executionTimes);
 			params[0] = newResult;
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
-			runMainExecution(pts, newResult, params);
+			runMainExecution(pts, newResult);
 		} catch (Throwable t) {
 			newResult.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), newResult, false, true, filename, true);
@@ -145,7 +144,7 @@ public class PerformanceTestRunner {
 		long start = System.currentTimeMillis();
 		try {
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
-			runMainExecution(pts, tr, params);
+			runMainExecution(pts, tr);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
