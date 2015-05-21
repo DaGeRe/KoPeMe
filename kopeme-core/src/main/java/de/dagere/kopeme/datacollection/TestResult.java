@@ -82,7 +82,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Adds a DataCollector to the given collectors
+	 * Adds a DataCollector to the given collectors.
 	 * 
 	 * @param dc DataCollector that should be added
 	 */
@@ -91,7 +91,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets all names of DataCollectors that are used
+	 * Gets all names of DataCollectors that are used.
 	 * 
 	 * @return Names of used DataCollectors
 	 */

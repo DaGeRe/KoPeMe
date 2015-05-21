@@ -101,7 +101,6 @@ public class PerformanceTestRunner {
 	/**
 	 * Executes a complex test, i.e. a test which has TestResult as a parameter.
 	 * 
-	 * @param tr Where the result should be saved
 	 * @return New TestResult
 	 * @throws IllegalAccessException Thrown if an error during method access occurs
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
@@ -131,6 +130,13 @@ public class PerformanceTestRunner {
 		return newResult;
 	}
 
+	/**
+	 * Executes a simple test, i.e. a test without parameters.
+	 * 
+	 * @return The result of the test
+	 * @throws IllegalAccessException Thrown if an error during method access occurs
+	 * @throws InvocationTargetException Thrown if an error during method access occurs
+	 */
 	private TestResult executeSimpleTest() throws IllegalAccessException, InvocationTargetException {
 		TestResult tr = new TestResult(method.getName(), warmupExecutions);
 		Object[] params = {};
@@ -161,7 +167,7 @@ public class PerformanceTestRunner {
 	}
 
 	/**
-	 * Runs the warmup-executions of a test
+	 * Runs the warmup-executions of a test.
 	 * 
 	 * @param params The params for the method executions
 	 * @throws IllegalAccessException Thrown if an error during method access occurs
@@ -177,7 +183,7 @@ public class PerformanceTestRunner {
 	}
 
 	/**
-	 * Runs the main Executions of a test
+	 * Runs the main Executions of a test.
 	 * 
 	 * @param pts The Statement that should be run
 	 * @param tr The testresult that should save the results and eventually cancel the executions early
