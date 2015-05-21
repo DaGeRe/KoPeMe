@@ -6,6 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation for a method that should be run after a test without measuring the performance.
+ * 
+ * @author reichelt
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ METHOD })
 public @interface AfterNoMeasurement {
