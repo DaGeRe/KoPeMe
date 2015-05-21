@@ -23,7 +23,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
 	static Logger log = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 
-	public KoPeMeStandardRuleStatement(TestRunnables runnables, Method method, String filename) {
+	public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super(runnables, method, filename);
 	}
 

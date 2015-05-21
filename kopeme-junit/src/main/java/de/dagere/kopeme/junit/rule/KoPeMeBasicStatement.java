@@ -16,6 +16,8 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 
 /**
+ * A statement for running performance tests.
+ * 
  * Should once become base class of several TestExecutingStatements - isn't yet.
  * 
  * @author reichelt
@@ -23,7 +25,7 @@ import de.dagere.kopeme.datacollection.TestResult;
  */
 public abstract class KoPeMeBasicStatement extends Statement {
 
-	private static final Logger log = LogManager.getLogger(KoPeMeBasicStatement.class);
+	private static final Logger LOG = LogManager.getLogger(KoPeMeBasicStatement.class);
 
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
@@ -33,7 +35,14 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 
-	public KoPeMeBasicStatement(TestRunnables runnables, Method method, String filename) {
+	/**
+	 * Initializes the KoPemeBasicStatement.
+	 * 
+	 * @param runnables Runnables that should be run
+	 * @param method Method that should be executed
+	 * @param filename Name of the
+	 */
+	public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super();
 		this.runnables = runnables;
 		this.filename = filename;
@@ -56,7 +65,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		} else {
-			log.error("No @PerformanceTest-Annotation present!");
+			LOG.error("No @PerformanceTest-Annotation present!");
 		}
 	}
 
@@ -77,32 +86,32 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
-			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
 			runnables.getBeforeRunnable().run();
 			tr.startCollection();
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();
 
-			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
 		}
-		log.debug("Executions: " + (executions - 1));
+		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions - 1);
 	}
 
 	protected void runWarmup(String methodString) {
 		for (int i = 1; i <= warmupExecutions; i++) {
 			runnables.getBeforeRunnable().run();
-			log.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
 			runnables.getTestRunnable().run();
-			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 			runnables.getAfterRunnable().run();
 		}
 	}

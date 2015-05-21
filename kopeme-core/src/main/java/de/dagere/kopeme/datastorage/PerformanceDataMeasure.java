@@ -19,17 +19,18 @@ public class PerformanceDataMeasure {
 	/**
 	 * Initializes the PerformanceDataMeasure.
 	 * 
-	 * @param testcase
-	 * @param collectorname
-	 * @param value
-	 * @param deviation
-	 * @param executionTimes
-	 * @param min
-	 * @param max
-	 * @param first10percentile
+	 * @param testcase Name of the testcase
+	 * @param collectorname Name of the datacollector
+	 * @param value Measured value
+	 * @param deviation deviation of the values
+	 * @param executionTimes execution times
+	 * @param min minimum value
+	 * @param max maximum value
+	 * @param first10percentile First 10-Percentil of the measured values
 	 */
-	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max,
-			double first10percentile) {
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+			final long max,
+			final double first10percentile) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;
@@ -45,18 +46,19 @@ public class PerformanceDataMeasure {
 	/**
 	 * Initializes the PerformanceDataMeasure.
 	 * 
-	 * @param testcase
-	 * @param collectorname
-	 * @param value
-	 * @param deviation
-	 * @param executionTimes
-	 * @param min
-	 * @param max
-	 * @param failure
-	 * @param error
+	 * @param testcase Name of the testcase
+	 * @param collectorname Name of the datacollector
+	 * @param value Measured value
+	 * @param deviation deviation of the values
+	 * @param executionTimes execution times
+	 * @param min minimum value
+	 * @param max maximum value
+	 * @param failure Weather an failure occured
+	 * @param error Weather an error occured
 	 */
-	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max, boolean failure,
-			boolean error) {
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+			final long max, final boolean failure,
+			final boolean error) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;

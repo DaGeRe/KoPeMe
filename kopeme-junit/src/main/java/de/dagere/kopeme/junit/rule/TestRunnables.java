@@ -17,7 +17,7 @@ public class TestRunnables {
 
 	private final Runnable testRunnable, beforeRunnable, afterRunnable;
 
-	public TestRunnables(Runnable testRunnable, Class testClass, final Object testObject) {
+	public TestRunnables(final Runnable testRunnable, final Class testClass, final Object testObject) {
 		super();
 		this.testRunnable = testRunnable;
 		final List<Method> beforeMethods = new LinkedList<>();
