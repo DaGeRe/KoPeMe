@@ -21,36 +21,49 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
-public class XMLDataLoader implements DataLoader {
-	private static final Logger log = LogManager.getLogger(XMLDataLoader.class);
-	private File f;
+/**
+ * Loads XML-Performance-Data.
+ * 
+ * @author reichelt
+ *
+ */
+public final class XMLDataLoader implements DataLoader {
+	private static final Logger LOG = LogManager.getLogger(XMLDataLoader.class);
+	private File file;
 	private Kopemedata data;
 
-	public XMLDataLoader(String filename) throws JAXBException {
-		this(new File(filename));
-	}
-
-	public XMLDataLoader(File f) throws JAXBException {
-		this.f = f;
-		log.trace("Laden von {}", f.getAbsoluteFile());
+	/**
+	 * Initializes the XMLDataLoader with the given file.
+	 * 
+	 * @param f File that should be loaded
+	 * @throws JAXBException Thrown if the File countains errors
+	 */
+	public XMLDataLoader(final File file) throws JAXBException {
+		this.file = file;
 		loadData();
 	}
 
 	
+	/**
+	 * Loads the data.
+	 * 
+	 * @throws JAXBException Thrown if the File countains errors
+	 */
 	private void loadData() throws JAXBException {
-		if (f.exists()) {
+		if (file.exists()) {
 			JAXBContext jc;
 			jc = JAXBContext.newInstance(Kopemedata.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
-			data = (Kopemedata) unmarshaller.unmarshal(f);
-			log.trace("Daten geladen, Daten: " + data);
+			data = (Kopemedata) unmarshaller.unmarshal(file);
+			LOG.trace("Daten geladen, Daten: " + data);
 		} else {
-			log.info("Datei {} existiert nicht", f.getAbsolutePath());
+			LOG.info("Datei {} existiert nicht", file.getAbsolutePath());
 			data = new Kopemedata();
 			data.setTestcases(new Testcases());
 			Testcases tc = data.getTestcases();
-			log.trace("TC: " + tc);
-			tc.setClazz(f.getName());
+			LOG.trace("TC: " + tc);
+			tc.setClazz(file.getName());
+
 		}
 	}
 
@@ -69,12 +82,12 @@ public class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns a mapping from all testcases to their results for a certain collectorName
+	 * Returns a mapping from all testcases to their results for a certain collectorName.
 	 * 
 	 * @param collectorName The name of the collector for loading the Results
 	 * @return Mapping from all testcases to their results
 	 */
-	public Map<String, Map<Date, Long>> getData(String collectorName) {
+	public Map<String, Map<Date, Long>> getData(final String collectorName) {
 		Map<String, Map<Date, Long>> map = new HashMap<>();
 		Testcases testcases = data.getTestcases();
 		for (TestcaseType tct : testcases.getTestcase()) {
@@ -87,7 +100,7 @@ public class XMLDataLoader implements DataLoader {
 				}
 			}
 			if (collector == null) {
-				log.error("Achtung: Datenkollektor " + collectorName + " nicht vorhanden");
+				LOG.error("Achtung: Datenkollektor " + collectorName + " nicht vorhanden");
 			} else {
 				for (Result s : collector.getResult()) {
 					measures.put(new Date(s.getDate()), new Long(s.getValue()));
@@ -99,9 +112,9 @@ public class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns all datacollectors that are used in the resultfile
+	 * Returns all datacollectors that are used in the resultfile.
 	 * 
-	 * @return
+	 * @return Names of all datacollectors
 	 */
 	public Set<String> getCollectors() {
 		Set<String> collectors = new HashSet<String>();
@@ -115,7 +128,7 @@ public class XMLDataLoader implements DataLoader {
 	}
 
 	/**
-	 * Returns all data
+	 * Returns all data.
 	 * 
 	 * @return Object containing all data from the file
 	 */

@@ -32,7 +32,7 @@ import de.dagere.kopeme.paralleltests.MethodExecution;
  * 
  */
 public class TestResult {
-	private static final Logger log = LogManager.getLogger(TestResult.class);
+	private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
 	protected Map<String, Long> values;
 	protected Map<String, DataCollector> dataCollectors;
@@ -41,38 +41,60 @@ public class TestResult {
 	protected int index;
 	protected Checker checker;
 	private int realExecutions;
-
-	private String testcase;
-
+	private final String testcase;
 	private List<MethodExecution> methods;
+	private Map<String, MeasureSummarizer> collectorSummarizerMap;
 
-	private Map<String, MeasureSummarizer> ms;
-
-	public TestResult(String testcase, int executionTimes) {
+	/**
+	 * Initializes the TestResult with a Testcase-Name and the executionTimes.
+	 * 
+	 * @param testcase Name of the Testcase
+	 * @param executionTimes Count of the planned executions
+	 */
+	public TestResult(final String testcase, final int executionTimes) {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		methods = new LinkedList<MethodExecution>();
 		index = 0;
 		this.testcase = testcase;
 
-		ms = new HashMap<>();
+		collectorSummarizerMap = new HashMap<>();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
-		// realValues = new HashMap<String, Long>[executionTimes];
 	}
 
+	/**
+	 * Returns the name of the TestCase for which the result is saved.
+	 * 
+	 * @return Name of the Testcase
+	 */
 	public String getTestcase() {
 		return testcase;
 	}
 
-	public void setCollectors(DataCollectorList dcl) {
+	/**
+	 * Sets the DatacollectorList for collecting Performance-Measures
+	 * 
+	 * @param dcl List of Datacollectors
+	 */
+	public void setCollectors(final DataCollectorList dcl) {
 		dataCollectors = new HashMap<String, DataCollector>();
 		dataCollectors = dcl.getDataCollectors();
 	}
 
-	public void addDataCollector(DataCollector dc) {
+	/**
+	 * Adds a DataCollector to the given collectors
+	 * 
+	 * @param dc DataCollector that should be added
+	 */
+	public void addDataCollector(final DataCollector dc) {
 		dataCollectors.put(dc.getName(), dc);
 	}
 
+	/**
+	 * Gets all names of DataCollectors that are used
+	 * 
+	 * @return Names of used DataCollectors
+	 */
 	public Set<String> getKeys() {
 		Set<String> keySet = new HashSet<String>();
 		for (DataCollector dc : dataCollectors.values())
@@ -84,21 +106,34 @@ public class TestResult {
 		return keySet;
 	}
 
-	public void setChecker(Checker c) {
+	/**
+	 * Sets the checker, that is checking weather the performance measures are good enough for a stable build.
+	 * 
+	 * @param c Checker for checking the values
+	 */
+	public void setChecker(final Checker c) {
 		this.checker = c;
 	}
 
+	/**
+	 * Checks, weather the values are good enough.
+	 */
 	public void checkValues() {
 		if (checker != null)
 			checker.checkValues(this);
 	}
 
-	public void checkValues(Map<String, Long> assertationvalues) {
+	/**
+	 * Checks the current list of performance measures are less than the given values.
+	 * 
+	 * @param assertationvalues Threshold values
+	 */
+	public void checkValues(final Map<String, Long> assertationvalues) {
 		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
 			for (DataCollector dc : dataCollectors.values()) {
-				log.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
+				LOG.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
-					log.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
+					LOG.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
@@ -107,7 +142,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Starts the collection of Data for all Datacollectors
+	 * Starts the collection of Data for all Datacollectors.
 	 */
 	public void startCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
@@ -120,14 +155,14 @@ public class TestResult {
 		};
 		Arrays.sort(sortedCollectors, comparator);
 		for (DataCollector dc : sortedCollectors) {
-			log.trace("Starte: {}", dc.getName());
+			LOG.trace("Starte: {}", dc.getName());
 			dc.startCollection();
 		}
 	}
 
 	/**
 	 * Starts or restarts the collection for all Datacollectors, e.g. if a TimeDataCollector was started and stoped before, the Time measured now is added to
-	 * the original time
+	 * the original time.
 	 */
 	public void startOrRestartCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
@@ -140,14 +175,14 @@ public class TestResult {
 		};
 		Arrays.sort(sortedCollectors, comparator);
 		for (DataCollector dc : sortedCollectors) {
-			log.trace("Starte: {}", dc.getName());
+			LOG.trace("Starte: {}", dc.getName());
 			dc.startOrRestartCollection();
 		}
 	}
 
 	/**
 	 * Stops the collection of data, that are collected via DataCollectors. The collection of self-defined values isn't stopped and historical data are not
-	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection
+	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection.
 	 */
 	public void stopCollection() {
 		Map<String, Long> runData = new HashMap<String, Long>();
@@ -167,7 +202,7 @@ public class TestResult {
 	 * @param ms
 	 */
 	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
-		this.ms.put(datacollector, ms);
+		this.collectorSummarizerMap.put(datacollector, ms);
 	}
 
 	/**
@@ -177,7 +212,7 @@ public class TestResult {
 	public void finalizeCollection() {
 		AverageSummerizer as = new AverageSummerizer();
 		for (String collectorName : getKeys()) {
-			log.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+			LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
 			List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
@@ -185,8 +220,8 @@ public class TestResult {
 				localValues.add(realValues.get(i).get(collectorName));
 			}
 			Long result;
-			if (ms.containsKey(collectorName)) {
-				result = ms.get(collectorName).getValue(localValues);
+			if (collectorSummarizerMap.containsKey(collectorName)) {
+				result = collectorSummarizerMap.get(collectorName).getValue(localValues);
 			} else {
 				result = as.getValue(localValues);
 			}
@@ -208,25 +243,30 @@ public class TestResult {
 		values.put(name, value);
 	}
 
+	/**
+	 * Returns the values of measures, that are not collected via DataCollectors.
+	 * 
+	 * @return Additional Values
+	 */
 	public Set<String> getAdditionValueKeys() {
 		return values.keySet();
 	}
 
 	/**
-	 * Gets the current value of the measurement
+	 * Gets the current value of the measurement.
 	 * 
-	 * @param name
-	 * @return
+	 * @param name Name of the measure
+	 * @return Value of the measure
 	 */
 	public long getValue(String name) {
 		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
 	}
 
 	/**
-	 * Gets the maximum value of the measurement of all runs
+	 * Gets the maximum value of the measurement of all runs.
 	 * 
-	 * @param measurement
-	 * @return
+	 * @param measurement Name of the measure
+	 * @return Maximum Value of the measure
 	 */
 	public long getMaximumValue(String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
@@ -241,10 +281,10 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the minimum value of the measurement of all runs
+	 * Gets the minimum value of the measurement of all runs.
 	 * 
-	 * @param measurement
-	 * @return
+	 * @param measurement Name of the measure
+	 * @return Minimum value of the measure
 	 */
 	public long getMinumumValue(String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
@@ -259,7 +299,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the average value of the performance-measure over all runs
+	 * Gets the average value of the performance-measure over all runs.
 	 * 
 	 * @param measurement
 	 * @return
@@ -360,14 +400,14 @@ public class TestResult {
 			values[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
-			log.trace(Arrays.toString(values));
+			LOG.trace(Arrays.toString(values));
 		}
 		SummaryStatistics st = new SummaryStatistics();
 		for (Long l : values) {
 			st.addValue(l);
 		}
 
-		log.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
+		LOG.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
 		return st.getStandardDeviation() / st.getMean();
 	}
 
@@ -379,7 +419,7 @@ public class TestResult {
 			Double aimStdDeviation = deviations.get(collectorName);
 			if (aimStdDeviation != null) {
 				double stdDeviation = getRelativeStandardDeviation(collectorName);
-				log.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
+				LOG.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
 					isRelativeDeviationBelowValue = false;
 					break;
@@ -390,26 +430,44 @@ public class TestResult {
 		return isRelativeDeviationBelowValue;
 	}
 
+	/**
+	 * Gets current minimum value for the measured values.
+	 * 
+	 * @param key Name of the performance measure
+	 * @return Minimum of the currently measured values
+	 */
 	public long getMinumumCurrentValue(String key) {
 		long min = Long.MAX_VALUE;
 		for (int i = 0; i < realValues.size(); i++) {
 			if (realValues.get(i).get(key) < min)
 				min = realValues.get(i).get(key);
 		}
-		log.trace("Minimum ermittelt: " + min);
+		LOG.trace("Minimum ermittelt: " + min);
 		return min;
 	}
 
+	/**
+	 * Gets current maximum value for the measured values.
+	 * 
+	 * @param key Name of the performance measure
+	 * @return Maximum of the currently measured values
+	 */
 	public long getMaximumCurrentValue(String key) {
 		long max = 0;
 		for (int i = 0; i < realValues.size(); i++) {
 			if (realValues.get(i).get(key) > max)
 				max = realValues.get(i).get(key);
 		}
-		log.trace("Maximum ermittelt: " + max);
+		LOG.trace("Maximum ermittelt: " + max);
 		return max;
 	}
 
+	/**
+	 * Returns all measured value for a measure name.
+	 * 
+	 * @param key Name of the measure
+	 * @return Values measured
+	 */
 	public List<Long> getValues(String key) {
 		List<Long> values = new LinkedList<Long>();
 		for (int i = 0; i < realValues.size(); i++) {
@@ -418,10 +476,20 @@ public class TestResult {
 		return values;
 	}
 
+	/**
+	 * Returns count of real executions.
+	 * 
+	 * @return Count of real Executions
+	 */
 	public int getRealExecutions() {
 		return realExecutions;
 	}
 
+	/**
+	 * Sets count of real executions.
+	 * 
+	 * @param realExecutions Count of real executions
+	 */
 	public void setRealExecutions(int realExecutions) {
 		this.realExecutions = realExecutions;
 	}

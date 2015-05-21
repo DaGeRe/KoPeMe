@@ -5,8 +5,8 @@
 	<artifactId>kopeme-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>0.6-SNAPSHOT</version>
-	<name>KoPeMe-Parent</name>
-	<description>Continous Performance Testing Framework</description>
+	<name>KoPeMe - Parent</name>
+	<description>KoPeMe is a framework for enabling performance tests in Java. This makes it possible to live a software development process where performance measures are taken continously and therefore react continously to changes in performance. With continous performance testing, one avoids refactorings after performance problems occured in a big testing phase before releasing the software.</description>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -23,6 +23,7 @@
 	</properties>
 
 	<modules>
+		<module>build-tools</module>
 		<module>kopeme-core</module>
 		<module>kopeme-junit</module>
 		<module>kopeme-junit3</module>
@@ -30,25 +31,29 @@
 		<!-- <module>kopeme-mojo</module> -->
 		<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
 		<!-- <module>kopeme-visualizer</module> -->
-		<!-- Visualizer kann nicht in Jar-Build integriert werden -->
 	</modules>
 
-	<profiles>
-		<profile>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<id>excludeMojoProfile</id>
-			<modules>
-				<module>kopeme-core</module>
-				<module>kopeme-junit</module>
-				<module>kopeme-junit3</module>
-				<module>kopeme-visualizer-core</module>
-			</modules>
-		</profile>
-	</profiles>
-
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<dependencies>
+					<dependency>
+						<groupId>de.dagere.kopeme</groupId>
+						<artifactId>build-tools</artifactId>
+						<version>1.0</version>
+					</dependency>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>6.5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -150,7 +155,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 	</dependencies>
 
@@ -194,4 +199,16 @@
 		</repository>
 	</distributionManagement>
 
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<configuration>
+					<configLocation>checkstyle/checkstyle.xml</configLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

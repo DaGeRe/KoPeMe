@@ -3,15 +3,22 @@ package de.dagere.kopeme.measuresummarizing;
 import java.util.Arrays;
 import java.util.List;
 
-public class MedianSummarizer implements MeasureSummarizer {
+/**
+ * A summarizer returning the medium of a measure.
+ * 
+ * @author reichelt
+ *
+ */
+public final class MedianSummarizer implements MeasureSummarizer {
 
 	/**
-	 * Returns the median of the List of measures
+	 * Returns the median of the List of measures.
+	 * 
 	 * @return median of the liste of measures
 	 */
 	@Override
-	public long getValue(List<Long> values) {
-		Long longarray[] = values.toArray(new Long[0]);
+	public long getValue(final List<Long> values) {
+		Long[] longarray = values.toArray(new Long[0]);
 		Arrays.sort(longarray);
 		int middle = ((longarray.length) / 2);
 		long median;

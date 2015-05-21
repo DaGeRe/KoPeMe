@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.exampletests.pure.ExamplePurePerformanceTests;
@@ -22,10 +24,19 @@ public class PureKoPeMeTest {
 
 	private static final Logger log = LogManager.getLogger(PureKoPeMeTest.class);
 
+	@BeforeClass
+	public static void setupClass(){
+		TestUtils.cleanAndSetKoPeMeOutputFolder();
+	}
+	
+	@Test
+	public void testPureKoPeMeExecution() throws Throwable {
+		String params[] = new String[] { ExamplePurePerformanceTests.class.getName() };
+		PerformanceTestRunnerKoPeMe.main(params);
+	}
+	
 	@Test
 	public void testExecutionTimeMeasurement() throws Throwable {
-		FolderProvider.getInstance().setKopemeDefaultFolder("target/test-classes/.KoPeMe");
-		PerformanceTestRunnerKoPeMe.main(new String[] { ExamplePurePerformanceTests.class.getName() });
 		long start = System.currentTimeMillis();
 		PerformanceTestRunnerKoPeMe.main(new String[] { TestTimeTest.class.getName() });
 		long duration = System.currentTimeMillis() - start;
@@ -33,7 +44,7 @@ public class PureKoPeMeTest {
 		String className = TestTimeTest.class.getCanonicalName();
 		String folderName = FolderProvider.getInstance().getFolderFor(className);
 		String filename = className + ".simpleTest.xml";
-		XMLDataLoader xdl = new XMLDataLoader(folderName + File.separator + filename);
+		XMLDataLoader xdl = new XMLDataLoader(new File(folderName + File.separator + filename));
 		Kopemedata kd = xdl.getFullData();
 		List<Datacollector> collector = null;
 		for (TestcaseType tct : kd.getTestcases().getTestcase()) {

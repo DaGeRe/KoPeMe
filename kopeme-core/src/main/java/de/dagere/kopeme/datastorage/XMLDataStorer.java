@@ -19,30 +19,42 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
 
 /**
- * Manages the storing of resultdata of KoPeMe-tests in the KoPeMe-XML-format
+ * Manages the storing of resultdata of KoPeMe-tests in the KoPeMe-XML-format.
  * 
  * @author reichelt
  *
  */
-public class XMLDataStorer implements DataStorer {
+public final class XMLDataStorer implements DataStorer {
 
-	private static final Logger log = LogManager.getLogger(XMLDataStorer.class);
-
-	private File f;
+	private static final Logger LOG = LogManager.getLogger(XMLDataStorer.class);
+	private final File file;
 	private Kopemedata data;
 
-	public XMLDataStorer(String foldername, String classname, String methodname) throws JAXBException {
+	/**
+	 * Initializes an XMLDataStorer.
+	 * 
+	 * @param foldername Folder where the result should be saved
+	 * @param classname Name of the test class which was executed
+	 * @param methodname Name of the method which was executed
+	 * @throws JAXBException Thrown if an XML Writing error occurs
+	 */
+	public XMLDataStorer(final String foldername, final String classname, final String methodname) throws JAXBException {
 		String filename = classname + "." + methodname + ".xml";
-		f = new File(foldername + File.separator + filename);
-		if (f.exists()) {
-			XMLDataLoader loader = new XMLDataLoader(f);
+		file = new File(foldername + File.separator + filename);
+		if (file.exists()) {
+			XMLDataLoader loader = new XMLDataLoader(file);
 			data = loader.getFullData();
 		} else {
 			createXMLData(classname);
 		}
 	}
 
-	public void createXMLData(String classname) {
+	/**
+	 * Initializes XML-Data.
+	 * 
+	 * @param classname Name of the testclass
+	 */
+	public void createXMLData(final String classname) {
 		data = new Kopemedata();
 		data.setTestcases(new Testcases());
 		Testcases tc = data.getTestcases();
@@ -51,21 +63,21 @@ public class XMLDataStorer implements DataStorer {
 	}
 
 	@Override
-	public void storeValue(String name, long value) {
-		log.error("Speichere Wert falsch");
+	public void storeValue(final String name, final long value) {
+		LOG.error("Speichere Wert falsch");
 	}
 
-	public void storeValue(PerformanceDataMeasure performanceDataMeasure, List<Long> values) {
+	@Override
+	public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final List<Long> values) {
 		TestcaseType test = null;
-		if (data.getTestcases() == null)
-			data.setTestcases(new Testcases());
+		if (data.getTestcases() == null) data.setTestcases(new Testcases());
 		for (TestcaseType tc : data.getTestcases().getTestcase()) {
 			if (tc.getName().equals(performanceDataMeasure.testcase)) {
 				test = tc;
 			}
 		}
 		if (test == null) {
-			log.trace("Test == null, füge hinzu");
+			LOG.trace("Test == null, füge hinzu");
 			test = new TestcaseType();
 			test.setName(performanceDataMeasure.testcase);
 			data.getTestcases().getTestcase().add(test);
@@ -89,15 +101,15 @@ public class XMLDataStorer implements DataStorer {
 
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()) {
-			log.trace("Name: {} Collectorname: {}", dc2.getName(), performanceDataMeasure.collectorname);
+			LOG.trace("Name: {} Collectorname: {}", dc2.getName(), performanceDataMeasure.collectorname);
 			if (dc2.getName().equals(performanceDataMeasure.collectorname)) {
-				log.trace("Equals");
+				LOG.trace("Equals");
 				dc = dc2;
 			}
 		}
 
 		if (dc == null) {
-			log.trace("Erstelle neu");
+			LOG.trace("Erstelle neu");
 			dc = new Datacollector();
 			dc.setName(performanceDataMeasure.collectorname);
 			test.getDatacollector().add(dc);
@@ -109,18 +121,24 @@ public class XMLDataStorer implements DataStorer {
 	public void storeData() {
 		JAXBContext jaxbContext;
 		try {
-			log.info("Storing data to: {}", f.getAbsoluteFile());
+			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-			jaxbMarshaller.marshal(data, f);
+			jaxbMarshaller.marshal(data, file);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void storeData(File file, Kopemedata currentdata) {
+	/**
+	 * Stores the data in the given file.
+	 * 
+	 * @param file File for saving
+	 * @param currentdata Data to save
+	 */
+	public static void storeData(final File file, final Kopemedata currentdata) {
 		JAXBContext jaxbContext;
 		try {
 			// log.debug("Storing data to: {}", file.getAbsoluteFile());

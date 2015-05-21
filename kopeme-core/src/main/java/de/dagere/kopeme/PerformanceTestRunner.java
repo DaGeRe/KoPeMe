@@ -11,12 +11,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.annotations.Assertion;
+import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
- * Represents an execution of all runs of one test
+ * Represents an execution of all runs of one test.
  * 
  * @author dagere
  * 
@@ -25,14 +26,21 @@ public class PerformanceTestRunner {
 
 	private static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
 
-	protected Class klasse;
-	protected Object instanz;
-	protected Method method;
+	protected final Class klasse;
+	protected final Object instanz;
+	protected final Method method;
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
+	/**
+	 * Initializes the PerformanceTestRunner.
+	 * 
+	 * @param klasse
+	 * @param instance
+	 * @param method
+	 */
 	public PerformanceTestRunner(Class klasse, Object instance, Method method) {
 		this.klasse = klasse;
 		this.instanz = instance;
