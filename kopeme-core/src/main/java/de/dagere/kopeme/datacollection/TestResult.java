@@ -72,7 +72,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Sets the DatacollectorList for collecting Performance-Measures
+	 * Sets the DatacollectorList for collecting Performance-Measures.
 	 * 
 	 * @param dcl List of Datacollectors
 	 */
@@ -97,11 +97,12 @@ public class TestResult {
 	 */
 	public Set<String> getKeys() {
 		Set<String> keySet = new HashSet<String>();
-		for (DataCollector dc : dataCollectors.values())
+		for (DataCollector dc : dataCollectors.values()) {
 			keySet.add(dc.getName());
+		}
+
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i) != null)
-				keySet.addAll(realValues.get(i).keySet());
+			if (realValues.get(i) != null) keySet.addAll(realValues.get(i).keySet());
 		}
 		return keySet;
 	}
@@ -119,8 +120,7 @@ public class TestResult {
 	 * Checks, weather the values are good enough.
 	 */
 	public void checkValues() {
-		if (checker != null)
-			checker.checkValues(this);
+		if (checker != null) checker.checkValues(this);
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class TestResult {
 		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
-			public int compare(DataCollector arg0, DataCollector arg1) {
+			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
@@ -197,11 +197,12 @@ public class TestResult {
 	}
 
 	/**
-	 * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ...
+	 * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ... .
 	 * 
-	 * @param ms
+	 * @param datacollector The collector for whom the Summarizer should be set
+	 * @param ms The summarizer to set
 	 */
-	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
+	public void setMeasureSummarizer(final String datacollector, final MeasureSummarizer ms) {
 		this.collectorSummarizerMap.put(datacollector, ms);
 	}
 
@@ -232,14 +233,16 @@ public class TestResult {
 	}
 
 	/**
-	 * Adds a self-defined value
+	 * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a
+	 * certain time) and this value should be saved along with the performance measures which where measured by KoPeMe.
 	 * 
-	 * @param name
-	 * @param value
+	 * @param name Name of the measure that should be saved
+	 * @param value Value of the measure
 	 */
-	public void addValue(String name, long value) {
-		if (dataCollectors.get(name) != null)
+	public void addValue(final String name, final long value) {
+		if (dataCollectors.get(name) != null) {
 			throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
+		}
 		values.put(name, value);
 	}
 
@@ -258,7 +261,7 @@ public class TestResult {
 	 * @param name Name of the measure
 	 * @return Value of the measure
 	 */
-	public long getValue(String name) {
+	public long getValue(final String name) {
 		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
 	}
 
@@ -268,12 +271,13 @@ public class TestResult {
 	 * @param measurement Name of the measure
 	 * @return Maximum Value of the measure
 	 */
-	public long getMaximumValue(String measurement) {
+	public long getMaximumValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		if (historicalData.size() > 0) {
 			long max = Long.MIN_VALUE;
-			for (Long value : historicalData.values())
+			for (Long value : historicalData.values()) {
 				max = (value > max ? value : max);
+			}
 			return max;
 		} else {
 			return 0;
@@ -286,12 +290,13 @@ public class TestResult {
 	 * @param measurement Name of the measure
 	 * @return Minimum value of the measure
 	 */
-	public long getMinumumValue(String measurement) {
+	public long getMinumumValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		if (historicalData.size() > 0) {
 			long min = Long.MAX_VALUE;
-			for (Long value : historicalData.values())
+			for (Long value : historicalData.values()) {
 				min = (value < min ? value : min);
+			}
 			return min;
 		} else {
 			return 0;
@@ -301,10 +306,10 @@ public class TestResult {
 	/**
 	 * Gets the average value of the performance-measure over all runs.
 	 * 
-	 * @param measurement
-	 * @return
+	 * @param measurement Name of the measure
+	 * @return Average value of the measure
 	 */
-	public long getAverageValue(String measurement) {
+	public long getAverageValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		if (historicalData == null)
 			return 0l;
@@ -319,16 +324,15 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets a List of Dates of the last runs
+	 * Gets a List of Dates of the last runs.
 	 * 
-	 * @param measurement
-	 * @param runs
-	 * @return
+	 * @param measurement Name of the measure
+	 * @param runs Count of runs
+	 * @return List of dates
 	 */
-	private List<Date> getLastRuns(String measurement, int runs) {
+	private List<Date> getLastRuns(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null)
-			return new LinkedList<Date>();
+		if (historicalData == null) return new LinkedList<Date>();
 
 		List<Date> dateList = new LinkedList<Date>(historicalData.keySet());
 		Collections.sort(dateList);
@@ -361,26 +365,20 @@ public class TestResult {
 
 	public long getLastRunsMaximum(String measurement, int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		List<Date> lastRunList = getLastRuns(measurement, runs);
 
 		long max = Long.MIN_VALUE;
-		for (Date d : lastRunList) {
-			Number num = historicalData.get(d);
-			if (max > num.longValue())
-				max = num.longValue();
+		for (Number num : historicalData.values()) {
+			if (max < num.longValue()) max = num.longValue();
 		}
 		return max;
 	}
 
 	public long getLastRunsMinimum(String measurement, int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		List<Date> lastRunList = getLastRuns(measurement, runs);
 
 		long min = Long.MAX_VALUE;
-		for (Date d : lastRunList) {
-			Number num = historicalData.get(d);
-			if (min < num.longValue())
-				min = num.longValue();
+		for (Number num : historicalData.values()) {
+			if (min < num.longValue()) min = num.longValue();
 		}
 		return min;
 	}
