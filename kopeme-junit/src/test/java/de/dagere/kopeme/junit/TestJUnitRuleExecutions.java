@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.ruletests;
+package de.dagere.kopeme.junit;
 
 
 import org.apache.logging.log4j.LogManager;

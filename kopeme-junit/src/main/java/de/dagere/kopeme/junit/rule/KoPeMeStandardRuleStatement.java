@@ -1,5 +1,7 @@
 package de.dagere.kopeme.junit.rule;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -8,8 +10,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Represents an execution of all runs of one test
@@ -67,15 +69,15 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 			runMainExecution(tr);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
+			saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, true));
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
 
 		return tr;
 	}

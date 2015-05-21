@@ -1,17 +1,19 @@
 package de.dagere.kopeme.junit.tests;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
@@ -23,17 +25,23 @@ import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
 
 public class TestFileWriting {
 
+	private static final String TEST_MULTIPLICATION = "testMultiplication";
+	private static final String TEST_ADDITION = "testAddition";
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
+	
+	@BeforeClass
+	public static void initClass() throws IOException {
+		TestUtils.cleanAndSetKoPeMeOutputFolder();
+	}
 
 	@Test
 	public void testNormalWriting() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
-
-		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTest.class.getName() + ".testAddition" + ".yaml";
-		File f = new File(name);
-		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
+		String testClass = JUnitAdditionTest.class.getName();
+		File f = TestUtils.xmlfileForKoPeMeRuleTest(testClass, TEST_ADDITION);
+		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		f.delete();
 	}
 
@@ -41,12 +49,9 @@ public class TestFileWriting {
 	public void testDoubleWriting() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
-
 		jc.run(JUnitAdditionTest.class);
-
-		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitAdditionTest.class.getName() + "." + "testAddition" + ".yaml";
-		File f = new File(name);
-		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
+		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
+		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		f.delete();
 	}
 
@@ -54,10 +59,8 @@ public class TestFileWriting {
 	public void testResults() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitMultiplicationTest.class);
-
-		String name = PerformanceTestUtils.PERFORMANCEFOLDER + "/" + JUnitMultiplicationTest.class.getName() + ".testMultiplication" + ".yaml";
-		File f = new File(name);
-		Assert.assertTrue("Datei " + name + " sollte existieren", f.exists());
+		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
+		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		try {
 			Kopemedata kd = new XMLDataLoader(f).getFullData();
@@ -66,7 +69,7 @@ public class TestFileWriting {
 
 			TestcaseType tct = null;
 			for (TestcaseType t : tc.getTestcase()) {
-				if (t.getName().equals("testMultiplication")) {
+				if (t.getName().equals(TEST_MULTIPLICATION)) {
 					tct = t;
 					break;
 				}
@@ -92,13 +95,12 @@ public class TestFileWriting {
 			}
 
 		} catch (JAXBException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
 	@Test
 	public void testExceptionWriting() {
-
+		//FIXME why is this empty?
 	}
 }
