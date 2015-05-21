@@ -7,7 +7,6 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-visualizer-core</artifactId>
 	<name>KoPeMe-Visualizer-Core</name>
 	<version>0.2-SNAPSHOT</version>
