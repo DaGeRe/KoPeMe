@@ -362,7 +362,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the maximum value of the performance-measure over the last runs runs
+	 * Gets the maximum value of the performance-measure over the last runs runs.
 	 * 
 	 * @param measurement measurment, for which the value should be calculated
 	 * @param runs count of runs
@@ -396,22 +396,22 @@ public class TestResult {
 	}
 
 	/**
-	 * Returns the relative standard deviation for the given DataColelctor
+	 * Returns the relative standard deviation for the given DataCollector.
 	 * 
 	 * @param datacollector Name of the DataCollector
 	 * @return Relative standard deviation
 	 */
-	public double getRelativeStandardDeviation(String datacollector) {
-		long[] values = new long[realValues.size()];
+	public double getRelativeStandardDeviation(final String datacollector) {
+		long[] currentValues = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
 			Map<String, Long> map = realValues.get(i);
-			values[i] = map.get(datacollector);
+			currentValues[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
-			LOG.trace(Arrays.toString(values));
+			LOG.trace(Arrays.toString(currentValues));
 		}
 		SummaryStatistics st = new SummaryStatistics();
-		for (Long l : values) {
+		for (Long l : currentValues) {
 			st.addValue(l);
 		}
 
@@ -425,9 +425,8 @@ public class TestResult {
 	 * @param deviations maximale relative standard deviations
 	 * @return Weather the test can be stopped
 	 */
-	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
-		if (realValues.size() < 5)
-			return false;
+	public boolean isRelativeStandardDeviationBelow(final Map<String, Double> deviations) {
+		if (realValues.size() < 5) return false;
 		boolean isRelativeDeviationBelowValue = true;
 		for (String collectorName : getKeys()) {
 			Double aimStdDeviation = deviations.get(collectorName);
@@ -469,8 +468,7 @@ public class TestResult {
 	public long getMaximumCurrentValue(String key) {
 		long max = 0;
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i).get(key) > max)
-				max = realValues.get(i).get(key);
+			if (realValues.get(i).get(key) > max) max = realValues.get(i).get(key);
 		}
 		LOG.trace("Maximum ermittelt: " + max);
 		return max;
@@ -482,12 +480,12 @@ public class TestResult {
 	 * @param key Name of the measure
 	 * @return Values measured
 	 */
-	public List<Long> getValues(String key) {
-		List<Long> values = new LinkedList<Long>();
+	public List<Long> getValues(final String key) {
+		List<Long> currentValues = new LinkedList<>();
 		for (int i = 0; i < realValues.size(); i++) {
-			values.add(realValues.get(i).get(key));
+			currentValues.add(realValues.get(i).get(key));
 		}
-		return values;
+		return currentValues;
 	}
 
 	/**
@@ -504,7 +502,7 @@ public class TestResult {
 	 * 
 	 * @param realExecutions Count of real executions
 	 */
-	public void setRealExecutions(int realExecutions) {
+	public void setRealExecutions(final int realExecutions) {
 		this.realExecutions = realExecutions;
 	}
 }

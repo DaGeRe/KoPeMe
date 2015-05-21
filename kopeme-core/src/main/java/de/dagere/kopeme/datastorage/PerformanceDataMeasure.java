@@ -16,6 +16,18 @@ public class PerformanceDataMeasure {
 	public final double first10percentile;
 	public final boolean failure, error;
 
+	/**
+	 * Initializes the PerformanceDataMeasure.
+	 * 
+	 * @param testcase
+	 * @param collectorname
+	 * @param value
+	 * @param deviation
+	 * @param executionTimes
+	 * @param min
+	 * @param max
+	 * @param first10percentile
+	 */
 	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max,
 			double first10percentile) {
 		this.testcase = testcase;
@@ -30,6 +42,19 @@ public class PerformanceDataMeasure {
 		failure = false;
 	}
 
+	/**
+	 * Initializes the PerformanceDataMeasure.
+	 * 
+	 * @param testcase
+	 * @param collectorname
+	 * @param value
+	 * @param deviation
+	 * @param executionTimes
+	 * @param min
+	 * @param max
+	 * @param failure
+	 * @param error
+	 */
 	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max, boolean failure,
 			boolean error) {
 		this.testcase = testcase;
