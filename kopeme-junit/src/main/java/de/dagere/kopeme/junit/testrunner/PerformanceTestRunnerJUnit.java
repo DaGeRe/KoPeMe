@@ -42,7 +42,7 @@ import de.dagere.kopeme.datacollection.TestResult;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
-	final static PerformanceTestingClass defaultPerformanceTestingClass = new PerformanceTestingClass() {
+	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = new PerformanceTestingClass() {
 
 		@Override
 		public Class<? extends Annotation> annotationType() {
@@ -80,7 +80,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 	};
 
-	private final static Logger log = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
+	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private final Class klasse;
 	protected boolean saveFullData;
@@ -90,7 +90,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
 
-	public PerformanceTestRunnerJUnit(Class<?> klasse) throws InitializationError {
+	/**
+	 * Initializes a PerformanceTestRunnerJUnit
+	 * 
+	 * @param klasse Class that should be tested
+	 * @throws InitializationError Thrown if class can't be initialized
+	 */
+	public PerformanceTestRunnerJUnit(final Class<?> klasse) throws InitializationError {
 		super(klasse);
 		this.klasse = klasse;
 	}
@@ -100,7 +106,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		long start = System.nanoTime();
 		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc == null) {
-			ptc = defaultPerformanceTestingClass;
+			ptc = DEFAULTPERFORMANCETESTINGCLASS;
 		}
 		final RunNotifier parallelNotifier = new RunNotifier();
 		parallelNotifier.addListener(new DelegatingRunListener(notifier));
@@ -111,23 +117,28 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			}
 		});
 		saveFullData = ptc.logFullData();
-		log.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
+		LOG.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
 		mainThread.start();
 
 		try {
 			mainThread.join(ptc.overallTimeout());
 			if (mainThread.isAlive()) {
-				log.debug("Call interrupt because of class-timeout");
+				LOG.debug("Call interrupt because of class-timeout");
 				mainThread.interrupt();
-				log.debug("Firing..");
+				LOG.debug("Firing..");
 				setTestsToFail(notifier);
 			}
 		} catch (InterruptedException e) {
-			log.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
+			LOG.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Sets that tests are failed
+	 * 
+	 * @param notifier Notifier that should be notified
+	 */
 	private void setTestsToFail(final RunNotifier notifier) {
 		Description description = getDescription();
 		ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
@@ -151,6 +162,17 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 	}
 
+	/**
+	 * Gets the PerformanceJUnitStatement for the test execution of the given method.
+	 * 
+	 * @param currentMethod Method that should be tested
+	 * @return PerformanceJUnitStatement for testing the method
+	 * @throws NoSuchMethodException Thrown if the method does not exist
+	 * @throws SecurityException Thrown if the method is not accessible
+	 * @throws IllegalAccessException Thrown if the method is not accessible
+	 * @throws IllegalArgumentException Thrown if the method has arguments
+	 * @throws InvocationTargetException Thrown if the method is not accessible
+	 */
 	private PerformanceJUnitStatement getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException,
 			IllegalArgumentException,
@@ -166,7 +188,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		} catch (Throwable e) {
 			return new PerformanceFail(e);
 		}
-		log.debug("Statement: " + currentMethod.getName() + " " + method);
+		LOG.debug("Statement: " + currentMethod.getName() + " " + method);
 
 		Statement statement = methodInvoker(currentMethod, test);
 
@@ -193,6 +215,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 	}
 
+	/**
+	 * Creates a PerformanceStatement out of a method
+	 * 
+	 * @param currentMethod Method for which the statement should be created
+	 * @return The statement
+	 */
 	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
 		final PerformanceJUnitStatement callee;
 		try {
@@ -200,7 +228,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
-		log.trace("Im methodBlock für " + currentMethod.getName());
+		LOG.trace("Im methodBlock für " + currentMethod.getName());
 
 		initValues(currentMethod);
 
@@ -215,31 +243,31 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 							TestResult tr = executeSimpleTest(callee);
 							tr.checkValues();
 							if (!assertationvalues.isEmpty()) {
-								log.info("Checking: " + assertationvalues.size());
+								LOG.info("Checking: " + assertationvalues.size());
 								tr.checkValues(assertationvalues);
 							}
 						} catch (Exception e) {
 							if (e instanceof RuntimeException) {
 								throw (RuntimeException) e;
 							}
-							log.error("Catched Exception: {}", e.getLocalizedMessage());
+							LOG.error("Catched Exception: {}", e.getLocalizedMessage());
 							e.printStackTrace();
 						} catch (Throwable t) {
 							if (t instanceof Error)
 								throw (Error) t;
-							log.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
+							LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
 						}
 					}
 				});
 				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
 				tbe.execute();
-				log.debug("Timebounded execution finished");
+				LOG.debug("Timebounded execution finished");
 			}
 		};
 		return st;
 	}
 
-	private void initValues(FrameworkMethod method) {
+	private void initValues(final FrameworkMethod method) {
 		this.method = method;
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
@@ -261,11 +289,18 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		filename = klasse.getName();
 	}
 
-	private TestResult executeSimpleTest(PerformanceJUnitStatement callee) throws Throwable {
+	/**
+	 * Executes a simple test, i.e. a test without parameters.
+	 * 
+	 * @param callee Statement that should be called to measure performance and execute the test
+	 * @return The result of the test
+	 * @throws Throwable Any exception that occurs during the test
+	 */
+	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee) throws Throwable {
 		TestResult tr = new TestResult(method.getName(), executionTimes);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
-			log.warn("Not all Collectors are valid!");
+			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
 			runMainExecution(tr, callee, true);
@@ -279,37 +314,49 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		return tr;
 	}
 
-	private void runMainExecution(TestResult tr, PerformanceJUnitStatement callee, boolean simple) throws Throwable {
+	/**
+	 * Runs the main execution of the test, i.e. the execution where performance measures are counted.
+	 * 
+	 * @param tr TestResult that should be filled
+	 * @param callee Statement that should be called to measure performance and execute the test
+	 * @param simple Weather it is a simple test, i.e. weather there are parameters
+	 * @throws Throwable Any exception that occurs during the test
+	 */
+	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			callee.preEvaluate();
-			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
-			if (simple)
-				tr.startCollection();
+			LOG.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
+			if (simple) tr.startCollection();
 			callee.evaluate();
-			if (simple)
-				tr.stopCollection();
-			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			if (simple) tr.stopCollection();
+			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			callee.postEvaluate();
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
 		}
-		log.debug("Executions: " + executions);
+		LOG.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);
 	}
 
+	/**
+	 * Runs the warmup for the tests.
+	 * 
+	 * @param callee Statement that should be called to measure performance and execute the test
+	 * @throws Throwable Any exception that occurs during the test
+	 */
 	private void runWarmup(PerformanceJUnitStatement callee) throws Throwable {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
 			callee.preEvaluate();
-			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			callee.evaluate();
-			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 			callee.postEvaluate();
 		}
 	}
