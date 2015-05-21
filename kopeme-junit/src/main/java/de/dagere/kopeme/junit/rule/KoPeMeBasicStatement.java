@@ -70,13 +70,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	}
 
 	/**
-	 * Saves the measured data
-	 */
-	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
 	 * 
-	 * @param tr
-	 * @return
+	 * @param tr Test Result that should be checked
+	 * @return Weather the result is valid
 	 */
 	protected boolean checkCollectorValidity(TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);

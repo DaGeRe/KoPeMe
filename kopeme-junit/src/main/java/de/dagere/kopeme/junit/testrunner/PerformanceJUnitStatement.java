@@ -74,7 +74,7 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Sets Before-Methods that should be executed.
 	 * 
-	 * @param befores After-Methods
+	 * @param afters After-Methods
 	 */
 	public void setAfters(final List<FrameworkMethod> afters) {
 		this.afters = afters;
