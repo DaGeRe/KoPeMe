@@ -16,8 +16,21 @@ public class PerformanceDataMeasure {
 	public final double first10percentile;
 	public final boolean failure, error;
 
-	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max,
-			double first10percentile) {
+	/**
+	 * Initializes the PerformanceDataMeasure.
+	 * 
+	 * @param testcase Name of the testcase
+	 * @param collectorname Name of the datacollector
+	 * @param value Measured value
+	 * @param deviation deviation of the values
+	 * @param executionTimes execution times
+	 * @param min minimum value
+	 * @param max maximum value
+	 * @param first10percentile First 10-Percentil of the measured values
+	 */
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+			final long max,
+			final double first10percentile) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;
@@ -30,8 +43,22 @@ public class PerformanceDataMeasure {
 		failure = false;
 	}
 
-	public PerformanceDataMeasure(String testcase, String collectorname, long value, double deviation, int executionTimes, long min, long max, boolean failure,
-			boolean error) {
+	/**
+	 * Initializes the PerformanceDataMeasure.
+	 * 
+	 * @param testcase Name of the testcase
+	 * @param collectorname Name of the datacollector
+	 * @param value Measured value
+	 * @param deviation deviation of the values
+	 * @param executionTimes execution times
+	 * @param min minimum value
+	 * @param max maximum value
+	 * @param failure Weather an failure occured
+	 * @param error Weather an error occured
+	 */
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+			final long max, final boolean failure,
+			final boolean error) {
 		this.testcase = testcase;
 		this.collectorname = collectorname;
 		this.value = value;
@@ -44,42 +71,72 @@ public class PerformanceDataMeasure {
 		this.error = error;
 	}
 
+	/**
+	 * @return the testcase
+	 */
 	public String getTestcase() {
 		return testcase;
 	}
 
+	/**
+	 * @return the collectorname
+	 */
 	public String getCollectorname() {
 		return collectorname;
 	}
 
+	/**
+	 * @return the value
+	 */
 	public long getValue() {
 		return value;
 	}
 
+	/**
+	 * @return the deviation
+	 */
 	public double getDeviation() {
 		return deviation;
 	}
 
+	/**
+	 * @return the executionTimes
+	 */
 	public int getExecutionTimes() {
 		return executionTimes;
 	}
 
+	/**
+	 * @return the min
+	 */
 	public long getMin() {
 		return min;
 	}
 
+	/**
+	 * @return the max
+	 */
 	public long getMax() {
 		return max;
 	}
 
+	/**
+	 * @return the first10percentile
+	 */
 	public double getFirst10percentile() {
 		return first10percentile;
 	}
 
+	/**
+	 * @return the failure
+	 */
 	public boolean isFailure() {
 		return failure;
 	}
 
+	/**
+	 * @return the error
+	 */
 	public boolean isError() {
 		return error;
 	}

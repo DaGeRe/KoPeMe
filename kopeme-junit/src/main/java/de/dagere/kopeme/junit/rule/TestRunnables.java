@@ -11,20 +11,33 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
 
+/**
+ * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.
+ * 
+ * @author reichelt
+ *
+ */
 public class TestRunnables {
 
-	private static final Logger log = LogManager.getLogger(TestRunnables.class);
+	private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 
 	private final Runnable testRunnable, beforeRunnable, afterRunnable;
 
-	public TestRunnables(Runnable testRunnable, Class testClass, final Object testObject) {
+	/**
+	 * Initializes the TestRunnables
+	 * 
+	 * @param testRunnable Runnable for the test itself
+	 * @param testClass Class that should be tested
+	 * @param testObject Object that should be tested
+	 */
+	public TestRunnables(final Runnable testRunnable, final Class testClass, final Object testObject) {
 		super();
 		this.testRunnable = testRunnable;
 		final List<Method> beforeMethods = new LinkedList<>();
 		final List<Method> afterMethods = new LinkedList<>();
-		log.debug("Klasse: {}", testClass);
+		LOG.debug("Klasse: {}", testClass);
 		for (Method classMethod : testClass.getMethods()) {
-			log.trace("Prüfe: {}", classMethod);
+			LOG.trace("Prüfe: {}", classMethod);
 			if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
 				if (classMethod.getParameterTypes().length > 0) {
 					throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
@@ -72,14 +85,29 @@ public class TestRunnables {
 		};
 	}
 
+	/**
+	 * Returns the test Runnable
+	 * 
+	 * @return Test-Runnable
+	 */
 	public Runnable getTestRunnable() {
 		return testRunnable;
 	}
 
+	/**
+	 * Returns the runnable, that should be run before the test
+	 * 
+	 * @return Before-Runnable
+	 */
 	public Runnable getBeforeRunnable() {
 		return beforeRunnable;
 	}
 
+	/**
+	 * Returns the runnable, that should be run after the test
+	 * 
+	 * @return After-Runnable
+	 */
 	public Runnable getAfterRunnable() {
 		return afterRunnable;
 	}

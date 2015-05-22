@@ -32,36 +32,36 @@ public @interface PerformanceTest {
 	 * 
 	 * @return
 	 */
-	public int executionTimes() default 10;
+	int executionTimes() default 10;
 
 	/**
 	 * Optionally specify the count of executions, that should be executed before the measuring begins.
 	 * 
 	 * @return Execution times of the test
 	 */
-	public int warmupExecutions() default 1;
+	int warmupExecutions() default 1;
 
 	/**
-	 * Optionally specify the timeout after which the test is canceled. The test is canceled after the timeout occurs for all executions, not for a single
+	 * Optionally specify the timeout after which the test is canceled. The test is canceled after the timeout occurs for all executions, not for a single.
 	 * execution of the method.
 	 * 
 	 * @return Warmup executions of the test
 	 */
-	public int timeout() default 100000;
+	int timeout() default 100000;
 
 	/**
 	 * Optionally specify that all data should be logged, i.e. primarily all measured values instead of only average values.
 	 * 
 	 * @return Weather to log full data
 	 */
-	public boolean logFullData() default false;
+	boolean logFullData() default false;
 
 	/**
-	 * Optionally specify which performance thresholds should be checked after the execution is completed
+	 * Optionally specify which performance thresholds should be checked after the execution is completed.
 	 * 
 	 * @return Assertations that should be checked
 	 */
-	public Assertion[] assertions() default {};
+	Assertion[] assertions() default {};
 
 	/**
 	 * Optionally specify for <emph>all<emph> datacollectors, for which maximal standard deviation an early stop is executed. This means that, if all relative
@@ -70,12 +70,12 @@ public @interface PerformanceTest {
 	 * 
 	 * @return Maximale relative standard deviation for early abortion of the test
 	 */
-	public MaximalRelativeStandardDeviation[] deviations() default {};
+	MaximalRelativeStandardDeviation[] deviations() default {};
 
 	/**
-	 * Optionally specify how many executions, if <code>deviations</code> is specified, are executed before an early stop is eventually happening
+	 * Optionally specify how many executions, if <code>deviations</code> is specified, are executed before an early stop is eventually happening.
 	 * 
 	 * @return Minimal execution times for early abortion of the test
 	 */
-	public int minEarlyStopExecutions() default 10;
+	int minEarlyStopExecutions() default 10;
 }

@@ -22,7 +22,6 @@ import org.hamcrest.Matchers;
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
-import de.dagere.kopeme.paralleltests.MethodExecution;
 
 /**
  * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are
@@ -42,7 +41,7 @@ public class TestResult {
 	protected Checker checker;
 	private int realExecutions;
 	private final String testcase;
-	private List<MethodExecution> methods;
+
 	private Map<String, MeasureSummarizer> collectorSummarizerMap;
 
 	/**
@@ -54,7 +53,6 @@ public class TestResult {
 	public TestResult(final String testcase, final int executionTimes) {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
-		methods = new LinkedList<MethodExecution>();
 		index = 0;
 		this.testcase = testcase;
 
@@ -72,7 +70,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Sets the DatacollectorList for collecting Performance-Measures
+	 * Sets the DatacollectorList for collecting Performance-Measures.
 	 * 
 	 * @param dcl List of Datacollectors
 	 */
@@ -82,7 +80,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Adds a DataCollector to the given collectors
+	 * Adds a DataCollector to the given collectors.
 	 * 
 	 * @param dc DataCollector that should be added
 	 */
@@ -91,17 +89,18 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets all names of DataCollectors that are used
+	 * Gets all names of DataCollectors that are used.
 	 * 
 	 * @return Names of used DataCollectors
 	 */
 	public Set<String> getKeys() {
 		Set<String> keySet = new HashSet<String>();
-		for (DataCollector dc : dataCollectors.values())
+		for (DataCollector dc : dataCollectors.values()) {
 			keySet.add(dc.getName());
+		}
+
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i) != null)
-				keySet.addAll(realValues.get(i).keySet());
+			if (realValues.get(i) != null) keySet.addAll(realValues.get(i).keySet());
 		}
 		return keySet;
 	}
@@ -119,8 +118,7 @@ public class TestResult {
 	 * Checks, weather the values are good enough.
 	 */
 	public void checkValues() {
-		if (checker != null)
-			checker.checkValues(this);
+		if (checker != null) checker.checkValues(this);
 	}
 
 	/**
@@ -149,7 +147,7 @@ public class TestResult {
 		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
-			public int compare(DataCollector arg0, DataCollector arg1) {
+			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
@@ -169,7 +167,7 @@ public class TestResult {
 		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
-			public int compare(DataCollector arg0, DataCollector arg1) {
+			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
@@ -197,11 +195,12 @@ public class TestResult {
 	}
 
 	/**
-	 * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ...
+	 * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ... .
 	 * 
-	 * @param ms
+	 * @param datacollector The collector for whom the Summarizer should be set
+	 * @param ms The summarizer to set
 	 */
-	public void setMeasureSummarizer(String datacollector, MeasureSummarizer ms) {
+	public void setMeasureSummarizer(final String datacollector, final MeasureSummarizer ms) {
 		this.collectorSummarizerMap.put(datacollector, ms);
 	}
 
@@ -232,14 +231,16 @@ public class TestResult {
 	}
 
 	/**
-	 * Adds a self-defined value
+	 * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a
+	 * certain time) and this value should be saved along with the performance measures which where measured by KoPeMe.
 	 * 
-	 * @param name
-	 * @param value
+	 * @param name Name of the measure that should be saved
+	 * @param value Value of the measure
 	 */
-	public void addValue(String name, long value) {
-		if (dataCollectors.get(name) != null)
+	public void addValue(final String name, final long value) {
+		if (dataCollectors.get(name) != null) {
 			throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
+		}
 		values.put(name, value);
 	}
 
@@ -258,7 +259,7 @@ public class TestResult {
 	 * @param name Name of the measure
 	 * @return Value of the measure
 	 */
-	public long getValue(String name) {
+	public long getValue(final String name) {
 		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
 	}
 
@@ -268,12 +269,13 @@ public class TestResult {
 	 * @param measurement Name of the measure
 	 * @return Maximum Value of the measure
 	 */
-	public long getMaximumValue(String measurement) {
+	public long getMaximumValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		if (historicalData.size() > 0) {
 			long max = Long.MIN_VALUE;
-			for (Long value : historicalData.values())
+			for (Long value : historicalData.values()) {
 				max = (value > max ? value : max);
+			}
 			return max;
 		} else {
 			return 0;
@@ -286,12 +288,13 @@ public class TestResult {
 	 * @param measurement Name of the measure
 	 * @return Minimum value of the measure
 	 */
-	public long getMinumumValue(String measurement) {
+	public long getMinumumValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		if (historicalData.size() > 0) {
 			long min = Long.MAX_VALUE;
-			for (Long value : historicalData.values())
+			for (Long value : historicalData.values()) {
 				min = (value < min ? value : min);
+			}
 			return min;
 		} else {
 			return 0;
@@ -301,17 +304,17 @@ public class TestResult {
 	/**
 	 * Gets the average value of the performance-measure over all runs.
 	 * 
-	 * @param measurement
-	 * @return
+	 * @param measurement Name of the measure
+	 * @return Average value of the measure
 	 */
-	public long getAverageValue(String measurement) {
+	public long getAverageValue(final String measurement) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null)
-			return 0l;
+		if (historicalData == null) return 0L;
 		if (historicalData.size() > 0) {
 			long sum = 0;
-			for (Number value : historicalData.values())
+			for (Number value : historicalData.values()) {
 				sum += value.longValue();
+			}
 			return sum / historicalData.size();
 		} else {
 			return 0;
@@ -319,16 +322,15 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets a List of Dates of the last runs
+	 * Gets a List of Dates of the last runs.
 	 * 
-	 * @param measurement
-	 * @param runs
-	 * @return
+	 * @param measurement Name of the measure
+	 * @param runs Count of runs
+	 * @return List of dates
 	 */
-	private List<Date> getLastRuns(String measurement, int runs) {
+	private List<Date> getLastRuns(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null)
-			return new LinkedList<Date>();
+		if (historicalData == null) return new LinkedList<Date>();
 
 		List<Date> dateList = new LinkedList<Date>(historicalData.keySet());
 		Collections.sort(dateList);
@@ -341,13 +343,13 @@ public class TestResult {
 	}
 
 	/**
-	 * Gets the average value of the performance-measure over the last runs runs
+	 * Gets the average value of the performance-measure over the last runs runs.
 	 * 
 	 * @param measurement measurment, for which the value should be calculated
 	 * @param runs count of runs
-	 * @return
+	 * @return Average value
 	 */
-	public long getLastRunsAverage(String measurement, int runs) {
+	public long getLastRunsAverage(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
 		List<Date> lastRunList = getLastRuns(measurement, runs);
 
@@ -359,51 +361,57 @@ public class TestResult {
 		return lastRunList.size() != 0 ? sum / lastRunList.size() : 0;
 	}
 
-	public long getLastRunsMaximum(String measurement, int runs) {
+	/**
+	 * Gets the maximum value of the performance-measure over the last runs runs.
+	 * 
+	 * @param measurement measurment, for which the value should be calculated
+	 * @param runs count of runs
+	 * @return Last runs maximum
+	 */
+	public long getLastRunsMaximum(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		List<Date> lastRunList = getLastRuns(measurement, runs);
 
 		long max = Long.MIN_VALUE;
-		for (Date d : lastRunList) {
-			Number num = historicalData.get(d);
-			if (max > num.longValue())
-				max = num.longValue();
+		for (Number num : historicalData.values()) {
+			if (max < num.longValue()) max = num.longValue();
 		}
 		return max;
 	}
 
-	public long getLastRunsMinimum(String measurement, int runs) {
+	/**
+	 * Gets the minimum value of the performance-measure over the last runs runs.
+	 * 
+	 * @param measurement measurment, for which the value should be calculated
+	 * @param runs count of runs
+	 * @return Last runs minimum
+	 */
+	public long getLastRunsMinimum(final String measurement, final int runs) {
 		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		List<Date> lastRunList = getLastRuns(measurement, runs);
 
 		long min = Long.MAX_VALUE;
-		for (Date d : lastRunList) {
-			Number num = historicalData.get(d);
-			if (min < num.longValue())
-				min = num.longValue();
+		for (Number num : historicalData.values()) {
+			if (min < num.longValue()) min = num.longValue();
 		}
 		return min;
 	}
 
-	public void addParallelTest(MethodExecution methodExecution) {
-		methods.add(methodExecution);
-	}
-
-	public List<MethodExecution> getParallelTests() {
-		return methods;
-	}
-
-	public double getRelativeStandardDeviation(String datacollector) {
-		long[] values = new long[realValues.size()];
+	/**
+	 * Returns the relative standard deviation for the given DataCollector.
+	 * 
+	 * @param datacollector Name of the DataCollector
+	 * @return Relative standard deviation
+	 */
+	public double getRelativeStandardDeviation(final String datacollector) {
+		long[] currentValues = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
 			Map<String, Long> map = realValues.get(i);
-			values[i] = map.get(datacollector);
+			currentValues[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
-			LOG.trace(Arrays.toString(values));
+			LOG.trace(Arrays.toString(currentValues));
 		}
 		SummaryStatistics st = new SummaryStatistics();
-		for (Long l : values) {
+		for (Long l : currentValues) {
 			st.addValue(l);
 		}
 
@@ -411,9 +419,14 @@ public class TestResult {
 		return st.getStandardDeviation() / st.getMean();
 	}
 
-	public boolean isRelativeStandardDeviationBelow(Map<String, Double> deviations) {
-		if (realValues.size() < 5)
-			return false;
+	/**
+	 * Checks weather the given real deviations are below the maximale relative standard deviations that are given.
+	 * 
+	 * @param deviations maximale relative standard deviations
+	 * @return Weather the test can be stopped
+	 */
+	public boolean isRelativeStandardDeviationBelow(final Map<String, Double> deviations) {
+		if (realValues.size() < 5) return false;
 		boolean isRelativeDeviationBelowValue = true;
 		for (String collectorName : getKeys()) {
 			Double aimStdDeviation = deviations.get(collectorName);
@@ -455,8 +468,7 @@ public class TestResult {
 	public long getMaximumCurrentValue(String key) {
 		long max = 0;
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i).get(key) > max)
-				max = realValues.get(i).get(key);
+			if (realValues.get(i).get(key) > max) max = realValues.get(i).get(key);
 		}
 		LOG.trace("Maximum ermittelt: " + max);
 		return max;
@@ -468,12 +480,12 @@ public class TestResult {
 	 * @param key Name of the measure
 	 * @return Values measured
 	 */
-	public List<Long> getValues(String key) {
-		List<Long> values = new LinkedList<Long>();
+	public List<Long> getValues(final String key) {
+		List<Long> currentValues = new LinkedList<>();
 		for (int i = 0; i < realValues.size(); i++) {
-			values.add(realValues.get(i).get(key));
+			currentValues.add(realValues.get(i).get(key));
 		}
-		return values;
+		return currentValues;
 	}
 
 	/**
@@ -490,7 +502,7 @@ public class TestResult {
 	 * 
 	 * @param realExecutions Count of real executions
 	 */
-	public void setRealExecutions(int realExecutions) {
+	public void setRealExecutions(final int realExecutions) {
 		this.realExecutions = realExecutions;
 	}
 }

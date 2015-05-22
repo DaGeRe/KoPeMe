@@ -10,11 +10,7 @@ import java.util.List;
  */
 public final class AverageSummerizer implements MeasureSummarizer {
 
-	/**
-	 * Returns the average of the List of measures.
-	 * 
-	 * @return average of the liste of measures
-	 */
+	@Override
 	public long getValue(final List<Long> values) {
 		if (values != null && values.size() != 0) {
 			long sum = 0;
@@ -26,7 +22,5 @@ public final class AverageSummerizer implements MeasureSummarizer {
 		else {
 			return 0;
 		}
-
 	}
-
 }

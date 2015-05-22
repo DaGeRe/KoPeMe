@@ -17,16 +17,16 @@ import org.junit.runners.model.Statement;
  */
 public class KoPeMeRule implements TestRule {
 
-	private static final Logger log = LogManager.getLogger(KoPeMeRule.class);
+	private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
 
-	private Object testObject;
+	private final Object testObject;
 
-	public KoPeMeRule(Object testObject) {
+	public KoPeMeRule(final Object testObject) {
 		this.testObject = testObject;
 	}
 
 	@Override
-	public Statement apply(final Statement stmt, Description descr) {
+	public Statement apply(final Statement stmt, final Description descr) {
 		if (descr.isTest()) {
 			Method testMethod = null;
 			Class<?> testClass = null;

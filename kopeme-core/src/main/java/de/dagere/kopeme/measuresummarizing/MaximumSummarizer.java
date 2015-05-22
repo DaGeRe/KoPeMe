@@ -9,11 +9,6 @@ import java.util.List;
  */
 public final class MaximumSummarizer implements MeasureSummarizer {
 
-	/**
-	 * Returns the maximum of the List of measures.
-	 * 
-	 * @return Maximum of the liste of measures
-	 */
 	@Override
 	public long getValue(final List<Long> values) {
 		long max = 0;
