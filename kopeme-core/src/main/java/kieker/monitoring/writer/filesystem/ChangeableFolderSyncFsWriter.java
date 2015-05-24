@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
+import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
@@ -90,11 +91,14 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		return tempConfig;
 	}
 	
-	public synchronized void closeCurrentWriter(){
+	public synchronized void reset(){
 		if(currentWriter != null){
 			currentWriter.terminate();
 		}
 		currentWriter = null;
 	}
 
+	public IMonitoringController getController(){
+		return monitoringController;
+	}
 }
