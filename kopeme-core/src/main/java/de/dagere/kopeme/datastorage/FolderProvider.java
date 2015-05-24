@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 public class FolderProvider {
 	
+	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
+	
 	private static final String USER_HOME = System.getenv("HOME");
 	private static final String KO_PE_ME = ".KoPeMe";
 	
@@ -14,7 +16,8 @@ public class FolderProvider {
 	
 	private static FolderProvider INSTANCE; 
 	
-	static FolderProvider getInstance(String defaultFolder){ if(INSTANCE == null){
+	static FolderProvider getInstance(String defaultFolder){ 
+		if(INSTANCE == null){
 			INSTANCE = new FolderProvider(defaultFolder);
 		} 
 		return INSTANCE;
@@ -30,8 +33,8 @@ public class FolderProvider {
 		setKopemeDefaultFolder(kopemeDefaultFolder);
 	}
 	
-	public File getFolderForNewPerformanceresult(String filename) {
-		String nowAsString = Long.valueOf(System.currentTimeMillis()).toString();
+	public File getFolderForCurrentPerformanceresults(String filename) {
+		String nowAsString = MEASURE_TIME.toString();
 		File returnable = new File(getFolderFor(filename) + nowAsString);
 		return returnable;
 	}

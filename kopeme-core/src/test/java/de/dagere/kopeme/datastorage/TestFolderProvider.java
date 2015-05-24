@@ -23,6 +23,13 @@ public class TestFolderProvider {
 	}
 	
 	@Test
+	public void testGetFolderForCurrentPerformanceresults(){
+		String fileName = "test";
+		assertEquals(new File(testClasses + File.separator + fileName + File.separator + FolderProvider.MEASURE_TIME), testable.getFolderForCurrentPerformanceresults(fileName));
+	}
+	
+	
+	@Test
 	public void testDefaultFolderName(){
 		assertEquals(System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator, FolderProvider.KOPEME_DEFAULT_FOLDER);
 	}
