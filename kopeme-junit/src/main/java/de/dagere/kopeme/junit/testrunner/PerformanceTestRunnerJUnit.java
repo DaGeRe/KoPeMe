@@ -32,6 +32,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
@@ -271,6 +272,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		this.method = method;
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
+			try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename);
+			} catch (Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
 			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
