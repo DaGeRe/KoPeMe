@@ -92,6 +92,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	public PerformanceTestRunnerJUnit(final Class<?> klasse) throws InitializationError {
 		super(klasse);
 		this.klasse = klasse;
+		filename = klasse.getName();
 	}
 
 	@Override
@@ -202,10 +203,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod currentMethod) {
-		if (currentMethod.getAnnotation(PerformanceTest.class) != null) {
-			return createPerformanceStatementFromMethod(currentMethod);
-		} else {
+		if (currentMethod.getAnnotation(PerformanceTest.class) == null) {
 			return super.methodBlock(currentMethod);
+		} else {
+			return createPerformanceStatementFromMethod(currentMethod);
 		}
 	}
 
@@ -285,7 +286,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		}
-		filename = klasse.getName();
 	}
 
 	/**
