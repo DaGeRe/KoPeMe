@@ -53,16 +53,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 
 		@Override
-		public boolean useKieker() {
-			try {
-				return (boolean) PerformanceTestingClass.class.getMethod("useKieker").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-
-		@Override
 		public int overallTimeout() {
 			try {
 				return (int) PerformanceTestingClass.class.getMethod("overallTimeout").getDefaultValue();
