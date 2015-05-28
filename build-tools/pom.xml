@@ -5,6 +5,13 @@
   <version>1.0</version>
   <name>Build Tools</name>
 
+  <parent>
+		<artifactId>kopeme-parent</artifactId>
+		<relativePath>../pom.xml</relativePath>
+		<version>0.6-SNAPSHOT</version>
+		<groupId>de.dagere.kopeme</groupId>
+  </parent>
+
   <dependencies>
 	<dependency>
 		<groupId>com.puppycrawl.tools</groupId>
