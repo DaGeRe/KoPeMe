@@ -39,13 +39,14 @@ public final class XMLDataStorer implements DataStorer {
 	 * @throws JAXBException Thrown if an XML Writing error occurs
 	 */
 	public XMLDataStorer(final String foldername, final String classname, final String methodname) throws JAXBException {
-		String filename = classname + "." + methodname + ".yaml";
+		String filename = classname + "." + methodname + ".xml";
 		file = new File(foldername + File.separator + filename);
-		if (!file.exists()) {
+		if (file.exists()) {
+			XMLDataLoader loader = new XMLDataLoader(file);
+			data = loader.getFullData();
+		} else {
 			createXMLData(classname);
 		}
-		XMLDataLoader loader = new XMLDataLoader(file);
-		data = loader.getFullData();
 	}
 
 	/**

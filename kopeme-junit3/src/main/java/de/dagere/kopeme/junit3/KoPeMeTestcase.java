@@ -9,10 +9,11 @@ import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTestUtils;
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Base class for KoPeMe-JUnit3-Testcases.
@@ -80,6 +81,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		return DataCollectorList.STANDARD;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void runTest() throws Throwable {
 		final Runnable testCase = new Runnable() {
@@ -146,7 +148,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		}
 
 		System.out.println("Speichere nach: " + this.getClass().getName());
-		PerformanceTestUtils.saveData(getName(), tr, false, false, this.getClass().getName(), fullData);
+		saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 	}
 
 	/**
@@ -174,11 +176,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 			runMainExecution(testCase, fullName, tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, true, false, getName(), fullData);
+			saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, false, true, getName(), fullData);
+			saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		}
 	}

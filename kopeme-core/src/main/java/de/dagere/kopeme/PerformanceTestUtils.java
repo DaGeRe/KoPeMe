@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 
 /**
@@ -24,8 +25,6 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
  */
 public final class PerformanceTestUtils {
 	private static final Logger LOG = LogManager.getLogger(PerformanceTestUtils.class);
-
-	public static final String PERFORMANCEFOLDER = "performanceresults";
 
 	/**
 	 * Initializes the class.
@@ -68,23 +67,26 @@ public final class PerformanceTestUtils {
 		return valid;
 	}
 
-	/**
-	 * Saves the measured performance data to the file system.
-	 * 
-	 * @param testcasename Name of the testcase
-	 * @param tr TestResult-Object that should be saved
-	 * @param failure Weather the test was a failure
-	 * @param error Weather an error occured during the test
-	 * @param filename The filename where the test should be saved
-	 * @param saveValues Weather values should be saved or only aggregates
-	 */
-	public static void saveData(final String testcasename, final TestResult tr, final boolean failure, final boolean error, final String filename, final boolean saveValues) {
+/**
+ * Saves the measured performance data to the file system.
+ * 
+ * @param testcasename Name of the testcase
+ * @param tr TestResult-Object that should be saved
+ * @param failure Weather the test was a failure
+ * @param error Weather an error occured during the test
+ * @param filename The filename where the test should be saved
+ * @param saveValues Weather values should be saved or only aggregates
+ */
+	public static void saveData(SaveableTestData data) {
 		try {
-			File f = new File(PERFORMANCEFOLDER);
-			if (!f.exists()) {
-				f.mkdir();
+			File f = data.getFolder();
+			String testcasename = data.getTestcasename();
+			if (!f.exists())
+			{
+				f.mkdirs();
 			}
-			DataStorer xds = new XMLDataStorer(PERFORMANCEFOLDER + "/", filename, testcasename);
+			DataStorer xds = new XMLDataStorer(f.getAbsolutePath(), data.getFilename(), testcasename);
+			TestResult tr = data.getTr();
 			for (String key : tr.getKeys()) {
 				LOG.trace("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
@@ -96,7 +98,7 @@ public final class PerformanceTestUtils {
 				double first10percentile = getPercentile(tr.getValues(key), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
 						tr.getRealExecutions(), min, max, first10percentile);
-				List<Long> values = saveValues ? tr.getValues(key) : null;
+				List<Long> values = data.isSaveValues() ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
 				LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
@@ -107,7 +109,6 @@ public final class PerformanceTestUtils {
 				List<Long> vales = new LinkedList<Long>();
 				xds.storeValue(performanceDataMeasure, vales);
 			}
-
 			xds.storeData();
 		} catch (JAXBException e) {
 			e.printStackTrace();
