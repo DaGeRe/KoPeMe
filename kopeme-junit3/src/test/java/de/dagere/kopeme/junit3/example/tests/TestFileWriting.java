@@ -25,7 +25,7 @@ public class TestFileWriting extends TestCase {
 	public void testOnlyTimeWriting() {
 		TestRunner.run(JUnitAdditionTestOnlyTime.class);
 
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTestOnlyTime.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestOnlyTime.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		XMLDataLoader xdl;
@@ -43,7 +43,7 @@ public class TestFileWriting extends TestCase {
 	public void testNormalWriting() {
 		TestRunner.run(JUnitAdditionTest.class);
 
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		XMLDataLoader xdl;
@@ -63,7 +63,7 @@ public class TestFileWriting extends TestCase {
 		TestRunner.run(JUnitAdditionTest.class);
 		TestRunner.run(JUnitAdditionTest.class);
 
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 	}
 }

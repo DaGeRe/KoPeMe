@@ -37,7 +37,7 @@ public class TestFulldataFunctionality {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
 		jc.run(JUnitAdditionTest.class);
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTest.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
 		try {
@@ -62,7 +62,7 @@ public class TestFulldataFunctionality {
 	public void testFullWriting() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTestFullData.class);
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		XMLDataLoader xdl;
 		try {

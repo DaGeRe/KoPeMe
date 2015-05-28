@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestFolderProvider {
+public class FolderProviderTest {
 
 	private static final String FOLDERPROVIDER = "folderprovider";
 
