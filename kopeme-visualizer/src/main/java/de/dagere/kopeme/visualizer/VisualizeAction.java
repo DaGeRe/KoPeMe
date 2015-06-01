@@ -28,9 +28,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.visualizer.data.DateConverter;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
-import de.dagere.kopeme.visualizer.data.NormalDateConverter;
 
 //import hudson.util.
 
@@ -46,18 +44,14 @@ public class VisualizeAction implements Action, Serializable {
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
 
-	// transient Map<String, Map<String, Map<Date, Long>>> dataMap;
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
-	DateConverter dateconverter;
-	// Map<String, Set<String>> viewable = null;
 	int width = 800, height = 500;
 
 	public VisualizeAction(AbstractProject project, KoPeMePublisher publisher) {
 		// logger.log(Level.INFO, "Konstruktor Visualizeaction");
 		this.project = project;
 		this.publisher = publisher;
-		dateconverter = new NormalDateConverter();
 		loadData();
 	}
 
@@ -75,10 +69,6 @@ public class VisualizeAction implements Action, Serializable {
 
 	public String getUrlName() {
 		return "Visualisierung_URL";
-	}
-
-	public DateConverter getDateConverter() {
-		return dateconverter;
 	}
 
 	private void loadData() {
@@ -101,25 +91,8 @@ public class VisualizeAction implements Action, Serializable {
 					if (file.exists()) {
 						loadFileData(testcaseName.toString(), file);
 					}
-					// File file = new File(project.getSomeWorkspace() + File.separator
-					// + testcaseName);
 				}
 
-				// for (Testcase testcase : testcases) {
-				// log.log(Level.FINE, "Testcase: " + testcase);
-				// String testcaseName = testcase.getName();
-				// log.log(Level.FINE, "Suche nach: " + testcaseName + " " + workspace.list().size());
-				// FilePath[] list = workspace.list(testcaseName);
-				// log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length + " Testcase: " + testcaseName);
-				// if (list != null && list.length > 0
-				// && testcaseName.length() != 0) {
-				// File file = new File(project.getSomeWorkspace() + File.separator
-				// + testcaseName);
-				// loadFileData(testcaseName, file);
-				// } else {
-				// log.info("Error: No data available!");
-				// }
-				// }
 			} else {
 				log.info("Error: Workspace == null");
 			}
@@ -143,7 +116,7 @@ public class VisualizeAction implements Action, Serializable {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
 				final String prettyName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1) + ")";
-				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp));
+				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, true));
 			}
 
 		} catch (JAXBException e) {
@@ -174,7 +147,7 @@ public class VisualizeAction implements Action, Serializable {
 	}
 
 	public void setVisible(String name, boolean visible) {
-
+		log.log(Level.FINE, "Set visible: " + name + " " + visible);
 	}
 
 	public String[] getFiles() {
@@ -232,37 +205,31 @@ public class VisualizeAction implements Action, Serializable {
 
 		int i = 0;
 		for (String viewable : graphVisualizer.getDatamap().keySet()) {
-			log.info("Erstelle Graph für " + viewable + " "
-					+ (dateconverter instanceof NormalDateConverter));
-			if (dateconverter instanceof NormalDateConverter) {
-				TimeSeriesCollection collection = new TimeSeriesCollection();
-				TimeSeries serie = new TimeSeries(viewable, Minute.class);
-				log.log(Level.FINE, "Suche Eintrag für " + viewable);
-				for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
-					serie.addOrUpdate(new Minute(entry.getKey()),
-							entry.getValue());
-				}
-				collection.addSeries(serie);
-				// collection.
-				if (i == 0) {
-					chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
-							"Wert", collection, true, true, false);
-				} else {
-					XYPlot plot = chart.getXYPlot();
-					plot.setDataset(i, collection);
-					plot.setRenderer(i, new StandardXYItemRenderer());
-				}
-				i++;
-			} else {
-				// TODO: Visualisierung mit Revisionsnummern/Tags?
+			log.info("Erstelle Graph für " + viewable);
+
+			TimeSeriesCollection collection = new TimeSeriesCollection();
+			TimeSeries serie = new TimeSeries(viewable, Minute.class);
+			log.log(Level.FINE, "Suche Eintrag für " + viewable);
+			for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
+				serie.addOrUpdate(new Minute(entry.getKey()),
+						entry.getValue());
 			}
+			collection.addSeries(serie);
+			// collection.
+			if (i == 0) {
+				chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
+						"Wert", collection, true, true, false);
+			} else {
+				XYPlot plot = chart.getXYPlot();
+				plot.setDataset(i, collection);
+				plot.setRenderer(i, new StandardXYItemRenderer());
+			}
+			i++;
 
 		}
 		log.info("Graph geladen");
 
 		chart.setBackgroundPaint(Color.white);
-
-		// Image image = chart.createBufferedImage(width, height);
 
 		final JFreeChart chart2 = chart;
 

@@ -34,7 +34,6 @@ public class KoPeMePublisher extends Recorder {
 
 	public KoPeMePublisher() {
 		log.log(Level.INFO, "Constructor KoPeMePublisher");
-
 	}
 
 	private Object readResolve() {
@@ -50,11 +49,6 @@ public class KoPeMePublisher extends Recorder {
 
 	public void setTestcases(List<GraphVisualizer> testcases) {
 		this.testcases = testcases;
-	}
-
-	public String getTest()
-	{
-		return "test";
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
