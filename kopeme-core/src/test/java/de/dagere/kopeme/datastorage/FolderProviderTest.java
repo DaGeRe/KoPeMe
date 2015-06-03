@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.dagere.kopeme.KoPeMeConfiguration;
@@ -17,6 +18,11 @@ public class FolderProviderTest {
 	private FolderProvider testable;
 
 	private final String testClasses = "target/test-classes";
+	
+	@BeforeClass
+	public static void setupClass(){
+		KoPeMeConfiguration.getInstance().setProjectName(KoPeMeConfiguration.DEFAULT_PROJECTNAME);
+	}
 	
 	@Before
 	public void setup(){

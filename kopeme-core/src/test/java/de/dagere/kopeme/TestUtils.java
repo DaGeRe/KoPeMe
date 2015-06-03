@@ -11,7 +11,10 @@ public class TestUtils {
 	
 	public static final String KOPEME_DEFAULT_FOLDER = "target/test-classes/.KoPeMe";
 	public static final String TEST_ADDITION = "testAddition";
-
+	
+	public static final String PATH_TO_TESTPOM_SUBFOLDER = "src/test/resources/pomreader/test";
+	public static final String TESTPOM_EXPECTED_PROJECT_NAME = "de.kopeme/testpom";
+	
 	public static void deleteRecursively(File file) {
 		if (file.isFile()) {
 			file.delete();
@@ -39,5 +42,6 @@ public class TestUtils {
 		String folder = p.getFolderFor("");
 		return Paths.get(folder, canonicalName, canonicalName + "." + testCaseName + ".xml").toFile();
 	}
+
 
 }
