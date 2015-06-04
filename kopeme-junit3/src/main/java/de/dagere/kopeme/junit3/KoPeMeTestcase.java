@@ -17,6 +17,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * Base class for KoPeMe-JUnit3-Testcases.
@@ -89,6 +90,15 @@ public abstract class KoPeMeTestcase extends TestCase {
 	protected DataCollectorList getDataCollectors() {
 		return DataCollectorList.STANDARD;
 	}
+	
+	/**
+	 * Should kieker monitoring be used.
+	 * 
+	 * @return
+	 */
+	protected boolean useKieker() {
+		return annoTestcase.useKieker();
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -109,8 +119,17 @@ public abstract class KoPeMeTestcase extends TestCase {
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
 
-		final TestResult tr = new TestResult(this.getClass().getName(), executionTimes);
+		String testClassName = this.getClass().getName();
+		final TestResult tr = new TestResult(testClassName, executionTimes);
 		tr.setCollectors(getDataCollectors());
+		
+		try {
+			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
+		} catch (Exception e) {
+			System.err.println("kieker has failed!");
+			e.printStackTrace();
+		}
+		
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
@@ -158,12 +177,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	/**
 	 * Runs the whole testcase.
-	 * 	try {
-				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-			} catch (Exception e) {
-				System.err.println("kieker has failed!");
-				e.printStackTrace();
-			}
+	 * 
 	 * @param testCase Runnable that should be run
 	 * @param tr Where the results should be saved
 	 * @param warmupExecutions How many warmup executions should be done
@@ -177,7 +191,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			throws AssertionFailedError, InvocationTargetException, IllegalAccessException {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
+			LOG.info("-- Starting warmup executiongetName() " + fullName + " " + i + "/" + warmupExecutions + " --");
 			testCase.run();
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 		}
@@ -196,7 +210,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	}
 
 	/**
-	 * Runs the main execution of the test, i.e. the execution where performance measures are counted.
+	 * Runs the main execution of the test, i.e.useKieker the execution where performance measures are counted.
 	 * 
 	 * @param testCase Runnable that should be run
 	 * @param name Name of the test
