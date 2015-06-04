@@ -133,7 +133,13 @@
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
-			<version>1.11</version>
+			<version>${kieker.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.kieker-monitoring</groupId>
+			<artifactId>kieker</artifactId>
+			<version>${kieker.version}</version>
+			<classifier>aspectj</classifier>
 		</dependency>
 	</dependencies>
 
