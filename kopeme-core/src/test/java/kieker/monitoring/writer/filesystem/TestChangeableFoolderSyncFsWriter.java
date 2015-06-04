@@ -81,7 +81,7 @@ public class TestChangeableFoolderSyncFsWriter {
 		Configuration c = new Configuration();
 		int fixture = 100;
 		c.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
-		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance();
+		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
 		Configuration result = testable.toSyncFsWriterConfiguration(c);
 		int intResult = result.getIntProperty(SyncFsWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
@@ -89,7 +89,7 @@ public class TestChangeableFoolderSyncFsWriter {
 	
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
-		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance();
+		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
 		int rounds = 10, lines = rounds / 2 * 3;
 		for(int i = 0; i < rounds; i++){
 			if((i+1)% 6 == 0){
