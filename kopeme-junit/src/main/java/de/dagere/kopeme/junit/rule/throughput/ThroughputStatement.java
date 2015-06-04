@@ -11,7 +11,6 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
@@ -34,6 +33,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
+		int executionTimes = annotation.executionTimes();
 		while (executionTimes <= maxsize) {
 			TestResult tr = new TestResult(method.getName(), executionTimes);
 
@@ -66,6 +66,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 
 	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
+		int executionTimes = annotation.executionTimes();
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
@@ -79,7 +80,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			if (executions >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
