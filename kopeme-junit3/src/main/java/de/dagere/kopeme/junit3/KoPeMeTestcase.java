@@ -10,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+import de.dagere.kopeme.annotations.AnnotationDefaults;
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
@@ -22,11 +25,16 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
  *
  */
 public abstract class KoPeMeTestcase extends TestCase {
+	
+	private static final Logger LOG = LogManager.getLogger(KoPeMeTestcase.class);
+	
+	private PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
+	private PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
+	
 	/**
 	 * Initializes the testcase.
 	 */
 	public KoPeMeTestcase() {
-
 	}
 
 	/**
@@ -38,15 +46,13 @@ public abstract class KoPeMeTestcase extends TestCase {
 		super(name);
 	}
 
-	private static final Logger LOG = LogManager.getLogger(KoPeMeTestcase.class);
-
 	/**
-	 * Returns the count of warmup executions, default is 5.
+	 * Returns the count of warmup executions, default is 1.
 	 * 
 	 * @return Warmup executions
 	 */
 	protected int getWarmupExecutions() {
-		return 5;
+		return annoTestcase.warmupExecutions();
 	}
 
 	/**
@@ -54,22 +60,25 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * 
 	 * @return real executions
 	 */
-	protected abstract int getExecutionTimes();
+	protected int getExecutionTimes(){
+		return annoTestcase.executionTimes();
+	}
 
 	/**
 	 * Returns weather full data should be logged.
 	 * 
 	 * @return Weather full data should be logged
 	 */
-	protected abstract boolean logFullData();
-
+	protected boolean logFullData(){
+		return annoTestcase.logFullData();
+	}
 	/**
 	 * Returns the time all testcase executions may take *in sum* in ms. -1 means unbounded; Standard is set to 120 s.
 	 * 
 	 * @return Maximal time of all test executions
 	 */
 	protected int getMaximalTime() {
-		return 120000;
+		return annoTestClass.overallTimeout();
 	}
 
 	/**
@@ -91,7 +100,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 				try {
 					KoPeMeTestcase.super.runTest();
 				} catch (Throwable e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -110,13 +118,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 				try {
 					runTestCase(testCase, tr, warmupExecutions, executionTimes, fullData);
 				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (AssertionFailedError e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				tr.finalizeCollection();
@@ -153,7 +158,12 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	/**
 	 * Runs the whole testcase.
-	 * 
+	 * 	try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+			} catch (Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 	 * @param testCase Runnable that should be run
 	 * @param tr Where the results should be saved
 	 * @param warmupExecutions How many warmup executions should be done
