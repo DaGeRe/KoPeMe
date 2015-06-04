@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit.testrunner;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -46,34 +46,7 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
-	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = new PerformanceTestingClass() {
-
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return PerformanceTestingClass.class;
-		}
-
-		@Override
-		public int overallTimeout() {
-			try {
-				return (int) PerformanceTestingClass.class.getMethod("overallTimeout").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return 100;
-		}
-
-		@Override
-		public boolean logFullData() {
-			try {
-				return (boolean) PerformanceTestingClass.class.getMethod("logFullData").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-	};
-
+	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = AnnotationDefaults.of(PerformanceTestingClass.class);
 	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private final Class klasse;
