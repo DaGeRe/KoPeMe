@@ -14,6 +14,7 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * A statement for running performance tests.
@@ -52,6 +53,12 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			
 		
 		if (annotation != null) {
+			try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+			} catch (Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 			maximalRelativeStandardDeviation = new HashMap<>();
 			assertationvalues = new HashMap<>();
 			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
