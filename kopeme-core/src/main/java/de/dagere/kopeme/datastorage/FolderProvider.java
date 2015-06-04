@@ -39,6 +39,10 @@ public class FolderProvider {
 		return returnable;
 	}
 	
+	public File getFolderForCurrentPerformanceresults(String testFileName, String testCaseName) {
+		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath() + File.separator + testCaseName);
+	}
+	
 	public String getFolderFor(String filename){
 		StringBuilder pathBuilder = new StringBuilder();
 		pathBuilder.append(kopemeDefaultFolder);

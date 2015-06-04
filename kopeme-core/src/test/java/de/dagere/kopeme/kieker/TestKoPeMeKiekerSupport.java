@@ -10,6 +10,6 @@ public class TestKoPeMeKiekerSupport {
 	@Test
 	public void testThatTheworldisnotSinkingIntoABlockHole() throws Exception {
 		MonitoringController.getInstance();
-		KoPeMeKiekerSupport.INSTANCE.useKieker(true, "myClass");
+		KoPeMeKiekerSupport.INSTANCE.useKieker(true, "myClass", "myTestCaseName");
 	}
 }

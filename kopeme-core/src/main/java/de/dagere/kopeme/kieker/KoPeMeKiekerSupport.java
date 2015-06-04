@@ -16,7 +16,7 @@ public enum KoPeMeKiekerSupport {
 	}
 	
 	
-	public void useKieker(boolean useIt, String testClassName) throws Exception{
+	public void useKieker(boolean useIt, String testClassName, String testCaseName) throws Exception{
 		ChangeableFolderSyncFsWriter fsWriter = ChangeableFolderSyncFsWriter.getInstance();
 		if(fsWriter == null) {
 			if(useIt){
@@ -25,7 +25,7 @@ public enum KoPeMeKiekerSupport {
 		} else {
 			IMonitoringController kiekerController = fsWriter.getController();
 			if(useIt){
-				File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName);
+				File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
 				folderForCurrentPerformanceResult.mkdirs();
 				fsWriter.setFolder(folderForCurrentPerformanceResult);
 				kiekerController.enableMonitoring();

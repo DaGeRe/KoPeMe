@@ -273,7 +273,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
 			try {
-				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename);
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
 			} catch (Exception e) {
 				System.err.println("kieker has failed!");
 				e.printStackTrace();

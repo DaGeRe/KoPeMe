@@ -25,7 +25,16 @@ public class TestFolderProvider {
 	@Test
 	public void testGetFolderForCurrentPerformanceresults(){
 		String fileName = "test";
-		assertEquals(new File(testClasses + File.separator + fileName + File.separator + FolderProvider.MEASURE_TIME), testable.getFolderForCurrentPerformanceresults(fileName));
+		File fixture = new File(testClasses + File.separator + fileName + File.separator + FolderProvider.MEASURE_TIME);
+		assertEquals(fixture, testable.getFolderForCurrentPerformanceresults(fileName));
+	}
+	
+	@Test
+	public void testGetFolderForCurrentPerformanceresultsTestcase(){
+		String fileName = "test";
+		String testcaseName = "testcase";
+		File fixture = new File(testClasses + File.separator + fileName + File.separator + FolderProvider.MEASURE_TIME + File.separator + testcaseName);
+		assertEquals(fixture, testable.getFolderForCurrentPerformanceresults(fileName, testcaseName));
 	}
 	
 	
