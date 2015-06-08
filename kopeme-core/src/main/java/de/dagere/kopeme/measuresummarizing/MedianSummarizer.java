@@ -11,11 +11,6 @@ import java.util.List;
  */
 public final class MedianSummarizer implements MeasureSummarizer {
 
-	/**
-	 * Returns the median of the List of measures.
-	 * 
-	 * @return median of the liste of measures
-	 */
 	@Override
 	public long getValue(final List<Long> values) {
 		Long[] longarray = values.toArray(new Long[0]);

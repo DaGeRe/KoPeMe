@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.jfree.util.Log;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import de.dagere.kopeme.visualizer.VisualizeAction;
 
 /**
  * Saves the data for one graph, i.e. for one part of a VisualizeAction
@@ -17,6 +20,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  */
 public class GraphVisualizer {
+
+	private static transient Logger LOG = Logger
+			.getLogger(VisualizeAction.class.getName());
 
 	private Map<String, Map<Date, Long>> dataMap;
 	private int valueCount;
@@ -32,10 +38,11 @@ public class GraphVisualizer {
 	}
 
 	@DataBoundConstructor
-	public GraphVisualizer(String name, Map<String, Map<Date, Long>> temp) {
+	public GraphVisualizer(String name, Map<String, Map<Date, Long>> temp, boolean visible) {
 		this.name = name;
 		dataMap = temp;
-		visible = true;
+		this.visible = visible;
+		LOG.info("Visible: " + visible);
 	}
 
 	public String[] getMeasurements() {
@@ -76,7 +83,7 @@ public class GraphVisualizer {
 	}
 
 	public void setVisible(boolean isVisible) {
-		Log.info("SetVisible: " + isVisible);
+		LOG.info("SetVisible: " + isVisible);
 		this.visible = isVisible;
 	}
 }

@@ -5,35 +5,39 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.dagere.kopeme.KoPeMeConfiguration;
+
 public class FolderProvider {
 	
 	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
 	
 	private static final String USER_HOME = System.getenv("HOME");
 	private static final String KO_PE_ME = ".KoPeMe";
-	
+
 	static final String KOPEME_DEFAULT_FOLDER = USER_HOME + File.separator + KO_PE_ME + File.separator;
+
+	private static FolderProvider INSTANCE;
 	
-	private static FolderProvider INSTANCE; 
+	private KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 	
-	static FolderProvider getInstance(String defaultFolder){ 
-		if(INSTANCE == null){
+	static FolderProvider getInstance(final String defaultFolder) {
+		if (INSTANCE == null) {
 			INSTANCE = new FolderProvider(defaultFolder);
-		} 
+		}
 		return INSTANCE;
 	}
-	
-	public static FolderProvider getInstance(){
+
+	public static FolderProvider getInstance() {
 		return getInstance(KOPEME_DEFAULT_FOLDER);
 	}
-	
+
 	private String kopemeDefaultFolder;
-	
-	private FolderProvider(String kopemeDefaultFolder){
+
+	private FolderProvider(final String kopemeDefaultFolder) {
 		setKopemeDefaultFolder(kopemeDefaultFolder);
 	}
 	
-	public File getFolderForCurrentPerformanceresults(String filename) {
+	public File getFolderForCurrentPerformanceresults(final String filename) {
 		String nowAsString = MEASURE_TIME.toString();
 		File returnable = new File(getFolderFor(filename) + nowAsString);
 		return returnable;
@@ -43,24 +47,26 @@ public class FolderProvider {
 		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath() + File.separator + testCaseName);
 	}
 	
-	public String getFolderFor(String filename){
+	public String getFolderFor(final String filename) {
 		StringBuilder pathBuilder = new StringBuilder();
 		pathBuilder.append(kopemeDefaultFolder);
+		pathBuilder.append(File.separator);
+		pathBuilder.append(config.getProjectName());
 		pathBuilder.append(File.separator);
 		pathBuilder.append(filename);
 		pathBuilder.append(File.separator);
 		return pathBuilder.toString();
 	}
 
-	public Collection<File> getPerformanceResultFolders(String filename){
+	public Collection<File> getPerformanceResultFolders(final String filename) {
 		File perfromanceResultsContainingFolder = new File(getFolderFor(filename));
-		if(!perfromanceResultsContainingFolder.isDirectory()){
+		if (!perfromanceResultsContainingFolder.isDirectory()) {
 			throw new RuntimeException();
 		}
-		Map<Long, File> timeFileMapping = new TreeMap<Long,File>();
-		for(File f : perfromanceResultsContainingFolder.listFiles()){
+		Map<Long, File> timeFileMapping = new TreeMap<Long, File>();
+		for (File f : perfromanceResultsContainingFolder.listFiles()) {
 			try {
-				if(f.isDirectory()){
+				if (f.isDirectory()) {
 					long time = Long.parseLong(f.getName());
 					timeFileMapping.put(time, f);
 				}
@@ -70,8 +76,8 @@ public class FolderProvider {
 		}
 		return timeFileMapping.values();
 	}
-	
-	public File getLastPerformanceResultFolder(String filename){
+
+	public File getLastPerformanceResultFolder(final String filename) {
 		Collection<File> performanceResults = getPerformanceResultFolders(filename);
 		File[] result = performanceResults.toArray(new File[performanceResults.size()]);
 		return result[performanceResults.size() - 1];
@@ -81,8 +87,8 @@ public class FolderProvider {
 		return kopemeDefaultFolder;
 	}
 
-	public void setKopemeDefaultFolder(String kopemeDefaultFolder) {
+	public void setKopemeDefaultFolder(final String kopemeDefaultFolder) {
 		this.kopemeDefaultFolder = kopemeDefaultFolder;
 	}
-	
+
 }

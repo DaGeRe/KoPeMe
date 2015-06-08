@@ -24,7 +24,7 @@ public class TestFulldataFunctionality extends TestCase {
 	
 	public void testFullWriting() {
 		TestRunner.run(JUnitAdditionTestFullData.class);
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		XMLDataLoader xdl;

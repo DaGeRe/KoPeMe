@@ -78,7 +78,7 @@ public class TestBeforeExecution {
 		if(!canonicalName.contains("Runner")){
 			canonicalName += ".yaml";
 		}
-		File f = TestUtils.xmlfileForKoPeMeRuleTest(canonicalName, testname);
+		File f = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
 		Integer time = getTimeResult(f, testname);
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
