@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.dagere.kopeme.KoPeMeConfiguration;
+
 public class FolderProvider {
 
 	private static final String USER_HOME = System.getenv("HOME");
@@ -13,6 +15,8 @@ public class FolderProvider {
 	static final String KOPEME_DEFAULT_FOLDER = USER_HOME + File.separator + KO_PE_ME + File.separator;
 
 	private static FolderProvider INSTANCE;
+	
+	private KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 
 	static FolderProvider getInstance(final String defaultFolder) {
 		if (INSTANCE == null) {
@@ -40,6 +44,8 @@ public class FolderProvider {
 	public String getFolderFor(final String filename) {
 		StringBuilder pathBuilder = new StringBuilder();
 		pathBuilder.append(kopemeDefaultFolder);
+		pathBuilder.append(File.separator);
+		pathBuilder.append(config.getProjectName());
 		pathBuilder.append(File.separator);
 		pathBuilder.append(filename);
 		pathBuilder.append(File.separator);

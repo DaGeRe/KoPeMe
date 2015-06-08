@@ -6,7 +6,10 @@ import java.io.File;
 import java.util.Collection;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import de.dagere.kopeme.KoPeMeConfiguration;
 
 public class FolderProviderTest {
 
@@ -15,6 +18,11 @@ public class FolderProviderTest {
 	private FolderProvider testable;
 
 	private final String testClasses = "target/test-classes";
+	
+	@BeforeClass
+	public static void setupClass(){
+		KoPeMeConfiguration.getInstance().setProjectName(KoPeMeConfiguration.DEFAULT_PROJECTNAME);
+	}
 	
 	@Before
 	public void setup(){
@@ -28,9 +36,10 @@ public class FolderProviderTest {
 	}
 	
 	@Test
-	public void testFolderForTesting(){
+	public void testFolderForKoPeMeResults(){
 		String filename = "dataprovider";
-		assertEquals(testClasses +  File.separator + filename + File.separator, testable.getFolderFor(filename));
+		String expectedPath = testClasses +  File.separator + KoPeMeConfiguration.DEFAULT_PROJECTNAME + File.separator + filename + File.separator;
+		assertEquals(expectedPath, testable.getFolderFor(filename));
 	}
 	
 	@Test
@@ -42,7 +51,7 @@ public class FolderProviderTest {
 	@Test
 	public void testGetLatestPerformanceResult(){
 		File result = testable.getLastPerformanceResultFolder(FOLDERPROVIDER + File.separator + "de.test.ExampleTest1");
-		String expected = testClasses + File.separator + FOLDERPROVIDER + File.separator + "de.test.ExampleTest1" + File.separator + "1432060232";
+		String expected = testClasses + File.separator + KoPeMeConfiguration.DEFAULT_PROJECTNAME + File.separator + FOLDERPROVIDER + File.separator + "de.test.ExampleTest1" + File.separator + "1432060232";
 		assertEquals(expected, result.getPath());
 	}
 }
