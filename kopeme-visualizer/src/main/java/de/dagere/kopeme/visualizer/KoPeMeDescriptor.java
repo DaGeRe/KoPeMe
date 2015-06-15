@@ -8,6 +8,11 @@ import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -16,6 +21,9 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+
+import de.dagere.kopeme.visualizer.data.GraphVisualizer;
+
 
 /**
  * Describes the plugin
@@ -82,11 +90,18 @@ public final class KoPeMeDescriptor extends
 		publisher = new KoPeMePublisher();
 		JSONArray dataArray = getArray(formData.get("testcases"));
 		log.info("Erzeuge neue Publisher-Instanz, Daten: " + dataArray);
+		List<GraphVisualizer> testcases = publisher.getTestcases();
 		for (Object data : dataArray) {
 			log.info("Füge alte Daten hinzu für " + data);
+			
+			final Map<String, Map<Date, Long>> dataTemp = Collections.emptyMap();
+			final String name = ((JSONObject) data).getString("name");
+			final Boolean visible = ((JSONObject) data).getBoolean("visible");
+			
 			// if (data instanceof JSONObject)
 			// {
-			// publisher.addTestcase(new GraphVisualizer(((JSONObject) data).getString("name")));
+			// warum die pruefung? gibt es grund den daten nicht zu trauen?
+			testcases.add(new GraphVisualizer(name, dataTemp, visible));
 			// }
 			// else
 			// {
@@ -96,6 +111,7 @@ public final class KoPeMeDescriptor extends
 		// if (publisher.getTestcases().isEmpty()) {
 		// publisher.addTestcase(new GraphVisualizer());
 		// }
+		publisher.setTestcases(testcases);
 		return publisher;
 	}
 }
