@@ -78,9 +78,7 @@ public class VisualizeAction implements Action, Serializable {
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
-
-			// final List<Testcase> testcases = publisher.getTestcases();
-			// log.log(Level.FINE, "Testcases:" + testcases);
+			
 			final FilePath workspace = project.getSomeWorkspace();
 			if (workspace != null) // prevent error, when workspace for project isn't initialized
 			{
@@ -92,11 +90,9 @@ public class VisualizeAction implements Action, Serializable {
 						loadFileData(testcaseName.toString(), file);
 					}
 				}
-
 			} else {
 				log.info("Error: Workspace == null");
 			}
-
 		} catch (IOException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -110,13 +106,28 @@ public class VisualizeAction implements Action, Serializable {
 
 	private void loadFileData(String testcaseName, File file) {
 		log.log(Level.FINE, "Lade Daten von: " + file.exists() + " " + file.getAbsolutePath());
+		
+		// lies testcases und schreibe name + visible in visibilityMap
+		// ermoeglich schnelles nachschlagen
+		List<GraphVisualizer> testcases = publisher.getTestcases();
+		Map<String,Boolean> visibilityMap = new HashMap<String,Boolean>();
+		for (GraphVisualizer gv : testcases) visibilityMap.put(gv.getName(),gv.isVisible());
+		
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
 				final String prettyName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1) + ")";
-				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, true));
+				
+				// nachschlagen von visible fuer aktuellen collector
+				Boolean visible = visibilityMap.get(prettyName);
+				// default setzen fuer den fall dass der collector noch nicht bekannt war
+				if (visible == null) { visible = true; } 
+
+				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten 
+				// mit korrektem (aus config gelesen oder defaul) visible
+				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
 
 		} catch (JAXBException e) {
