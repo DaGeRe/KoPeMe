@@ -7,6 +7,12 @@ import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.writer.filesystem.ChangeableFolderSyncFsWriter;
 import de.dagere.kopeme.datastorage.FolderProvider;
 
+/**
+ * Class to control kieker tracing for KoPeMe.
+ * 
+ * @author dhaeb
+ *
+ */
 public enum KoPeMeKiekerSupport {
 	INSTANCE;
 	
