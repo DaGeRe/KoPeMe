@@ -23,7 +23,7 @@ public class KiekerTrace {
 
 	private Map<String, List<KiekerTraceEntry>> entries = new HashMap<>();
 	
-	public KiekerTrace(InputStream resource) throws IOException {
+	public KiekerTrace(final InputStream resource) throws IOException {
 		try(CsvBeanReader reader = new CsvBeanReader(new BufferedReader(new InputStreamReader(resource)), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE)){
 			KiekerTraceEntry currentEntry = null; 
 			while((currentEntry = getNextKiekerTraceEntry(reader)) != null){
@@ -32,7 +32,7 @@ public class KiekerTrace {
 		}
 	}
 
-	private KiekerTraceEntry getNextKiekerTraceEntry(CsvBeanReader reader) throws IOException {
+	private KiekerTraceEntry getNextKiekerTraceEntry(final CsvBeanReader reader) throws IOException {
 		return reader.read(KiekerTraceEntry.class, KiekerTraceEntry.getFieldDescription(), KiekerTraceEntry.getCellProcessors());
 	}
 
