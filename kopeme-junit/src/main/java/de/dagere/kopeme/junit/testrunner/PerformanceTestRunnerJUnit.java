@@ -55,7 +55,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
-	protected String filename;
+	protected final String filename;
 
 	/**
 	 * Initializes a PerformanceTestRunnerJUnit

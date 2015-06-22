@@ -21,6 +21,12 @@ import org.junit.Test;
 
 import de.dagere.kopeme.TestUtils;
 
+/**
+ * Writes Kieker examples result to the kieker monitoring controller for tests.
+ * 
+ * @author dhaeb
+ *
+ */
 public class TestChangeableFoolderSyncFsWriter {
 
 	private static IMonitoringController MONITORING_CONTROLLER;

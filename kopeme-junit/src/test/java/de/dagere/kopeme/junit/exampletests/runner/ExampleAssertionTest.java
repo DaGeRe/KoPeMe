@@ -16,8 +16,29 @@ public class ExampleAssertionTest {
 	@PerformanceTest(executionTimes = 10, warmupExecutions = 10,
 			assertions =
 			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
-			deviations = { @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) })
+			deviations = { @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
+			useKieker = true)
 	public void testAssertionAddition() {
+		int a = 0;
+		for (int i = 0; i < 100000; i++) {
+			a += i;
+		}
+		Assert.assertEquals(100000 * 99999 / 2, a);
+		try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@PerformanceTest(executionTimes = 10, warmupExecutions = 10,
+			assertions =
+			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
+			deviations = { @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
+			useKieker = true)
+	public void testAssertionAdditionDoubleTest() {
 		int a = 0;
 		for (int i = 0; i < 100000; i++) {
 			a += i;

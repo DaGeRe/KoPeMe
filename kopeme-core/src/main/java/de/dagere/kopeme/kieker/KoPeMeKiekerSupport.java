@@ -15,34 +15,35 @@ import de.dagere.kopeme.datastorage.FolderProvider;
  */
 public enum KoPeMeKiekerSupport {
 	INSTANCE;
-	
+
 	private final FolderProvider fp;
-	
+
 	private KoPeMeKiekerSupport() {
 		fp = FolderProvider.getInstance();
 	}
-	
-	
-	public void useKieker(boolean useIt, String testClassName, String testCaseName) throws Exception{
+
+	public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
+		// AsyncFsWriter fsWriter2 = AsyncFsWriter.
 		ChangeableFolderSyncFsWriter fsWriter = ChangeableFolderSyncFsWriter.getInstance(MonitoringController.getInstance());
-		if(fsWriter == null) {
-			if(useIt){
+		if (fsWriter == null) {
+			if (useIt) {
 				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderSyncFsWriter.class.getCanonicalName() + " has to be used!");
 			}
 		} else {
 			IMonitoringController kiekerController = fsWriter.getController();
-			if(useIt){
+			if (useIt) {
+				// fsWriter.getWriter().
 				File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
 				folderForCurrentPerformanceResult.mkdirs();
 				fsWriter.setFolder(folderForCurrentPerformanceResult);
+
 				kiekerController.enableMonitoring();
 			} else {
 				kiekerController.disableMonitoring();
 				fsWriter.reset();
 			}
-			
+
 		}
 	}
-	
-	
+
 }
