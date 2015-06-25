@@ -14,6 +14,14 @@ import kieker.common.record.misc.RegistryRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 
+/**
+ * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is
+ * set to the {@link ChangeableFolderSyncFsWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a
+ * List and written to every new {@link SyncFsWriter} that is created with a new folder.
+ * 
+ * @author reichelt
+ *
+ */
 public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	public static final String PREFIX = ChangeableFolderSyncFsWriter.class.getName() + ".";
@@ -52,16 +60,13 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	@Override
 	public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
-		synchronized (this) {
-			if (currentWriter == null) {
-				if (record instanceof RegistryRecord) {
-					return MAPPING_RECORDS.add((RegistryRecord) record);
-				} else {
-					return true;
-				}
-			} else {
-				return currentWriter.newMonitoringRecord(record);
-			}
+		if (record instanceof RegistryRecord) {
+			MAPPING_RECORDS.add((RegistryRecord) record);
+		}
+		if (currentWriter == null) {
+			return true;
+		} else {
+			return currentWriter.newMonitoringRecord(record);
 		}
 	}
 
@@ -71,7 +76,6 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		if (currentWriter != null) {
 			currentWriter.terminate();
 		}
-
 	}
 
 	@Override
