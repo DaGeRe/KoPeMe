@@ -42,7 +42,7 @@ public class TestResult {
 	private int realExecutions;
 	private final String testcase;
 
-	private Map<String, MeasureSummarizer> collectorSummarizerMap;
+	private final Map<String, MeasureSummarizer> collectorSummarizerMap;
 
 	/**
 	 * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -144,7 +144,7 @@ public class TestResult {
 	 */
 	public void startCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
+		DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(final DataCollector arg0, final DataCollector arg1) {
@@ -164,7 +164,7 @@ public class TestResult {
 	 */
 	public void startOrRestartCollection() {
 		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = (DataCollector[]) dcCollection.toArray(new DataCollector[0]);
+		DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
 		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(final DataCollector arg0, final DataCollector arg1) {
@@ -224,7 +224,7 @@ public class TestResult {
 			} else {
 				result = as.getValue(localValues);
 			}
-			// values.put(collectorName, result);
+			values.put(collectorName, result);
 		}
 
 		historicalDataMap = new HashMap<String, Map<Date, Long>>();
@@ -449,7 +449,7 @@ public class TestResult {
 	 * @param key Name of the performance measure
 	 * @return Minimum of the currently measured values
 	 */
-	public long getMinumumCurrentValue(String key) {
+	public long getMinumumCurrentValue(final String key) {
 		long min = Long.MAX_VALUE;
 		for (int i = 0; i < realValues.size(); i++) {
 			if (realValues.get(i).get(key) < min)
@@ -465,7 +465,7 @@ public class TestResult {
 	 * @param key Name of the performance measure
 	 * @return Maximum of the currently measured values
 	 */
-	public long getMaximumCurrentValue(String key) {
+	public long getMaximumCurrentValue(final String key) {
 		long max = 0;
 		for (int i = 0; i < realValues.size(); i++) {
 			if (realValues.get(i).get(key) > max) max = realValues.get(i).get(key);

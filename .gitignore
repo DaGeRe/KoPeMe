@@ -10,3 +10,4 @@ target/**/*
 **/.project
 *.png
 **/performanceresults/
+**/out*/**

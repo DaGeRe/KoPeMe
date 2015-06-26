@@ -45,7 +45,6 @@ public final class CPUUsageCollector extends DataCollector {
 
 	@Override
 	public long getValue() {
-
 		long cpuTime = stopTimeCpu - startTimeCpu;
 		long time = stopTime - startTime;
 		LOG.trace("CPUTime: " + cpuTime + " Usertime: " + (stopTimeUser - startTimeUser));
