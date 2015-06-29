@@ -33,11 +33,13 @@ public class TestChangeableFoolderSyncFsWriter {
 
 	private static final File DEFAULT_FOLDER = new File("target/test-classes/kieker_testresults");
 	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/test-classes/kieker_testresults_changed_folder");
+	private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target/test-classes/kieker_testresults_changed_folder2");
 
 	@BeforeClass
 	public static void setupClass() {
 		TestUtils.deleteRecursively(DEFAULT_FOLDER);
 		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME);
+		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME2);
 		DEFAULT_FOLDER.mkdirs();
 		NEW_FOLDER_AT_RUNTIME.mkdirs();
 		Configuration config = ConfigurationFactory.createSingletonConfiguration();
@@ -98,19 +100,26 @@ public class TestChangeableFoolderSyncFsWriter {
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
 		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
-		int rounds = 10, lines = rounds / 2 * 3;
-		for (int i = 0; i < rounds; i++) {
-			if ((i + 1) % 6 == 0) {
-				testable.setFolder(NEW_FOLDER_AT_RUNTIME);
-			}
+		int rounds = 15, lines = 15;
+		runFixture(rounds);
+		testable.setFolder(NEW_FOLDER_AT_RUNTIME);
+		runFixture(rounds);
+		testable.setFolder(NEW_FOLDER_AT_RUNTIME2);
+		runFixture(rounds);
+		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 1); // TODO due to the meta data entry, which is not written when changing the folder
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines);
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines);
+	}
+
+	private void runFixture(int rounds) throws InterruptedException,
+			ExecutionException {
+		for (int i = 0; i < rounds / 3; i++) {
 			Sample fixture = new Sample();
 			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
 			fixture.a();
 			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
 			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".a()");
 		}
-		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 1); // TODO due to the meta data entry, which is not written when changing the folder
-		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines);
 	}
 
 	private void assertKiekerFileConstainsLines(File kiekerFolder, int lines) throws IOException {
