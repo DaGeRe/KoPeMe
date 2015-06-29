@@ -17,18 +17,65 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
 	xmlns:customtag="/de/dagere/kopeme/visualizer/tags">
+	
+	<st:include page="css.jelly" class="de.dagere.kopeme.visualizer.KoPeMePublisher" />
+	<!-- https://groups.google.com/forum/#!topic/jenkinsci-dev/Wn_bwsQQ2W8 -->
+	<j:set var="resourcesURL" value="${resURL}/plugin/kopeme-visualizer" />
+	<!--script src="${resourcesURL}/test.js" type="text/javascript" ></script-->
+
 	<div>Bei dieser Aktion werden Ihre Performanzmaße dargestellt.<br />
 	</div>
+
 	<j:if test="${!instance.isInitialized()}">
        Die Aktion ist noch nicht initialisiert, deshalb konnten noch keine KoPeMe-Performanzergebnisse gefunden werden.
     </j:if>
-    <j:if test="${instance.isInitialized()}">
+	<j:else test="${instance.isInitialized()}">
        Bitte wählen Sie aus, welche Messergebnisse visualisiert werden sollen.
-		<f:entry>
-			<f:repeatable var="key" name="testcases" items="${instance.testcases}" noAddButton="true">
-				<customtag:textboxhidden field="key.name" value="${key.name}" />
-				<f:checkbox field="key.visible" checked="${key.visible}" title="${key.name}" />
-			</f:repeatable>
-		</f:entry>
-    </j:if>
+		<f:radioBlock name="grouping" value="NONE" title="keine Gruppierung" checked="${instance.lastTestcasesSortOrder.equals('NONE')}">
+			<f:block>
+			<div class="testcases">
+				<f:repeatable name="testcases" var="key" items="${instance.testcases}" noAddButton="true" >
+					<customtag:textboxhidden field="key.name" value="${key.name}" />
+					<f:checkbox field="key.visible" checked="${key.visible}" title="${key.name}" />
+				</f:repeatable>	
+			</div>
+			</f:block>
+		</f:radioBlock>
+		<f:radioBlock name="grouping" value="TESTCLASSNAME" title="Gruppierung nach Testklasse" checked="${instance.lastTestcasesSortOrder.equals('TESTCLASSNAME')}">
+			<f:block>
+				<j:forEach var="group" items="${instance.testclassNames}">
+					<div class="testcases">
+					<f:checkbox title="${group}" />	
+						<f:repeatable name="testcases" var="key" items="${instance.testcases}" noAddButton="true" >
+						<div class="testcase">
+							<j:if test="${key.testclassName.equals(group)}"> 
+							<!-- j:if - attribute name "test" is mandatory, other names wont work -->
+								<f:checkbox field="key.visible" checked="${key.visible}" title="${key.collectorName}" />
+								<customtag:textboxhidden field="key.name" value="${key.name}" />
+							</j:if>
+						</div>
+						</f:repeatable>
+					</div>						
+				</j:forEach>
+			</f:block>
+		</f:radioBlock>
+		<f:radioBlock name="grouping" value="COLLECTORNAME" title="Gruppierung nach Datencollector" checked="${instance.lastTestcasesSortOrder.equals('COLLECTORNAME')}">
+			<f:block>
+				<j:forEach var="group" items="${instance.collectorNames}">
+					<div class="testcases">
+					<f:checkbox title="${group}" />	
+						<f:repeatable name="testcases" var="key" items="${instance.testcases}" noAddButton="true" >
+						<div class="testcase">
+							<j:if test="${key.collectorName.equals(group)}"> 
+							<!-- j:if - attribute name "test" is mandatory, other names wont work -->
+								<f:checkbox field="key.visible" checked="${key.visible}" title="${key.testclassName}" />
+								<customtag:textboxhidden field="key.name" value="${key.name}" />
+							</j:if>
+						</div>
+						</f:repeatable>
+					</div>						
+				</j:forEach>
+			</f:block>
+		</f:radioBlock>
+    </j:else>
 </j:jelly>

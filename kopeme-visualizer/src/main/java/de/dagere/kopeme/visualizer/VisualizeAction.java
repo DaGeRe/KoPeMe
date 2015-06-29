@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,7 +44,9 @@ public class VisualizeAction implements Action, Serializable {
 	private static transient Logger log = Logger
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
-
+	private List<String> collectorNames = new ArrayList<String>();
+	private List<String> testclassNames = new ArrayList<String>();
+	
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
 	int width = 800, height = 500;
@@ -70,7 +73,15 @@ public class VisualizeAction implements Action, Serializable {
 	public String getUrlName() {
 		return "Visualisierung_URL";
 	}
-
+	
+	public List<String> getCollectorNames() {
+		return collectorNames;
+	}
+	
+	public List<String> getTestclassNames() {
+		return testclassNames;
+	}
+	
 	private void loadData() {
 		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
@@ -115,10 +126,20 @@ public class VisualizeAction implements Action, Serializable {
 		
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
+
+			final String testclassName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
+			if(!testclassNames.contains(testclassName))
+					testclassNames.add(testclassName);	
+					
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
-				final String prettyName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1) + ")";
+				
+				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
+				final String prettyName = testclassName + " (" + collectorName + ")";
+
+				if(!collectorNames.contains(collectorName))
+					collectorNames.add(collectorName);
 				
 				// nachschlagen von visible fuer aktuellen collector
 				Boolean visible = visibilityMap.get(prettyName);
@@ -126,7 +147,7 @@ public class VisualizeAction implements Action, Serializable {
 				if (visible == null) { visible = true; } 
 
 				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten 
-				// mit korrektem (aus config gelesen oder defaul) visible
+				// mit korrektem (aus config gelesen oder default) visible
 				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
 

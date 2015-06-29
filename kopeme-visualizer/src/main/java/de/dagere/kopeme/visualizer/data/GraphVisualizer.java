@@ -32,6 +32,16 @@ public class GraphVisualizer {
 	public String getName() {
 		return name;
 	}
+	
+	public String getTestclassName() {
+		final String testclassName = name.substring(0, name.lastIndexOf("(")-1);
+		return testclassName;
+	}
+	
+	public String getCollectorName() {
+		final String collectorName = name.substring(name.lastIndexOf("(")+1, name.lastIndexOf(")"));
+		return collectorName;
+	}
 
 	public GraphVisualizer() {
 
