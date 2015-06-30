@@ -131,4 +131,15 @@ public class TestRecursiveMethodCallFinder {
 		assertEquals(fixtureClass.getDeclaredMethod("c"),iterator.next());
 		assertEquals(fixtureClass.getDeclaredMethod("fac"),iterator.next());
 	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testLevelLowerZero() {
+		testable.find(fixtureMethod, Integer.MIN_VALUE);
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testLevelLowerZero2() {
+		testable.find(fixtureMethod, -1);
+	}
+	
 }
