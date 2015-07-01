@@ -35,9 +35,10 @@ public class TestJavassistPremain {
 		pb.redirectOutput(new File("target/err"));
 		int ret = pb.start().waitFor();
 		assertEquals("the return value of the forked vm was not null", 0, ret);
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PICKLED_PATH));
-		Collection<TestJoinPointData> readObject = (Collection<TestJoinPointData>) ois.readObject();
-		assertEquals(4, readObject.size());
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PICKLED_PATH))){
+			Collection<TestJoinPointData> readObject = (Collection<TestJoinPointData>) ois.readObject();
+			assertEquals(4, readObject.size());
+		}
 	}
 	
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
