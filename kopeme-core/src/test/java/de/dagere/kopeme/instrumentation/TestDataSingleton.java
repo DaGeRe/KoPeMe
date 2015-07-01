@@ -1,10 +1,11 @@
 package de.dagere.kopeme.instrumentation;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public enum TestDataSingleton {
+public enum TestDataSingleton implements Serializable {
 	INSTANCE;
 	
 	public static StackTraceElement lineOut(){
@@ -16,7 +17,9 @@ public enum TestDataSingleton {
 	    return traces[level];
 	}
 	    
-	public static abstract class TestJoinPointData {
+	public static abstract class TestJoinPointData implements Serializable {
+		
+		private static final long serialVersionUID = 1L;
 		
 		private String containingClass;
 		private String containingMethod;

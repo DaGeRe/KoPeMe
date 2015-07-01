@@ -28,10 +28,37 @@
 				<version>2.6</version>
 				<executions>
 					<execution>
-						<phase>test</phase>	
+						<phase>test</phase>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>agent</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<finalName>${project.build.finalName}-agent</finalName>
+							<includes>
+								<include>de/dagere/kopeme/instrumentation/*</include>
+							</includes>
+							<archive>
+								<manifestEntries>
+									<premain-class>de.dagere.kopeme.instrumentation.JavaAssistPremain</premain-class>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>normal</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
 					</execution>
 				</executions>
 			</plugin>

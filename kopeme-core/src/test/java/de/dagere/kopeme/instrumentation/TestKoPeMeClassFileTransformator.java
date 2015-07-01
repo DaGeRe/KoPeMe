@@ -20,8 +20,8 @@ import de.dagere.kopeme.instrumentation.TestDataSingleton.Transformable;
 
 public class TestKoPeMeClassFileTransformator {
 
-	private static final String FIXTURE_BEFORE = "System.out.println(\"davor\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  BeginTestJoinPointData.class.getName() +  "());";
-	private static final String FIXTURE_AFTER = "System.out.println(\"dannach\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  AfterTestJoinPointData.class.getName() +  "());";
+	static final String FIXTURE_BEFORE = "System.out.println(\"davor\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  BeginTestJoinPointData.class.getName() +  "());";
+	static final String FIXTURE_AFTER = "System.out.println(\"dannach\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  AfterTestJoinPointData.class.getName() +  "());";
 	
 	private static ClassPool pool;
 	private static Loader loader;
