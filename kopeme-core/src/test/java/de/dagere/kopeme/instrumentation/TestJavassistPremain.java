@@ -28,14 +28,16 @@ public class TestJavassistPremain {
 		String instractableMethod = "b";
 		String codeBefore = TestKoPeMeClassFileTransformator.FIXTURE_BEFORE;
 		String codeAfter =TestKoPeMeClassFileTransformator.FIXTURE_AFTER;
+		String agentInputArgs = new KoPeMeClassFileTransformaterData(instructableClass, instractableMethod, codeBefore, codeAfter, 3).toString();
 		ProcessBuilder pb = new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"),  
-												String.format("-javaagent:target/%s=%s;;%s;;%s ;;%s ;;3", jarFileName, instructableClass, instractableMethod, codeBefore, codeAfter),
+												String.format("-javaagent:target/%s=%s", jarFileName, agentInputArgs),
 												TestJavassistPremain.class.getName());
 		pb.redirectError(new File("target/out"));
 		pb.redirectOutput(new File("target/err"));
 		int ret = pb.start().waitFor();
 		assertEquals("the return value of the forked vm was not null", 0, ret);
 		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PICKLED_PATH))){
+			@SuppressWarnings("unchecked")
 			Collection<TestJoinPointData> readObject = (Collection<TestJoinPointData>) ois.readObject();
 			assertEquals(4, readObject.size());
 		}

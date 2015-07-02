@@ -2,6 +2,7 @@ package de.dagere.kopeme.instrumentation;
 
 public class KoPeMeClassFileTransformaterData {
 	static final String DEFAULT_ARG_SEPARATOR = ";;";
+	static final String DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE = " " + DEFAULT_ARG_SEPARATOR;
 	
 	private String instrumentableClass;
 	private String instrumentableMethod;
@@ -101,5 +102,19 @@ public class KoPeMeClassFileTransformaterData {
 		return true;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder toStringBuilder = new StringBuilder();
+		toStringBuilder.append(instrumentableClass);
+		toStringBuilder.append(DEFAULT_ARG_SEPARATOR);
+		toStringBuilder.append(instrumentableMethod);
+		toStringBuilder.append(DEFAULT_ARG_SEPARATOR);
+		toStringBuilder.append(codeBefore);
+		toStringBuilder.append(DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE);
+		toStringBuilder.append(codeAfter);
+		toStringBuilder.append(DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE);
+		toStringBuilder.append(level);
+		return toStringBuilder.toString();
+	}
 	
 }
