@@ -22,14 +22,12 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 	private String codeAfter;
 	private Logger logger = Logger.getLogger(getClass().getName());
 
-	public KoPeMeClassFileTransformater(final String instrumentableClass,
-			final String instrumentableMethod, final String codeBefore, final String codeAfter, final int level)
-			throws NotFoundException {
-		this.codeBefore = codeBefore;
-		this.codeAfter = codeAfter;
-		CtClass findable = pool.get(instrumentableClass);
-		CtMethod method = findable.getDeclaredMethod(instrumentableMethod);
-		instrumentable = new RecursiveMethodCallFinder().find(method, level);
+	public KoPeMeClassFileTransformater(final KoPeMeClassFileTransformaterData parameterObject) throws NotFoundException {
+		this.codeBefore = parameterObject.getCodeBefore();
+		this.codeAfter = parameterObject.getCodeAfter();
+		CtClass findable = pool.get(parameterObject.getInstrumentableClass());
+		CtMethod method = findable.getDeclaredMethod(parameterObject.getInstrumentableMethod());
+		instrumentable = new RecursiveMethodCallFinder().find(method, parameterObject.getLevel());
 	}
 
 	@Override

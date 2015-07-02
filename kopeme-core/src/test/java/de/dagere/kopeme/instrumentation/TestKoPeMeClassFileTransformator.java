@@ -36,7 +36,8 @@ public class TestKoPeMeClassFileTransformator {
 	
 	@Before
 	public void setup() throws NotFoundException{
-		testable = new KoPeMeClassFileTransformater(Transformable.class.getName(), "a", FIXTURE_BEFORE, FIXTURE_AFTER, 3);
+		KoPeMeClassFileTransformaterData fixture = new KoPeMeClassFileTransformaterData(Transformable.class.getName(), "a", FIXTURE_BEFORE, FIXTURE_AFTER, 3);
+		testable = new KoPeMeClassFileTransformater(fixture);
 	}
 	
 	@Test
