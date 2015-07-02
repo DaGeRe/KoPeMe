@@ -1,5 +1,7 @@
 package de.dagere.kopeme.junit3;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 
@@ -9,7 +11,6 @@ import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
@@ -144,7 +145,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 		while (thread.isAlive()) {
 			LOG.debug("Thread not finished, is kill now..");
 			thread.interrupt();
-			thread.stop();
 		}
 
 		System.out.println("Speichere nach: " + this.getClass().getName());
@@ -170,6 +170,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			testCase.run();
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
+			if (Thread.interrupted()) {
+				return;
+			}
 		}
 
 		try {
@@ -207,6 +210,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
 			LOG.debug("--- Stopping execution " + executions + endPart);
+			if (Thread.interrupted()) {
+				return;
+			}
 		}
 		LOG.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);
