@@ -34,6 +34,25 @@
 						</goals>
 					</execution>
 					<execution>
+						<id>javassist_agent</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<finalName>${project.build.finalName}-javassist_agent</finalName>
+							<includes>
+								<include>de/dagere/kopeme/instrumentation/*</include>
+							</includes>
+							<archive>
+								<manifestEntries>
+									<premain-class>de.dagere.kopeme.instrumentation.JavaAssistPremain</premain-class>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
 						<id>agent</id>
 						<phase>process-classes</phase>
 						<goals>
@@ -47,7 +66,7 @@
 							</includes>
 							<archive>
 								<manifestEntries>
-									<premain-class>de.dagere.kopeme.instrumentation.JavaAssistPremain</premain-class>
+									<premain-class>de.dagere.kopeme.instrumentation.KoPeMeKiekerPremain</premain-class>
 								</manifestEntries>
 							</archive>
 						</configuration>

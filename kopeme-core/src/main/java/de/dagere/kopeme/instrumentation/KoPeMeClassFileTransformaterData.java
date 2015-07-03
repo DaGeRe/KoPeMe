@@ -59,7 +59,7 @@ public class KoPeMeClassFileTransformaterData {
 		this(Arrays.asList(agentArgs.split(DEFAULT_ARG_SEPARATOR)));
 	}
 	
-	private KoPeMeClassFileTransformaterData(List<String> args) {
+	protected KoPeMeClassFileTransformaterData(List<String> args) {
 		this(args.get(0).trim(), args.get(1).trim(), args.get(2).trim(), args.get(3).trim(), Integer.parseInt(args.get(4).trim()), parseDeclarations(args.subList(5, args.size())));
 	}
 
@@ -90,7 +90,7 @@ public class KoPeMeClassFileTransformaterData {
 	public int getLevel() {
 		return level;
 	}
-
+	
 	public List<VarDeclarationData> getDeclarations() {
 		return declarations;
 	}

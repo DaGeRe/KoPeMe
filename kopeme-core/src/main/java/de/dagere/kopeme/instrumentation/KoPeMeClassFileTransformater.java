@@ -81,6 +81,7 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 		for(VarDeclarationData declaration : declarations){
 			m.addLocalVariable(declaration.getName(), pool.get(declaration.getType()));
 		}
+		System.out.println("bef: " + before);
 		m.insertBefore(before);
 		m.insertAfter(after);
 	}

@@ -22,7 +22,7 @@ public class TestJavassistPremain {
 	@Test
 	public void run() throws Exception {
 		// TODO adjust for windows machines if needed
-		String jarFileName = "kopeme-core-0.10-SNAPSHOT-agent.jar";
+		String jarFileName = "kopeme-core-0.10-SNAPSHOT-javassist_agent.jar";
 		String instractableMethod = "b";
 		String agentInputArgs = TestKoPeMeClassFileTransformator.createTestData(instractableMethod, 3).toString();
 		ProcessBuilder pb = new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"),  
