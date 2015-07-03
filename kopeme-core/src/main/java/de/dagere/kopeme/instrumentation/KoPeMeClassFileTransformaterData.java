@@ -5,6 +5,28 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class handles the input to the {@link JavaAssistPremain} class.
+ * It's constructors parse the input into fields, 
+ * and the toString method can be used to convert fields back to the cmd representation of the arguments.
+ * 
+ * There are at least five arguments:
+ * 	classname
+ * 	method name
+ *  before code
+ *  after code
+ *  level
+ *  
+ *  all parameters are separated by ;;.
+ *  
+ *  Optionally, you can add any number of local variables declarations given as
+ *  Classname varname, e.g.
+ *  java.lang.Integer i
+ *  You can also add multiple variable declarations separating them again by the same separator string.
+ * 
+ * @author dhaeb
+ *
+ */
 public class KoPeMeClassFileTransformaterData {
 	static final String DEFAULT_ARG_SEPARATOR = ";;";
 	static final String DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE = " " + DEFAULT_ARG_SEPARATOR;
