@@ -1,5 +1,10 @@
 package de.dagere.kopeme.instrumentation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class KoPeMeClassFileTransformaterData {
 	static final String DEFAULT_ARG_SEPARATOR = ";;";
 	static final String DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE = " " + DEFAULT_ARG_SEPARATOR;
@@ -9,23 +14,39 @@ public class KoPeMeClassFileTransformaterData {
 	private String codeBefore;
 	private String codeAfter;
 	private int level;
+	private List<VarDeclarationData> declarations;
 
 	public KoPeMeClassFileTransformaterData(final String instrumentableClass,
 			final String instrumentableMethod, final String codeBefore, final String codeAfter,
 			final int level) {
+		this(instrumentableClass, instrumentableMethod, codeBefore, codeAfter, level, Collections.<VarDeclarationData>emptyList());
+	}
+	
+	public KoPeMeClassFileTransformaterData(final String instrumentableClass,
+			final String instrumentableMethod, final String codeBefore, final String codeAfter,
+			final int level, final List<VarDeclarationData> declarations) {
 		this.instrumentableClass = instrumentableClass;
 		this.instrumentableMethod = instrumentableMethod;
 		this.codeBefore = codeBefore;
 		this.codeAfter = codeAfter;
 		this.level = level;
+		this.declarations = declarations;
 	}
 
 	public KoPeMeClassFileTransformaterData(String agentArgs) {
-		this(agentArgs.split(DEFAULT_ARG_SEPARATOR));
+		this(Arrays.asList(agentArgs.split(DEFAULT_ARG_SEPARATOR)));
 	}
 	
-	private KoPeMeClassFileTransformaterData(String[] args) {
-		this(args[0].trim(), args[1].trim(), args[2].trim(), args[3].trim(), Integer.parseInt(args[4].trim()));
+	private KoPeMeClassFileTransformaterData(List<String> args) {
+		this(args.get(0).trim(), args.get(1).trim(), args.get(2).trim(), args.get(3).trim(), Integer.parseInt(args.get(4).trim()), parseDeclarations(args.subList(5, args.size())));
+	}
+
+	private static List<VarDeclarationData> parseDeclarations(List<String> subList) {
+		ArrayList<VarDeclarationData> returnable = new ArrayList<>();
+		for(String declaration : subList){
+			returnable.add(new VarDeclarationData(declaration.trim()));
+		}
+		return returnable;
 	}
 
 	public String getInstrumentableClass() {
@@ -48,6 +69,10 @@ public class KoPeMeClassFileTransformaterData {
 		return level;
 	}
 
+	public List<VarDeclarationData> getDeclarations() {
+		return declarations;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,6 +81,8 @@ public class KoPeMeClassFileTransformaterData {
 				+ ((codeAfter == null) ? 0 : codeAfter.hashCode());
 		result = prime * result
 				+ ((codeBefore == null) ? 0 : codeBefore.hashCode());
+		result = prime * result
+				+ ((declarations == null) ? 0 : declarations.hashCode());
 		result = prime
 				* result
 				+ ((instrumentableClass == null) ? 0 : instrumentableClass
@@ -87,6 +114,11 @@ public class KoPeMeClassFileTransformaterData {
 				return false;
 		} else if (!codeBefore.equals(other.codeBefore))
 			return false;
+		if (declarations == null) {
+			if (other.declarations != null)
+				return false;
+		} else if (!declarations.equals(other.declarations))
+			return false;
 		if (instrumentableClass == null) {
 			if (other.instrumentableClass != null)
 				return false;
@@ -101,7 +133,7 @@ public class KoPeMeClassFileTransformaterData {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder toStringBuilder = new StringBuilder();
@@ -114,6 +146,10 @@ public class KoPeMeClassFileTransformaterData {
 		toStringBuilder.append(codeAfter);
 		toStringBuilder.append(DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE);
 		toStringBuilder.append(level);
+		for(VarDeclarationData data : getDeclarations()){
+			toStringBuilder.append(DEFAULT_ARG_SEPARATOR);
+			toStringBuilder.append(data.toString());
+		}
 		return toStringBuilder.toString();
 	}
 	
