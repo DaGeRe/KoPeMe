@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -18,13 +19,15 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 
 	private ClassPool pool = ClassPool.getDefault();
 	private Map<CtClass, Set<CtMethod>> instrumentable;
-	private String codeBefore;
-	private String codeAfter;
 	private Logger logger = Logger.getLogger(getClass().getName());
+	private KoPeMeClassFileTransformaterData parameterObject;
 
 	public KoPeMeClassFileTransformater(final KoPeMeClassFileTransformaterData parameterObject) throws NotFoundException {
-		this.codeBefore = parameterObject.getCodeBefore();
-		this.codeAfter = parameterObject.getCodeAfter();
+		this.parameterObject = parameterObject;
+		findInstrumentableClasses(parameterObject);
+	}
+
+	private void findInstrumentableClasses(final KoPeMeClassFileTransformaterData parameterObject)throws NotFoundException {
 		CtClass findable = pool.get(parameterObject.getInstrumentableClass());
 		CtMethod method = findable.getDeclaredMethod(parameterObject.getInstrumentableMethod());
 		instrumentable = new RecursiveMethodCallFinder().find(method, parameterObject.getLevel());
@@ -45,7 +48,7 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 				logger.info("Instrumenting " + className);
 				instrumentableClass.defrost();
 				for (CtMethod instrumentableMethod : instrumentableMethods) {
-					around(instrumentableMethod, codeBefore, codeAfter);
+					around(instrumentableMethod, parameterObject.getCodeBefore(), parameterObject.getCodeAfter(), parameterObject.getDeclarations());
 				}
 				returnable = instrumentableClass.toBytecode();
 			} 
@@ -63,10 +66,14 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 	 * @param before
 	 * @param after
 	 * @throws CannotCompileException
+	 * @throws NotFoundException 
 	 */
-	private void around(final CtMethod m, final String before, final String after) throws CannotCompileException {
+	private void around(final CtMethod m, final String before, final String after, List<VarDeclarationData> declarations) throws CannotCompileException, NotFoundException {
+		for(VarDeclarationData declaration : declarations){
+			m.addLocalVariable(declaration.getName(), pool.get(declaration.getType()));
+		}
 		m.insertBefore(before);
-		m.insertAfter(after, true);
+		m.insertAfter(after);
 	}
 
 }

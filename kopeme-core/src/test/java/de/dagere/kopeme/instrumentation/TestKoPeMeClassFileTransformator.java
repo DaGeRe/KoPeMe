@@ -3,6 +3,7 @@ package de.dagere.kopeme.instrumentation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javassist.ClassPool;
@@ -20,8 +21,17 @@ import de.dagere.kopeme.instrumentation.TestDataSingleton.Transformable;
 
 public class TestKoPeMeClassFileTransformator {
 
-	static final String FIXTURE_BEFORE = "System.out.println(\"davor\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  BeginTestJoinPointData.class.getName() +  "());";
-	static final String FIXTURE_AFTER = "System.out.println(\"dannach\");"+ TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  AfterTestJoinPointData.class.getName() +  "());";
+	static final String NEW_VARNAME = "f";
+	static final String FIXTURE_BEFORE = "%s = 1; System.out.println(\"davor: \" + %s);".replace("%s", NEW_VARNAME) + TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  BeginTestJoinPointData.class.getName() +  "());";
+	static final String FIXTURE_AFTER = "%s++; System.out.println(\"dannach: \" + %s);".replace("%s", NEW_VARNAME) + TestDataSingleton.class.getName() + ".INSTANCE.add(new " +  AfterTestJoinPointData.class.getName() +  "());";
+	static final KoPeMeClassFileTransformaterData fixture = createTestData("a", 3);
+
+	static KoPeMeClassFileTransformaterData createTestData(String methodName, int level) {
+		return new KoPeMeClassFileTransformaterData(Transformable.class.getName(), methodName, FIXTURE_BEFORE, FIXTURE_AFTER, level, Arrays.asList(new VarDeclarationData[]{
+				new VarDeclarationData(int.class.getName(), NEW_VARNAME)
+		}));
+	}
+	
 	
 	private static ClassPool pool;
 	private static Loader loader;
@@ -36,10 +46,9 @@ public class TestKoPeMeClassFileTransformator {
 	
 	@Before
 	public void setup() throws NotFoundException{
-		KoPeMeClassFileTransformaterData fixture = new KoPeMeClassFileTransformaterData(Transformable.class.getName(), "a", FIXTURE_BEFORE, FIXTURE_AFTER, 3);
 		testable = new KoPeMeClassFileTransformater(fixture);
 	}
-	
+
 	@Test
 	public void testInstrumentation() throws Exception {
 		// A java class is addressed by its name (fully qualified package.Classname) AND ITS CLASSLOADER!
