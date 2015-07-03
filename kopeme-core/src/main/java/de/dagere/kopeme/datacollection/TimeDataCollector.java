@@ -38,7 +38,10 @@ public final class TimeDataCollector extends DataCollector {
 		try {
 			Thread.sleep(1);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			Thread.currentThread().interrupt();
+			// It is ok, if the collection is interrupted
+			// The interrupt status should stay the same
+			// throw new RuntimeException(e);
 		}
 	}
 
