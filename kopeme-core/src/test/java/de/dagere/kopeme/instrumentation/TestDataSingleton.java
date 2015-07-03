@@ -5,18 +5,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static de.dagere.kopeme.instrumentation.KiekerMeasureUtil.*;
+
 public enum TestDataSingleton implements Serializable {
 	INSTANCE;
 	
-	public static StackTraceElement lineOut(){
-		return lineOut(3);
-	}
-	
-	public static StackTraceElement lineOut(int level) { // http://stackoverflow.com/questions/115008/how-can-we-print-line-numbers-to-the-log-in-java
-	    StackTraceElement[] traces = Thread.currentThread().getStackTrace();
-	    return traces[level];
-	}
-	    
 	public static abstract class TestJoinPointData implements Serializable {
 		
 		private static final long serialVersionUID = 1L;

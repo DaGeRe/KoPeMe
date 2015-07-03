@@ -20,14 +20,14 @@ public class FolderProvider {
 	
 	private KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 	
-	static FolderProvider getInstance(final String defaultFolder) {
+	static synchronized FolderProvider getInstance(final String defaultFolder) {
 		if (INSTANCE == null) {
 			INSTANCE = new FolderProvider(defaultFolder);
 		}
 		return INSTANCE;
 	}
 
-	public static FolderProvider getInstance() {
+	public synchronized static FolderProvider getInstance() {
 		return getInstance(KOPEME_DEFAULT_FOLDER);
 	}
 

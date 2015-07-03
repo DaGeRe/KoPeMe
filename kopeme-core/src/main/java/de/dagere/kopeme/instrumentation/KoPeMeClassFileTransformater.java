@@ -13,8 +13,15 @@ import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.Modifier;
 import javassist.NotFoundException;
 
+/**
+ * The class which performs the byte code transformation, injecting statements given from {@link KoPeMeClassFileTransformaterData}.
+ * 
+ * @author dhaeb
+ *
+ */
 public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 
 	private ClassPool pool = ClassPool.getDefault();
@@ -69,6 +76,8 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 	 * @throws NotFoundException 
 	 */
 	private void around(final CtMethod m, final String before, final String after, List<VarDeclarationData> declarations) throws CannotCompileException, NotFoundException {
+		String signature = Modifier.toString(m.getModifiers()) + " " + m.getReturnType().getName() + " "+ m.getLongName();
+		logger.info("--- Instrumenting " + signature);
 		for(VarDeclarationData declaration : declarations){
 			m.addLocalVariable(declaration.getName(), pool.get(declaration.getType()));
 		}
