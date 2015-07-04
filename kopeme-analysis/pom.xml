@@ -63,7 +63,61 @@
 					</descriptorRefs>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>javassist_agent</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<finalName>${project.build.finalName}-javassist_agent</finalName>
+							<includes>
+								<include>de/dagere/kopeme/instrumentation/*</include>
+							</includes>
+							<archive>
+								<manifestEntries>
+									<premain-class>de.dagere.kopeme.instrumentation.JavaAssistPremain</premain-class>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>agent</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<finalName>${project.build.finalName}-agent</finalName>
+							<includes>
+								<include>de/dagere/kopeme/instrumentation/*</include>
+							</includes>
+							<archive>
+								<manifestEntries>
+									<premain-class>de.dagere.kopeme.instrumentation.KoPeMeKiekerPremain</premain-class>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>normal</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<inherited>false</inherited>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 	</build>
 
 	<dependencies>
@@ -71,6 +125,11 @@
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
 			<version>1.11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.20.0-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -86,6 +145,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+		</dependency>
+		<dependency>
+			<groupId>de.dagere.kopeme</groupId>
+			<artifactId>kopeme-core</artifactId>
+			<version>${core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
