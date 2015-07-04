@@ -1,5 +1,12 @@
 package de.dagere.kopeme.instrumentation;
 
+/**
+ * Data class to represent a command java variable declaration, 
+ * containing {@link #type} and {@link #name}. 
+ * 
+ * @author dhaeb
+ *
+ */
 public class VarDeclarationData {
 
 	private static final String SEPARATOR_BETWEEN_DECLARATION = " ";

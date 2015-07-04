@@ -14,17 +14,27 @@ import kieker.monitoring.timer.ITimeSource;
 /**
  * Instances of this class will be used for instrumenting purposes, 
  * making able to save {@link OperationExecutionRecord}s in the kieker framework.
+ * The code for the methods {@link #measureBefore} and {@link #measureAfter} was taken from the class {@link AbstractOperationExecutionAspect}. 
  * 
  * @author dhaeb
  *
  */
 public class KiekerMeasureUtil implements IMonitoringProbe {
 
-	public static StackTraceElement lineOut(){
-		return lineOut(3);
-	}
-	
-	public static StackTraceElement lineOut(final int level) { // http://stackoverflow.com/questions/115008/how-can-we-print-line-numbers-to-the-log-in-java
+	/**
+	 * Used to get meta information about the current stack ({@link StackTraceElement}).
+	 * 
+	 * @see  {@code http://stackoverflow.com/questions/115008/how-can-we-print-line-numbers-to-the-log-in-java}
+	 * 
+	 * @param level which element of the current stack should be returned? <br/>
+	 * 		  0 => representing {@code Thread.currentThread().getStackTrace()} <br/>
+	 * 		  1 => representing {@code KiekerMeasureUtil.lineOut()}<br/>
+	 * 		  2 => representing The position where you called this method. If you indirecting yourself, you should take care of this by yourself and use an higher value for level.<br/>
+	 * 
+	 * 
+	 * @return The stacktrace element denoted by level, 0 most current, higher values representing deeper stack entries
+	 */
+	public static StackTraceElement lineOut(final int level) { 
 	    StackTraceElement[] traces = Thread.currentThread().getStackTrace();
 	    return traces[level];
 	}

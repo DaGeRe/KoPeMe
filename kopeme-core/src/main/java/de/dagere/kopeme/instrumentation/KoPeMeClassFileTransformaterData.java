@@ -8,27 +8,33 @@ import java.util.List;
 /**
  * This class handles the input to the {@link JavaAssistPremain} class.
  * It's constructors parse the input into fields, 
- * and the toString method can be used to convert fields back to the cmd representation of the arguments.
+ * and the {@link #toString} method can be used to convert fields back to the command line representation of the arguments.
  * 
- * There are at least five arguments:
- * 	classname
- * 	method name
- *  before code
- *  after code
- *  level
- *  
- *  all parameters are separated by ;;.
- *  
- *  Optionally, you can add any number of local variables declarations given as
- *  Classname varname, e.g.
- *  java.lang.Integer i
+ * There are at least five arguments, given in the following order:
+ *  <p>
+ * 	classname<br/>
+ * 	method name<br/>
+ *  before code<br/>
+ *  after code<br/>
+ *  level<br/>
+ *  </p>
+ *  all parameters are separated by {@link #DEFAULT_ARG_SEPARATOR}.<br/>
+ *  <br/>
+ *  Optionally, you can add any number of local variables declarations given as<br/>
+ *  <i>Classname varname</i>, e.g.
+ *  <p><b>java.lang.Integer i</b></p>
  *  You can also add multiple variable declarations separating them again by the same separator string.
  * 
  * @author dhaeb
  *
  */
 public class KoPeMeClassFileTransformaterData {
+	
+	/**
+	 * The separator used in the command line representation.
+	 */
 	static final String DEFAULT_ARG_SEPARATOR = ";;";
+	
 	static final String DEFAULT_ARG_SEPARATOR_WITH_WHITESPACE_BEFORE = " " + DEFAULT_ARG_SEPARATOR;
 	
 	private String instrumentableClass;
@@ -55,6 +61,11 @@ public class KoPeMeClassFileTransformaterData {
 		this.declarations = declarations;
 	}
 
+	/**
+	 * Constructor performing the argument parse process.
+	 * 
+	 * @param agentArgs The arguments to parse (string separated with ;;)
+	 */
 	public KoPeMeClassFileTransformaterData(String agentArgs) {
 		this(Arrays.asList(agentArgs.split(DEFAULT_ARG_SEPARATOR)));
 	}
@@ -156,6 +167,11 @@ public class KoPeMeClassFileTransformaterData {
 		return true;
 	}
 
+	/**
+	 * Creates the command line representation of this class members.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		StringBuilder toStringBuilder = new StringBuilder();

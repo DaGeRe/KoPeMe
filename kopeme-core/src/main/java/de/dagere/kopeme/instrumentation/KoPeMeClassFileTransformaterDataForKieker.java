@@ -6,17 +6,15 @@ import java.util.List;
 
 /**
  * This is a special {@link KoPeMeClassFileTransformaterData} class acting as input parser 
- * for the kieker instrumentation class.
+ * for the kieker instrumentation class {@link KoPeMeKiekerPremain}.
  * 
- * As the code and the input vars are already defined here, 
- * you just need to add:
+ * <p>As the injected code sections and the input variables are already defined (for kieker trace monitoring purposes), 
+ * you just need to give the following parameters, separated by {@link KoPeMeClassFileTransformaterData#DEFAULT_ARG_SEPARATOR}:</p>
  * 
- * instrumentableClass
- * instrumentableMethod
- * level
- * 
- * also separated by ;;.
- * 
+ * instrumentableClass <br/>
+ * instrumentableMethod<br/>
+ * level<br/>
+ * <br/>
  * @author dhaeb
  *
  */
@@ -29,19 +27,19 @@ public class KoPeMeClassFileTransformaterDataForKieker extends KoPeMeClassFileTr
 	private static final String BEFORE_CODE = VARNAME_FOR_KIEKER_MEASURECLASS + " = new " + KIEKER_MEASURE_UTIL_CLASS + "(); " + callMethod("measureBefore");
 	private static final String AFTER_CODE = callMethod("measureAfter");
 	
-	private static String callMethod(String method) {
+	private static String callMethod(final String method) {
 		return VARNAME_FOR_KIEKER_MEASURECLASS + "." + method + "();";
 	}
 
-	public KoPeMeClassFileTransformaterDataForKieker(String cmd) {
+	public KoPeMeClassFileTransformaterDataForKieker(final String cmd) {
 		super(parse(cmd));
 	}
 
-	public KoPeMeClassFileTransformaterDataForKieker(String name, String string, int i) {
+	public KoPeMeClassFileTransformaterDataForKieker(final String name, final String string, final int i) {
 		super(name, string, BEFORE_CODE, AFTER_CODE, i);
 	}
 
-	static List<String> parse(String cmd) {
+	static List<String> parse(final String cmd) {
 		List<String> cmdAsList = Arrays.asList(cmd.split(KoPeMeClassFileTransformaterData.DEFAULT_ARG_SEPARATOR));
 		if(cmdAsList.size() != 3){
 			throw new IllegalArgumentException(ERROR_MESSAGE);
@@ -54,6 +52,12 @@ public class KoPeMeClassFileTransformaterDataForKieker extends KoPeMeClassFileTr
 		return returnable;
 	}
 
+	/**
+	 * As {@link #toString()} will give the command representation of the superclass {@link KoPeMeClassFileTransformaterData},
+	 * we introduced this function to get the command representation of this class.
+	 * 
+	 * @return the special command representation of this class with only the three parameters of this class.
+	 */
 	public String getCommand() {
 		return getInstrumentableClass() + DEFAULT_ARG_SEPARATOR + getInstrumentableMethod() + DEFAULT_ARG_SEPARATOR + getLevel();
 	}

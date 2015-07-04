@@ -8,7 +8,6 @@ import java.lang.ProcessBuilder.Redirect;
 import org.junit.Test;
 
 public class TestKoPeMeKiekerPremain {
-
 	
 	@Test
 	public void run() throws Exception {
@@ -18,7 +17,7 @@ public class TestKoPeMeKiekerPremain {
 		String agentInputArgs = new KoPeMeClassFileTransformaterDataForKieker(TestDataSingleton.Transformable.class.getName(), instractableMethod, 1).getCommand();
 		ProcessBuilder pb = new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"),  
 												String.format("-javaagent:target/%s=%s", jarFileName, agentInputArgs),
-												TestJavassistPremain.class.getName());
+												TestKoPeMeKiekerPremain.class.getName());
 		pb.redirectError(Redirect.INHERIT);
 		pb.redirectOutput(Redirect.INHERIT);
 		Process start = pb.start();

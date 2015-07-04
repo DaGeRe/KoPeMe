@@ -45,12 +45,11 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 			final Class<?> classBeingRedefined,
 			final ProtectionDomain protectionDomain,
 			final byte[] classfileBuffer) throws IllegalClassFormatException {
-		Set<CtMethod> instrumentableMethods;
 		byte[] returnable = classfileBuffer;
 		try {
 			String currentClass = className.replace("/", ".");
 			CtClass instrumentableClass = pool.get(currentClass);
-			instrumentableMethods = instrumentable.get(instrumentableClass);
+			Set<CtMethod> instrumentableMethods = instrumentable.get(instrumentableClass);
 			if (instrumentableMethods != null) {
 				logger.info("Instrumenting " + className);
 				instrumentableClass.defrost();
@@ -75,13 +74,12 @@ public class KoPeMeClassFileTransformater implements ClassFileTransformer {
 	 * @throws CannotCompileException
 	 * @throws NotFoundException 
 	 */
-	private void around(final CtMethod m, final String before, final String after, List<VarDeclarationData> declarations) throws CannotCompileException, NotFoundException {
+	private void around(final CtMethod m, final String before, final String after, final List<VarDeclarationData> declarations) throws CannotCompileException, NotFoundException {
 		String signature = Modifier.toString(m.getModifiers()) + " " + m.getReturnType().getName() + " "+ m.getLongName();
 		logger.info("--- Instrumenting " + signature);
 		for(VarDeclarationData declaration : declarations){
 			m.addLocalVariable(declaration.getName(), pool.get(declaration.getType()));
 		}
-		System.out.println("bef: " + before);
 		m.insertBefore(before);
 		m.insertAfter(after);
 	}

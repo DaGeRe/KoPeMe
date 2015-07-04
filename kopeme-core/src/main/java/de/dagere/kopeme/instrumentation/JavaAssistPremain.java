@@ -4,6 +4,12 @@ import java.lang.instrument.Instrumentation;
 
 import javassist.NotFoundException;
 
+/**
+ * Java agent to inject arbitrary code recursively into a call tree.
+ *    
+ * @author dhaeb
+ *
+ */
 public class JavaAssistPremain {
 
 	public static void premain(String agentArgs, Instrumentation inst) throws NotFoundException {
