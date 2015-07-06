@@ -67,17 +67,17 @@ public final class PerformanceTestUtils {
 		return valid;
 	}
 
-/**
- * Saves the measured performance data to the file system.
- * 
- * @param testcasename Name of the testcase
- * @param tr TestResult-Object that should be saved
- * @param failure Weather the test was a failure
- * @param error Weather an error occured during the test
- * @param filename The filename where the test should be saved
- * @param saveValues Weather values should be saved or only aggregates
- */
-	public static void saveData(SaveableTestData data) {
+	/**
+	 * Saves the measured performance data to the file system.
+	 * 
+	 * @param testcasename Name of the testcase
+	 * @param tr TestResult-Object that should be saved
+	 * @param failure Weather the test was a failure
+	 * @param error Weather an error occured during the test
+	 * @param filename The filename where the test should be saved
+	 * @param saveValues Weather values should be saved or only aggregates
+	 */
+	public static void saveData(final SaveableTestData data) {
 		try {
 			File f = data.getFolder();
 			String testcasename = data.getTestcasename();
@@ -88,12 +88,10 @@ public final class PerformanceTestUtils {
 			DataStorer xds = new XMLDataStorer(f.getAbsolutePath(), data.getFilename(), testcasename);
 			TestResult tr = data.getTr();
 			for (String key : tr.getKeys()) {
-				LOG.trace("Key: " + key);
+				LOG.debug("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
 				long value = tr.getValue(key);
-				// log.info("Ermittle Minimum");
 				long min = tr.getMinumumCurrentValue(key);
-				// log.info("Min: " + min);
 				long max = tr.getMaximumCurrentValue(key);
 				double first10percentile = getPercentile(tr.getValues(key), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,

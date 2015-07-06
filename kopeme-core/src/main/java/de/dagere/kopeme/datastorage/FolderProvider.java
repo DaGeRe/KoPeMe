@@ -9,24 +9,18 @@ import de.dagere.kopeme.KoPeMeConfiguration;
 
 public class FolderProvider {
 
-	private static final String USER_HOME = System.getenv("HOME");
-	private static final String KO_PE_ME = ".KoPeMe";
-
-	static final String KOPEME_DEFAULT_FOLDER = USER_HOME + File.separator + KO_PE_ME + File.separator;
+	static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME") : System.getenv("HOME") + File.separator + ".KoPeMe"
+			+ File.separator;
 
 	private static FolderProvider INSTANCE;
-	
-	private KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 
-	static FolderProvider getInstance(final String defaultFolder) {
-		if (INSTANCE == null) {
-			INSTANCE = new FolderProvider(defaultFolder);
-		}
-		return INSTANCE;
-	}
+	private final KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 
 	public static FolderProvider getInstance() {
-		return getInstance(KOPEME_DEFAULT_FOLDER);
+		if (INSTANCE == null) {
+			INSTANCE = new FolderProvider(KOPEME_DEFAULT_FOLDER);
+		}
+		return INSTANCE;
 	}
 
 	private String kopemeDefaultFolder;

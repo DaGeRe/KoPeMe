@@ -223,7 +223,7 @@ public class TestResult {
 			} else {
 				result = as.getValue(localValues);
 			}
-			values.put(collectorName, result);
+			// values.put(collectorName, result);
 		}
 	}
 

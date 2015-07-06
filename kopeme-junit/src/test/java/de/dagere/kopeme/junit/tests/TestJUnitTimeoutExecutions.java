@@ -17,7 +17,6 @@ import org.junit.runner.notification.Failure;
 
 import de.dagere.kopeme.junit.exampletests.runner.ExampleJUnitTests;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
-import de.dagere.kopeme.junit.exampletests.runner.classtimeout.ExampleClassTimeoutTest;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.MultipleCallClassTimeout;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.NoTimeoutOutput;
 
@@ -34,11 +33,11 @@ public class TestJUnitTimeoutExecutions {
 
 	public static Logger log = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
 
-	@Test(timeout = 600)
-	public void testClassTimeout() {
-		JUnitCore jc = new JUnitCore();
-		jc.run(ExampleClassTimeoutTest.class);
-	}
+	// @Test(timeout = 600)
+	// public void testClassTimeout() {
+	// JUnitCore jc = new JUnitCore();
+	// jc.run(ExampleClassTimeoutTest.class);
+	// }
 
 	@Test(timeout = 1600)
 	public void testMethodTimeout() {
@@ -61,7 +60,7 @@ public class TestJUnitTimeoutExecutions {
 		assertFailureDocumentation(r);
 	}
 
-	private void assertFailureDocumentation(Result r) {
+	private void assertFailureDocumentation(final Result r) {
 		List<Failure> failures = r.getFailures();
 		assertEquals(5, r.getFailureCount());
 		int countTimeoutException = 0, countInterruptedException = 0;
