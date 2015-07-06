@@ -81,22 +81,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 		return DataCollectorList.STANDARD;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void runTest() throws Throwable {
-		final Runnable testCase = new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					KoPeMeTestcase.super.runTest();
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
@@ -108,7 +94,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			@Override
 			public void run() {
 				try {
-					runTestCase(testCase, tr, warmupExecutions, executionTimes, fullData);
+					runTestCase(tr, warmupExecutions, executionTimes, fullData);
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -116,6 +102,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (AssertionFailedError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Throwable e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -153,21 +142,18 @@ public abstract class KoPeMeTestcase extends TestCase {
 	/**
 	 * Runs the whole testcase.
 	 * 
-	 * @param testCase Runnable that should be run
 	 * @param tr Where the results should be saved
 	 * @param warmupExecutions How many warmup executions should be done
 	 * @param executionTimes How many normal executions should be done
 	 * @param fullData Weather to log full data
-	 * @throws AssertionFailedError Thrown if an assertion failed, i.e. the test is an failure
-	 * @throws IllegalAccessException Thrown if an access error occurs
-	 * @throws InvocationTargetException Thrown if an access error occurs
+	 * @throws Throwable
 	 */
-	private void runTestCase(final Runnable testCase, final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
-			throws AssertionFailedError, InvocationTargetException, IllegalAccessException {
+	private void runTestCase(final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
+			throws Throwable {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
-			testCase.run();
+			KoPeMeTestcase.super.runTest();
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			if (Thread.interrupted()) {
 				return;
@@ -175,7 +161,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		}
 
 		try {
-			runMainExecution(testCase, fullName, tr, executionTimes);
+			runMainExecution(fullName, tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
 			PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
@@ -194,18 +180,16 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * @param name Name of the test
 	 * @param tr Where the results should be saved
 	 * @param executionTimes How often the test should be executed
-	 * @throws IllegalAccessException Thrown if an access error occurs
-	 * @throws InvocationTargetException Thrown if an access error occurs
+	 * @throws Throwable
 	 */
-	private void runMainExecution(final Runnable testCase, final String name, final TestResult tr, final int executionTimes) throws IllegalAccessException,
-			InvocationTargetException {
+	private void runMainExecution(final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
 		String firstPart = "--- Starting execution " + name + " ";
 		String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
 			tr.startCollection();
-			testCase.run();
+			KoPeMeTestcase.super.runTest();
 			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
 			LOG.debug("--- Stopping execution " + executions + endPart);
