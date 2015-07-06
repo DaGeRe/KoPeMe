@@ -256,8 +256,16 @@ public class TestResult {
 	 * @param name Name of the measure
 	 * @return Value of the measure
 	 */
-	public long getValue(final String name) {
-		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
+	public long getValue(final String key) {
+		if (values.get(key) != null) {
+			return values.get(key);
+		} else {
+			long avg = 0;
+			for (int i = 0; i < realValues.size(); i++) {
+				avg += realValues.get(i).get(key);
+			}
+			return avg / realValues.size();
+		}
 	}
 
 	/**
