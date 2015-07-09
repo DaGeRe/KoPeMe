@@ -20,6 +20,9 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -28,6 +31,7 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 
@@ -44,14 +48,14 @@ public class VisualizeAction implements Action, Serializable {
 	private static transient Logger log = Logger
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
-	private List<String> collectorNames = new ArrayList<String>();
-	private List<String> testclassNames = new ArrayList<String>();
-	
+	private final List<String> collectorNames = new ArrayList<String>();
+	private final List<String> testclassNames = new ArrayList<String>();
+
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
 	int width = 800, height = 500;
 
-	public VisualizeAction(AbstractProject project, KoPeMePublisher publisher) {
+	public VisualizeAction(final AbstractProject project, final KoPeMePublisher publisher) {
 		// logger.log(Level.INFO, "Konstruktor Visualizeaction");
 		this.project = project;
 		this.publisher = publisher;
@@ -62,26 +66,48 @@ public class VisualizeAction implements Action, Serializable {
 		return project;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return "Performanzmaß-Visualisierung";
 	}
 
+	@Override
 	public String getIconFileName() {
 		return "graph.gif";
 	}
 
+	@Override
 	public String getUrlName() {
 		return "Visualisierung_URL";
 	}
-	
+
 	public List<String> getCollectorNames() {
 		return collectorNames;
 	}
-	
+
 	public List<String> getTestclassNames() {
 		return testclassNames;
 	}
-	
+
+	public static void main(final String[] args) {
+		String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
+		File folder = new File(foldername);
+		if (folder.exists()) {
+			log.info("Suche in: " + folder);
+
+			for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
+				log.info("Gefunden: " + fileObject);
+				File file = (File) fileObject;
+				log.log(Level.FINE, "File: " + file + " " + file.exists());
+				if (file.exists()) {
+					System.out.println("Datei: " + file);
+				}
+			}
+		} else {
+			log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
+		}
+	}
+
 	private void loadData() {
 		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
@@ -89,7 +115,7 @@ public class VisualizeAction implements Action, Serializable {
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
-			
+
 			final FilePath workspace = project.getSomeWorkspace();
 			if (workspace != null) // prevent error, when workspace for project isn't initialized
 			{
@@ -104,6 +130,23 @@ public class VisualizeAction implements Action, Serializable {
 			} else {
 				log.info("Error: Workspace == null");
 			}
+
+			String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
+			File folder = new File(foldername);
+			if (folder.exists()) {
+				log.info("Suche in: " + folder);
+				for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
+					log.info("Gefunden: " + fileObject);
+					File file = (File) fileObject;
+					log.log(Level.FINE, "File: " + file + " " + file.exists());
+					if (file.exists()) {
+						loadFileData(file.getName(), file);
+					}
+				}
+			} else {
+				log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
+			}
+
 		} catch (IOException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -115,38 +158,41 @@ public class VisualizeAction implements Action, Serializable {
 		log.info("VisualizeAction.loadData - Daten geladen");
 	}
 
-	private void loadFileData(String testcaseName, File file) {
+	private void loadFileData(final String testcaseName, final File file) {
 		log.log(Level.FINE, "Lade Daten von: " + file.exists() + " " + file.getAbsolutePath());
-		
+
 		// lies testcases und schreibe name + visible in visibilityMap
 		// ermoeglich schnelles nachschlagen
 		List<GraphVisualizer> testcases = publisher.getTestcases();
-		Map<String,Boolean> visibilityMap = new HashMap<String,Boolean>();
-		for (GraphVisualizer gv : testcases) visibilityMap.put(gv.getName(),gv.isVisible());
-		
+		Map<String, Boolean> visibilityMap = new HashMap<String, Boolean>();
+		for (GraphVisualizer gv : testcases)
+			visibilityMap.put(gv.getName(), gv.isVisible());
+
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
 
 			final String testclassName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
-			if(!testclassNames.contains(testclassName))
-					testclassNames.add(testclassName);	
-					
+			if (!testclassNames.contains(testclassName))
+				testclassNames.add(testclassName);
+
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
-				
+
 				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
 				final String prettyName = testclassName + " (" + collectorName + ")";
 
-				if(!collectorNames.contains(collectorName))
+				if (!collectorNames.contains(collectorName))
 					collectorNames.add(collectorName);
-				
+
 				// nachschlagen von visible fuer aktuellen collector
 				Boolean visible = visibilityMap.get(prettyName);
 				// default setzen fuer den fall dass der collector noch nicht bekannt war
-				if (visible == null) { visible = true; } 
+				if (visible == null) {
+					visible = true;
+				}
 
-				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten 
+				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten
 				// mit korrektem (aus config gelesen oder default) visible
 				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
@@ -163,11 +209,11 @@ public class VisualizeAction implements Action, Serializable {
 	 * 
 	 * @return
 	 */
-	public String[] getMeasurements(String file) {
+	public String[] getMeasurements(final String file) {
 		return graphMap.get(file).getMeasurements();
 	}
 
-	public boolean isVisible(String fileName) {
+	public boolean isVisible(final String fileName) {
 		return graphMap.get(fileName).isVisible();
 	}
 
@@ -178,7 +224,7 @@ public class VisualizeAction implements Action, Serializable {
 		return ret;
 	}
 
-	public void setVisible(String name, boolean visible) {
+	public void setVisible(final String name, final boolean visible) {
 		log.log(Level.FINE, "Set visible: " + name + " " + visible);
 	}
 
@@ -198,7 +244,7 @@ public class VisualizeAction implements Action, Serializable {
 	 * 
 	 * @return
 	 */
-	public Graph getSummaryGraph(String file) {
+	public Graph getSummaryGraph(final String file) {
 		loadData();
 
 		log.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);

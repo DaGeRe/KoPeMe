@@ -12,10 +12,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * This class is used to extract a project name string from the pom xml.
- * First you need to class foundPomXml to locate the pom.xml.
- * Second, you can get the project name by calling getProjectName
- *  
+ * This class is used to extract a project name string from the pom xml. First you need to class foundPomXml to locate the pom.xml. Second, you can get the
+ * project name by calling getProjectName
+ * 
  * 
  * @author dhaeb
  *
@@ -24,26 +23,27 @@ public class PomProjectNameReader {
 
 	private File pathToPomXml;
 
-	public PomProjectNameReader() {}
+	public PomProjectNameReader() {
+	}
 
 	/**
 	 * Tries to find the pom recursively by going up in the directory tree.
 	 * 
-	 * @param directory The start folder where to search 
+	 * @param directory The start folder where to search
 	 * @param depth how many times should we try to go up to find the pom?
 	 * @return a boolean denoting if the pom was found / side effect setting the pom file
 	 */
 	public boolean foundPomXml(final File directory, final int depth) {
-		if(depth == -1 || !directory.isDirectory()){
+		if (depth == -1 || directory == null || !directory.isDirectory()) {
 			return false;
 		} else {
 			File[] pomFiles = directory.listFiles(new FileFilter() {
 				@Override
-				public boolean accept(File pathname) {
+				public boolean accept(final File pathname) {
 					return "pom.xml".equals(pathname.getName());
 				}
 			});
-			if(pomFiles.length == 1){
+			if (pomFiles.length == 1) {
 				pathToPomXml = pomFiles[0];
 				return true;
 			} else {
