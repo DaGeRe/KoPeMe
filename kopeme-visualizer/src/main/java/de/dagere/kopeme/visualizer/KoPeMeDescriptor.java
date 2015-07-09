@@ -88,7 +88,12 @@ public final class KoPeMeDescriptor extends
 			throws FormException {
 		log.info("Creating new Instance");
 		publisher = new KoPeMePublisher();
-		JSONArray dataArray = getArray(formData.get("testcases"));
+		
+		//JSONArray dataArray = formData.optJSONObject("grouping").optJSONArray("testcases");
+		JSONArray dataArray = getArray(formData.optJSONObject("grouping").get("testcases"));
+		String lastTestcasesSortOrder = formData.optJSONObject("grouping").get("value").toString();
+		
+		log.info("grouping: " + formData.getJSONObject("grouping").get("value"));
 		log.info("Erzeuge neue Publisher-Instanz, Daten: " + dataArray);
 		List<GraphVisualizer> testcases = publisher.getTestcases();
 		for (Object data : dataArray) {
@@ -97,21 +102,10 @@ public final class KoPeMeDescriptor extends
 			final Map<String, Map<Date, Long>> dataTemp = Collections.emptyMap();
 			final String name = ((JSONObject) data).getString("name");
 			final Boolean visible = ((JSONObject) data).getBoolean("visible");
-			
-			// if (data instanceof JSONObject)
-			// {
-			// warum die pruefung? gibt es grund den daten nicht zu trauen?
 			testcases.add(new GraphVisualizer(name, dataTemp, visible));
-			// }
-			// else
-			// {
-			// publisher.addTestcase(new GraphVisualizer());
-			// }
 		}
-		// if (publisher.getTestcases().isEmpty()) {
-		// publisher.addTestcase(new GraphVisualizer());
-		// }
 		publisher.setTestcases(testcases);
+		publisher.setLastTestcasesSortOrder(lastTestcasesSortOrder);
 		return publisher;
 	}
 }

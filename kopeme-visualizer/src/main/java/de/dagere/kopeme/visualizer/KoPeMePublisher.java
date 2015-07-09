@@ -12,6 +12,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Recorder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,10 +28,19 @@ import de.dagere.kopeme.visualizer.data.GraphVisualizer;
  */
 public class KoPeMePublisher extends Recorder {
 
+	private enum TestcasesSortOrder {
+		TESTCLASSNAME
+		, COLLECTORNAME
+		, NONE
+	}
+	
 	private static final Logger log = Logger.getLogger(KoPeMePublisher.class.getName());
 	private List<GraphVisualizer> testcases = new LinkedList<GraphVisualizer>();
 	private AbstractProject<?, ?> lastProject = null;
 	private VisualizeAction lastVA = null;
+	private TestcasesSortOrder lastTestcasesSortOrder = TestcasesSortOrder.NONE;
+	private List<String> collectorNames = new ArrayList<String>();
+	private List<String> testclassNames = new ArrayList<String>();
 
 	public KoPeMePublisher() {
 		log.log(Level.INFO, "Constructor KoPeMePublisher");
@@ -49,6 +59,22 @@ public class KoPeMePublisher extends Recorder {
 
 	public void setTestcases(List<GraphVisualizer> testcases) {
 		this.testcases = testcases;
+	}
+	
+	public List<String> getCollectorNames() {
+		return collectorNames;
+	}
+	
+	public List<String> getTestclassNames() {
+		return testclassNames;
+	}
+	
+	public String getLastTestcasesSortOrder() {
+		return lastTestcasesSortOrder.name();
+	}
+	
+	public void setLastTestcasesSortOrder(String testcasesSortOrderValue) {
+		this.lastTestcasesSortOrder = TestcasesSortOrder.valueOf(testcasesSortOrderValue);
 	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
@@ -77,6 +103,10 @@ public class KoPeMePublisher extends Recorder {
 			VisualizeAction va = new VisualizeAction((AbstractProject) project, this);
 			lastVA = va;
 			log.info("Visualizer: " + va.getVisualizer().size());
+			
+			collectorNames = va.getCollectorNames();
+			testclassNames = va.getTestclassNames();
+			
 			testcases = new LinkedList<GraphVisualizer>();
 			for (GraphVisualizer gv : va.getVisualizer()) {
 				log.info("Füge Testcase hinzu: " + gv.getName());
