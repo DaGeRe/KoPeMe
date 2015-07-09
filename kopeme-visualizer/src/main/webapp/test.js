@@ -1,8 +1,7 @@
 Q(function () {
-	// Apparently click is better than change? Cuz IE?
 	Q('input[type="checkbox"]').change(function (e) {
 		var checked = Q(this).prop("checked"),
-		container = Q(this).parent().parent(),
+		container = Q(this).parent(),
 		siblings = container.siblings();
 
 		container.find('input[type="checkbox"]').prop({
@@ -10,9 +9,11 @@ Q(function () {
 			checked : checked
 		});
 
+		// intermediate state 
+		
+		/* 
 		function checkSiblings(el) {
-			var parent = el.closest('.testcases'),
-			//var parent = el.parent().parent().parent().parent(),
+			var parent = el.parent(),
 			all = true;
 
 			el.siblings().each(function () {
@@ -37,5 +38,7 @@ Q(function () {
 			}
 		}
 		checkSiblings(container);
+		*/
 	});
 });
+
