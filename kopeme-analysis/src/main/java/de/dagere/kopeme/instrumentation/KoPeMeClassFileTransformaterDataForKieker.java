@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.dagere.kopeme.instrumentation.generic.KoPeMeClassFileTransformaterData;
+
 /**
  * This is a special {@link KoPeMeClassFileTransformaterData} class acting as input parser 
  * for the kieker instrumentation class {@link KoPeMeKiekerPremain}.

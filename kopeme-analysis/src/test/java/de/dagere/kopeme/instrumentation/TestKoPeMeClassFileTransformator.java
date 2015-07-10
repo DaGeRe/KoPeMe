@@ -18,6 +18,7 @@ import de.dagere.kopeme.instrumentation.TestDataSingleton.AfterTestJoinPointData
 import de.dagere.kopeme.instrumentation.TestDataSingleton.BeginTestJoinPointData;
 import de.dagere.kopeme.instrumentation.TestDataSingleton.TestJoinPointData;
 import de.dagere.kopeme.instrumentation.TestDataSingleton.Transformable;
+import de.dagere.kopeme.instrumentation.generic.KoPeMeClassFileTransformaterData;
 
 public class TestKoPeMeClassFileTransformator {
 

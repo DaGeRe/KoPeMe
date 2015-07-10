@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import de.dagere.kopeme.instrumentation.generic.KoPeMeClassFileTransformaterData;
+
 public class TestKoPeMeClassFileTransformaterData {
 
 	private static final String STRING_FORAMT_PATTERN = " %s";

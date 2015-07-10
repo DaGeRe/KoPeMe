@@ -82,7 +82,7 @@
 							</includes>
 							<archive>
 								<manifestEntries>
-									<premain-class>de.dagere.kopeme.instrumentation.JavaAssistPremain</premain-class>
+									<premain-class>de.dagere.kopeme.instrumentation.generic.JavaAssistPremain</premain-class>
 								</manifestEntries>
 							</archive>
 						</configuration>
