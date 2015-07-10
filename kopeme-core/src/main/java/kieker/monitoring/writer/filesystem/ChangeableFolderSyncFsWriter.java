@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -25,12 +26,13 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
 public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	public static final String PREFIX = ChangeableFolderSyncFsWriter.class.getName() + ".";
-	public static final String CONFIG_PATH = PREFIX + "customStoragePath"; // NOCS (afterPREFIX)
-	public static final String CONFIG_MAXENTRIESINFILE = PREFIX + "maxEntriesInFile"; // NOCS (afterPREFIX)
-	public static final String CONFIG_MAXLOGSIZE = PREFIX + "maxLogSize"; // NOCS (afterPREFIX)
-	public static final String CONFIG_MAXLOGFILES = PREFIX + "maxLogFiles"; // NOCS (afterPREFIX)
-	public static final String CONFIG_FLUSH = PREFIX + "flush"; // NOCS (afterPREFIX)
-	public static final String CONFIG_BUFFER = PREFIX + "bufferSize"; // NOCS (afterPREFIX)
+	public static final String CONFIG_PATH = PREFIX + "customStoragePath";
+	public static final String CONFIG_MAXENTRIESINFILE = PREFIX + "maxEntriesInFile";
+	public static final String CONFIG_MAXLOGSIZE = PREFIX + "maxLogSize";
+
+	public static final String CONFIG_MAXLOGFILES = PREFIX + "maxLogFiles";
+	public static final String CONFIG_FLUSH = PREFIX + "flush";
+	public static final String CONFIG_BUFFER = PREFIX + "bufferSize";
 
 	private static final Map<IMonitoringController, ChangeableFolderSyncFsWriter> instanceMapping = new HashMap<>();
 
@@ -38,13 +40,15 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		return instanceMapping.get(controler);
 	}
 
-	private final static List<RegistryRecord> MAPPING_RECORDS = new LinkedList<>();
-	private SyncFsWriter currentWriter;
+	private final List<RegistryRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
+	private final Logger logger = Logger.getLogger(getClass().getName());
+	private SyncFsWriter currentWriter;
 
 	public ChangeableFolderSyncFsWriter(final Configuration configuration) {
 		super(configuration);
 		this.configuration = configuration;
+		currentWriter = new SyncFsWriter(toSyncFsWriterConfiguration(configuration));
 	}
 
 	Configuration toSyncFsWriterConfiguration(final Configuration c) {
@@ -61,7 +65,7 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 	@Override
 	public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
 		if (record instanceof RegistryRecord) {
-			MAPPING_RECORDS.add((RegistryRecord) record);
+			mappingRecords.add((RegistryRecord) record);
 		}
 		if (currentWriter == null) {
 			return true;
@@ -72,7 +76,6 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	@Override
 	public synchronized void terminate() {
-		// defaultWriter.terminate();
 		if (currentWriter != null) {
 			currentWriter.terminate();
 		}
@@ -80,6 +83,7 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	@Override
 	protected void init() throws Exception {
+		currentWriter.setController(monitoringController);
 		instanceMapping.put(monitoringController, this);
 	}
 
@@ -90,13 +94,11 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		writingFolder.mkdirs();
 		String absolutePath = writingFolder.getAbsolutePath();
 		Configuration resultingConfig = createTempConfigWithNewFolder(absolutePath);
-		synchronized (this) {
-			currentWriter = new SyncFsWriter(resultingConfig);
-			currentWriter.setController(monitoringController);
-			for (RegistryRecord record : MAPPING_RECORDS) {
-				System.out.println("Füge hinzu: " + record);
-				currentWriter.newMonitoringRecord(record);
-			}
+		currentWriter = new SyncFsWriter(resultingConfig);
+		currentWriter.setController(monitoringController);
+		for (RegistryRecord record : mappingRecords) {
+			logger.info("Füge registery records dem neuen fs writer hinzu: " + record);
+			currentWriter.newMonitoringRecord(record);
 		}
 	}
 
@@ -104,17 +106,6 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		Configuration tempConfig = toSyncFsWriterConfiguration(configuration);
 		tempConfig.setProperty(SyncFsWriter.CONFIG_PATH, absolutePath);
 		return tempConfig;
-	}
-
-	public synchronized void reset() {
-		if (currentWriter != null) {
-			currentWriter.terminate();
-		}
-		currentWriter = null;
-	}
-
-	public SyncFsWriter getWriter() {
-		return currentWriter;
 	}
 
 	public IMonitoringController getController() {

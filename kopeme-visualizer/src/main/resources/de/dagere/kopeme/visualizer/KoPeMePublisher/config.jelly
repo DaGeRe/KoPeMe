@@ -15,7 +15,8 @@
 	OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN * THE 
 	SOFTWARE. -->
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" 
+	xmlns:customtag="/de/dagere/kopeme/visualizer/tags">
 	<div>Bei dieser Aktion werden Ihre Performanzmaße dargestellt.<br />
 	</div>
 	<j:if test="${!instance.isInitialized()}">
@@ -23,10 +24,11 @@
     </j:if>
     <j:if test="${instance.isInitialized()}">
        Bitte wählen Sie aus, welche Messergebnisse visualisiert werden sollen.
-       <f:entry>
-		<j:forEach var="key" items="${instance.testcases}">
-				<f:checkbox name="name" checked="${key.visible}" title="${key.getName()}" /><br />
-		</j:forEach>
-	</f:entry>
+		<f:entry>
+			<f:repeatable var="key" name="testcases" items="${instance.testcases}" noAddButton="true">
+				<customtag:textboxhidden field="key.name" value="${key.name}" />
+				<f:checkbox field="key.visible" checked="${key.visible}" title="${key.name}" />
+			</f:repeatable>
+		</f:entry>
     </j:if>
 </j:jelly>

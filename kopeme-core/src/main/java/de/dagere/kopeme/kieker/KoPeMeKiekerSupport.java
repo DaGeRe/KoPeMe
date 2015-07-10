@@ -40,7 +40,6 @@ public enum KoPeMeKiekerSupport {
 				kiekerController.enableMonitoring();
 			} else {
 				kiekerController.disableMonitoring();
-				fsWriter.reset();
 			}
 
 		}
