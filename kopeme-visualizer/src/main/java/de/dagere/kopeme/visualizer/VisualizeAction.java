@@ -130,7 +130,7 @@ public class VisualizeAction implements Action, Serializable {
 			} else {
 				log.info("Error: Workspace == null");
 			}
-
+/*
 			String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
 			File folder = new File(foldername);
 			if (folder.exists()) {
@@ -146,7 +146,7 @@ public class VisualizeAction implements Action, Serializable {
 			} else {
 				log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
 			}
-
+*/
 		} catch (IOException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
