@@ -49,7 +49,7 @@ public class VisualizeAction implements Action, Serializable {
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
 	private final List<String> collectorNames = new ArrayList<String>();
-	private final List<String> testclassNames = new ArrayList<String>();
+	private final List<String> testNames = new ArrayList<String>();
 
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
@@ -85,8 +85,8 @@ public class VisualizeAction implements Action, Serializable {
 		return collectorNames;
 	}
 
-	public List<String> getTestclassNames() {
-		return testclassNames;
+	public List<String> getTestNames() {
+		return testNames;
 	}
 
 	public static void main(final String[] args) {
@@ -171,16 +171,16 @@ public class VisualizeAction implements Action, Serializable {
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
 
-			final String testclassName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
-			if (!testclassNames.contains(testclassName))
-				testclassNames.add(testclassName);
+			final String testName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
+			if (!testNames.contains(testName))
+				testNames.add(testName);
 
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
 
 				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
-				final String prettyName = testclassName + " (" + collectorName + ")";
+				final String prettyName = testName + " (" + collectorName + ")";
 
 				if (!collectorNames.contains(collectorName))
 					collectorNames.add(collectorName);

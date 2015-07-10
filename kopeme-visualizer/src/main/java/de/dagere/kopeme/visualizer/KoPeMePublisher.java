@@ -29,7 +29,7 @@ import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 public class KoPeMePublisher extends Recorder {
 
 	private enum TestcasesSortOrder {
-		TESTCLASSNAME
+		TESTNAME
 		, COLLECTORNAME
 		, NONE
 	}
@@ -40,7 +40,7 @@ public class KoPeMePublisher extends Recorder {
 	private VisualizeAction lastVA = null;
 	private TestcasesSortOrder lastTestcasesSortOrder = TestcasesSortOrder.NONE;
 	private List<String> collectorNames = new ArrayList<String>();
-	private List<String> testclassNames = new ArrayList<String>();
+	private List<String> testNames = new ArrayList<String>();
 
 	public KoPeMePublisher() {
 		log.log(Level.INFO, "Constructor KoPeMePublisher");
@@ -65,8 +65,8 @@ public class KoPeMePublisher extends Recorder {
 		return collectorNames;
 	}
 	
-	public List<String> getTestclassNames() {
-		return testclassNames;
+	public List<String> getTestNames() {
+		return testNames;
 	}
 	
 	public String getLastTestcasesSortOrder() {
@@ -105,7 +105,7 @@ public class KoPeMePublisher extends Recorder {
 			log.info("Visualizer: " + va.getVisualizer().size());
 			
 			collectorNames = va.getCollectorNames();
-			testclassNames = va.getTestclassNames();
+			testNames = va.getTestNames();
 			
 			testcases = new LinkedList<GraphVisualizer>();
 			for (GraphVisualizer gv : va.getVisualizer()) {
