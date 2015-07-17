@@ -31,6 +31,7 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.dagere.kopeme.PomProjectNameReader;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
@@ -49,7 +50,7 @@ public class VisualizeAction implements Action, Serializable {
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
 	private final List<String> collectorNames = new ArrayList<String>();
-	private final List<String> testclassNames = new ArrayList<String>();
+	private final List<String> testNames = new ArrayList<String>();
 
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
@@ -85,8 +86,8 @@ public class VisualizeAction implements Action, Serializable {
 		return collectorNames;
 	}
 
-	public List<String> getTestclassNames() {
-		return testclassNames;
+	public List<String> getTestNames() {
+		return testNames;
 	}
 
 	private void loadData() {
@@ -113,7 +114,14 @@ public class VisualizeAction implements Action, Serializable {
 			}
 
 			String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
-			File folder = new File(foldername);
+
+			log.info("Projekt: " + project.getName() + " " + project.getDisplayName());
+			log.info(project.getSomeWorkspace() + File.separator + "pom.xml");
+			File pomFile = new File(project.getSomeWorkspace() + File.separator + "pom.xml");
+			String name = new PomProjectNameReader().getProjectName(pomFile);
+			log.info("Name: " + name);
+
+			File folder = new File(foldername + File.separator + name);
 			if (folder.exists()) {
 				log.info("Suche in: " + folder);
 				for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
@@ -152,17 +160,16 @@ public class VisualizeAction implements Action, Serializable {
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
 
-			final String testclassName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
-			log.log(Level.INFO, "Lade Testklasse: " + testclassName + " File: " + file);
-			if (!testclassNames.contains(testclassName))
-				testclassNames.add(testclassName);
+			final String testName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
+			if (!testNames.contains(testName))
+				testNames.add(testName);
 
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
 
 				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
-				final String prettyName = testclassName + " (" + collectorName + ")";
+				final String prettyName = testName + " (" + collectorName + ")";
 
 				if (!collectorNames.contains(collectorName)) {
 					collectorNames.add(collectorName);
@@ -180,7 +187,6 @@ public class VisualizeAction implements Action, Serializable {
 				log.log(Level.INFO, "Finaler Name: " + prettyName);
 				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
-
 		} catch (JAXBException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();

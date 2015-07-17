@@ -21,8 +21,13 @@
 	<st:include page="css.jelly" class="de.dagere.kopeme.visualizer.KoPeMePublisher" />
 	<!-- https://groups.google.com/forum/#!topic/jenkinsci-dev/Wn_bwsQQ2W8 -->
 	<j:set var="resourcesURL" value="${resURL}/plugin/kopeme-visualizer" />
+<<<<<<< HEAD
 	<script src="${resourcesURL}/jquery-2.1.4.min.js" type="text/javascript" ></script>
 	<script src="${resourcesURL}/test.js" type="text/javascript" ></script>
+=======
+	<script src="${resourcesURL}/test.js" type="text/javascript" ></script>
+	<!-- script src="${resourcesURL}/jquery-2.1.4.min.js" type="text/javascript" ></script> -->
+>>>>>>> gruppierung-jenkins-config
 
 	<div>Bei dieser Aktion werden Ihre Performanzmaße dargestellt.<br />
 	</div>

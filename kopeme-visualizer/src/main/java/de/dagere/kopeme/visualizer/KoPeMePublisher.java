@@ -35,10 +35,10 @@ public class KoPeMePublisher extends Recorder {
 	private static final Logger log = Logger.getLogger(KoPeMePublisher.class.getName());
 	private List<GraphVisualizer> testcases = new LinkedList<GraphVisualizer>();
 	private AbstractProject<?, ?> lastProject = null;
-	private VisualizeAction lastVA = null;
-	private TestcasesSortOrder lastTestcasesSortOrder = TestcasesSortOrder.NONE;
+	private VisualizeAction lastVisulizeAction = null;
+	private TestcasesSortOrder lastTestcasesSortOrder = TestcasesSortOrder.TESTCLASSNAME;
 	private List<String> collectorNames = new ArrayList<String>();
-	private List<String> testclassNames = new ArrayList<String>();
+	private List<String> testNames = new ArrayList<String>();
 
 	public KoPeMePublisher() {
 		log.log(Level.INFO, "Constructor KoPeMePublisher");
@@ -63,8 +63,8 @@ public class KoPeMePublisher extends Recorder {
 		return collectorNames;
 	}
 
-	public List<String> getTestclassNames() {
-		return testclassNames;
+	public List<String> getTestNames() {
+		return testNames;
 	}
 
 	public String getLastTestcasesSortOrder() {
@@ -90,7 +90,7 @@ public class KoPeMePublisher extends Recorder {
 	}
 
 	public boolean isInitialized() {
-		return lastVA != null;
+		return lastVisulizeAction != null;
 	}
 
 	@Override
@@ -100,13 +100,11 @@ public class KoPeMePublisher extends Recorder {
 		{
 			lastProject = project;
 			VisualizeAction va = new VisualizeAction(project, this);
-			lastVA = va;
+			lastVisulizeAction = va;
 			log.info("Visualizer: " + va.getVisualizer().size());
 
 			collectorNames = va.getCollectorNames();
-			testclassNames = va.getTestclassNames();
-			log.info("Testklassennamen: " + testclassNames.size());
-			log.info("TestklassenKollektoren: " + collectorNames.size());
+			testNames = va.getTestNames();
 
 			testcases = new LinkedList<GraphVisualizer>();
 			for (GraphVisualizer gv : va.getVisualizer()) {

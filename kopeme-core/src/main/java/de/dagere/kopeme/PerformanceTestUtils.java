@@ -85,7 +85,7 @@ public final class PerformanceTestUtils {
 			{
 				f.mkdirs();
 			}
-			DataStorer xds = new XMLDataStorer(f.getAbsolutePath(), data.getFilename(), testcasename);
+			DataStorer xds = new XMLDataStorer(f, data.getFilename(), testcasename);
 			TestResult tr = data.getTr();
 			for (String key : tr.getKeys()) {
 				LOG.debug("Key: " + key);
