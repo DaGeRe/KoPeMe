@@ -29,11 +29,9 @@ import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 public class KoPeMePublisher extends Recorder {
 
 	private enum TestcasesSortOrder {
-		TESTCLASSNAME
-		, COLLECTORNAME
-		, NONE
+		TESTCLASSNAME, COLLECTORNAME, NONE
 	}
-	
+
 	private static final Logger log = Logger.getLogger(KoPeMePublisher.class.getName());
 	private List<GraphVisualizer> testcases = new LinkedList<GraphVisualizer>();
 	private AbstractProject<?, ?> lastProject = null;
@@ -57,33 +55,34 @@ public class KoPeMePublisher extends Recorder {
 		return testcases;
 	}
 
-	public void setTestcases(List<GraphVisualizer> testcases) {
+	public void setTestcases(final List<GraphVisualizer> testcases) {
 		this.testcases = testcases;
 	}
-	
+
 	public List<String> getCollectorNames() {
 		return collectorNames;
 	}
-	
+
 	public List<String> getTestclassNames() {
 		return testclassNames;
 	}
-	
+
 	public String getLastTestcasesSortOrder() {
 		return lastTestcasesSortOrder.name();
 	}
-	
-	public void setLastTestcasesSortOrder(String testcasesSortOrderValue) {
+
+	public void setLastTestcasesSortOrder(final String testcasesSortOrderValue) {
 		this.lastTestcasesSortOrder = TestcasesSortOrder.valueOf(testcasesSortOrderValue);
 	}
 
+	@Override
 	public BuildStepMonitor getRequiredMonitorService() {
 		return BuildStepMonitor.NONE;
 	}
 
 	@Override
-	public boolean perform(AbstractBuild build, Launcher launcher,
-			BuildListener listener) throws InterruptedException, IOException {
+	public boolean perform(final AbstractBuild build, final Launcher launcher,
+			final BuildListener listener) throws InterruptedException, IOException {
 		// String buildLog = build.getLog();
 		listener.getLogger().println("Performing Post build task...");
 		Result pr = build.getResult();
@@ -95,18 +94,18 @@ public class KoPeMePublisher extends Recorder {
 	}
 
 	@Override
-	public Action getProjectAction(AbstractProject<?, ?> project) {
+	public Action getProjectAction(final AbstractProject<?, ?> project) {
 		log.info("Gebe Projektaktion aus, Klasse: " + project.getClass() + " Instanz von Projekt: " + (project instanceof Project));
 		if (project instanceof AbstractProject)
 		{
 			lastProject = project;
-			VisualizeAction va = new VisualizeAction((AbstractProject) project, this);
+			VisualizeAction va = new VisualizeAction(project, this);
 			lastVA = va;
 			log.info("Visualizer: " + va.getVisualizer().size());
-			
+
 			collectorNames = va.getCollectorNames();
 			testclassNames = va.getTestclassNames();
-			
+
 			testcases = new LinkedList<GraphVisualizer>();
 			for (GraphVisualizer gv : va.getVisualizer()) {
 				log.info("Füge Testcase hinzu: " + gv.getName());
@@ -121,7 +120,7 @@ public class KoPeMePublisher extends Recorder {
 		return null;
 	}
 
-	public boolean fileExists(String value) {
+	public boolean fileExists(final String value) {
 		if (lastProject != null) {
 			FilePath workspace = lastProject.getSomeWorkspace();
 			log.info("Suche in: " + workspace.toString());

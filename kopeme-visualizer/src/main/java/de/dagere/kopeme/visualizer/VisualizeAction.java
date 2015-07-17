@@ -182,8 +182,9 @@ public class VisualizeAction implements Action, Serializable {
 				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
 				final String prettyName = testclassName + " (" + collectorName + ")";
 
-				if (!collectorNames.contains(collectorName))
+				if (!collectorNames.contains(collectorName)) {
 					collectorNames.add(collectorName);
+				}
 
 				// nachschlagen von visible fuer aktuellen collector
 				Boolean visible = visibilityMap.get(prettyName);

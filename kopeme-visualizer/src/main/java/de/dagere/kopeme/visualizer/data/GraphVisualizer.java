@@ -32,14 +32,14 @@ public class GraphVisualizer {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getTestclassName() {
-		final String testclassName = name.substring(0, name.lastIndexOf("(")-1);
+		final String testclassName = name.substring(0, name.lastIndexOf("(") - 1);
 		return testclassName;
 	}
-	
+
 	public String getCollectorName() {
-		final String collectorName = name.substring(name.lastIndexOf("(")+1, name.lastIndexOf(")"));
+		final String collectorName = name.substring(name.lastIndexOf("(") + 1, name.lastIndexOf(")"));
 		return collectorName;
 	}
 
@@ -48,7 +48,7 @@ public class GraphVisualizer {
 	}
 
 	@DataBoundConstructor
-	public GraphVisualizer(String name, Map<String, Map<Date, Long>> temp, boolean visible) {
+	public GraphVisualizer(final String name, final Map<String, Map<Date, Long>> temp, final boolean visible) {
 		this.name = name;
 		dataMap = temp;
 		this.visible = visible;
@@ -68,7 +68,8 @@ public class GraphVisualizer {
 			Set<Date> unOrderedSet = performanceMeasure.getValue().keySet();
 			TreeSet<Date> measuredDates = new TreeSet<Date>(new Comparator<Date>() {
 
-				public int compare(Date o1, Date o2) {
+				@Override
+				public int compare(final Date o1, final Date o2) {
 					return -o1.compareTo(o2);
 				}
 			});
@@ -92,8 +93,7 @@ public class GraphVisualizer {
 		return visible;
 	}
 
-	public void setVisible(boolean isVisible) {
-		LOG.info("SetVisible: " + isVisible);
+	public void setVisible(final boolean isVisible) {
 		this.visible = isVisible;
 	}
 }
