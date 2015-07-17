@@ -1,7 +1,7 @@
-Q(function () {
-	Q('input[type="checkbox"]').change(function (e) {
-		var checked = Q(this).prop("checked"),
-		container = Q(this).parent(),
+$(function () {
+	$('input[type="checkbox"]').change(function (e) {
+		var checked = $(this).prop("checked"),
+		container = $(this).parent(),
 		siblings = container.siblings();
 
 		container.find('input[type="checkbox"]').prop({

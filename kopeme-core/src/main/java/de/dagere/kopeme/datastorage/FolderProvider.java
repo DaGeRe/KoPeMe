@@ -58,14 +58,14 @@ public class FolderProvider {
 			throw new RuntimeException();
 		}
 		Map<Long, File> timeFileMapping = new TreeMap<Long, File>();
-		for (File f : perfromanceResultsContainingFolder.listFiles()) {
+		for (File file : perfromanceResultsContainingFolder.listFiles()) {
 			try {
-				if (f.isDirectory()) {
-					long time = Long.parseLong(f.getName());
-					timeFileMapping.put(time, f);
+				if (file.isDirectory()) {
+					long time = Long.parseLong(file.getName());
+					timeFileMapping.put(time, file);
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("The folder " + f.getAbsolutePath() + " may not be placed there, need timestamp folder name!");
+				System.err.println("The folder " + file.getAbsolutePath() + " may not be placed there, need timestamp folder name!");
 			}
 		}
 		return timeFileMapping.values();

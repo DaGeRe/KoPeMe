@@ -31,6 +31,7 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.dagere.kopeme.PomProjectNameReader;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
@@ -130,9 +131,16 @@ public class VisualizeAction implements Action, Serializable {
 			} else {
 				log.info("Error: Workspace == null");
 			}
-/*
+
 			String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
-			File folder = new File(foldername);
+
+			log.info("Projekt: " + project.getName() + " " + project.getDisplayName());
+			log.info(project.getSomeWorkspace() + File.separator + "pom.xml");
+			File pomFile = new File(project.getSomeWorkspace() + File.separator + "pom.xml");
+			String name = new PomProjectNameReader().getProjectName(pomFile);
+			log.info("Name: " + name);
+
+			File folder = new File(foldername + File.separator + name);
 			if (folder.exists()) {
 				log.info("Suche in: " + folder);
 				for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
@@ -146,7 +154,7 @@ public class VisualizeAction implements Action, Serializable {
 			} else {
 				log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
 			}
-*/
+
 		} catch (IOException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -196,7 +204,6 @@ public class VisualizeAction implements Action, Serializable {
 				// mit korrektem (aus config gelesen oder default) visible
 				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
-
 		} catch (JAXBException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();

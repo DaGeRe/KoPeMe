@@ -38,9 +38,9 @@ public final class XMLDataStorer implements DataStorer {
 	 * @param methodname Name of the method which was executed
 	 * @throws JAXBException Thrown if an XML Writing error occurs
 	 */
-	public XMLDataStorer(final String foldername, final String classname, final String methodname) throws JAXBException {
+	public XMLDataStorer(final File foldername, final String classname, final String methodname) throws JAXBException {
 		String filename = classname + "." + methodname + ".xml";
-		file = new File(foldername + File.separator + filename);
+		file = new File(foldername, filename);
 		if (file.exists()) {
 			XMLDataLoader loader = new XMLDataLoader(file);
 			data = loader.getFullData();

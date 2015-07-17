@@ -61,7 +61,7 @@ public class TestJUnitTimeoutExecutions {
 		assertFailureDocumentation(r);
 	}
 
-	private void assertFailureDocumentation(Result r) {
+	private void assertFailureDocumentation(final Result r) {
 		List<Failure> failures = r.getFailures();
 		assertEquals(5, r.getFailureCount());
 		int countTimeoutException = 0, countInterruptedException = 0;
