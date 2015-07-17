@@ -105,6 +105,8 @@ public class KoPeMePublisher extends Recorder {
 
 			collectorNames = va.getCollectorNames();
 			testclassNames = va.getTestclassNames();
+			log.info("Testklassennamen: " + testclassNames.size());
+			log.info("TestklassenKollektoren: " + collectorNames.size());
 
 			testcases = new LinkedList<GraphVisualizer>();
 			for (GraphVisualizer gv : va.getVisualizer()) {

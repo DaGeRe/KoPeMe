@@ -89,25 +89,6 @@ public class VisualizeAction implements Action, Serializable {
 		return testclassNames;
 	}
 
-	public static void main(final String[] args) {
-		String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
-		File folder = new File(foldername);
-		if (folder.exists()) {
-			log.info("Suche in: " + folder);
-
-			for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
-				log.info("Gefunden: " + fileObject);
-				File file = (File) fileObject;
-				log.log(Level.FINE, "File: " + file + " " + file.exists());
-				if (file.exists()) {
-					System.out.println("Datei: " + file);
-				}
-			}
-		} else {
-			log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
-		}
-	}
-
 	private void loadData() {
 		log.info("VisualizeAction.loadData - Lade Daten");
 		try {
@@ -136,11 +117,11 @@ public class VisualizeAction implements Action, Serializable {
 			if (folder.exists()) {
 				log.info("Suche in: " + folder);
 				for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
-					log.info("Gefunden: " + fileObject);
+					log.log(Level.FINE, "Gefunden: " + fileObject);
 					File file = (File) fileObject;
-					log.log(Level.FINE, "File: " + file + " " + file.exists());
+					log.log(Level.FINE, "File: " + file + " " + file.getAbsolutePath() + " " + file.exists());
 					if (file.exists()) {
-						loadFileData(file.getName(), file);
+						loadFileData(file.getAbsolutePath(), file);
 					}
 				}
 			} else {
@@ -172,6 +153,7 @@ public class VisualizeAction implements Action, Serializable {
 			XMLDataLoader xdl = new XMLDataLoader(file);
 
 			final String testclassName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
+			log.log(Level.INFO, "Lade Testklasse: " + testclassName + " File: " + file);
 			if (!testclassNames.contains(testclassName))
 				testclassNames.add(testclassName);
 
@@ -195,6 +177,7 @@ public class VisualizeAction implements Action, Serializable {
 
 				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten
 				// mit korrektem (aus config gelesen oder default) visible
+				log.log(Level.INFO, "Finaler Name: " + prettyName);
 				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
 			}
 

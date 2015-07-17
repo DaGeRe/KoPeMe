@@ -52,7 +52,7 @@ public class GraphVisualizer {
 		this.name = name;
 		dataMap = temp;
 		this.visible = visible;
-		LOG.info("Visible: " + visible);
+		// LOG.info("Visible: " + visible);
 	}
 
 	public String[] getMeasurements() {
