@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>kopeme-junit</artifactId>
 	<packaging>jar</packaging>
@@ -7,7 +6,7 @@
 	<parent>
 		<artifactId>kopeme-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>0.6-SNAPSHOT</version>
+		<version>0.6</version>
 		<groupId>de.dagere.kopeme</groupId>
 	</parent>
 
@@ -70,7 +69,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>${core.version}</version>
+			<version>0.10</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -80,7 +79,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>${core.version}</version>
+			<version>0.10</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
