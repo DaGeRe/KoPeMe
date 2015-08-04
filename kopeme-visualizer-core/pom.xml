@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
 		<artifactId>kopeme-parent</artifactId>
-		<version>0.6</version>
+		<version>0.7-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>kopeme-visualizer-core</artifactId>
 	<name>KoPeMe-Visualizer-Core</name>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<url>http://kopeme.dagere.de</url>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.10</version>
+			<version>0.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
