@@ -83,7 +83,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
-		LOG.debug("Starting KoPeMe-Test {} finished", getName());
+		LOG.debug("Starting KoPeMe-Test {}", getName());
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
@@ -110,7 +110,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 					e.printStackTrace();
 				}
 				tr.finalizeCollection();
-				PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 				LOG.debug("Test-call finished");
 			}
 		});
@@ -129,8 +128,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 			}
 		});
 
-		thread.start();
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
+		thread.start();
+
 		thread.join(timeoutTime);
 		LOG.trace("Test should be finished...");
 		if (thread.isAlive()) {
@@ -145,9 +145,14 @@ public abstract class KoPeMeTestcase extends TestCase {
 				LOG.debug("Thread does not respond, so it is killed hard now.");
 				thread.stop();
 				LOG.debug("Saving for error-finished test: " + getName());
-				PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+				// PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 			}
+		} else {
+
 		}
+		// No matter how the test gets finished, saving should be done here
+		LOG.debug("End-Testcase-Saving begins");
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
@@ -179,11 +184,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 			runMainExecution(fullName, tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
+			// PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
+			// PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		}
 	}
