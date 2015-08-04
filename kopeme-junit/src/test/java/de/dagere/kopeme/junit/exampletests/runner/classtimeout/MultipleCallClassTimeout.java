@@ -13,25 +13,25 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
  * @author reichelt
  *
  */
-@PerformanceTestingClass(overallTimeout = 250)
+@PerformanceTestingClass(overallTimeout = 500)
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class MultipleCallClassTimeout {
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
 	public void test() throws InterruptedException {
-		Thread.sleep(5);
+		Thread.sleep(10);
 	}
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
 	public void test2() throws InterruptedException {
-		Thread.sleep(5);
+		Thread.sleep(10);
 	}
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
 	public void test3() throws InterruptedException {
-		Thread.sleep(5);
+		Thread.sleep(10);
 	}
 }

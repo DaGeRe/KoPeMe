@@ -110,6 +110,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 					e.printStackTrace();
 				}
 				tr.finalizeCollection();
+				PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 				LOG.debug("Test-call finished");
 			}
 		});
@@ -132,20 +133,22 @@ public abstract class KoPeMeTestcase extends TestCase {
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
 		thread.join(timeoutTime);
 		LOG.trace("Test should be finished...");
-		int count = 0;
-		while (thread.isAlive() && count < 5) {
-			LOG.debug("Thread not finished, is kill now..");
-			thread.interrupt();
-			Thread.sleep(50);
-			count++;
-		}
-		if (count == 10) {
-			LOG.debug("Thread does not respond, so it is killed hard now.");
-			thread.stop();
+		if (thread.isAlive()) {
+			int count = 0;
+			while (thread.isAlive() && count < 5) {
+				LOG.debug("Thread not finished, is kill now..");
+				thread.interrupt();
+				Thread.sleep(50);
+				count++;
+			}
+			if (count == 10) {
+				LOG.debug("Thread does not respond, so it is killed hard now.");
+				thread.stop();
+				LOG.debug("Saving for error-finished test: " + getName());
+				PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+			}
 		}
 
-		LOG.trace("Saving for test: " + getName());
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
 

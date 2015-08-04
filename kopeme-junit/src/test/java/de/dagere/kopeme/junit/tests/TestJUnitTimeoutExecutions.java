@@ -31,7 +31,7 @@ public class TestJUnitTimeoutExecutions {
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
-	public static Logger log = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
+	public static Logger LOG = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
 
 	// @Test(timeout = 600)
 	// public void testClassTimeout() {
@@ -62,6 +62,9 @@ public class TestJUnitTimeoutExecutions {
 
 	private void assertFailureDocumentation(final Result r) {
 		List<Failure> failures = r.getFailures();
+		for (Failure f : failures) {
+			LOG.info(f.getTrace());
+		}
 		assertEquals(5, r.getFailureCount());
 		int countTimeoutException = 0, countInterruptedException = 0;
 		for (Failure f : failures) {
