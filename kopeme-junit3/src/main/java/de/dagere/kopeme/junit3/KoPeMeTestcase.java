@@ -13,6 +13,7 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Base class for KoPeMe-JUnit3-Testcases.
@@ -82,19 +83,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
-		final Runnable testCase = new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					KoPeMeTestcase.super.runTest();
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-
+		LOG.debug("Starting KoPeMe-Test {} finished", getName());
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
@@ -106,7 +95,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			@Override
 			public void run() {
 				try {
-					runTestCase(testCase, tr, warmupExecutions, executionTimes, fullData);
+					runTestCase(tr, warmupExecutions, executionTimes, fullData);
 				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -116,8 +105,12 @@ public abstract class KoPeMeTestcase extends TestCase {
 				} catch (AssertionFailedError e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (Throwable e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				tr.finalizeCollection();
+				LOG.debug("Test-call finished");
 			}
 		});
 
@@ -138,47 +131,56 @@ public abstract class KoPeMeTestcase extends TestCase {
 		thread.start();
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
 		thread.join(timeoutTime);
-		LOG.debug("Test should be finished...");
-		while (thread.isAlive()) {
+		LOG.trace("Test should be finished...");
+		int count = 0;
+		while (thread.isAlive() && count < 5) {
 			LOG.debug("Thread not finished, is kill now..");
 			thread.interrupt();
+			Thread.sleep(50);
+			count++;
+		}
+		if (count == 10) {
+			LOG.debug("Thread does not respond, so it is killed hard now.");
 			thread.stop();
 		}
 
-		System.out.println("Speichere nach: " + this.getClass().getName());
-		PerformanceTestUtils.saveData(getName(), tr, false, false, this.getClass().getName(), fullData);
+		LOG.trace("Saving for test: " + getName());
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
 
 	/**
 	 * Runs the whole testcase.
 	 * 
-	 * @param testCase Runnable that should be run
 	 * @param tr Where the results should be saved
 	 * @param warmupExecutions How many warmup executions should be done
 	 * @param executionTimes How many normal executions should be done
 	 * @param fullData Weather to log full data
-	 * @throws AssertionFailedError Thrown if an assertion failed, i.e. the test is an failure
-	 * @throws IllegalAccessException Thrown if an access error occurs
-	 * @throws InvocationTargetException Thrown if an access error occurs
+	 * @throws Throwable
 	 */
-	private void runTestCase(final Runnable testCase, final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
-			throws AssertionFailedError, InvocationTargetException, IllegalAccessException {
+	private void runTestCase(final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
+			throws Throwable {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
-			testCase.run();
+			KoPeMeTestcase.super.runTest();
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
+			if (Thread.interrupted()) {
+				return;
+			} else {
+				LOG.trace("Nicht interrupted!");
+			}
 		}
 
 		try {
-			runMainExecution(testCase, fullName, tr, executionTimes);
+			runMainExecution(fullName, tr, executionTimes);
 		} catch (AssertionFailedError t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, true, false, getName(), fullData);
+			PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(this.getClass().getName(), tr, false, true, getName(), fullData);
+			PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
 			throw t;
 		}
 	}
@@ -190,23 +192,26 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * @param name Name of the test
 	 * @param tr Where the results should be saved
 	 * @param executionTimes How often the test should be executed
-	 * @throws IllegalAccessException Thrown if an access error occurs
-	 * @throws InvocationTargetException Thrown if an access error occurs
+	 * @throws Throwable
 	 */
-	private void runMainExecution(final Runnable testCase, final String name, final TestResult tr, final int executionTimes) throws IllegalAccessException,
-			InvocationTargetException {
+	private void runMainExecution(final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
 		String firstPart = "--- Starting execution " + name + " ";
 		String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
 			tr.startCollection();
-			testCase.run();
+			KoPeMeTestcase.super.runTest();
 			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
 			LOG.debug("--- Stopping execution " + executions + endPart);
+			if (Thread.interrupted()) {
+				return;
+			} else {
+				LOG.trace("Nicht interrupted!");
+			}
 		}
-		LOG.debug("Executions: " + executions);
+		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions);
 	}
 }

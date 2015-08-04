@@ -8,6 +8,11 @@ import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -16,6 +21,9 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+
+import de.dagere.kopeme.visualizer.data.GraphVisualizer;
+
 
 /**
  * Describes the plugin
@@ -80,22 +88,26 @@ public final class KoPeMeDescriptor extends
 			throws FormException {
 		log.info("Creating new Instance");
 		publisher = new KoPeMePublisher();
-		JSONArray dataArray = getArray(formData.get("testcases"));
-		log.info("Erzeuge neue Publisher-Instanz, Daten: " + dataArray);
-		for (Object data : dataArray) {
-			log.info("Füge alte Daten hinzu für " + data);
-			// if (data instanceof JSONObject)
-			// {
-			// publisher.addTestcase(new GraphVisualizer(((JSONObject) data).getString("name")));
-			// }
-			// else
-			// {
-			// publisher.addTestcase(new GraphVisualizer());
-			// }
+		
+		// es gibt es kein grouping, wenn kein radiobutton gewaehlt ist
+		// kann bei hinzufuegen der visualisierung vorkommen 
+		if (formData.optJSONObject("grouping") != null) {
+
+			JSONArray dataArray = getArray(formData.optJSONObject("grouping").get("testcases"));
+			String lastTestcasesSortOrder = formData.optJSONObject("grouping").get("value").toString();
+
+			List<GraphVisualizer> testcases = publisher.getTestcases();
+			for (Object data : dataArray) {
+			
+				final Map<String, Map<Date, Long>> dataTemp = Collections.emptyMap();
+				final String name = ((JSONObject) data).getString("name");
+				final Boolean visible = ((JSONObject) data).getBoolean("visible");
+				testcases.add(new GraphVisualizer(name, dataTemp, visible));
+			}
+			publisher.setTestcases(testcases);
+			publisher.setLastTestcasesSortOrder(lastTestcasesSortOrder);
 		}
-		// if (publisher.getTestcases().isEmpty()) {
-		// publisher.addTestcase(new GraphVisualizer());
-		// }
+		
 		return publisher;
 	}
 }

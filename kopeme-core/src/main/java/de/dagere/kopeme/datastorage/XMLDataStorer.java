@@ -38,14 +38,15 @@ public final class XMLDataStorer implements DataStorer {
 	 * @param methodname Name of the method which was executed
 	 * @throws JAXBException Thrown if an XML Writing error occurs
 	 */
-	public XMLDataStorer(final String foldername, final String classname, final String methodname) throws JAXBException {
-		String filename = classname + "." + methodname + ".yaml";
-		file = new File(foldername + File.separator + filename);
-		if (!file.exists()) {
+	public XMLDataStorer(final File foldername, final String classname, final String methodname) throws JAXBException {
+		String filename = classname + "." + methodname + ".xml";
+		file = new File(foldername, filename);
+		if (file.exists()) {
+			XMLDataLoader loader = new XMLDataLoader(file);
+			data = loader.getFullData();
+		} else {
 			createXMLData(classname);
 		}
-		XMLDataLoader loader = new XMLDataLoader(file);
-		data = loader.getFullData();
 	}
 
 	/**
@@ -68,21 +69,12 @@ public final class XMLDataStorer implements DataStorer {
 
 	@Override
 	public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final List<Long> values) {
-		TestcaseType test = null;
-		if (data.getTestcases() == null) data.setTestcases(new Testcases());
-		for (TestcaseType tc : data.getTestcases().getTestcase()) {
-			if (tc.getName().equals(performanceDataMeasure.testcase)) {
-				test = tc;
-			}
+		if (data.getTestcases() == null) {
+			data.setTestcases(new Testcases());
 		}
-		if (test == null) {
-			LOG.trace("Test == null, füge hinzu");
-			test = new TestcaseType();
-			test.setName(performanceDataMeasure.testcase);
-			data.getTestcases().getTestcase().add(test);
-		}
+		final TestcaseType test = getOrCreateTestcase(performanceDataMeasure);
 
-		Result r = new Result();
+		final Result r = new Result();
 		r.setDate(new Date().getTime());
 		r.setValue("" + performanceDataMeasure.value);
 		r.setDeviation(performanceDataMeasure.deviation);
@@ -98,6 +90,11 @@ public final class XMLDataStorer implements DataStorer {
 			r.setFulldata(fd);
 		}
 
+		Datacollector dc = getOrCreateDatacollector(performanceDataMeasure, test);
+		dc.getResult().add(r);
+	}
+
+	private Datacollector getOrCreateDatacollector(final PerformanceDataMeasure performanceDataMeasure, final TestcaseType test) {
 		Datacollector dc = null;
 		for (Datacollector dc2 : test.getDatacollector()) {
 			LOG.trace("Name: {} Collectorname: {}", dc2.getName(), performanceDataMeasure.collectorname);
@@ -113,7 +110,23 @@ public final class XMLDataStorer implements DataStorer {
 			dc.setName(performanceDataMeasure.collectorname);
 			test.getDatacollector().add(dc);
 		}
-		dc.getResult().add(r);
+		return dc;
+	}
+
+	private TestcaseType getOrCreateTestcase(final PerformanceDataMeasure performanceDataMeasure) {
+		TestcaseType test = null;
+		for (TestcaseType tc : data.getTestcases().getTestcase()) {
+			if (tc.getName().equals(performanceDataMeasure.testcase)) {
+				test = tc;
+			}
+		}
+		if (test == null) {
+			LOG.trace("Test == null, füge hinzu");
+			test = new TestcaseType();
+			test.setName(performanceDataMeasure.testcase);
+			data.getTestcases().getTestcase().add(test);
+		}
+		return test;
 	}
 
 	@Override

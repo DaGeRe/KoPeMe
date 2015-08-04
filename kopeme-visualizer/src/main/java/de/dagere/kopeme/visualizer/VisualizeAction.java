@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,6 +20,9 @@ import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -27,10 +31,10 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.dagere.kopeme.PomProjectNameReader;
+import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.visualizer.data.DateConverter;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
-import de.dagere.kopeme.visualizer.data.NormalDateConverter;
 
 //import hudson.util.
 
@@ -45,19 +49,17 @@ public class VisualizeAction implements Action, Serializable {
 	private static transient Logger log = Logger
 			.getLogger(VisualizeAction.class.getName());
 	private transient final AbstractProject project;
+	private final List<String> collectorNames = new ArrayList<String>();
+	private final List<String> testNames = new ArrayList<String>();
 
-	// transient Map<String, Map<String, Map<Date, Long>>> dataMap;
 	transient KoPeMePublisher publisher;
 	Map<String, GraphVisualizer> graphMap;
-	DateConverter dateconverter;
-	// Map<String, Set<String>> viewable = null;
 	int width = 800, height = 500;
 
-	public VisualizeAction(AbstractProject project, KoPeMePublisher publisher) {
+	public VisualizeAction(final AbstractProject project, final KoPeMePublisher publisher) {
 		// logger.log(Level.INFO, "Konstruktor Visualizeaction");
 		this.project = project;
 		this.publisher = publisher;
-		dateconverter = new NormalDateConverter();
 		loadData();
 	}
 
@@ -65,20 +67,27 @@ public class VisualizeAction implements Action, Serializable {
 		return project;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return "Performanzmaß-Visualisierung";
 	}
 
+	@Override
 	public String getIconFileName() {
 		return "graph.gif";
 	}
 
+	@Override
 	public String getUrlName() {
 		return "Visualisierung_URL";
 	}
 
-	public DateConverter getDateConverter() {
-		return dateconverter;
+	public List<String> getCollectorNames() {
+		return collectorNames;
+	}
+
+	public List<String> getTestNames() {
+		return testNames;
 	}
 
 	private void loadData() {
@@ -89,8 +98,6 @@ public class VisualizeAction implements Action, Serializable {
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
 
-			// final List<Testcase> testcases = publisher.getTestcases();
-			// log.log(Level.FINE, "Testcases:" + testcases);
 			final FilePath workspace = project.getSomeWorkspace();
 			if (workspace != null) // prevent error, when workspace for project isn't initialized
 			{
@@ -101,27 +108,32 @@ public class VisualizeAction implements Action, Serializable {
 					if (file.exists()) {
 						loadFileData(testcaseName.toString(), file);
 					}
-					// File file = new File(project.getSomeWorkspace() + File.separator
-					// + testcaseName);
 				}
-
-				// for (Testcase testcase : testcases) {
-				// log.log(Level.FINE, "Testcase: " + testcase);
-				// String testcaseName = testcase.getName();
-				// log.log(Level.FINE, "Suche nach: " + testcaseName + " " + workspace.list().size());
-				// FilePath[] list = workspace.list(testcaseName);
-				// log.log(Level.FINE, "Gefundene Daten: " + list + " " + list.length + " Testcase: " + testcaseName);
-				// if (list != null && list.length > 0
-				// && testcaseName.length() != 0) {
-				// File file = new File(project.getSomeWorkspace() + File.separator
-				// + testcaseName);
-				// loadFileData(testcaseName, file);
-				// } else {
-				// log.info("Error: No data available!");
-				// }
-				// }
 			} else {
 				log.info("Error: Workspace == null");
+			}
+
+			String foldername = FolderProvider.getInstance().getKopemeDefaultFolder();
+
+			log.info("Projekt: " + project.getName() + " " + project.getDisplayName());
+			log.info(project.getSomeWorkspace() + File.separator + "pom.xml");
+			File pomFile = new File(project.getSomeWorkspace() + File.separator + "pom.xml");
+			String name = new PomProjectNameReader().getProjectName(pomFile);
+			log.info("Name: " + name);
+
+			File folder = new File(foldername + File.separator + name);
+			if (folder.exists()) {
+				log.info("Suche in: " + folder);
+				for (Object fileObject : FileUtils.listFiles(folder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE)) {
+					log.log(Level.FINE, "Gefunden: " + fileObject);
+					File file = (File) fileObject;
+					log.log(Level.FINE, "File: " + file + " " + file.getAbsolutePath() + " " + file.exists());
+					if (file.exists()) {
+						loadFileData(file.getAbsolutePath(), file);
+					}
+				}
+			} else {
+				log.info("Achtung: Ordner " + folder.getAbsolutePath() + " existiert nicht.");
 			}
 
 		} catch (IOException e) {
@@ -135,17 +147,46 @@ public class VisualizeAction implements Action, Serializable {
 		log.info("VisualizeAction.loadData - Daten geladen");
 	}
 
-	private void loadFileData(String testcaseName, File file) {
+	private void loadFileData(final String testcaseName, final File file) {
 		log.log(Level.FINE, "Lade Daten von: " + file.exists() + " " + file.getAbsolutePath());
+
+		// lies testcases und schreibe name + visible in visibilityMap
+		// ermoeglich schnelles nachschlagen
+		List<GraphVisualizer> testcases = publisher.getTestcases();
+		Map<String, Boolean> visibilityMap = new HashMap<String, Boolean>();
+		for (GraphVisualizer gv : testcases)
+			visibilityMap.put(gv.getName(), gv.isVisible());
+
 		try {
 			XMLDataLoader xdl = new XMLDataLoader(file);
+
+			final String testName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1, testcaseName.lastIndexOf("."));
+			if (!testNames.contains(testName))
+				testNames.add(testName);
+
 			for (String collector : xdl.getCollectors()) {
 				Map<String, Map<Date, Long>> dataTemp = xdl.getData(collector);
 				log.log(Level.FINE, "Daten für " + file.getAbsolutePath() + "(" + collector + ") geladen");
-				final String prettyName = testcaseName.substring(testcaseName.lastIndexOf(File.separator) + 1) + " (" + collector.substring(collector.lastIndexOf(".") + 1) + ")";
-				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp));
-			}
 
+				final String collectorName = collector.substring(collector.lastIndexOf(".") + 1);
+				final String prettyName = testName + " (" + collectorName + ")";
+
+				if (!collectorNames.contains(collectorName)) {
+					collectorNames.add(collectorName);
+				}
+
+				// nachschlagen von visible fuer aktuellen collector
+				Boolean visible = visibilityMap.get(prettyName);
+				// default setzen fuer den fall dass der collector noch nicht bekannt war
+				if (visible == null) {
+					visible = true;
+				}
+
+				// hinzufuegen der aktuellen (neu aus yaml eingelesenen) daten
+				// mit korrektem (aus config gelesen oder default) visible
+				log.log(Level.INFO, "Finaler Name: " + prettyName);
+				graphMap.put(prettyName, new GraphVisualizer(prettyName, dataTemp, visible));
+			}
 		} catch (JAXBException e) {
 			log.info(e.getLocalizedMessage());
 			e.printStackTrace();
@@ -158,11 +199,11 @@ public class VisualizeAction implements Action, Serializable {
 	 * 
 	 * @return
 	 */
-	public String[] getMeasurements(String file) {
+	public String[] getMeasurements(final String file) {
 		return graphMap.get(file).getMeasurements();
 	}
 
-	public boolean isVisible(String fileName) {
+	public boolean isVisible(final String fileName) {
 		return graphMap.get(fileName).isVisible();
 	}
 
@@ -173,8 +214,8 @@ public class VisualizeAction implements Action, Serializable {
 		return ret;
 	}
 
-	public void setVisible(String name, boolean visible) {
-
+	public void setVisible(final String name, final boolean visible) {
+		log.log(Level.FINE, "Set visible: " + name + " " + visible);
 	}
 
 	public String[] getFiles() {
@@ -193,7 +234,7 @@ public class VisualizeAction implements Action, Serializable {
 	 * 
 	 * @return
 	 */
-	public Graph getSummaryGraph(String file) {
+	public Graph getSummaryGraph(final String file) {
 		loadData();
 
 		log.info("VisualizeAction:getSummaryGraph - Lade Daten für: " + file);
@@ -232,37 +273,31 @@ public class VisualizeAction implements Action, Serializable {
 
 		int i = 0;
 		for (String viewable : graphVisualizer.getDatamap().keySet()) {
-			log.info("Erstelle Graph für " + viewable + " "
-					+ (dateconverter instanceof NormalDateConverter));
-			if (dateconverter instanceof NormalDateConverter) {
-				TimeSeriesCollection collection = new TimeSeriesCollection();
-				TimeSeries serie = new TimeSeries(viewable, Minute.class);
-				log.log(Level.FINE, "Suche Eintrag für " + viewable);
-				for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
-					serie.addOrUpdate(new Minute(entry.getKey()),
-							entry.getValue());
-				}
-				collection.addSeries(serie);
-				// collection.
-				if (i == 0) {
-					chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
-							"Wert", collection, true, true, false);
-				} else {
-					XYPlot plot = chart.getXYPlot();
-					plot.setDataset(i, collection);
-					plot.setRenderer(i, new StandardXYItemRenderer());
-				}
-				i++;
-			} else {
-				// TODO: Visualisierung mit Revisionsnummern/Tags?
+			log.info("Erstelle Graph für " + viewable);
+
+			TimeSeriesCollection collection = new TimeSeriesCollection();
+			TimeSeries serie = new TimeSeries(viewable, Minute.class);
+			log.log(Level.FINE, "Suche Eintrag für " + viewable);
+			for (Map.Entry<Date, Long> entry : subMap.get(viewable).entrySet()) {
+				serie.addOrUpdate(new Minute(entry.getKey()),
+						entry.getValue());
 			}
+			collection.addSeries(serie);
+			// collection.
+			if (i == 0) {
+				chart = ChartFactory.createTimeSeriesChart("Chart", "Zeit",
+						"Wert", collection, true, true, false);
+			} else {
+				XYPlot plot = chart.getXYPlot();
+				plot.setDataset(i, collection);
+				plot.setRenderer(i, new StandardXYItemRenderer());
+			}
+			i++;
 
 		}
 		log.info("Graph geladen");
 
 		chart.setBackgroundPaint(Color.white);
-
-		// Image image = chart.createBufferedImage(width, height);
 
 		final JFreeChart chart2 = chart;
 

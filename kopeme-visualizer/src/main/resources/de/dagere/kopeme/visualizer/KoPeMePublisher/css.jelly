@@ -1,0 +1,22 @@
+     <style type="text/css">
+
+		/* ========================= repeatable elements ========================= */
+
+		/* 
+			http://www.peterkropff.de/site/css/echte_kaskadierung.htm 
+			content - padding - border - margin
+		*/
+			
+		div.testcases .repeated-container .repeated-chunk {
+			border: 0 solid ;
+			margin-top: 0.5% ;
+			margin-bottom: .5% ;
+			padding-top: 0 ;
+			padding-bottom: 0 ;
+		}
+		
+		div.testcases {
+			margin-left: 1.5% ;
+		}
+		
+    </style>

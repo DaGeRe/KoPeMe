@@ -3,9 +3,7 @@ package de.dagere.kopeme.datacollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -35,12 +33,12 @@ public class TestResult {
 
 	protected Map<String, Long> values;
 	protected Map<String, DataCollector> dataCollectors;
-	protected Map<String, Map<Date, Long>> historicalDataMap;
 	protected List<Map<String, Long>> realValues;
 	protected int index;
 	protected Checker checker;
 	private int realExecutions;
 	private final String testcase;
+	private final HistoricalTestResults historicalResults;
 
 	private final Map<String, MeasureSummarizer> collectorSummarizerMap;
 
@@ -55,6 +53,7 @@ public class TestResult {
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		index = 0;
 		this.testcase = testcase;
+		historicalResults = new HistoricalTestResults(testcase);
 
 		collectorSummarizerMap = new HashMap<>();
 		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
@@ -226,8 +225,6 @@ public class TestResult {
 			}
 			values.put(collectorName, result);
 		}
-
-		historicalDataMap = new HashMap<String, Map<Date, Long>>();
 	}
 
 	/**
@@ -259,140 +256,16 @@ public class TestResult {
 	 * @param name Name of the measure
 	 * @return Value of the measure
 	 */
-	public long getValue(final String name) {
-		return values.get(name) != null ? values.get(name) : dataCollectors.get(name).getValue();
-	}
-
-	/**
-	 * Gets the maximum value of the measurement of all runs.
-	 * 
-	 * @param measurement Name of the measure
-	 * @return Maximum Value of the measure
-	 */
-	public long getMaximumValue(final String measurement) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData.size() > 0) {
-			long max = Long.MIN_VALUE;
-			for (Long value : historicalData.values()) {
-				max = (value > max ? value : max);
-			}
-			return max;
+	public long getValue(final String key) {
+		if (values.get(key) != null) {
+			return values.get(key);
 		} else {
-			return 0;
-		}
-	}
-
-	/**
-	 * Gets the minimum value of the measurement of all runs.
-	 * 
-	 * @param measurement Name of the measure
-	 * @return Minimum value of the measure
-	 */
-	public long getMinumumValue(final String measurement) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData.size() > 0) {
-			long min = Long.MAX_VALUE;
-			for (Long value : historicalData.values()) {
-				min = (value < min ? value : min);
+			long avg = 0;
+			for (int i = 0; i < realValues.size(); i++) {
+				avg += realValues.get(i).get(key);
 			}
-			return min;
-		} else {
-			return 0;
+			return realValues.size() > 0 ? avg / realValues.size() : Long.MAX_VALUE;
 		}
-	}
-
-	/**
-	 * Gets the average value of the performance-measure over all runs.
-	 * 
-	 * @param measurement Name of the measure
-	 * @return Average value of the measure
-	 */
-	public long getAverageValue(final String measurement) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null) return 0L;
-		if (historicalData.size() > 0) {
-			long sum = 0;
-			for (Number value : historicalData.values()) {
-				sum += value.longValue();
-			}
-			return sum / historicalData.size();
-		} else {
-			return 0;
-		}
-	}
-
-	/**
-	 * Gets a List of Dates of the last runs.
-	 * 
-	 * @param measurement Name of the measure
-	 * @param runs Count of runs
-	 * @return List of dates
-	 */
-	private List<Date> getLastRuns(final String measurement, final int runs) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		if (historicalData == null) return new LinkedList<Date>();
-
-		List<Date> dateList = new LinkedList<Date>(historicalData.keySet());
-		Collections.sort(dateList);
-
-		int start = 0;
-		if (dateList.size() > runs) {
-			start = dateList.size() - runs;
-		}
-		return dateList.subList(start, dateList.size());
-	}
-
-	/**
-	 * Gets the average value of the performance-measure over the last runs runs.
-	 * 
-	 * @param measurement measurment, for which the value should be calculated
-	 * @param runs count of runs
-	 * @return Average value
-	 */
-	public long getLastRunsAverage(final String measurement, final int runs) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-		List<Date> lastRunList = getLastRuns(measurement, runs);
-
-		long sum = 0;
-		for (Date d : lastRunList) {
-			Number num = historicalData.get(d);
-			sum += (num.longValue());
-		}
-		return lastRunList.size() != 0 ? sum / lastRunList.size() : 0;
-	}
-
-	/**
-	 * Gets the maximum value of the performance-measure over the last runs runs.
-	 * 
-	 * @param measurement measurment, for which the value should be calculated
-	 * @param runs count of runs
-	 * @return Last runs maximum
-	 */
-	public long getLastRunsMaximum(final String measurement, final int runs) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-
-		long max = Long.MIN_VALUE;
-		for (Number num : historicalData.values()) {
-			if (max < num.longValue()) max = num.longValue();
-		}
-		return max;
-	}
-
-	/**
-	 * Gets the minimum value of the performance-measure over the last runs runs.
-	 * 
-	 * @param measurement measurment, for which the value should be calculated
-	 * @param runs count of runs
-	 * @return Last runs minimum
-	 */
-	public long getLastRunsMinimum(final String measurement, final int runs) {
-		Map<Date, Long> historicalData = historicalDataMap.get(measurement);
-
-		long min = Long.MAX_VALUE;
-		for (Number num : historicalData.values()) {
-			if (min < num.longValue()) min = num.longValue();
-		}
-		return min;
 	}
 
 	/**
@@ -504,5 +377,14 @@ public class TestResult {
 	 */
 	public void setRealExecutions(final int realExecutions) {
 		this.realExecutions = realExecutions;
+	}
+
+	/**
+	 * Gets the historical test results, e.g. the results in past runs.
+	 * 
+	 * @return
+	 */
+	public HistoricalTestResults getHistoricalResults() {
+		return historicalResults;
 	}
 }

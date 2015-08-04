@@ -1,5 +1,7 @@
 package de.dagere.kopeme;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Represents an execution of all runs of one test.
@@ -119,15 +122,13 @@ public class PerformanceTestRunner {
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
 			runMainExecution(pts, newResult);
 		} catch (Throwable t) {
-			newResult.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), newResult, false, true, filename, true);
+			tr.finalizeCollection();
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 			throw t;
 		}
-		PerformanceTestUtils.saveData(method.getName(), newResult, false, false, filename, true);
-
-		newResult.checkValues();
-
-		return newResult;
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
+		tr.checkValues();
+		return tr;
 	}
 
 	/**
@@ -141,7 +142,6 @@ public class PerformanceTestRunner {
 		TestResult tr = new TestResult(method.getName(), warmupExecutions);
 		Object[] params = {};
 		runWarmup(params);
-		int executions = 0;
 		tr = new TestResult(method.getName(), executionTimes);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
@@ -153,16 +153,14 @@ public class PerformanceTestRunner {
 			runMainExecution(pts, tr);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 			throw t;
 		}
 		log.trace("Zeit: " + (System.currentTimeMillis() - start));
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
 		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden sollen
-
 		tr.checkValues();
-
 		return tr;
 	}
 

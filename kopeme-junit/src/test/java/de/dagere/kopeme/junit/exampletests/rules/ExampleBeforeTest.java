@@ -16,13 +16,13 @@ public class ExampleBeforeTest {
 	@Before
 	public void init() throws InterruptedException {
 		System.out.println("Init");
-		Thread.sleep(100);
+		Thread.sleep(60);
 	}
 
 	@Test
 	@PerformanceTest
 	public void spendTime() throws InterruptedException {
 		System.out.println("SpendTime");
-		Thread.sleep(100);
+		Thread.sleep(60);
 	}
 }

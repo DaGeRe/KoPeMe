@@ -1,5 +1,7 @@
 package de.dagere.kopeme.junit.testrunner;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,6 +31,7 @@ import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
@@ -312,11 +315,11 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			runMainExecution(tr, callee, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, saveFullData);
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, saveFullData));
 			throw t;
 		}
 		tr.finalizeCollection();
-		PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, saveFullData);
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, saveFullData));
 		return tr;
 	}
 

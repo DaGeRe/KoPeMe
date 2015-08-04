@@ -36,6 +36,6 @@ public class ExampleNonMeasuringBefore {
 	@Test
 	public void spendTime() throws InterruptedException {
 		System.out.println("Spend Time");
-		Thread.sleep(100);
+		Thread.sleep(110);
 	}
 }

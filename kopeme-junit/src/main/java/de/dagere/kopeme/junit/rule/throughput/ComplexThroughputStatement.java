@@ -1,5 +1,7 @@
 package de.dagere.kopeme.junit.rule.throughput;
 
+import static de.dagere.kopeme.PerformanceTestUtils.saveData;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -9,8 +11,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
@@ -46,16 +48,16 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 				runMainExecution(tr);
 			} catch (AssertionFailedError t) {
 				tr.finalizeCollection();
-				PerformanceTestUtils.saveData(method.getName(), tr, true, false, filename, true);
+				saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, true));
 				throw t;
 			} catch (Throwable t) {
 				tr.finalizeCollection();
-				PerformanceTestUtils.saveData(method.getName(), tr, false, true, filename, true);
+				saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
 				throw t;
 			}
 			tr.finalizeCollection();
 			tr.addValue("size", currentsize);
-			PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, false);
+			saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
 			if (!assertationvalues.isEmpty()) {
 				tr.checkValues(assertationvalues);
 			}
@@ -63,8 +65,6 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 			currentsize += stepsize;
 			oberserver.setSize(currentsize);
 		}
-
-		// PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 	}
 
 	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {

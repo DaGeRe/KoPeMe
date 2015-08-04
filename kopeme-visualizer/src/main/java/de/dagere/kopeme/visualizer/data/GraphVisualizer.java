@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.jfree.util.Log;
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import de.dagere.kopeme.visualizer.VisualizeAction;
 
 /**
  * Saves the data for one graph, i.e. for one part of a VisualizeAction
@@ -17,6 +20,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  */
 public class GraphVisualizer {
+
+	private static transient Logger LOG = Logger
+			.getLogger(VisualizeAction.class.getName());
 
 	private Map<String, Map<Date, Long>> dataMap;
 	private int valueCount;
@@ -27,15 +33,26 @@ public class GraphVisualizer {
 		return name;
 	}
 
+	public String getTestName() {
+		final String testName = name.substring(0, name.lastIndexOf("(") - 1);
+		return testName;
+	}
+
+	public String getCollectorName() {
+		final String collectorName = name.substring(name.lastIndexOf("(") + 1, name.lastIndexOf(")"));
+		return collectorName;
+	}
+
 	public GraphVisualizer() {
 
 	}
 
 	@DataBoundConstructor
-	public GraphVisualizer(String name, Map<String, Map<Date, Long>> temp) {
+	public GraphVisualizer(final String name, final Map<String, Map<Date, Long>> temp, final boolean visible) {
 		this.name = name;
 		dataMap = temp;
-		visible = true;
+		this.visible = visible;
+		// LOG.info("Visible: " + visible);
 	}
 
 	public String[] getMeasurements() {
@@ -51,7 +68,8 @@ public class GraphVisualizer {
 			Set<Date> unOrderedSet = performanceMeasure.getValue().keySet();
 			TreeSet<Date> measuredDates = new TreeSet<Date>(new Comparator<Date>() {
 
-				public int compare(Date o1, Date o2) {
+				@Override
+				public int compare(final Date o1, final Date o2) {
 					return -o1.compareTo(o2);
 				}
 			});
@@ -75,8 +93,7 @@ public class GraphVisualizer {
 		return visible;
 	}
 
-	public void setVisible(boolean isVisible) {
-		Log.info("SetVisible: " + isVisible);
+	public void setVisible(final boolean isVisible) {
 		this.visible = isVisible;
 	}
 }

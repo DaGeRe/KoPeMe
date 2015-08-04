@@ -37,9 +37,9 @@ public class ExampleJUnitTests {
 
 		tr.setChecker(new Checker() {
 			@Override
-			public void checkValues(TestResult tr) {
+			public void checkValues(final TestResult tr) {
 				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class
-						.getName()), Matchers.lessThan((long) (tr
+						.getName()), Matchers.lessThan((long) (tr.getHistoricalResults()
 						.getLastRunsAverage(TimeDataCollector.class.getName(),
 								5) * 1.10)));
 			}
