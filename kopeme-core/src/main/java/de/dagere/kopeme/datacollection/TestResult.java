@@ -264,7 +264,7 @@ public class TestResult {
 			for (int i = 0; i < realValues.size(); i++) {
 				avg += realValues.get(i).get(key);
 			}
-			return avg / realValues.size();
+			return realValues.size() > 0 ? avg / realValues.size() : Long.MAX_VALUE;
 		}
 	}
 

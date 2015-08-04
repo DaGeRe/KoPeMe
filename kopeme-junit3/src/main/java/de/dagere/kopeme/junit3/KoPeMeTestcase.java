@@ -83,6 +83,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
+		LOG.debug("Starting KoPeMe-Test {} finished", getName());
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
@@ -109,6 +110,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 					e.printStackTrace();
 				}
 				tr.finalizeCollection();
+				LOG.debug("Test-call finished");
 			}
 		});
 
@@ -129,14 +131,22 @@ public abstract class KoPeMeTestcase extends TestCase {
 		thread.start();
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
 		thread.join(timeoutTime);
-		LOG.debug("Test should be finished...");
-		while (thread.isAlive()) {
+		LOG.trace("Test should be finished...");
+		int count = 0;
+		while (thread.isAlive() && count < 5) {
 			LOG.debug("Thread not finished, is kill now..");
 			thread.interrupt();
+			Thread.sleep(50);
+			count++;
+		}
+		if (count == 10) {
+			LOG.debug("Thread does not respond, so it is killed hard now.");
+			thread.stop();
 		}
 
-		System.out.println("Speichere nach: " + this.getClass().getName());
+		LOG.trace("Saving for test: " + getName());
 		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
 
 	/**
@@ -157,6 +167,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			if (Thread.interrupted()) {
 				return;
+			} else {
+				LOG.trace("Nicht interrupted!");
 			}
 		}
 
@@ -195,9 +207,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 			LOG.debug("--- Stopping execution " + executions + endPart);
 			if (Thread.interrupted()) {
 				return;
+			} else {
+				LOG.trace("Nicht interrupted!");
 			}
 		}
-		LOG.debug("Executions: " + executions);
+		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions);
 	}
 }

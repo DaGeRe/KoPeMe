@@ -88,7 +88,7 @@ public final class PerformanceTestUtils {
 			DataStorer xds = new XMLDataStorer(f, data.getFilename(), testcasename);
 			TestResult tr = data.getTr();
 			for (String key : tr.getKeys()) {
-				LOG.debug("Key: " + key);
+				LOG.trace("Key: " + key);
 				double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
 				long value = tr.getValue(key);
 				long min = tr.getMinumumCurrentValue(key);
