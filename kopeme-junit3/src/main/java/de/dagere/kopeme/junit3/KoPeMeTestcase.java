@@ -9,14 +9,10 @@ import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-<<<<<<< HEAD
 import de.dagere.kopeme.PerformanceTestUtils;
-=======
-import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
->>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
@@ -30,12 +26,12 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
  *
  */
 public abstract class KoPeMeTestcase extends TestCase {
-	
+
 	private static final Logger LOG = LogManager.getLogger(KoPeMeTestcase.class);
-	
-	private PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
-	private PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
-	
+
+	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
+	private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
+
 	/**
 	 * Initializes the testcase.
 	 */
@@ -65,7 +61,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * 
 	 * @return real executions
 	 */
-	protected int getExecutionTimes(){
+	protected int getExecutionTimes() {
 		return annoTestcase.executionTimes();
 	}
 
@@ -74,9 +70,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * 
 	 * @return Weather full data should be logged
 	 */
-	protected boolean logFullData(){
+	protected boolean logFullData() {
 		return annoTestcase.logFullData();
 	}
+
 	/**
 	 * Returns the time all testcase executions may take *in sum* in ms. -1 means unbounded; Standard is set to 120 s.
 	 * 
@@ -94,7 +91,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	protected DataCollectorList getDataCollectors() {
 		return DataCollectorList.STANDARD;
 	}
-	
+
 	/**
 	 * Should kieker monitoring be used.
 	 * 
@@ -106,9 +103,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
-<<<<<<< HEAD
-		LOG.debug("Starting KoPeMe-Test {}", getName());
-=======
 		final Runnable testCase = new Runnable() {
 
 			@Override
@@ -121,7 +115,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 			}
 		};
 
->>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
@@ -129,14 +122,14 @@ public abstract class KoPeMeTestcase extends TestCase {
 		String testClassName = this.getClass().getName();
 		final TestResult tr = new TestResult(testClassName, executionTimes);
 		tr.setCollectors(getDataCollectors());
-		
+
 		try {
 			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 		} catch (Exception e) {
 			System.err.println("kieker has failed!");
 			e.printStackTrace();
 		}
-		
+
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
@@ -214,13 +207,13 @@ public abstract class KoPeMeTestcase extends TestCase {
 			throws Throwable {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-<<<<<<< HEAD
+			// <<<<<<< HEAD
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			KoPeMeTestcase.super.runTest();
-=======
-			LOG.info("-- Starting warmup executiongetName() " + fullName + " " + i + "/" + warmupExecutions + " --");
-			testCase.run();
->>>>>>> feature_i#13/kieker_stack_measures_and_comparison
+			// =======
+			// LOG.info("-- Starting warmup executiongetName() " + fullName + " " + i + "/" + warmupExecutions + " --");
+			// testCase.run();
+			// >>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			if (Thread.interrupted()) {
 				return;

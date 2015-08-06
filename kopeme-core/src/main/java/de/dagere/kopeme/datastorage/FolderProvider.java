@@ -8,7 +8,8 @@ import java.util.TreeMap;
 import de.dagere.kopeme.KoPeMeConfiguration;
 
 public class FolderProvider {
-<<<<<<< HEAD
+
+	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
 
 	static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME") : System.getenv("HOME") + File.separator + ".KoPeMe"
 			+ File.separator;
@@ -18,50 +19,28 @@ public class FolderProvider {
 	private final KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 
 	public static FolderProvider getInstance() {
-=======
-	
-	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
-	
-	private static final String USER_HOME = System.getenv("HOME");
-	private static final String KO_PE_ME = ".KoPeMe";
-
-	static final String KOPEME_DEFAULT_FOLDER = USER_HOME + File.separator + KO_PE_ME + File.separator;
-
-	private static FolderProvider INSTANCE;
-	
-	private KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
-	
-	static synchronized FolderProvider getInstance(final String defaultFolder) {
->>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 		if (INSTANCE == null) {
 			INSTANCE = new FolderProvider(KOPEME_DEFAULT_FOLDER);
 		}
 		return INSTANCE;
 	}
 
-<<<<<<< HEAD
-=======
-	public synchronized static FolderProvider getInstance() {
-		return getInstance(KOPEME_DEFAULT_FOLDER);
-	}
-
->>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 	private String kopemeDefaultFolder;
 
 	private FolderProvider(final String kopemeDefaultFolder) {
 		setKopemeDefaultFolder(kopemeDefaultFolder);
 	}
-	
+
 	public File getFolderForCurrentPerformanceresults(final String filename) {
 		String nowAsString = MEASURE_TIME.toString();
 		File returnable = new File(getFolderFor(filename) + nowAsString);
 		return returnable;
 	}
-	
-	public File getFolderForCurrentPerformanceresults(String testFileName, String testCaseName) {
+
+	public File getFolderForCurrentPerformanceresults(final String testFileName, final String testCaseName) {
 		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath() + File.separator + testCaseName);
 	}
-	
+
 	public String getFolderFor(final String filename) {
 		StringBuilder pathBuilder = new StringBuilder();
 		pathBuilder.append(kopemeDefaultFolder);

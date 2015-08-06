@@ -21,7 +21,7 @@ public class TestFileWriting extends TestCase {
 	protected void setUp() throws Exception {
 		TestUtils.cleanAndSetKoPeMeOutputFolder();
 	}
-	
+
 	public void testOnlyTimeWriting() {
 		TestRunner.run(JUnitAdditionTestOnlyTime.class);
 

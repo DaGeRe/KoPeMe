@@ -31,6 +31,9 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import de.dagere.kopeme.PomProjectNameReader;
+import de.dagere.kopeme.datastorage.FolderProvider;
+import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 
 //import hudson.util.
