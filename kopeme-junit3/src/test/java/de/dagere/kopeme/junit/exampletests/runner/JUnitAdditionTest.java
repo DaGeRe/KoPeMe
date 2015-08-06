@@ -5,8 +5,10 @@ import junit.framework.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
+@PerformanceTestingClass(useKieker = true)
 public class JUnitAdditionTest extends KoPeMeTestcase {
 	private final static Logger log = LogManager.getLogger(JUnitAdditionTest.class);
 

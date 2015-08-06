@@ -25,11 +25,4 @@ public @interface PerformanceTestingClass {
 	 * @return
 	 */
 	boolean logFullData() default false;
-
-	/**
-	 * Optionally specifies that kieker should be used.
-	 * 
-	 * @return
-	 */
-	boolean useKieker() default false;
 }

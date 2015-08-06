@@ -34,7 +34,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), warmupExecutions);
+				TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions());
 				try {
 					tr = executeSimpleTest(tr);
 					if (!assertationvalues.isEmpty()) {
@@ -48,7 +48,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		});
 
 		mainThread.start();
-		mainThread.join(timeout);
+		mainThread.join(annotation.timeout());
 		if (mainThread.isAlive()) {
 			mainThread.interrupt();
 		}
@@ -60,7 +60,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
-		tr = new TestResult(method.getName(), executionTimes);
+		tr = new TestResult(method.getName(), annotation.timeout());
 
 		if (!checkCollectorValidity(tr)) {
 			log.warn("Not all Collectors are valid!");

@@ -38,7 +38,7 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 		runWarmup(methodString);
 
 		while (currentsize <= maxsize) {
-			TestResult tr = new TestResult(method.getName(), executionTimes);
+			TestResult tr = new TestResult(method.getName(), annotation.executionTimes());
 
 			if (!checkCollectorValidity(tr)) {
 				log.warn("Not all Collectors are valid!");
@@ -69,6 +69,7 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 
 	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
+		int executionTimes = annotation.executionTimes();
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			log.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
@@ -82,7 +83,7 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			if (executions  >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}

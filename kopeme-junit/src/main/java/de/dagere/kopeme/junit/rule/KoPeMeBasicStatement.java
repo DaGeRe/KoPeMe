@@ -14,6 +14,7 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * A statement for running performance tests.
@@ -33,7 +34,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	protected Method method;
 	protected TestRunnables runnables;
 
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
+	protected PerformanceTest annotation;
 
 	/**
 	 * Initializes the KoPemeBasicStatement.
@@ -48,13 +49,16 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		this.filename = filename;
 		this.method = method;
 
-		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-
+		annotation = method.getAnnotation(PerformanceTest.class);
+			
+		
 		if (annotation != null) {
-			executionTimes = annotation.executionTimes();
-			warmupExecutions = annotation.warmupExecutions();
-			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
-			timeout = annotation.timeout();
+			try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+			} catch (Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 			maximalRelativeStandardDeviation = new HashMap<>();
 			assertationvalues = new HashMap<>();
 			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
@@ -81,20 +85,20 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
-		for (executions = 1; executions <= executionTimes; executions++) {
+		for (executions = 1; executions <= annotation.executionTimes(); executions++) {
 
-			LOG.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting execution " + executions + "/" + annotation.executionTimes() + " ---");
 			runnables.getBeforeRunnable().run();
 			tr.startCollection();
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();
 
-			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Stopping execution " + executions + "/" + annotation.executionTimes() + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			if (executions >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
@@ -104,11 +108,11 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	}
 
 	protected void runWarmup(String methodString) {
-		for (int i = 1; i <= warmupExecutions; i++) {
+		for (int i = 1; i <= annotation.warmupExecutions(); i++) {
 			runnables.getBeforeRunnable().run();
-			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + annotation.warmupExecutions() + " ---");
 			runnables.getTestRunnable().run();
-			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Stopping warmup execution " + i + "/" + annotation.warmupExecutions() + " ---");
 			runnables.getAfterRunnable().run();
 		}
 	}

@@ -20,6 +20,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<core.version>0.10-SNAPSHOT</core.version>
 		<java.version>1.7</java.version>
+		<kieker.version>1.11</kieker.version>
 	</properties>
 
 	<modules>
@@ -28,6 +29,8 @@
 		<module>kopeme-junit</module>
 		<module>kopeme-junit3</module>
 		<module>kopeme-visualizer-core</module>
+		<module>kopeme-analysis</module>
+		
 		<!-- <module>kopeme-mojo</module> -->
 		<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
 		<!-- <module>kopeme-visualizer</module> -->

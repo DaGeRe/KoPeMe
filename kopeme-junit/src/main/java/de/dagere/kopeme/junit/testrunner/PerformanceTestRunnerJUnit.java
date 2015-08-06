@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit.testrunner;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -26,12 +25,14 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
@@ -45,44 +46,7 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
  */
 public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
-	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = new PerformanceTestingClass() {
-
-		@Override
-		public Class<? extends Annotation> annotationType() {
-			return PerformanceTestingClass.class;
-		}
-
-		@Override
-		public boolean useKieker() {
-			try {
-				return (boolean) PerformanceTestingClass.class.getMethod("useKieker").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-
-		@Override
-		public int overallTimeout() {
-			try {
-				return (int) PerformanceTestingClass.class.getMethod("overallTimeout").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return 100;
-		}
-
-		@Override
-		public boolean logFullData() {
-			try {
-				return (boolean) PerformanceTestingClass.class.getMethod("logFullData").getDefaultValue();
-			} catch (NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}
-			return false;
-		}
-	};
-
+	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = AnnotationDefaults.of(PerformanceTestingClass.class);
 	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private final Class klasse;
@@ -91,7 +55,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
-	protected String filename;
+	protected final String filename;
 
 	/**
 	 * Initializes a PerformanceTestRunnerJUnit
@@ -102,6 +66,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	public PerformanceTestRunnerJUnit(final Class<?> klasse) throws InitializationError {
 		super(klasse);
 		this.klasse = klasse;
+		filename = klasse.getName();
 	}
 
 	@Override
@@ -212,10 +177,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Statement methodBlock(final FrameworkMethod currentMethod) {
-		if (currentMethod.getAnnotation(PerformanceTest.class) != null) {
-			return createPerformanceStatementFromMethod(currentMethod);
-		} else {
+		if (currentMethod.getAnnotation(PerformanceTest.class) == null) {
 			return super.methodBlock(currentMethod);
+		} else {
+			return createPerformanceStatementFromMethod(currentMethod);
 		}
 	}
 
@@ -280,6 +245,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		this.method = method;
 		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
+			try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+			} catch (Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
 			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
@@ -295,7 +266,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		}
-		filename = klasse.getName();
 	}
 
 	/**

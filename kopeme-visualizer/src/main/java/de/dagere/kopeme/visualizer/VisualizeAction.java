@@ -31,9 +31,6 @@ import org.jfree.data.time.Minute;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import de.dagere.kopeme.PomProjectNameReader;
-import de.dagere.kopeme.datastorage.FolderProvider;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
 
 //import hudson.util.
@@ -97,7 +94,6 @@ public class VisualizeAction implements Action, Serializable {
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
-
 			final FilePath workspace = project.getSomeWorkspace();
 			if (workspace != null) // prevent error, when workspace for project isn't initialized
 			{
