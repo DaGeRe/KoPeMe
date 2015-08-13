@@ -39,7 +39,9 @@ public enum KoPeMeKiekerSupport {
 
 				kiekerController.enableMonitoring();
 			} else {
-				kiekerController.disableMonitoring();
+				if (kiekerController.isMonitoringEnabled()) {
+					kiekerController.disableMonitoring();
+				}
 			}
 
 		}
