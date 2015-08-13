@@ -5,13 +5,11 @@ import junit.framework.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
-public class JUnitAdditionTest extends KoPeMeTestcase {
-	private final static Logger log = LogManager.getLogger(JUnitAdditionTest.class);
+public class ExampleAdditionTest extends KoPeMeTestcase {
+	private final static Logger log = LogManager.getLogger(ExampleAdditionTest.class);
 
-	@PerformanceTest(useKieker = true)
 	public void testAddition() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {
@@ -19,6 +17,11 @@ public class JUnitAdditionTest extends KoPeMeTestcase {
 		}
 		Assert.assertEquals(10000 * 9999 / 2, a);
 		log.debug("Addition beendet");
+		giveMeOutput();
+	}
+
+	private void giveMeOutput() {
+		System.out.println("Test");
 	}
 
 	@Override
@@ -35,5 +38,10 @@ public class JUnitAdditionTest extends KoPeMeTestcase {
 	protected boolean logFullData() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	protected boolean useKieker() {
+		return true;
 	}
 }

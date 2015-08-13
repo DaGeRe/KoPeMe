@@ -103,6 +103,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	protected void runTest() throws Throwable {
+		LOG.debug("Initialize JUnit-3-KoPeMe-Testcase");
 		final Runnable testCase = new Runnable() {
 
 			@Override
@@ -207,13 +208,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 			throws Throwable {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			// <<<<<<< HEAD
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			KoPeMeTestcase.super.runTest();
-			// =======
-			// LOG.info("-- Starting warmup executiongetName() " + fullName + " " + i + "/" + warmupExecutions + " --");
-			// testCase.run();
-			// >>>>>>> feature_i#13/kieker_stack_measures_and_comparison
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			if (Thread.interrupted()) {
 				return;

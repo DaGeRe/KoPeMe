@@ -12,7 +12,7 @@ import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
+import de.dagere.kopeme.junit.exampletests.runner.ExampleAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestOnlyTime;
 
 public class TestFileWriting extends TestCase {
@@ -41,9 +41,9 @@ public class TestFileWriting extends TestCase {
 	}
 
 	public void testNormalWriting() {
-		TestRunner.run(JUnitAdditionTest.class);
+		TestRunner.run(ExampleAdditionTest.class);
 
-		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(ExampleAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		XMLDataLoader xdl;
@@ -60,10 +60,10 @@ public class TestFileWriting extends TestCase {
 	}
 
 	public void testDoubleWriting() {
-		TestRunner.run(JUnitAdditionTest.class);
-		TestRunner.run(JUnitAdditionTest.class);
+		TestRunner.run(ExampleAdditionTest.class);
+		TestRunner.run(ExampleAdditionTest.class);
 
-		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
+		File f = TestUtils.xmlFileForKoPeMeTest(ExampleAdditionTest.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 	}
 }
