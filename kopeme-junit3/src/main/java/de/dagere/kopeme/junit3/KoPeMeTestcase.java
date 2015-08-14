@@ -27,6 +27,8 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
  */
 public abstract class KoPeMeTestcase extends TestCase {
 
+	private static final int INTERRUPT_TRIES = 10;
+
 	private static final Logger LOG = LogManager.getLogger(KoPeMeTestcase.class);
 
 	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
@@ -173,18 +175,18 @@ public abstract class KoPeMeTestcase extends TestCase {
 		LOG.trace("Test should be finished...");
 		if (thread.isAlive()) {
 			int count = 0;
-			while (thread.isAlive() && count < 10) {
+			while (thread.isAlive() && count < INTERRUPT_TRIES) {
 				LOG.debug("Thread not finished, is kill now..");
 				thread.interrupt();
-				Thread.sleep(50);
+				Thread.sleep(10);
 				count++;
 			}
-			if (count == 10) {
+			if (count == INTERRUPT_TRIES) {
 				LOG.debug("Thread does not respond, so it is killed hard now.");
 				count = 0;
 				while (thread.isAlive() && count < 5) {
 					thread.stop();
-					Thread.sleep(50);
+					Thread.sleep(10);
 					count++;
 				}
 

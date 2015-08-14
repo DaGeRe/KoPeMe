@@ -16,8 +16,8 @@ public class TestTimeout extends TestCase {
 	protected void setUp() throws Exception {
 		TestUtils.cleanAndSetKoPeMeOutputFolder();
 	}
-	
-	private static final Logger logger = LogManager.getLogger(TestTimeout.class);
+
+	private static final Logger LOG = LogManager.getLogger(TestTimeout.class);
 
 	public void testOnlyTimeWriting() {
 		long start = System.nanoTime();
@@ -25,7 +25,7 @@ public class TestTimeout extends TestCase {
 		long stop = System.nanoTime();
 
 		long duration = (long) ((stop - start) / 10E5);
-		logger.info("Zeit: " + duration);
+		LOG.info("Zeit: " + duration);
 		Assert.assertTrue(duration < 1500);
 	}
 
