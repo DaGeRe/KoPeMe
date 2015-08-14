@@ -127,7 +127,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		try {
 			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 		} catch (Exception e) {
-			System.err.println("kieker has failed!");
+			System.err.println("Kieker has failed!");
 			e.printStackTrace();
 		}
 
@@ -173,7 +173,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		LOG.trace("Test should be finished...");
 		if (thread.isAlive()) {
 			int count = 0;
-			while (thread.isAlive() && count < 5) {
+			while (thread.isAlive() && count < 10) {
 				LOG.debug("Thread not finished, is kill now..");
 				thread.interrupt();
 				Thread.sleep(50);
@@ -181,7 +181,13 @@ public abstract class KoPeMeTestcase extends TestCase {
 			}
 			if (count == 10) {
 				LOG.debug("Thread does not respond, so it is killed hard now.");
-				thread.stop();
+				count = 0;
+				while (thread.isAlive() && count < 5) {
+					thread.stop();
+					Thread.sleep(50);
+					count++;
+				}
+
 				LOG.debug("Saving for error-finished test: " + getName());
 				// PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 			}

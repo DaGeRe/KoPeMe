@@ -43,7 +43,6 @@ public enum KoPeMeKiekerSupport {
 					kiekerController.disableMonitoring();
 				}
 			}
-
 		}
 	}
 
