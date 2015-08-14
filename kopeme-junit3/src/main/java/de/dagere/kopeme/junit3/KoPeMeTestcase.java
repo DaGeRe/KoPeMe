@@ -104,19 +104,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 	}
 
 	@Override
-	protected void runTest() throws Throwable {
+	public void runBare() throws InterruptedException {
 		LOG.debug("Initialize JUnit-3-KoPeMe-Testcase");
-		final Runnable testCase = new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					KoPeMeTestcase.super.runTest();
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-			}
-		};
 
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
@@ -169,6 +158,15 @@ public abstract class KoPeMeTestcase extends TestCase {
 		});
 
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
+		waitForTestEnd(timeoutTime, thread);
+		// No matter how the test gets finished, saving should be done here
+		LOG.debug("End-Testcase-Saving begins");
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+
+		LOG.debug("KoPeMe-Test {} finished", getName());
+	}
+
+	private void waitForTestEnd(final int timeoutTime, final Thread thread) throws InterruptedException {
 		thread.start();
 
 		thread.join(timeoutTime);
@@ -189,18 +187,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 					Thread.sleep(10);
 					count++;
 				}
-
-				LOG.debug("Saving for error-finished test: " + getName());
-				// PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 			}
 		} else {
 
 		}
-		// No matter how the test gets finished, saving should be done here
-		LOG.debug("End-Testcase-Saving begins");
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
-
-		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
 
 	/**
@@ -216,9 +206,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 			throws Throwable {
 		String fullName = this.getClass().getName() + "." + getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
+			setUp();
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			KoPeMeTestcase.super.runTest();
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
+			tearDown();
 			if (Thread.interrupted()) {
 				return;
 			} else {
@@ -254,9 +246,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 		String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
+			setUp();
 			tr.startCollection();
 			KoPeMeTestcase.super.runTest();
 			tr.stopCollection();
+			tearDown();
 			tr.getValue(TimeDataCollector.class.getName());
 			LOG.debug("--- Stopping execution " + executions + endPart);
 			if (Thread.interrupted()) {

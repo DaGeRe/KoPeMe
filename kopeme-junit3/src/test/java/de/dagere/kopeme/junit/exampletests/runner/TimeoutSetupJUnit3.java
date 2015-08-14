@@ -5,8 +5,21 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
-public class JUnitTimeoutTest extends KoPeMeTestcase {
-	private final static Logger log = LogManager.getLogger(JUnitTimeoutTest.class);
+public class TimeoutSetupJUnit3 extends KoPeMeTestcase {
+	private final static Logger log = LogManager.getLogger(TimeoutSetupJUnit3.class);
+
+	@Override
+	public void setUp() {
+		while (true) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Warte 1 Sekunde");
+		}
+	}
 
 	public void testAddition() {
 		try {
