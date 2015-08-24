@@ -105,7 +105,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 	@Override
 	public void runBare() throws InterruptedException {
-		LOG.debug("Initialize JUnit-3-KoPeMe-Testcase");
+		LOG.trace("Initialize JUnit-3-KoPeMe-Testcase");
 
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
@@ -160,7 +160,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		LOG.debug("Waiting for test-completion for {}", timeoutTime);
 		waitForTestEnd(timeoutTime, thread);
 		// No matter how the test gets finished, saving should be done here
-		LOG.debug("End-Testcase-Saving begins");
+		LOG.trace("End-Testcase-Saving begins");
 		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
