@@ -198,10 +198,12 @@ public class PerformanceTestRunner {
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
 			}
+			tr.setRealExecutions(executions);
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
+
 		}
 		log.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);

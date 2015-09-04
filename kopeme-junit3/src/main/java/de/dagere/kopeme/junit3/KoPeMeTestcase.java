@@ -188,8 +188,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 					count++;
 				}
 			}
-		} else {
-
 		}
 	}
 
@@ -252,6 +250,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			tr.stopCollection();
 			tearDown();
 			tr.getValue(TimeDataCollector.class.getName());
+			tr.setRealExecutions(executions);
 			LOG.debug("--- Stopping execution " + executions + endPart);
 			if (Thread.interrupted()) {
 				return;

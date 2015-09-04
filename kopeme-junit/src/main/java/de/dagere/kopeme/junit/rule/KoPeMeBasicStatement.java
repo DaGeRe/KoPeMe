@@ -50,8 +50,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		this.method = method;
 
 		annotation = method.getAnnotation(PerformanceTest.class);
-			
-		
+
 		if (annotation != null) {
 			try {
 				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
@@ -79,11 +78,11 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	 * @param tr Test Result that should be checked
 	 * @return Weather the result is valid
 	 */
-	protected boolean checkCollectorValidity(TestResult tr) {
+	protected boolean checkCollectorValidity(final TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
 	}
 
-	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+	protected void runMainExecution(final TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
 		for (executions = 1; executions <= annotation.executionTimes(); executions++) {
 
@@ -93,7 +92,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();
-
+			tr.setRealExecutions(executions - 1);
 			LOG.debug("--- Stopping execution " + executions + "/" + annotation.executionTimes() + " ---");
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
@@ -107,7 +106,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		tr.setRealExecutions(executions - 1);
 	}
 
-	protected void runWarmup(String methodString) {
+	protected void runWarmup(final String methodString) {
 		for (int i = 1; i <= annotation.warmupExecutions(); i++) {
 			runnables.getBeforeRunnable().run();
 			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + annotation.warmupExecutions() + " ---");

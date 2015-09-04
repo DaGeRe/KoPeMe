@@ -314,6 +314,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			if (simple) tr.stopCollection();
 			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			callee.postEvaluate();
+			tr.setRealExecutions(executions);
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
