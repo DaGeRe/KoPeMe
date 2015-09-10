@@ -161,7 +161,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		waitForTestEnd(timeoutTime, thread);
 		// No matter how the test gets finished, saving should be done here
 		LOG.trace("End-Testcase-Saving begins");
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, fullData));
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, fullData));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
@@ -259,6 +259,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 			}
 		}
 		LOG.debug("Executions: " + (executions - 1));
-		tr.setRealExecutions(executions);
+		tr.setRealExecutions(executions - 1);
 	}
 }

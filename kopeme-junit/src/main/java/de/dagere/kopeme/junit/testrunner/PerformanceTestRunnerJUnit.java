@@ -285,11 +285,11 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			runMainExecution(tr, callee, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, saveFullData));
+			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, warmupExecutions, saveFullData));
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, saveFullData));
+		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, warmupExecutions, saveFullData));
 		return tr;
 	}
 

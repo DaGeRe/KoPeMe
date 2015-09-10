@@ -40,6 +40,7 @@
 								<xs:sequence>
 									<xs:element name="value" type="xs:string" />
 									<xs:element name="deviation" type="xs:double" />
+									<xs:element name="warmupExecutions" type="xs:long"/>
 									<xs:element name="executionTimes" type="xs:long"/>
 									<xs:element name="version" type="versioninfo"/>
 									<xs:element name="min" type="xs:long"/>

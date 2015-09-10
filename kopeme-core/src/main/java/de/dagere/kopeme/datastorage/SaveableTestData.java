@@ -11,15 +11,20 @@ public abstract class SaveableTestData {
 	private static class SaveableTestDataFactory<T extends SaveableTestData> {
 		private final Class<T> type;
 
-		public SaveableTestDataFactory(Class<T> type) {
+		public SaveableTestDataFactory(final Class<T> type) {
 			this.type = type;
 		}
 
-		public T createTestData(File folder, String testcasename, String filename, TestResult tr, boolean saveValues) {
+		public T createTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmup, final boolean saveValues) {
 			T returnable;
 			try {
 				returnable = type.newInstance();
-				setFields(returnable, folder, testcasename, filename, tr, saveValues);
+				returnable.setFolder(folder);
+				returnable.setTestcasename(testcasename);
+				returnable.setFilename(filename);
+				returnable.setTr(tr);
+				returnable.setSaveValues(saveValues);
+				returnable.setWarmupExecutions(warmup);
 				return returnable;
 			} catch (InstantiationException | IllegalAccessException e) {
 				throw new RuntimeException(e); // should never happen
@@ -27,47 +32,60 @@ public abstract class SaveableTestData {
 		}
 	}
 
-	public static FineTestData createFineTestData(String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, saveValues);
+	public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, final int warmupExecutions, final boolean saveValues) {
+		return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
-	private static File createDefaultFolder(String filename) {
+	private static File createDefaultFolder(final String filename) {
 		File folder = new File(PROVIDER.getFolderFor(filename));
 		folder.mkdirs();
 		return folder;
 	}
 
-	public static AssertFailureTestData createAssertFailedTestData(String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return createAssertFailedTestData(createDefaultFolder(filename), testcasename, filename, tr, saveValues);
+	public static AssertFailureTestData createAssertFailedTestData(final String testcasename, final String filename, final TestResult tr, final int warmupExecutions,
+			final boolean saveValues) {
+		return createAssertFailedTestData(createDefaultFolder(filename), testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
-	public static TestErrorTestData createErrorTestData(String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return createErrorTestData(createDefaultFolder(filename), testcasename, filename, tr, saveValues);
+	public static TestErrorTestData createErrorTestData(final String testcasename, final String filename, final TestResult tr, final int warmupExecutions, final boolean saveValues) {
+		return createErrorTestData(createDefaultFolder(filename), testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
-	public static FineTestData createFineTestData(File folder, String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return new SaveableTestDataFactory<>(FineTestData.class).createTestData(folder, testcasename, filename, tr, saveValues);
+	public static FineTestData createFineTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmupExecutions,
+			final boolean saveValues) {
+		return new SaveableTestDataFactory<>(FineTestData.class).createTestData(folder, testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
-	public static AssertFailureTestData createAssertFailedTestData(File folder, String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, saveValues);
+	public static AssertFailureTestData createAssertFailedTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
+			final int warmupExecutions,
+			final boolean saveValues) {
+		return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
-	public static TestErrorTestData createErrorTestData(File folder, String testcasename, String filename, TestResult tr, boolean saveValues) {
-		return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, saveValues);
-	}
-
-	private static void setFields(SaveableTestData returnable, File folder, String testcasename, String filename, TestResult tr, boolean saveValues) {
-		returnable.setFolder(folder);
-		returnable.setTestcasename(testcasename);
-		returnable.setFilename(filename);
-		returnable.setTr(tr);
-		returnable.setSaveValues(saveValues);
+	public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmupExecutions,
+			final boolean saveValues) {
+		return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, warmupExecutions, saveValues);
 	}
 
 	private File folder;
 	private String testcasename, filename;
 	private TestResult tr;
+	private int warmupExecutions;
+
+	/**
+	 * @return the warmupExecutions
+	 */
+	public int getWarmupExecutions() {
+		return warmupExecutions;
+	}
+
+	/**
+	 * @param warmupExecutions the warmupExecutions to set
+	 */
+	public void setWarmupExecutions(final int warmupExecutions) {
+		this.warmupExecutions = warmupExecutions;
+	}
+
 	private boolean saveValues;
 
 	public static class FineTestData extends SaveableTestData {
@@ -83,7 +101,7 @@ public abstract class SaveableTestData {
 		return folder;
 	}
 
-	public void setFolder(File folder) {
+	public void setFolder(final File folder) {
 		this.folder = folder;
 	}
 
@@ -91,7 +109,7 @@ public abstract class SaveableTestData {
 		return testcasename;
 	}
 
-	public void setTestcasename(String testcasename) {
+	public void setTestcasename(final String testcasename) {
 		this.testcasename = testcasename;
 	}
 
@@ -99,7 +117,7 @@ public abstract class SaveableTestData {
 		return filename;
 	}
 
-	public void setFilename(String filename) {
+	public void setFilename(final String filename) {
 		this.filename = filename;
 	}
 
@@ -107,7 +125,7 @@ public abstract class SaveableTestData {
 		return tr;
 	}
 
-	public void setTr(TestResult tr) {
+	public void setTr(final TestResult tr) {
 		this.tr = tr;
 	}
 
@@ -115,7 +133,7 @@ public abstract class SaveableTestData {
 		return saveValues;
 	}
 
-	public void setSaveValues(boolean saveValues) {
+	public void setSaveValues(final boolean saveValues) {
 		this.saveValues = saveValues;
 	}
 

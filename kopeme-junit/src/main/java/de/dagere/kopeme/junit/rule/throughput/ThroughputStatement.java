@@ -22,7 +22,7 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 
 	private final int stepsize, maxsize;
 
-	public ThroughputStatement(TestRunnables runnables, Method method, String filename, int stepsize, int maxsize) {
+	public ThroughputStatement(final TestRunnables runnables, final Method method, final String filename, final int stepsize, final int maxsize) {
 		super(runnables, method, filename);
 		this.stepsize = stepsize;
 		this.maxsize = maxsize;
@@ -45,15 +45,15 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 				runMainExecution(tr);
 			} catch (AssertionFailedError t) {
 				tr.finalizeCollection();
-				saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, true));
+				saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, 0, true));
 				throw t;
 			} catch (Throwable t) {
 				tr.finalizeCollection();
-				saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
+				saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, 0, true));
 				throw t;
 			}
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
+			saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, 0, true));
 			if (!assertationvalues.isEmpty()) {
 				tr.checkValues(assertationvalues);
 			}
@@ -64,7 +64,8 @@ public class ThroughputStatement extends KoPeMeBasicStatement {
 		// PerformanceTestUtils.saveData(method.getName(), tr, false, false, filename, true);
 	}
 
-	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+	@Override
+	protected void runMainExecution(final TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
 		int executionTimes = annotation.executionTimes();
 		for (executions = 1; executions <= executionTimes; executions++) {

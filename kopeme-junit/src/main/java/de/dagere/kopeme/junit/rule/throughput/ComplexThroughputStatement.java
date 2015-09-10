@@ -24,7 +24,8 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 	private int currentsize;
 	private final IOberserveExecutionTimes oberserver;
 
-	public ComplexThroughputStatement(TestRunnables runnables, Method method, String filename, int startsize, int stepsize, int maxsize, IOberserveExecutionTimes oberserver) {
+	public ComplexThroughputStatement(final TestRunnables runnables, final Method method, final String filename, final int startsize, final int stepsize, final int maxsize,
+			final IOberserveExecutionTimes oberserver) {
 		super(runnables, method, filename);
 		this.stepsize = stepsize;
 		this.maxsize = maxsize;
@@ -48,16 +49,16 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 				runMainExecution(tr);
 			} catch (AssertionFailedError t) {
 				tr.finalizeCollection();
-				saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, true));
+				saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, 0, true));
 				throw t;
 			} catch (Throwable t) {
 				tr.finalizeCollection();
-				saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
+				saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, 0, true));
 				throw t;
 			}
 			tr.finalizeCollection();
 			tr.addValue("size", currentsize);
-			saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
+			saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, 0, true));
 			if (!assertationvalues.isEmpty()) {
 				tr.checkValues(assertationvalues);
 			}
@@ -67,7 +68,8 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 		}
 	}
 
-	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
+	@Override
+	protected void runMainExecution(final TestResult tr) throws IllegalAccessException, InvocationTargetException {
 		int executions;
 		int executionTimes = annotation.executionTimes();
 		for (executions = 1; executions <= executionTimes; executions++) {
@@ -83,7 +85,7 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions  >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+			if (executions >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}

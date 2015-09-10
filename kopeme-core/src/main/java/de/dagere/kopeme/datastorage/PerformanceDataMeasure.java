@@ -11,7 +11,7 @@ public class PerformanceDataMeasure {
 	public final String collectorname;
 	public final long value;
 	public final double deviation;
-	public final int executionTimes;
+	public final int executionTimes, warmupExecutions;
 	public final long min, max;
 	public final double first10percentile;
 	public final boolean failure, error;
@@ -28,7 +28,10 @@ public class PerformanceDataMeasure {
 	 * @param max maximum value
 	 * @param first10percentile First 10-Percentil of the measured values
 	 */
-	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation,
+			final int executionTimes,
+			final int warmupExecutions,
+			final long min,
 			final long max,
 			final double first10percentile) {
 		this.testcase = testcase;
@@ -36,6 +39,7 @@ public class PerformanceDataMeasure {
 		this.value = value;
 		this.deviation = deviation;
 		this.executionTimes = executionTimes;
+		this.warmupExecutions = warmupExecutions;
 		this.min = min;
 		this.max = max;
 		this.first10percentile = first10percentile;
@@ -56,7 +60,10 @@ public class PerformanceDataMeasure {
 	 * @param failure Weather an failure occured
 	 * @param error Weather an error occured
 	 */
-	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation, final int executionTimes, final long min,
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation,
+			final int executionTimes,
+			final int warmupExecutions,
+			final long min,
 			final long max, final boolean failure,
 			final boolean error) {
 		this.testcase = testcase;
@@ -64,6 +71,7 @@ public class PerformanceDataMeasure {
 		this.value = value;
 		this.deviation = deviation;
 		this.executionTimes = executionTimes;
+		this.warmupExecutions = warmupExecutions;
 		this.min = min;
 		this.max = max;
 		first10percentile = 10.0;
@@ -104,6 +112,10 @@ public class PerformanceDataMeasure {
 	 */
 	public int getExecutionTimes() {
 		return executionTimes;
+	}
+
+	public int getWarmupExecutions() {
+		return warmupExecutions;
 	}
 
 	/**
