@@ -1,7 +1,5 @@
 package de.dagere.kopeme.junit3;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
@@ -221,7 +219,6 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		String fullName = this.getClass().getName() + "." + getName();
 		int i = 1;
 		double mean = 1, standardeviation = 1;
-		FileWriter fw = new FileWriter(new File("/home/reichelt/plot.txt"));
 		while (standardeviation / mean > COEFFICIENT_OF_VARIATION || i < warmupExecutions) {
 			setUp();
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " -- (" + standardeviation / mean + ")");
@@ -230,8 +227,6 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 			final long measurement = System.nanoTime() - start;
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			tearDown();
-			fw.write(i + ";" + measurement + "\n");
-			fw.flush();
 			if (i < warmupExecutions) {
 				timeMeasurements.add(measurement);
 				SummaryStatistics st = new SummaryStatistics();
