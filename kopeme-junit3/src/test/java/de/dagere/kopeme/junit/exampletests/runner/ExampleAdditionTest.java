@@ -5,9 +5,10 @@ import junit.framework.Assert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.junit3.KoPeMeTestcase;
+import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.kopeme.junit3.KoPeMeStaticRigorTestcase;
 
-public class ExampleAdditionTest extends KoPeMeTestcase {
+public class ExampleAdditionTest extends KoPeMeStaticRigorTestcase {
 	private final static Logger log = LogManager.getLogger(ExampleAdditionTest.class);
 
 	public void testAddition() {
@@ -26,12 +27,12 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 
 	@Override
 	protected int getWarmupExecutions() {
-		return 2;
+		return 1000;
 	}
 
 	@Override
 	protected int getExecutionTimes() {
-		return 10;
+		return 2000;
 	}
 
 	@Override
@@ -43,5 +44,10 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 	@Override
 	protected boolean useKieker() {
 		return true;
+	}
+
+	@Override
+	protected DataCollectorList getDataCollectors() {
+		return DataCollectorList.ONLYTIME;
 	}
 }

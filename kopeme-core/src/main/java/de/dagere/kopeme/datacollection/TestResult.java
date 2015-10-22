@@ -361,6 +361,20 @@ public class TestResult {
 		return currentValues;
 	}
 
+	public void setValues(final String key, final List<Long> currentValues) {
+		if (currentValues.size() > realValues.size()) {
+			throw new RuntimeException("Internal Error: Count of new values should not exceed count of executions");
+		}
+		for (int i = 0; i < realValues.size(); i++) {
+			Map<String, Long> currentEntry = realValues.get(i);
+			if (currentValues.size() > i) {
+				currentEntry.put(key, currentValues.get(i));
+			} else {
+				currentEntry.remove(i);
+			}
+		}
+	}
+
 	/**
 	 * Returns count of real executions.
 	 * 
