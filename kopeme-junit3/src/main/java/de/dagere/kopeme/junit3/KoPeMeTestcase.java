@@ -2,15 +2,10 @@ package de.dagere.kopeme.junit3;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedList;
-import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-import org.apache.commons.math3.random.EmpiricalDistribution;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -209,76 +204,14 @@ public abstract class KoPeMeTestcase extends TestCase {
 			throws Throwable {
 
 		// TODO Fix Quickhack
-		List<Long> timeMeasurements = new LinkedList<>();
 
 		String fullName = this.getClass().getName() + "." + getName();
-		int i = 1;
-		double mean = 1, standardeviation = 1;
-		while (standardeviation / mean > 0.02 || i < warmupExecutions) {
+		for (int i = 0; i < warmupExecutions; i++) {
 			setUp();
-			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " -- (" + standardeviation / mean + ")");
-			long start = System.nanoTime();
+			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
 			KoPeMeTestcase.super.runTest();
-			final long measurement = System.nanoTime() - start;
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			tearDown();
-			if (i < warmupExecutions) {
-				timeMeasurements.add(measurement);
-				SummaryStatistics st = new SummaryStatistics();
-				for (Long l : timeMeasurements) {
-					st.addValue(l);
-				}
-
-				mean = st.getMean();
-				standardeviation = st.getStandardDeviation();
-				LOG.trace("Val: {} Mean: {} Abweichung: {}", measurement, mean, Math.abs(mean - measurement));
-			} else {
-				EmpiricalDistribution distribution = new EmpiricalDistribution(timeMeasurements.size() / 20);
-
-				double[] values = new double[timeMeasurements.size()];
-				int j = 0;
-				for (Long measurements : timeMeasurements) {
-					values[j] = measurements.doubleValue();
-					j++;
-				}
-
-				distribution.load(values);
-
-				try {
-					double cdfValue = distribution.cumulativeProbability(measurement);
-					// LOG.info("Anz: {} Sum: {} PDF: {}", distribution.getSampleStats().getN(), distribution.cumulativeProbability(measurement), cdfValue2);
-					LOG.trace("Val: {} PDF: {} Mean: {} Abweichung: {}", measurement, cdfValue, mean, Math.abs(mean - measurement));
-
-					final boolean isOutlier = cdfValue > 0.99;
-
-					if (!isOutlier) {
-						LOG.debug("Test");
-						timeMeasurements.add(measurement);
-
-						if (i > warmupExecutions) {
-							timeMeasurements.remove(0);
-						}
-
-						SummaryStatistics st = new SummaryStatistics();
-						for (Long l : timeMeasurements) {
-							st.addValue(l);
-						}
-
-						mean = st.getMean();
-						standardeviation = st.getStandardDeviation();
-					}
-				} catch (NotStrictlyPositiveException ne) {
-					LOG.debug("Harter Ausreißer: " + measurement);
-				}
-
-			}
-
-			i++;
-			if (Thread.interrupted()) {
-				return;
-			} else {
-				LOG.trace("Nicht interrupted!");
-			}
 		}
 		// for (int i = 1; i <= warmupExecutions; i++) {
 		//
