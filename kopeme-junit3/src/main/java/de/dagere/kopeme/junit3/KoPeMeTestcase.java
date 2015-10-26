@@ -203,19 +203,18 @@ public abstract class KoPeMeTestcase extends TestCase {
 	private void runTestCase(final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
 			throws Throwable {
 
-		// TODO Fix Quickhack
-
 		String fullName = this.getClass().getName() + "." + getName();
-		for (int i = 0; i < warmupExecutions; i++) {
-			setUp();
-			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
-			KoPeMeTestcase.super.runTest();
-			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
-			tearDown();
+		try {
+			for (int i = 0; i < warmupExecutions; i++) {
+				setUp();
+				LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " --");
+				KoPeMeTestcase.super.runTest();
+				LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
+				tearDown();
+			}
+		} catch (AssertionFailedError t) {
+			t.printStackTrace(); // do nothing - functional warmup failure is ok
 		}
-		// for (int i = 1; i <= warmupExecutions; i++) {
-		//
-		// }
 
 		try {
 			runMainExecution(fullName, tr, executionTimes);
