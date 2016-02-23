@@ -90,5 +90,5 @@ public @interface PerformanceTest {
 	 * 
 	 * @return true if the kieker framework should be used
 	 */
-	boolean useKieker() default false;
+	boolean useKieker() default true;
 }

@@ -7,8 +7,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit3.KoPeMeStaticRigorTestcase;
+import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
-public class ExampleAdditionTest extends KoPeMeStaticRigorTestcase {
+public class ExampleAdditionTest extends KoPeMeTestcase {
 	private final static Logger log = LogManager.getLogger(ExampleAdditionTest.class);
 
 	public void testAddition() {
@@ -27,12 +28,12 @@ public class ExampleAdditionTest extends KoPeMeStaticRigorTestcase {
 
 	@Override
 	protected int getWarmupExecutions() {
-		return 1000;
+		return 200;
 	}
 
 	@Override
 	protected int getExecutionTimes() {
-		return 2000;
+		return 500;
 	}
 
 	@Override

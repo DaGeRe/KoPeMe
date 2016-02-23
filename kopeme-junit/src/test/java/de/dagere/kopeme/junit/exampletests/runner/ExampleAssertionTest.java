@@ -24,11 +24,8 @@ class TestXYZ {
 public class ExampleAssertionTest {
 
 	@Test
-	@PerformanceTest(executionTimes = 10, warmupExecutions = 10,
-			assertions =
-			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
-			deviations = { @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
-			useKieker = true)
+	@PerformanceTest(executionTimes = 10, warmupExecutions = 10, deviations = {
+			@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) })
 	public void testAssertionAddition() throws FileNotFoundException {
 		int a = 0;
 		System.setOut(new PrintStream(new File("test.txt")));
@@ -62,11 +59,9 @@ public class ExampleAssertionTest {
 
 	@Ignore
 	@Test
-	@PerformanceTest(executionTimes = 10, warmupExecutions = 10,
-			assertions =
-			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
-			deviations = { @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) },
-			useKieker = true)
+	@PerformanceTest(executionTimes = 10, warmupExecutions = 10, assertions = {
+			@Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) }, deviations = {
+					@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) }, useKieker = true)
 	public void testAssertionAdditionDoubleTest() {
 		int a = 0;
 		for (int i = 0; i < 100000; i++) {

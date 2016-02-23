@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
+import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.common.record.misc.RegistryRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
@@ -47,6 +48,7 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	public ChangeableFolderSyncFsWriter(final Configuration configuration) {
 		super(configuration);
+		System.out.println("Initialisiere..");
 		this.configuration = configuration;
 		currentWriter = new SyncFsWriter(toSyncFsWriterConfiguration(configuration));
 	}
@@ -64,9 +66,16 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	@Override
 	public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
+		
 		if (record instanceof RegistryRecord) {
 			mappingRecords.add((RegistryRecord) record);
 		}
+//		else{
+//			if (record instanceof OperationExecutionRecord){
+//				OperationExecutionRecord operationExecutionRecord = (OperationExecutionRecord)record;
+//				System.out.println("schreibe: " + operationExecutionRecord.getOperationSignature() + " ");
+//			}
+//		}
 		if (currentWriter == null) {
 			return true;
 		} else {
