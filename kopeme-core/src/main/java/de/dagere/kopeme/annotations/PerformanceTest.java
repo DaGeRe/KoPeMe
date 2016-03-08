@@ -65,7 +65,14 @@ public @interface PerformanceTest {
 	 * @return Assertations that should be checked
 	 */
 	Assertion[] assertions() default {};
-
+	
+	/**
+	 * Sets the Datacollectors - possible values are STANDARD, ONLYTIME and NONE.
+	 * 
+	 * @return Datacollectors that should be used
+	 */
+	String dataCollectors() default "STANDARD";
+	
 	/**
 	 * Optionally specify for <emph>all<emph> datacollectors, for which maximal standard deviation an early stop is executed. This means that, if all relative
 	 * standard deviations fall below the given maximale relative deviations thresholds, the test is stoped and the measured value until the stop is the final

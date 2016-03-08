@@ -11,6 +11,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
@@ -39,7 +40,7 @@ public class ComplexThroughputStatement extends KoPeMeBasicStatement {
 		runWarmup(methodString);
 
 		while (currentsize <= maxsize) {
-			TestResult tr = new TestResult(method.getName(), annotation.executionTimes());
+			TestResult tr = new TestResult(method.getName(), annotation.executionTimes(), DataCollectorList.STANDARD);
 
 			if (!checkCollectorValidity(tr)) {
 				log.warn("Not all Collectors are valid!");

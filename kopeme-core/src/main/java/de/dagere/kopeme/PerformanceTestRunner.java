@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
@@ -109,7 +110,7 @@ public class PerformanceTestRunner {
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
 	 */
 	private TestResult executeComplexTest() throws IllegalAccessException, InvocationTargetException {
-		TestResult tr = new TestResult(method.getName(), warmupExecutions);
+		TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
 		Object[] params = { tr };
 		runWarmup(params);
 		TestResult newResult = null;
@@ -117,7 +118,7 @@ public class PerformanceTestRunner {
 			if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 				log.warn("Not all Collectors are valid!");
 			}
-			newResult = new TestResult(method.getName(), executionTimes);
+			newResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 			params[0] = newResult;
 			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
 			runMainExecution(pts, newResult);
@@ -139,10 +140,10 @@ public class PerformanceTestRunner {
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
 	 */
 	private TestResult executeSimpleTest() throws IllegalAccessException, InvocationTargetException {
-		TestResult tr = new TestResult(method.getName(), warmupExecutions);
+		TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
 		Object[] params = {};
 		runWarmup(params);
-		tr = new TestResult(method.getName(), executionTimes);
+		tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			log.warn("Not all Collectors are valid!");

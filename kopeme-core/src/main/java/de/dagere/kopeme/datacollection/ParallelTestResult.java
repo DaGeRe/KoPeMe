@@ -22,7 +22,7 @@ public class ParallelTestResult extends TestResult {
 	 * @param executionTimes Count of the planned executions
 	 */
 	public ParallelTestResult(final String testcase, final int executionTimes) {
-		super(testcase, executionTimes);
+		super(testcase, executionTimes, DataCollectorList.STANDARD);
 
 		methods = new LinkedList<MethodExecution>();
 	}

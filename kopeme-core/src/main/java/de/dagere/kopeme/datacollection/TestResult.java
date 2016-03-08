@@ -48,7 +48,7 @@ public class TestResult {
 	 * @param testcase Name of the Testcase
 	 * @param executionTimes Count of the planned executions
 	 */
-	public TestResult(final String testcase, final int executionTimes) {
+	public TestResult(final String testcase, final int executionTimes, final DataCollectorList collectors) {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		index = 0;
@@ -56,7 +56,7 @@ public class TestResult {
 		historicalResults = new HistoricalTestResults(testcase);
 
 		collectorSummarizerMap = new HashMap<>();
-		dataCollectors = DataCollectorList.STANDARD.getDataCollectors();
+		dataCollectors = collectors.getDataCollectors();
 	}
 
 	/**

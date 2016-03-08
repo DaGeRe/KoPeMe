@@ -112,7 +112,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		final int timeoutTime = getMaximalTime();
 
 		String testClassName = this.getClass().getName();
-		final TestResult tr = new TestResult(testClassName, executionTimes);
+		final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.STANDARD);
 		tr.setCollectors(getDataCollectors());
 
 		try {

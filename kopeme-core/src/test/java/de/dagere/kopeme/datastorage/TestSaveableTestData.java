@@ -9,6 +9,7 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 
 public class TestSaveableTestData {
@@ -16,7 +17,7 @@ public class TestSaveableTestData {
 	private static final String RESULT_FILENAME = "myFileName";
 	private static final String THIS_DIR = ".";
 	private static final String MY_TEST_CASE_NAME = "myTestCaseName";
-	private static final TestResult COMPLEX = new TestResult(MY_TEST_CASE_NAME, 1);
+	private static final TestResult COMPLEX = new TestResult(MY_TEST_CASE_NAME, 1, DataCollectorList.STANDARD);
 	private static final boolean SAVE_VALUES = true;
 
 	@Test

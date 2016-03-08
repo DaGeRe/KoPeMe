@@ -10,6 +10,7 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
@@ -34,7 +35,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		final Thread mainThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions());
+				TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), DataCollectorList.STANDARD);
 				try {
 					tr = executeSimpleTest(tr);
 					if (!assertationvalues.isEmpty()) {
@@ -60,7 +61,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		String methodString = method.getClass().getName() + "." + method.getName();
 		runWarmup(methodString);
 
-		tr = new TestResult(method.getName(), annotation.timeout());
+		tr = new TestResult(method.getName(), annotation.timeout(), DataCollectorList.STANDARD);
 
 		if (!checkCollectorValidity(tr)) {
 			log.warn("Not all Collectors are valid!");

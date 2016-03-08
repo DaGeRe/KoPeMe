@@ -45,8 +45,13 @@ public class TimeBoundedExecution {
 		});
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
-			LOG.error("Test timed out!");
+			LOG.error("Test timed out because of method-timeout!");
 			mainThread.interrupt();
+		}
+		mainThread.join(1000);
+		if (mainThread.isAlive()){
+			LOG.error("Test timed out and was not able to save his data after 10 seconds - is killed hard now.");
+			mainThread.stop();
 		}
 		if (testError != null) {
 			if (testError instanceof Exception) {

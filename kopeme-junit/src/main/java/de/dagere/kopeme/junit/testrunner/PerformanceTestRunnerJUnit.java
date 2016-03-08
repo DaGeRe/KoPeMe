@@ -30,14 +30,14 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
- * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g.
- * the TheorieRunner. An alternative implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to
- * change the signature of test methods to get KoPeMe-Tests running.
+ * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An alternative
+ * implementation, e.g. via Rules, which would make it possible to include Theories, is not possible, because one needs to change the signature of test methods to get KoPeMe-Tests running.
  * 
  * This test runner does not measure the time before and after are taking; but time rules take to execute are added to the overall-time of the method-execution.
  * 
@@ -49,19 +49,22 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = AnnotationDefaults.of(PerformanceTestingClass.class);
 	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
-	private final Class klasse;
+	private final Class<?> klasse;
 	protected boolean saveFullData;
 	protected FrameworkMethod method;
 	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
+	private DataCollectorList datacollectors;
 	protected final String filename;
 
 	/**
 	 * Initializes a PerformanceTestRunnerJUnit
 	 * 
-	 * @param klasse Class that should be tested
-	 * @throws InitializationError Thrown if class can't be initialized
+	 * @param klasse
+	 *            Class that should be tested
+	 * @throws InitializationError
+	 *             Thrown if class can't be initialized
 	 */
 	public PerformanceTestRunnerJUnit(final Class<?> klasse) throws InitializationError {
 		super(klasse);
@@ -79,12 +82,13 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		final RunNotifier parallelNotifier = new RunNotifier();
 		// TODO: Wieso wird dann nicht direkt der Notifier übergeben?
 		parallelNotifier.addListener(new DelegatingRunListener(notifier));
-		Thread mainThread = new Thread(new Runnable() {
+		final Runnable testRunRunnable = new Runnable() {
 			@Override
 			public void run() {
 				PerformanceTestRunnerJUnit.super.run(parallelNotifier);
 			}
-		});
+		};
+		final Thread mainThread = new Thread(testRunRunnable);
 		saveFullData = ptc.logFullData();
 		LOG.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
 		mainThread.start();
@@ -96,6 +100,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				mainThread.interrupt();
 				LOG.debug("Firing..");
 				setTestsToFail(notifier);
+			} else {
+				LOG.debug("Test Class " + klasse.getName() + " finished");
 			}
 		} catch (InterruptedException e) {
 			LOG.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
@@ -106,7 +112,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Sets that tests are failed.
 	 * 
-	 * @param notifier Notifier that should be notified
+	 * @param notifier
+	 *            Notifier that should be notified
 	 */
 	private void setTestsToFail(final RunNotifier notifier) {
 		Description description = getDescription();
@@ -134,45 +141,53 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Gets the PerformanceJUnitStatement for the test execution of the given method.
 	 * 
-	 * @param currentMethod Method that should be tested
+	 * @param currentMethod
+	 *            Method that should be tested
 	 * @return PerformanceJUnitStatement for testing the method
-	 * @throws NoSuchMethodException Thrown if the method does not exist
-	 * @throws SecurityException Thrown if the method is not accessible
-	 * @throws IllegalAccessException Thrown if the method is not accessible
-	 * @throws IllegalArgumentException Thrown if the method has arguments
-	 * @throws InvocationTargetException Thrown if the method is not accessible
+	 * @throws NoSuchMethodException
+	 *             Thrown if the method does not exist
+	 * @throws SecurityException
+	 *             Thrown if the method is not accessible
+	 * @throws IllegalAccessException
+	 *             Thrown if the method is not accessible
+	 * @throws IllegalArgumentException
+	 *             Thrown if the method has arguments
+	 * @throws InvocationTargetException
+	 *             Thrown if the method is not accessible
 	 */
 	private PerformanceJUnitStatement getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException,
 			IllegalArgumentException,
 			InvocationTargetException {
-		Object test;
+
 		try {
-			test = new ReflectiveCallable() {
+			final Object testObject = new ReflectiveCallable() {
 				@Override
 				protected Object runReflectiveCall() throws Throwable {
 					return createTest();
 				}
 			}.run();
+			LOG.debug("Statement: " + currentMethod.getName() + " " + method);
+
+			Statement testExceptionTimeoutStatement = methodInvoker(currentMethod, testObject);
+
+			testExceptionTimeoutStatement = possiblyExpectingExceptions(currentMethod, testObject, testExceptionTimeoutStatement);
+			// testExceptionTimeoutStatement = withPotentialTimeout(currentMethod, test, testExceptionTimeoutStatement);
+
+			final Method withRulesMethod = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
+			withRulesMethod.setAccessible(true);
+
+			final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
+			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject);
+			final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
+			final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
+			perfStatement.setBefores(befores);
+			perfStatement.setAfters(afters);
+
+			return perfStatement;
 		} catch (Throwable e) {
 			return new PerformanceFail(e);
 		}
-		LOG.debug("Statement: " + currentMethod.getName() + " " + method);
-
-		Statement statement = methodInvoker(currentMethod, test);
-
-		statement = possiblyExpectingExceptions(currentMethod, test, statement);
-		statement = withPotentialTimeout(currentMethod, test, statement);
-		Method method2 = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
-		method2.setAccessible(true);
-
-		statement = (Statement) method2.invoke(this, new Object[] { currentMethod, test, statement });
-		PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(statement, test);
-		List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
-		List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-		perfStatement.setBefores(befores);
-		perfStatement.setAfters(afters);
-		return perfStatement;
 	}
 
 	@Override
@@ -187,7 +202,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Creates a PerformanceStatement out of a method
 	 * 
-	 * @param currentMethod Method for which the statement should be created
+	 * @param currentMethod
+	 *            Method for which the statement should be created
 	 * @return The statement
 	 */
 	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
@@ -208,7 +224,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					@Override
 					public void run() {
 						try {
-							runWarmup(callee);
+							TestResult throwMeAway = executeSimpleTest(callee);
 							TestResult tr = executeSimpleTest(callee);
 							tr.checkValues();
 							if (!assertationvalues.isEmpty()) {
@@ -239,7 +255,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Initializes the value of the PerformanceTestRunnerJUnit-Object by reading the annotations.
 	 * 
-	 * @param method The method for which the values should be initialized
+	 * @param method
+	 *            The method for which the values should be initialized
 	 */
 	private void initValues(final FrameworkMethod method) {
 		this.method = method;
@@ -251,6 +268,16 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				System.err.println("kieker has failed!");
 				e.printStackTrace();
 			}
+			if (!annotation.dataCollectors().equals("STANDARD")){
+				datacollectors = DataCollectorList.STANDARD;
+			}else if (annotation.dataCollectors().equals("ONLYTIME")){
+				datacollectors = DataCollectorList.ONLYTIME;
+			}else if (annotation.dataCollectors().equals("NONE")){
+				datacollectors = DataCollectorList.NONE;
+			}else{
+				LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE ARE ALLOWED");
+			}
+
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
 			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
@@ -271,12 +298,15 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Executes a simple test, i.e. a test without parameters.
 	 * 
-	 * @param callee Statement that should be called to measure performance and execute the test
+	 * @param callee
+	 *            Statement that should be called to measure performance and execute the test
 	 * @return The result of the test
-	 * @throws Throwable Any exception that occurs during the test
+	 * @throws Throwable
+	 *             Any exception that occurs during the test
 	 */
 	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee) throws Throwable {
-		TestResult tr = new TestResult(method.getName(), executionTimes);
+		final String methodName = method.getMethod().getName();
+		TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
@@ -285,33 +315,39 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			runMainExecution(tr, callee, true);
 		} catch (Throwable t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, warmupExecutions, saveFullData));
+			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, warmupExecutions, saveFullData));
+		saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, saveFullData));
 		return tr;
 	}
 
 	/**
 	 * Runs the main execution of the test, i.e. the execution where performance measures are counted.
 	 * 
-	 * @param tr TestResult that should be filled
-	 * @param callee Statement that should be called to measure performance and execute the test
-	 * @param simple Weather it is a simple test, i.e. weather there are parameters
-	 * @throws Throwable Any exception that occurs during the test
+	 * @param tr
+	 *            TestResult that should be filled
+	 * @param callee
+	 *            Statement that should be called to measure performance and execute the test
+	 * @param simple
+	 *            Weather it is a simple test, i.e. weather there are parameters
+	 * @throws Throwable
+	 *             Any exception that occurs during the test
 	 */
 	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple) throws Throwable {
-		String methodString = method.getClass().getName() + "." + method.getName();
+		final String methodString = method.getDeclaringClass().getName() + "." + method.getMethod().getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			callee.preEvaluate();
 			LOG.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
-			if (simple) tr.startCollection();
+			if (simple)
+				tr.startCollection();
 			callee.evaluate();
-			if (simple) tr.stopCollection();
+			if (simple)
+				tr.stopCollection();
 			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			callee.postEvaluate();
 			tr.setRealExecutions(executions);
@@ -319,6 +355,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
+			if (Thread.interrupted()) {
+				break;
+			}
+			Thread.sleep(1); // To let other threads "breath"
 		}
 		LOG.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);
@@ -327,17 +367,24 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	/**
 	 * Runs the warmup for the tests.
 	 * 
-	 * @param callee Statement that should be called to measure performance and execute the test
-	 * @throws Throwable Any exception that occurs during the test
+	 * @param callee
+	 *            Statement that should be called to measure performance and execute the test
+	 * @throws Throwable
+	 *             Any exception that occurs during the test
 	 */
 	private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-		String methodString = method.getClass().getName() + "." + method.getName();
+		final String methodString = method.getDeclaringClass().getName() + "." + method.getMethod().getName();
+
 		for (int i = 1; i <= warmupExecutions; i++) {
 			callee.preEvaluate();
 			LOG.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			callee.evaluate();
 			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 			callee.postEvaluate();
+			if (Thread.interrupted()) {
+				break;
+			}
+			Thread.sleep(1); // To let other threads "breath"
 		}
 	}
 }

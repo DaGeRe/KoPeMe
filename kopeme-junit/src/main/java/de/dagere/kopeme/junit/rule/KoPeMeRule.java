@@ -50,7 +50,7 @@ public class KoPeMeRule implements TestRule {
 				}
 			}, testClass, testObject);
 
-			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName() + ".yaml"); //FIXME WHAT THE FUCK?!
+			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName() + ".xml");
 		} else {
 			return stmt;
 		}
