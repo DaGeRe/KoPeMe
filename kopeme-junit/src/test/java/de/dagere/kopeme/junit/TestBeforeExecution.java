@@ -59,7 +59,7 @@ public class TestBeforeExecution {
 	@Parameter(1)
 	public String testname;
 	
-	public static Logger log = LogManager.getLogger(TestJUnitRuleExecutions.class);
+	public static Logger LOG = LogManager.getLogger(TestJUnitRuleExecutions.class);
 
 	@BeforeClass
 	public static void cleanResult() throws IOException {
@@ -68,28 +68,26 @@ public class TestBeforeExecution {
 
 	@Test
 	public void testBefore() throws JAXBException {
-		JUnitCore jc = new JUnitCore();
-		Result result = jc.run(junitTestClass);
-		for (Failure failure : result.getFailures())
+		final JUnitCore jc = new JUnitCore();
+		final Result result = jc.run(junitTestClass);
+		for (final Failure failure : result.getFailures())
 		{
 			System.out.println(failure.toString());
 		}
-		String canonicalName = junitTestClass.getCanonicalName();
-		if(!canonicalName.contains("Runner")){
-			canonicalName += ".yaml";
-		}
-		File f = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
+		final String canonicalName = junitTestClass.getCanonicalName();
+		final File f = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
+		LOG.debug("Suche: {} Existiert: {}", f.getAbsolutePath(), f.exists());
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
-		Integer time = getTimeResult(f, testname);
+		final Integer time = getTimeResult(f, testname);
 		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
 		Assert.assertThat(time, Matchers.greaterThan(100 * 1000));
 	}
 	
-	public static Integer getTimeResult(File f, String methodName) throws JAXBException {
-		Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
-		Map<Date, Long> data = collectorData.get(methodName);
+	public static Integer getTimeResult(final File f, final String methodName) throws JAXBException {
+		final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
+		final Map<Date, Long> data = collectorData.get(methodName);
 		Assert.assertNotNull(data);
-		Integer time = data.entrySet().iterator().next().getValue().intValue();
+		final Integer time = data.entrySet().iterator().next().getValue().intValue();
 		return time;
 	}
 

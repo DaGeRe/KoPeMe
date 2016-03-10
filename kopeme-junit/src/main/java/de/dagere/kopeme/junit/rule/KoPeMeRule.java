@@ -37,20 +37,20 @@ public class KoPeMeRule implements TestRule {
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
-			TestRunnables runnables = new TestRunnables(new Runnable() {
+			final TestRunnables runnables = new TestRunnables(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
 						stmt.evaluate();
-					} catch (Throwable e) {
+					} catch (final Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}, testClass, testObject);
 
-			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName() + ".xml");
+			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName());
 		} else {
 			return stmt;
 		}

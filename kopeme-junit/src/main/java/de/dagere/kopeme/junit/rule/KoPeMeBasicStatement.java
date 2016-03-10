@@ -30,7 +30,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
-	protected String filename;
+	protected final String filename;
 	protected Method method;
 	protected TestRunnables runnables;
 
@@ -54,17 +54,17 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		if (annotation != null) {
 			try {
 				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.err.println("kieker has failed!");
 				e.printStackTrace();
 			}
 			maximalRelativeStandardDeviation = new HashMap<>();
 			assertationvalues = new HashMap<>();
-			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+			for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
 				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
-			for (Assertion a : annotation.assertions()) {
+			for (final Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		} else {
@@ -94,7 +94,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			runnables.getAfterRunnable().run();
 			tr.setRealExecutions(executions - 1);
 			LOG.debug("--- Stopping execution " + executions + "/" + annotation.executionTimes() + " ---");
-			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
 			if (executions >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()

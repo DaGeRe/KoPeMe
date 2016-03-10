@@ -74,39 +74,52 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 	@Override
 	public void run(final RunNotifier notifier) {
-		long start = System.nanoTime();
-		PerformanceTestingClass ptc = (PerformanceTestingClass) klasse.getAnnotation(PerformanceTestingClass.class);
+		final long start = System.nanoTime();
+		PerformanceTestingClass ptc = klasse.getAnnotation(PerformanceTestingClass.class);
 		if (ptc == null) {
 			ptc = DEFAULTPERFORMANCETESTINGCLASS;
 		}
-		final RunNotifier parallelNotifier = new RunNotifier();
+//		final RunNotifier parallelNotifier = new RunNotifier();
 		// TODO: Wieso wird dann nicht direkt der Notifier übergeben?
-		parallelNotifier.addListener(new DelegatingRunListener(notifier));
+//		parallelNotifier.addListener(new DelegatingRunListener(notifier));
 		final Runnable testRunRunnable = new Runnable() {
 			@Override
 			public void run() {
-				PerformanceTestRunnerJUnit.super.run(parallelNotifier);
+				PerformanceTestRunnerJUnit.super.run(notifier);
 			}
 		};
-		final Thread mainThread = new Thread(testRunRunnable);
 		saveFullData = ptc.logFullData();
-		LOG.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
-		mainThread.start();
-
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout());
 		try {
-			mainThread.join(ptc.overallTimeout());
-			if (mainThread.isAlive()) {
-				LOG.debug("Call interrupt because of class-timeout");
-				mainThread.interrupt();
-				LOG.debug("Firing..");
+			final boolean finished = tbe.execute();
+			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
+			if (!finished){
 				setTestsToFail(notifier);
-			} else {
-				LOG.debug("Test Class " + klasse.getName() + " finished");
 			}
-		} catch (InterruptedException e) {
-			LOG.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
+		} catch (final Exception e) {
+			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
 			e.printStackTrace();
 		}
+		
+//		final Thread mainThread = new Thread(testRunRunnable);
+//		saveFullData = ptc.logFullData();
+//		LOG.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
+//		mainThread.start();
+//
+//		try {
+//			mainThread.join(ptc.overallTimeout());
+//			if (mainThread.isAlive()) {
+//				LOG.debug("Call interrupt because of class-timeout");
+//				mainThread.interrupt();
+//				LOG.debug("Firing..");
+//				setTestsToFail(notifier);
+//			} else {
+//				LOG.debug("Test Class " + klasse.getName() + " finished");
+//			}
+//		} catch (final InterruptedException e) {
+//			LOG.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
+//			e.printStackTrace();
+//		}
 	}
 
 	/**
@@ -116,18 +129,18 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 *            Notifier that should be notified
 	 */
 	private void setTestsToFail(final RunNotifier notifier) {
-		Description description = getDescription();
-		ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
+		final Description description = getDescription();
+		final ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
 		toBeFailed.add(description); // the whole test class failed
-		for (Description d : toBeFailed) {
-			EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
+		for (final Description d : toBeFailed) {
+			final EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
 			testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
 		}
 	}
 
 	@Override
 	protected void validateTestMethods(final List<Throwable> errors) {
-		for (FrameworkMethod each : computeTestMethods()) {
+		for (final FrameworkMethod each : computeTestMethods()) {
 			if (each.getMethod().getParameterTypes().length > 1) {
 				errors.add(new Exception("Method " + each.getName() + " is supposed to have one or zero parameters, who's type is TestResult"));
 			} else {
@@ -185,7 +198,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			perfStatement.setAfters(afters);
 
 			return perfStatement;
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			return new PerformanceFail(e);
 		}
 	}
@@ -220,31 +233,35 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		final Statement st = new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				final Thread mainThread = new Thread(new Runnable() {
+				
+				final Runnable mainRunnable = new Runnable() {
 					@Override
 					public void run() {
 						try {
-							TestResult throwMeAway = executeSimpleTest(callee);
-							TestResult tr = executeSimpleTest(callee);
+							runWarmup(callee);
+							final TestResult tr = executeSimpleTest(callee);
 							tr.checkValues();
 							if (!assertationvalues.isEmpty()) {
 								LOG.info("Checking: " + assertationvalues.size());
 								tr.checkValues(assertationvalues);
 							}
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							if (e instanceof RuntimeException) {
 								throw (RuntimeException) e;
 							}
+							if (e instanceof InterruptedException){
+								throw new RuntimeException(e);
+							}
 							LOG.error("Catched Exception: {}", e.getLocalizedMessage());
 							e.printStackTrace();
-						} catch (Throwable t) {
+						} catch (final Throwable t) {
 							if (t instanceof Error)
 								throw (Error) t;
 							LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
 						}
 					}
-				});
-				TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+				};
+				final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout);
 				tbe.execute();
 				LOG.debug("Timebounded execution finished");
 			}
@@ -260,21 +277,21 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 */
 	private void initValues(final FrameworkMethod method) {
 		this.method = method;
-		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
+		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		if (annotation != null) {
 			try {
 				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				System.err.println("kieker has failed!");
 				e.printStackTrace();
 			}
-			if (!annotation.dataCollectors().equals("STANDARD")){
+			if (annotation.dataCollectors().equals("STANDARD")) {
 				datacollectors = DataCollectorList.STANDARD;
-			}else if (annotation.dataCollectors().equals("ONLYTIME")){
+			} else if (annotation.dataCollectors().equals("ONLYTIME")) {
 				datacollectors = DataCollectorList.ONLYTIME;
-			}else if (annotation.dataCollectors().equals("NONE")){
+			} else if (annotation.dataCollectors().equals("NONE")) {
 				datacollectors = DataCollectorList.NONE;
-			}else{
+			} else {
 				LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE ARE ALLOWED");
 			}
 
@@ -284,12 +301,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
 
-			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+			for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
 				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
 			assertationvalues = new HashMap<>();
-			for (Assertion a : annotation.assertions()) {
+			for (final Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		}
@@ -306,14 +323,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 */
 	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee) throws Throwable {
 		final String methodName = method.getMethod().getName();
-		TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
+		final TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
 			runMainExecution(tr, callee, true);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
 			throw t;
@@ -355,7 +372,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
-			if (Thread.interrupted()) {
+			final boolean interrupted = Thread.interrupted();
+			LOG.debug("Interrupt state: {}", interrupted );
+			if (interrupted) {
 				break;
 			}
 			Thread.sleep(1); // To let other threads "breath"
@@ -373,18 +392,18 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 *             Any exception that occurs during the test
 	 */
 	private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-		final String methodString = method.getDeclaringClass().getName() + "." + method.getMethod().getName();
+		final String methodName = method.getMethod().getName();
+		final TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
 
-		for (int i = 1; i <= warmupExecutions; i++) {
-			callee.preEvaluate();
-			LOG.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
-			callee.evaluate();
-			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
-			callee.postEvaluate();
-			if (Thread.interrupted()) {
-				break;
-			}
-			Thread.sleep(1); // To let other threads "breath"
+		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
+			LOG.warn("Not all Collectors are valid!");
 		}
+		try {
+			runMainExecution(tr, callee, true);
+		} catch (final Throwable t) {
+			tr.finalizeCollection();
+			throw t;
+		}
+		tr.finalizeCollection();
 	}
 }

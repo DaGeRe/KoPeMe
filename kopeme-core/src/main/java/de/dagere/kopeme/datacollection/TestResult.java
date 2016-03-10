@@ -93,8 +93,8 @@ public class TestResult {
 	 * @return Names of used DataCollectors
 	 */
 	public Set<String> getKeys() {
-		Set<String> keySet = new HashSet<String>();
-		for (DataCollector dc : dataCollectors.values()) {
+		final Set<String> keySet = new HashSet<String>();
+		for (final DataCollector dc : dataCollectors.values()) {
 			keySet.add(dc.getName());
 		}
 
@@ -126,32 +126,33 @@ public class TestResult {
 	 * @param assertationvalues Threshold values
 	 */
 	public void checkValues(final Map<String, Long> assertationvalues) {
-		for (Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
-			for (DataCollector dc : dataCollectors.values()) {
-				LOG.trace("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
+		for (final Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
+			for (final DataCollector dc : dataCollectors.values()) {
+				LOG.debug("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
-					LOG.trace("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
+					LOG.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
 					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
 			}
 		}
+		LOG.debug("All measurements fine.");
 	}
 
 	/**
 	 * Starts the collection of Data for all Datacollectors.
 	 */
 	public void startCollection() {
-		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
-		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
+		final Collection<DataCollector> dcCollection = dataCollectors.values();
+		final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
+		final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
 		Arrays.sort(sortedCollectors, comparator);
-		for (DataCollector dc : sortedCollectors) {
+		for (final DataCollector dc : sortedCollectors) {
 			LOG.trace("Starte: {}", dc.getName());
 			dc.startCollection();
 		}
@@ -162,16 +163,16 @@ public class TestResult {
 	 * the original time.
 	 */
 	public void startOrRestartCollection() {
-		Collection<DataCollector> dcCollection = dataCollectors.values();
-		DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
-		Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
+		final Collection<DataCollector> dcCollection = dataCollectors.values();
+		final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
+		final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
 			@Override
 			public int compare(final DataCollector arg0, final DataCollector arg1) {
 				return arg0.getPriority() - arg1.getPriority();
 			}
 		};
 		Arrays.sort(sortedCollectors, comparator);
-		for (DataCollector dc : sortedCollectors) {
+		for (final DataCollector dc : sortedCollectors) {
 			LOG.trace("Starte: {}", dc.getName());
 			dc.startOrRestartCollection();
 		}
@@ -182,11 +183,11 @@ public class TestResult {
 	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection.
 	 */
 	public void stopCollection() {
-		Map<String, Long> runData = new HashMap<String, Long>();
-		for (DataCollector dc : dataCollectors.values()) {
+		final Map<String, Long> runData = new HashMap<String, Long>();
+		for (final DataCollector dc : dataCollectors.values()) {
 			dc.stopCollection();
 		}
-		for (DataCollector dc : dataCollectors.values()) {
+		for (final DataCollector dc : dataCollectors.values()) {
 			runData.put(dc.getName(), dc.getValue());
 		}
 		realValues.add(runData);
@@ -208,10 +209,10 @@ public class TestResult {
 	 * and Assertations over historical data are possible
 	 */
 	public void finalizeCollection() {
-		AverageSummerizer as = new AverageSummerizer();
-		for (String collectorName : getKeys()) {
+		final AverageSummerizer as = new AverageSummerizer();
+		for (final String collectorName : getKeys()) {
 			LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-			List<Long> localValues = new LinkedList<Long>();
+			final List<Long> localValues = new LinkedList<Long>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
 				// realValues.get(i).get(collectorName));
@@ -275,16 +276,16 @@ public class TestResult {
 	 * @return Relative standard deviation
 	 */
 	public double getRelativeStandardDeviation(final String datacollector) {
-		long[] currentValues = new long[realValues.size()];
+		final long[] currentValues = new long[realValues.size()];
 		for (int i = 0; i < realValues.size(); i++) {
-			Map<String, Long> map = realValues.get(i);
+			final Map<String, Long> map = realValues.get(i);
 			currentValues[i] = map.get(datacollector);
 		}
 		if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
 			LOG.trace(Arrays.toString(currentValues));
 		}
-		SummaryStatistics st = new SummaryStatistics();
-		for (Long l : currentValues) {
+		final SummaryStatistics st = new SummaryStatistics();
+		for (final Long l : currentValues) {
 			st.addValue(l);
 		}
 
@@ -301,10 +302,10 @@ public class TestResult {
 	public boolean isRelativeStandardDeviationBelow(final Map<String, Double> deviations) {
 		if (realValues.size() < 5) return false;
 		boolean isRelativeDeviationBelowValue = true;
-		for (String collectorName : getKeys()) {
-			Double aimStdDeviation = deviations.get(collectorName);
+		for (final String collectorName : getKeys()) {
+			final Double aimStdDeviation = deviations.get(collectorName);
 			if (aimStdDeviation != null) {
-				double stdDeviation = getRelativeStandardDeviation(collectorName);
+				final double stdDeviation = getRelativeStandardDeviation(collectorName);
 				LOG.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
 					isRelativeDeviationBelowValue = false;
@@ -354,7 +355,7 @@ public class TestResult {
 	 * @return Values measured
 	 */
 	public List<Long> getValues(final String key) {
-		List<Long> currentValues = new LinkedList<>();
+		final List<Long> currentValues = new LinkedList<>();
 		for (int i = 0; i < realValues.size(); i++) {
 			currentValues.add(realValues.get(i).get(key));
 		}
@@ -366,7 +367,7 @@ public class TestResult {
 			throw new RuntimeException("Internal Error: Count of new values should not exceed count of executions");
 		}
 		for (int i = 0; i < realValues.size(); i++) {
-			Map<String, Long> currentEntry = realValues.get(i);
+			final Map<String, Long> currentEntry = realValues.get(i);
 			if (currentValues.size() > i) {
 				currentEntry.put(key, currentValues.get(i));
 			} else {

@@ -22,8 +22,10 @@ public class TimeBoundedExecution {
 	/**
 	 * Initializes the execution.
 	 * 
-	 * @param thread The executed Thread
-	 * @param timeout The timeout for canceling the execution
+	 * @param thread
+	 *            The executed Thread
+	 * @param timeout
+	 *            The timeout for canceling the execution
 	 */
 	public TimeBoundedExecution(final Thread thread, final int timeout) {
 		this.mainThread = thread;
@@ -31,29 +33,53 @@ public class TimeBoundedExecution {
 	}
 
 	/**
+	 * Initializes the execution with a given runnable.
+	 * 
+	 * @param runnable
+	 *            The runnable which is used to construct the thread
+	 * @param timeout
+	 *            The timeout for canceling the execution
+	 */
+	public TimeBoundedExecution(final Runnable runnable, final int timeout) {
+		this.mainThread = new Thread(runnable);
+		this.timeout = timeout;
+	}
+
+	/**
 	 * Executes the TimeBoundedExecution.
 	 * 
-	 * @throws Exception Thrown if an error occurs
+	 * @throws Exception
+	 *             Thrown if an error occurs
 	 */
-	public final void execute() throws Exception {
+	public final boolean execute() throws Exception {
+		boolean finished = false;
 		mainThread.start();
 		mainThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(final Thread arg0, final Throwable arg1) {
+				LOG.error("Uncaught exception");
 				testError = arg1;
 			}
 		});
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
 			LOG.error("Test timed out because of method-timeout!");
-			mainThread.interrupt();
+			for (int i = 0; i < 5; i++){
+				mainThread.interrupt();
+				// asure, that the test does not catch the interrupt state itself
+				Thread.sleep(5);				
+			}
 		}
-		mainThread.join(1000);
-		if (mainThread.isAlive()){
+		else {
+			finished = true;
+		}
+		mainThread.join(1000); //TODO If this time is shortened, test 
+		if (mainThread.isAlive()) {
 			LOG.error("Test timed out and was not able to save his data after 10 seconds - is killed hard now.");
 			mainThread.stop();
 		}
 		if (testError != null) {
+			LOG.trace("Test error != null");
 			if (testError instanceof Exception) {
 				throw (Exception) testError;
 			} else if (testError instanceof Error) {
@@ -63,6 +89,7 @@ public class TimeBoundedExecution {
 				testError.printStackTrace();
 			}
 		}
+		return finished;
 	}
 
 }

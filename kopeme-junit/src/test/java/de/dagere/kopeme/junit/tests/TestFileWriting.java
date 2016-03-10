@@ -43,38 +43,38 @@ public class TestFileWriting {
 
 	@Test
 	public void testNormalWriting() {
-		JUnitCore jc = new JUnitCore();
+		final JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
-		String testClass = JUnitAdditionTest.class.getName();
-		File f = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
+		final String testClass = JUnitAdditionTest.class.getName();
+		final File f = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		f.delete();
 	}
 
 	@Test
 	public void testDoubleWriting() {
-		JUnitCore jc = new JUnitCore();
+		final JUnitCore jc = new JUnitCore();
 		jc.run(JUnitAdditionTest.class);
 		jc.run(JUnitAdditionTest.class);
-		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
+		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 		f.delete();
 	}
 
 	@Test
 	public void testResults() {
-		JUnitCore jc = new JUnitCore();
+		final JUnitCore jc = new JUnitCore();
 		jc.run(JUnitMultiplicationTest.class);
-		File f = TestUtils.xmlFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
+		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
 		try {
-			Kopemedata kd = new XMLDataLoader(f).getFullData();
-			Testcases tc = kd.getTestcases();
+			final Kopemedata kd = new XMLDataLoader(f).getFullData();
+			final Testcases tc = kd.getTestcases();
 			Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
 
 			TestcaseType tct = null;
-			for (TestcaseType t : tc.getTestcase()) {
+			for (final TestcaseType t : tc.getTestcase()) {
 				if (t.getName().equals(TEST_MULTIPLICATION)) {
 					tct = t;
 					break;
@@ -83,7 +83,7 @@ public class TestFileWriting {
 			Assert.assertNotNull(tct);
 
 			Datacollector timeCollector = null;
-			for (Datacollector dc : tct.getDatacollector()) {
+			for (final Datacollector dc : tct.getDatacollector()) {
 				if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
 					timeCollector = dc;
 					break;
@@ -91,16 +91,16 @@ public class TestFileWriting {
 			}
 			Assert.assertNotNull(timeCollector);
 
-			for (Result r : timeCollector.getResult()) {
-				int val = new Integer(r.getValue());
-				int min = (int) r.getMin();
-				int max = (int) r.getMax();
+			for (final Result r : timeCollector.getResult()) {
+				final int val = new Integer(r.getValue());
+				final int min = (int) r.getMin();
+				final int max = (int) r.getMax();
 				Assert.assertThat(val, Matchers.greaterThan(0));
 				Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
 				Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
 			}
 
-		} catch (JAXBException e1) {
+		} catch (final JAXBException e1) {
 			e1.printStackTrace();
 		}
 	}
