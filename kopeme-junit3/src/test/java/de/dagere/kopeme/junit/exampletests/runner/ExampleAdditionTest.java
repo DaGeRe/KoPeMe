@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.dagere.kopeme.junit3.KoPeMeStaticRigorTestcase;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
 public class ExampleAdditionTest extends KoPeMeTestcase {
@@ -49,6 +48,6 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 
 	@Override
 	protected DataCollectorList getDataCollectors() {
-		return DataCollectorList.ONLYTIME;
+		return DataCollectorList.STANDARD;
 	}
 }

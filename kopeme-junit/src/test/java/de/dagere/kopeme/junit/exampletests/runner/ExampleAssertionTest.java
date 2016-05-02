@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 class TestXYZ {
@@ -21,11 +22,12 @@ class TestXYZ {
 }
 
 @RunWith(PerformanceTestRunnerJUnit.class)
+@PerformanceTestingClass(overallTimeout = Integer.MAX_VALUE)
 public class ExampleAssertionTest {
 
 	@Test
-	@PerformanceTest(executionTimes = 10, warmupExecutions = 10, deviations = {
-			@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 1500) }, assertions =
+	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 10000, warmupExecutions = 10000, deviations = {
+			@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.001) }, assertions =
 	{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 150) }
 			)
 			public void testAssertionAddition() throws FileNotFoundException {

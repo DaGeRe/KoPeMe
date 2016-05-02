@@ -300,7 +300,6 @@ public class TestResult {
 	 * @return Weather the test can be stopped
 	 */
 	public boolean isRelativeStandardDeviationBelow(final Map<String, Double> deviations) {
-		if (realValues.size() < 5) return false;
 		boolean isRelativeDeviationBelowValue = true;
 		for (final String collectorName : getKeys()) {
 			final Double aimStdDeviation = deviations.get(collectorName);
@@ -308,11 +307,13 @@ public class TestResult {
 				final double stdDeviation = getRelativeStandardDeviation(collectorName);
 				LOG.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
 				if (stdDeviation > aimStdDeviation) {
+					LOG.info("Standard deviation is too high");
 					isRelativeDeviationBelowValue = false;
 					break;
 				}
 			}
 		}
+		LOG.debug("Deviation below value: {}", isRelativeDeviationBelowValue);
 
 		return isRelativeDeviationBelowValue;
 	}

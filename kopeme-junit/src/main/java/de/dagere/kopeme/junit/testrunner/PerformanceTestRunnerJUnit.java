@@ -370,6 +370,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			tr.setRealExecutions(executions);
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+				LOG.info("Exiting because of deviation reached");
 				break;
 			}
 			final boolean interrupted = Thread.interrupted();
