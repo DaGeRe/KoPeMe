@@ -37,7 +37,6 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 
 	@Override
 	protected boolean logFullData() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

@@ -13,11 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PerformanceTestingClass {
 	/**
-	 * Optionally specifies the timeout of all test-methods including BeforeClass, Before, ...; normaly 1000000.
+	 * Optionally specifies the timeout of all test-methods including BeforeClass, Before, ...; default is 60 * 60 * 1000 ( = 1 hour).
 	 * 
 	 * @return
 	 */
-	int overallTimeout() default 1000000;
+	int overallTimeout() default 60 * 60 * 1000;
 
 	/**
 	 * Optionally specifies eather the test should log data of all executions or only statistical values.

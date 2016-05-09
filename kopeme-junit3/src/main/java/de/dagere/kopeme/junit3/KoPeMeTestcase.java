@@ -211,9 +211,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 		final String fullName = this.getClass().getName() + "." + getName();
 		try {
 			final TestResult bulkResult = new TestResult(tr.getTestcase(), executionTimes, getDataCollectors());
-			runMainExecution(fullName, bulkResult, executionTimes);
-			
-			runMainExecution(fullName, tr, executionTimes);
+			runMainExecution("warmup", fullName, bulkResult, warmupExecutions);
+
+			runMainExecution("main", fullName, tr, executionTimes);
 		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
 			// PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
@@ -238,9 +238,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 *            How often the test should be executed
 	 * @throws Throwable
 	 */
-	private void runMainExecution(final String name, final TestResult tr, final int executionTimes) throws Throwable {
+	private void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
-		final String firstPart = "--- Starting execution " + name + " ";
+		final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
 		final String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
