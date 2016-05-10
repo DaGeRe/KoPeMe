@@ -329,7 +329,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true);
+			runMainExecution(tr, callee, true, "execution ");
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
@@ -352,14 +352,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple) throws Throwable {
+	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple, final String warmupString) throws Throwable {
 		final String methodString = method.getDeclaringClass().getName() + "." + method.getMethod().getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 
 			callee.preEvaluate();
-			LOG.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting " + warmupString + methodString + " " + executions + "/" + executionTimes + " ---");
 			if (simple)
 				tr.startCollection();
 			callee.evaluate();
@@ -400,7 +400,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true);
+			runMainExecution(tr, callee, true, "warmup execution ");
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			throw t;

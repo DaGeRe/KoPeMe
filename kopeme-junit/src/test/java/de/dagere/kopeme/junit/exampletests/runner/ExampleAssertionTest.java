@@ -26,7 +26,7 @@ class TestXYZ {
 public class ExampleAssertionTest {
 
 	@Test
-	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 10000, warmupExecutions = 10000, deviations = {
+	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 50, warmupExecutions = 50, deviations = {
 			@MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.001) }, assertions =
 	{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 150) }
 			)
