@@ -32,7 +32,7 @@ public class ExampleAssertionTest {
 			)
 			public void testAssertionAddition() throws FileNotFoundException {
 		int a = 0;
-		System.setOut(new PrintStream(new File("test.txt")));
+		System.setOut(new PrintStream(new File("target/test.txt")));
 		for (int i = 0; i < 100000; i++) {
 			a += i;
 			giveMeOutput(i);
