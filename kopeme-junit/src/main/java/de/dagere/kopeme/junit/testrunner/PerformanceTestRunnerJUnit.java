@@ -100,26 +100,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
 			e.printStackTrace();
 		}
-		
-//		final Thread mainThread = new Thread(testRunRunnable);
-//		saveFullData = ptc.logFullData();
-//		LOG.info("Ausführung: " + klasse.getName() + " Class-Timeout: " + ptc.overallTimeout());
-//		mainThread.start();
-//
-//		try {
-//			mainThread.join(ptc.overallTimeout());
-//			if (mainThread.isAlive()) {
-//				LOG.debug("Call interrupt because of class-timeout");
-//				mainThread.interrupt();
-//				LOG.debug("Firing..");
-//				setTestsToFail(notifier);
-//			} else {
-//				LOG.debug("Test Class " + klasse.getName() + " finished");
-//			}
-//		} catch (final InterruptedException e) {
-//			LOG.debug("Zeit: " + (System.nanoTime() - start) / 10E5);
-//			e.printStackTrace();
-//		}
 	}
 
 	/**

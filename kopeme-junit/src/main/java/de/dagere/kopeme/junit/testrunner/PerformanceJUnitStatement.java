@@ -21,8 +21,10 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Initializes PerformanceJUnitStatement.
 	 * 
-	 * @param statement Statement that should be used
-	 * @param target Object for executing the performance test
+	 * @param statement
+	 *            Statement that should be used
+	 * @param target
+	 *            Object for executing the performance test
 	 */
 	public PerformanceJUnitStatement(final Statement statement, final Object target) {
 		this.statement = statement;
@@ -34,10 +36,10 @@ public class PerformanceJUnitStatement extends Statement {
 	 */
 	public void preEvaluate() {
 		try {
-			for (FrameworkMethod before : befores) {
+			for (final FrameworkMethod before : befores) {
 				before.invokeExplosively(fTarget);
 			}
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -48,10 +50,10 @@ public class PerformanceJUnitStatement extends Statement {
 	 */
 	public void postEvaluate() {
 		try {
-			for (FrameworkMethod after : afters) {
+			for (final FrameworkMethod after : afters) {
 				after.invokeExplosively(fTarget);
 			}
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -65,7 +67,8 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Sets Before-Methods that should be executed.
 	 * 
-	 * @param befores Before-Methods
+	 * @param befores
+	 *            Before-Methods
 	 */
 	public void setBefores(final List<FrameworkMethod> befores) {
 		this.befores = befores;
@@ -74,7 +77,8 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Sets Before-Methods that should be executed.
 	 * 
-	 * @param afters After-Methods
+	 * @param afters
+	 *            After-Methods
 	 */
 	public void setAfters(final List<FrameworkMethod> afters) {
 		this.afters = afters;
