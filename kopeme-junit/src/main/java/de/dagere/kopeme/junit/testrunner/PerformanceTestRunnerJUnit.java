@@ -401,6 +401,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		}
 		try {
 			runMainExecution(tr, callee, true, "warmup execution ");
+			warmupExecutions = tr.getRealExecutions();
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			throw t;
