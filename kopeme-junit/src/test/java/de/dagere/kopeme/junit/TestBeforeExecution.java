@@ -26,7 +26,7 @@ import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest;
-import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTest;
+import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleBeforeTestRunner;
@@ -45,7 +45,7 @@ public class TestBeforeExecution {
 	@Parameters(name = "{0}")
 	public static Iterable<Object[]> parameters(){
 		return Arrays.asList(new Object[][]{
-			{ExampleBeforeTest.class, TEST_NAME},
+			{ExampleBeforeTestRule.class, TEST_NAME},
 			{ExampleBeforeClassTest.class, TEST_NAME},
 			{ExampleNoBeforeTest.class, TEST_NAME},
 			{ExampleNonMeasuringBefore.class, TEST_NAME},

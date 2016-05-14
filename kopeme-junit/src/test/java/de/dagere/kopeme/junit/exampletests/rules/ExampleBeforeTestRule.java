@@ -8,7 +8,7 @@ import org.junit.rules.TestRule;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
-public class ExampleBeforeTest {
+public class ExampleBeforeTestRule {
 
 	@Rule
 	public TestRule rule = new KoPeMeRule(this);

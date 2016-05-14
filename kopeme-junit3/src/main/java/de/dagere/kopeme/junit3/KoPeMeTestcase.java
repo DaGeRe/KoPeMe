@@ -251,7 +251,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			tearDown();
 			tr.getValue(TimeDataCollector.class.getName());
 			tr.setRealExecutions(executions);
-			LOG.debug("--- Stopping execution " + executions + endPart);
+			LOG.debug("--- Stopping " + executionTypName + " execution " + executions + endPart);
 			if (Thread.interrupted()) {
 				return;
 			} else {
