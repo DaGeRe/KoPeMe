@@ -79,8 +79,8 @@ public class TestBeforeExecution {
 		LOG.debug("Suche: {} Existiert: {}", f.getAbsolutePath(), f.exists());
 		Assert.assertThat(f.exists(), Matchers.equalTo(true));
 		final Integer time = getTimeResult(f, testname);
-		Assert.assertThat(time, Matchers.lessThan(150 * 1000));
-		Assert.assertThat(time, Matchers.greaterThan(100 * 1000));
+		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * 1000));
+		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * 1000));
 	}
 	
 	public static Integer getTimeResult(final File f, final String methodName) throws JAXBException {
