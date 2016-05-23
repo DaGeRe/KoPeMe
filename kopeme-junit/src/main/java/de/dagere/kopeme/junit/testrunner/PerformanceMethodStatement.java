@@ -33,7 +33,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 
 	private final int executionTimes;
 	private final DataCollectorList datacollectors;
-	private final String methodName, filename;
+	private final String className, methodName, filename;
 	private final boolean saveFullData;
 	private boolean isFinished = false;
 	private Finishable mainRunnable;
@@ -41,6 +41,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final FrameworkMethod method, final boolean saveFullData) {
 		super();
 		this.callee = callee;
+		
 		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 		try {
 			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
@@ -71,6 +72,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 		}
 		this.filename = filename;
 		this.methodName = method.getName();
+		this.className = method.getDeclaringClass().getSimpleName();
 
 		assertationvalues = new HashMap<>();
 		for (final Assertion a : annotation.assertions()) {
@@ -190,7 +192,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 	 *             Any exception that occurs during the test
 	 */
 	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple, final String warmupString, final int executions) throws Throwable {
-		final String methodString = tr.getTestcase();
+		final String methodString = className + "." + tr.getTestcase();
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {
 
