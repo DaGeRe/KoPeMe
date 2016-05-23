@@ -51,6 +51,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected final String filename;
+	private boolean classFinished = false;
 	
 	private PerformanceMethodStatement currentMethodStatement;
 	
@@ -98,6 +99,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			final boolean finished = tbe.execute();
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
 			if (!finished){
+				classFinished = true;
 				LOG.debug("Not finished.");
 				setTestsToFail(notifier);
 			}
@@ -158,6 +160,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			IllegalArgumentException,
 			InvocationTargetException {
 
+		if (classFinished){
+			return null;
+		}
 		try {
 			final Object testObject = new ReflectiveCallable() {
 				@Override
