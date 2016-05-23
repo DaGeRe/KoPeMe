@@ -90,6 +90,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 			@Override
 			public void setFinished(final boolean isFinished) {
+				classFinished = isFinished;
 				currentMethodStatement.setFinished(isFinished);
 			}
 		};
