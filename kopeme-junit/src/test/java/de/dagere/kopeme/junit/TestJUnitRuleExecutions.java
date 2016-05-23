@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
-import de.dagere.kopeme.junit.exampletests.rules.JUnitRuleTest;
+import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleTest;
 
 /**
  * Beginn einer Implementierung einer Klasse, die prüft, ob Tests entsprechende
@@ -27,6 +27,6 @@ public class TestJUnitRuleExecutions {
 	@Test(timeout = 2300)
 	public void testMethodTimeout() {
 		JUnitCore jc = new JUnitCore();
-		jc.run(JUnitRuleTest.class);
+		jc.run(ExampleRuleTest.class);
 	}
 }

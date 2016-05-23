@@ -10,12 +10,12 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
 /**
- * An example test für testing weather the KoPeMe-TestRule works correct
+ * An example test für testing whether the KoPeMe-TestRule works correct
  * 
  * @author reichelt
  *
  */
-public class JUnitRuleTest {
+public class ExampleRuleTest {
 	@Rule
 	public TestRule rule = new KoPeMeRule(this);
 
@@ -24,22 +24,13 @@ public class JUnitRuleTest {
 		System.out.println("Führe aus");
 		try {
 			Thread.sleep(200);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	@Test(timeout = 400)
-	@PerformanceTest(executionTimes = 5, timeout = 1000)
-	public void testTimeout() {
-		try {
-			Thread.sleep(300);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
 	@Test
 	@PerformanceTest(executionTimes = 5, timeout = 1000)
