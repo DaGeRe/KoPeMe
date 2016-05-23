@@ -76,7 +76,7 @@ public class TimeBoundedExecution {
 		mainThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(final Thread arg0, final Throwable arg1) {
-				LOG.error("Uncaught exception");
+				LOG.error("Uncaught exception in {}: {}", arg0.getName(), arg1.getClass());
 				testError = arg1;
 			}
 		});

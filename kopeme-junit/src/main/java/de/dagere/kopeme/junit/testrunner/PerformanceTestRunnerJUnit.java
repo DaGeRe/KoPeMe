@@ -84,6 +84,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			final boolean finished = tbe.execute();
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
 			if (!finished){
+				LOG.debug("Not finished.");
 				setTestsToFail(notifier);
 			}
 		} catch (final Exception e) {
