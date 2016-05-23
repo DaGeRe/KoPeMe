@@ -104,7 +104,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			}
 			if (isFinished){
 				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
-				throw new InterruptedException();
+				throw new InterruptedException("Test timed out.");
 			}
 			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
@@ -113,7 +113,8 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted );
 			if (interrupted) {
-				throw new InterruptedException();
+				LOG.debug("Exiting thread.");
+				throw new InterruptedException("Test was interrupted and eventually timed out.");
 			}
 		}
 		LOG.debug("Executions: " + (execution - 1));
