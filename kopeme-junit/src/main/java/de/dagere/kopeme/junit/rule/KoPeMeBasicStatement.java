@@ -39,9 +39,12 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	/**
 	 * Initializes the KoPemeBasicStatement.
 	 * 
-	 * @param runnables Runnables that should be run
-	 * @param method Method that should be executed
-	 * @param filename Name of the
+	 * @param runnables
+	 *            Runnables that should be run
+	 * @param method
+	 *            Method that should be executed
+	 * @param filename
+	 *            Name of the
 	 */
 	public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super();
@@ -75,44 +78,40 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
 	 * 
-	 * @param tr Test Result that should be checked
+	 * @param tr
+	 *            Test Result that should be checked
 	 * @return Weather the result is valid
 	 */
 	protected boolean checkCollectorValidity(final TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
 	}
 
-	protected void runMainExecution(final TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		int executions;
-		for (executions = 1; executions <= annotation.executionTimes(); executions++) {
+	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions) throws IllegalAccessException, InvocationTargetException, InterruptedException {
+		int execution;
+		for (execution = 1; execution <= executions; execution++) {
 
-			LOG.debug("--- Starting execution " + executions + "/" + annotation.executionTimes() + " ---");
+			LOG.debug("--- Starting " + warmupString + execution + "/" + executions + " ---");
 			runnables.getBeforeRunnable().run();
 			tr.startCollection();
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();
-			tr.setRealExecutions(executions - 1);
-			LOG.debug("--- Stopping execution " + executions + "/" + annotation.executionTimes() + " ---");
+			tr.setRealExecutions(execution - 1);
+			LOG.debug("--- Stopping execution " + execution + "/" + executions + " ---");
 			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
+			final boolean interrupted = Thread.interrupted();
+			LOG.debug("Interrupt state: {}", interrupted );
+			if (interrupted) {
+				throw new InterruptedException();
+			}
 		}
-		LOG.debug("Executions: " + (executions - 1));
-		tr.setRealExecutions(executions - 1);
-	}
-
-	protected void runWarmup(final String methodString) {
-		for (int i = 1; i <= annotation.warmupExecutions(); i++) {
-			runnables.getBeforeRunnable().run();
-			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + annotation.warmupExecutions() + " ---");
-			runnables.getTestRunnable().run();
-			LOG.info("--- Stopping warmup execution " + i + "/" + annotation.warmupExecutions() + " ---");
-			runnables.getAfterRunnable().run();
-		}
+		LOG.debug("Executions: " + (execution - 1));
+		tr.setRealExecutions(execution - 1);
 	}
 }

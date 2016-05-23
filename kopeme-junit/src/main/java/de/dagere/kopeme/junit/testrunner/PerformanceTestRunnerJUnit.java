@@ -309,7 +309,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true, "execution ");
+			runMainExecution(tr, callee, true, "execution ", executionTimes);
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
@@ -332,23 +332,23 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple, final String warmupString) throws Throwable {
+	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple, final String warmupString, final int executions) throws Throwable {
 		final String methodString = method.getDeclaringClass().getName() + "." + method.getMethod().getName();
 		// if (maximalRelativeStandardDeviation == 0.0f){
-		int executions;
-		for (executions = 1; executions <= executionTimes; executions++) {
+		int execution;
+		for (execution = 1; execution <= executions; execution++) {
 
 			callee.preEvaluate();
-			LOG.debug("--- Starting " + warmupString + methodString + " " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			if (simple)
 				tr.startCollection();
 			callee.evaluate();
 			if (simple)
 				tr.stopCollection();
-			LOG.debug("--- Stopping " + warmupString + + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Stopping " + warmupString + + execution + "/" + executions + " ---");
 			callee.postEvaluate();
-			tr.setRealExecutions(executions);
-			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			tr.setRealExecutions(execution);
+			if (execution >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				LOG.info("Exiting because of deviation reached");
 				break;
@@ -360,8 +360,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			}
 			Thread.sleep(1); // To let other threads "breath"
 		}
-		LOG.debug("Executions: " + executions);
-		tr.setRealExecutions(executions);
+		LOG.debug("Executions: " + execution);
+		tr.setRealExecutions(execution);
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true, "warmup execution ");
+			runMainExecution(tr, callee, true, "warmup execution ", warmupExecutions);
 			warmupExecutions = tr.getRealExecutions();
 		} catch (final Throwable t) {
 			tr.finalizeCollection();

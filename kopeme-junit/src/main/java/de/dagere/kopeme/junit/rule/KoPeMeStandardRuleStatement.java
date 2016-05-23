@@ -42,7 +42,8 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 						tr.checkValues(assertationvalues);
 					}
 				} catch (IllegalAccessException | InvocationTargetException e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final Throwable e) {
 					e.printStackTrace();
 				}
 			}
@@ -57,9 +58,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		log.info("Test {} beendet", filename);
 	}
 
-	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "." + method.getName();
-		runWarmup(methodString);
+	private TestResult executeSimpleTest(TestResult tr) throws Throwable {
+		final String methodString = method.getClass().getName() + "." + method.getName();
+		
 
 		tr = new TestResult(method.getName(), annotation.timeout(), DataCollectorList.STANDARD);
 
@@ -67,12 +68,14 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 			log.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr);
-		} catch (AssertionFailedError t) {
+			//Run warmup
+			runMainExecution(new TestResult(method.getName(), annotation.timeout(), DataCollectorList.STANDARD), "warmup execution ", annotation.warmupExecutions());
+			runMainExecution(tr, "execution ", annotation.executionTimes());
+		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
