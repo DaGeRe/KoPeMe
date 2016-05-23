@@ -19,19 +19,19 @@ public class MultipleCallClassTimeout {
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
-	public void test() throws InterruptedException {
+	public void testClassTimeout() throws InterruptedException {
 		Thread.sleep(10);
 	}
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
-	public void test2() throws InterruptedException {
+	public void testClassTimeout2() throws InterruptedException {
 		Thread.sleep(10);
 	}
 
 	@Test
 	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
-	public void test3() throws InterruptedException {
+	public void testClassTimeout3() throws InterruptedException {
 		Thread.sleep(10);
 	}
 }

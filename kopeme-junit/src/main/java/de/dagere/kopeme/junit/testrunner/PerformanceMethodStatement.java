@@ -21,7 +21,7 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
-public class PerformanceMethodStatement extends Statement {
+public class PerformanceMethodStatement extends Statement implements Finishable {
 
 	private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 
@@ -36,6 +36,7 @@ public class PerformanceMethodStatement extends Statement {
 	private final String methodName, filename;
 	private final boolean saveFullData;
 	private boolean isFinished = false;
+	private Finishable mainRunnable;
 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final FrameworkMethod method, final boolean saveFullData) {
 		super();
@@ -80,8 +81,8 @@ public class PerformanceMethodStatement extends Statement {
 	@Override
 	public void evaluate() throws Throwable {
 
-		final Finishable mainRunnable = new Finishable() {
-			
+		mainRunnable = new Finishable() {
+
 			@Override
 			public void run() {
 				try {
@@ -107,20 +108,21 @@ public class PerformanceMethodStatement extends Statement {
 					LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
 				}
 			}
-			
+
 			@Override
 			public void setFinished(final boolean isFinished) {
 				PerformanceMethodStatement.this.isFinished = isFinished;
 			}
-			
+
 			@Override
 			public boolean isFinished() {
 				return isFinished;
 			}
 		};
-			
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout);
-		tbe.execute();
+		if (!isFinished){
+			final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout);
+			tbe.execute();
+		}
 		LOG.debug("Timebounded execution finished");
 	}
 
@@ -217,5 +219,27 @@ public class PerformanceMethodStatement extends Statement {
 		}
 		LOG.debug("Executions: " + execution);
 		tr.setRealExecutions(execution);
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isFinished() {
+		if (mainRunnable != null) {
+			return mainRunnable.isFinished();
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void setFinished(final boolean isFinished) {
+		if (mainRunnable != null) {
+			mainRunnable.setFinished(isFinished);
+		}
 	}
 }

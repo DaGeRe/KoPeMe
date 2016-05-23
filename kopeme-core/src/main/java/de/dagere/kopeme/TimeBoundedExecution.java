@@ -35,7 +35,7 @@ public class TimeBoundedExecution {
 	}
 	
 	public TimeBoundedExecution(final Finishable finishable, final int timeout) {
-		this.mainThread = new FinishableThread(finishable, "timebounded - " + (id++));
+		this.mainThread = new FinishableThread(finishable, "timebounded-" + (id++));
 		this.timeout = timeout;
 	}
 	

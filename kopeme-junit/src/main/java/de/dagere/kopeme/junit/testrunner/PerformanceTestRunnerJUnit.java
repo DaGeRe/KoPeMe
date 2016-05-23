@@ -21,6 +21,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.Assertion;
@@ -50,6 +51,9 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected final String filename;
+	
+	private PerformanceMethodStatement currentMethodStatement;
+	
 
 	/**
 	 * Initializes a PerformanceTestRunnerJUnit
@@ -72,10 +76,20 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		if (ptc == null) {
 			ptc = DEFAULTPERFORMANCETESTINGCLASS;
 		}
-		final Runnable testRunRunnable = new Runnable() {
+		final Finishable testRunRunnable = new Finishable() {
 			@Override
 			public void run() {
 				PerformanceTestRunnerJUnit.super.run(notifier);
+			}
+
+			@Override
+			public boolean isFinished() {
+				return false;
+			}
+
+			@Override
+			public void setFinished(final boolean isFinished) {
+				currentMethodStatement.setFinished(isFinished);
 			}
 		};
 		saveFullData = ptc.logFullData();
@@ -151,7 +165,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					return createTest();
 				}
 			}.run();
-			LOG.debug("Statement: " + currentMethod.getName() + " " + method);
+			LOG.debug("Statement: " + currentMethod.getName());
 
 			Statement testExceptionTimeoutStatement = methodInvoker(currentMethod, testObject);
 
@@ -191,18 +205,18 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 * @return The statement
 	 */
 	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
-		final PerformanceJUnitStatement callee;
 		try {
-			callee = getStatement(currentMethod);
+			final PerformanceJUnitStatement callee = getStatement(currentMethod);
+			
+			LOG.trace("Im methodBlock für " + currentMethod.getName());
+
+			initValues(currentMethod);
+
+			currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, saveFullData);
+			return currentMethodStatement;
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
-		LOG.trace("Im methodBlock für " + currentMethod.getName());
-
-		initValues(currentMethod);
-
-		final Statement st = new PerformanceMethodStatement(callee, filename, method, saveFullData);
-		return st;
 	}
 
 	/**
