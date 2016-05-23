@@ -87,6 +87,7 @@ public class TimeBoundedExecution {
 				testError = arg1;
 			}
 		});
+		LOG.debug("Warte: " + timeout);
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
 			mainThread.setFinished(true);

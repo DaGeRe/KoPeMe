@@ -13,7 +13,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
  * @author reichelt
  *
  */
-@PerformanceTestingClass(overallTimeout = 500)
+@PerformanceTestingClass(overallTimeout = 1100)
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class MultipleCallClassTimeout {
 

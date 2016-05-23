@@ -65,8 +65,8 @@ public class TestJUnitTimeoutExecutions {
 		for (final Failure f : failures) {
 			LOG.info(f.getTrace());
 		}
-		assertEquals(7, r.getFailureCount());
-		// 7 -> 1 parent (class timed out because..),3 methods * 2 per method (InterruptException, class timed out because..)
+		assertEquals(6, r.getFailureCount());
+		// 7 -> 1 parent (class timed out because..),3 methods, 1 * initial method, 1 * assertion failed
 		int countTimeoutException = 0, countInterruptedException = 0;
 		for (final Failure f : failures) {
 			final Class<? extends Throwable> execeptionType = f.getException().getClass();
@@ -80,7 +80,7 @@ public class TestJUnitTimeoutExecutions {
 			}
 		}
 		assertEquals(4, countTimeoutException);
-		assertEquals(3, countInterruptedException);
+		assertEquals(1, countInterruptedException);
 	}
 
 	public void testNormalJUnitExecution() {

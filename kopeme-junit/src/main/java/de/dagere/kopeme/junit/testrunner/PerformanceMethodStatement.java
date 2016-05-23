@@ -213,13 +213,13 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 			}
 			if (isFinished){
 				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
-				throw new InterruptedException();
+				throw new InterruptedException("Test timed out.");
 			}
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted);
 			if (interrupted) {
 				LOG.debug("Exiting thread.");
-				throw new InterruptedException();
+				throw new InterruptedException("Test was interrupted and eventually timed out.");
 			}
 			Thread.sleep(1); // To let other threads "breath"
 		}
