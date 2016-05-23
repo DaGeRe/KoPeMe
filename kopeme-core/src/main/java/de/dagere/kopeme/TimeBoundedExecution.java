@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class TimeBoundedExecution {
-	
+
 	public static int id = 0;
 
 	private static final Logger LOG = LogManager.getLogger(TimeBoundedExecution.class);
@@ -33,31 +33,36 @@ public class TimeBoundedExecution {
 		this.mainThread = thread;
 		this.timeout = timeout;
 	}
-	
+
 	public TimeBoundedExecution(final Finishable finishable, final int timeout) {
-		this.mainThread = new FinishableThread(finishable, "timebounded-" + (id++));
+		String threadName;
+		synchronized (LOG) {
+			threadName = "timebounded-" + (id++);
+		}
+		this.mainThread = new FinishableThread(finishable, threadName);
 		this.timeout = timeout;
 	}
-	
+
 	/**
-	 * Initializes a timebounded execution where the object is not set to finish. This indicates that
-	 * whenever an interrupt state is caught, the process will run even if the time bounded execution should finish.
+	 * Initializes a timebounded execution where the object is not set to finish. This indicates that whenever an interrupt state is caught, the process will run even if the time bounded execution
+	 * should finish.
+	 * 
 	 * @param finishable
 	 * @param timeout
 	 */
 	public TimeBoundedExecution(final Runnable finishable, final int timeout) {
 		this.mainThread = new FinishableThread(new Finishable() {
-			
+
 			@Override
 			public void run() {
 				finishable.run();
 			}
-			
+
 			@Override
 			public void setFinished(final boolean isFinished) {
 				LOG.debug("Warning: Thread can not be finished");
 			}
-			
+
 			@Override
 			public boolean isFinished() {
 				return false;
@@ -86,16 +91,16 @@ public class TimeBoundedExecution {
 		if (mainThread.isAlive()) {
 			mainThread.setFinished(true);
 			LOG.error("Test " + mainThread.getName() + " timed out!");
-			for (int i = 0; i < 5; i++){
+			for (int i = 0; i < 5; i++) {
 				mainThread.interrupt();
 				// asure, that the test does not catch the interrupt state itself
-				Thread.sleep(5);				
+				Thread.sleep(5);
 			}
 		}
 		else {
 			finished = true;
 		}
-		mainThread.join(1000); //TODO If this time is shortened, test 
+		mainThread.join(1000); // TODO If this time is shortened, test
 		if (mainThread.isAlive()) {
 			LOG.error("Test timed out and was not able to save his data after 10 seconds - is killed hard now.");
 			mainThread.stop();
