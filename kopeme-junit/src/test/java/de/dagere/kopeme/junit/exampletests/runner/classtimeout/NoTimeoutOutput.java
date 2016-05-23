@@ -7,7 +7,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
-@PerformanceTestingClass(overallTimeout = 5000)
+@PerformanceTestingClass(overallTimeout = 10000)
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class NoTimeoutOutput {
 

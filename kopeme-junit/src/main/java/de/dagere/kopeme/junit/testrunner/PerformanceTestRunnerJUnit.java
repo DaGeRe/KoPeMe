@@ -120,7 +120,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 */
 	private void setTestsToFail(final RunNotifier notifier) {
 		final Description description = getDescription();
-		final ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all three testmethods will be covered and set to failed here
+		final ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all testmethods will be covered and set to failed here
 		toBeFailed.add(description); // the whole test class failed
 		for (final Description d : toBeFailed) {
 			final EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
@@ -225,7 +225,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				return currentMethodStatement;
 			}else{
 				return new Statement() {
-					
 					@Override
 					public void evaluate() throws Throwable {
 						throw new AssertionFailedError("Test class has already timed out.");
