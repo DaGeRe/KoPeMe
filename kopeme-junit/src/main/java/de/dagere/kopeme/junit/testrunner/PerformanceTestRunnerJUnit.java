@@ -356,7 +356,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted );
 			if (interrupted) {
-				break;
+				throw new InterruptedException();
 			}
 			Thread.sleep(1); // To let other threads "breath"
 		}
