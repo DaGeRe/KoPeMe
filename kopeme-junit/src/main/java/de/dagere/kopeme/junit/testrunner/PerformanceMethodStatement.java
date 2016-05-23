@@ -210,6 +210,7 @@ public class PerformanceMethodStatement extends Statement {
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted);
 			if (isFinished || interrupted) {
+				LOG.debug("Exiting thread.");
 				throw new InterruptedException();
 			}
 			Thread.sleep(1); // To let other threads "breath"

@@ -14,6 +14,12 @@ public class FinishableThread extends Thread{
 		super(finishable);
 		this.finishable = finishable;
 	}
+	
+	public FinishableThread(final Finishable finishable, final String name) {
+		super(finishable, name);
+		this.finishable = finishable;
+	}
+
 
 	public boolean isFinished() {
 		return finishable.isFinished();

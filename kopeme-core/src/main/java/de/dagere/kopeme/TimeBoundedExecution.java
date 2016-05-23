@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
  *
  */
 public class TimeBoundedExecution {
+	
+	public static int id = 0;
 
 	private static final Logger LOG = LogManager.getLogger(TimeBoundedExecution.class);
 
@@ -33,7 +35,7 @@ public class TimeBoundedExecution {
 	}
 	
 	public TimeBoundedExecution(final Finishable finishable, final int timeout) {
-		this.mainThread = new FinishableThread(finishable);
+		this.mainThread = new FinishableThread(finishable, "timebounded - " + (id++));
 		this.timeout = timeout;
 	}
 	
