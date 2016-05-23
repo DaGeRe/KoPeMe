@@ -209,9 +209,13 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 				LOG.info("Exiting because of deviation reached");
 				break;
 			}
+			if (isFinished){
+				LOG.debug("Exiting finished thread.");
+				throw new InterruptedException();
+			}
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted);
-			if (isFinished || interrupted) {
+			if (interrupted) {
 				LOG.debug("Exiting thread.");
 				throw new InterruptedException();
 			}
