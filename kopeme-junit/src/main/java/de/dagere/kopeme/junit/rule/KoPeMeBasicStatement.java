@@ -33,6 +33,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	protected final String filename;
 	protected Method method;
 	protected TestRunnables runnables;
+	protected boolean isFinished;
 
 	protected PerformanceTest annotation;
 
@@ -100,6 +101,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			LOG.debug("--- Stopping execution " + execution + "/" + executions + " ---");
 			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+			}
+			if (isFinished){
+				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
+				throw new InterruptedException();
 			}
 			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {

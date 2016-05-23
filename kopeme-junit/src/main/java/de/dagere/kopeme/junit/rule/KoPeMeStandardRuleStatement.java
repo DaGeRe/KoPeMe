@@ -10,6 +10,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
@@ -32,7 +34,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
 	@Override
 	public void evaluate() throws Throwable {
-		final Thread mainThread = new Thread(new Runnable() {
+		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {
 				TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), DataCollectorList.STANDARD);
@@ -47,21 +49,26 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 					e.printStackTrace();
 				}
 			}
-		});
 
-		mainThread.start();
-		mainThread.join(annotation.timeout());
-		if (mainThread.isAlive()) {
-			mainThread.interrupt();
-		}
+			@Override
+			public boolean isFinished() {
+				return KoPeMeStandardRuleStatement.this.isFinished;
+			}
+
+			@Override
+			public void setFinished(final boolean isFinished) {
+				KoPeMeStandardRuleStatement.this.isFinished = isFinished;
+			}
+		};
+		
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout());
+		tbe.execute();
+
 
 		log.info("Test {} beendet", filename);
 	}
 
 	private TestResult executeSimpleTest(TestResult tr) throws Throwable {
-		final String methodString = method.getClass().getName() + "." + method.getName();
-		
-
 		tr = new TestResult(method.getName(), annotation.timeout(), DataCollectorList.STANDARD);
 
 		if (!checkCollectorValidity(tr)) {
