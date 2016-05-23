@@ -210,7 +210,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 				break;
 			}
 			if (isFinished){
-				LOG.debug("Exiting finished thread.");
+				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
 				throw new InterruptedException();
 			}
 			final boolean interrupted = Thread.interrupted();
