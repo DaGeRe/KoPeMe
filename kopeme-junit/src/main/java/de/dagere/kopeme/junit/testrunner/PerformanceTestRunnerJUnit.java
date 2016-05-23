@@ -160,9 +160,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			IllegalArgumentException,
 			InvocationTargetException {
 
-		if (classFinished){
-			return null;
-		}
 		try {
 			final Object testObject = new ReflectiveCallable() {
 				@Override
@@ -170,7 +167,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 					return createTest();
 				}
 			}.run();
-			LOG.debug("Statement: " + currentMethod.getName());
+			if (classFinished){
+				return null;
+			}
+			LOG.debug("Statement: " + currentMethod.getName() + " " + classFinished);
 
 			Statement testExceptionTimeoutStatement = methodInvoker(currentMethod, testObject);
 
