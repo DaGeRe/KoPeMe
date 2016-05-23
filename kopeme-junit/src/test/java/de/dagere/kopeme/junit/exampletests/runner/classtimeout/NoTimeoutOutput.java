@@ -13,13 +13,13 @@ public class NoTimeoutOutput {
 
 	@Test
 	@PerformanceTest(warmupExecutions = 5, executionTimes = 5, timeout = 100000)
-	public void test() throws InterruptedException {
+	public void testFastMethod() throws InterruptedException {
 		Thread.sleep(5);
 	}
 
 	@Test
 	@PerformanceTest(warmupExecutions = 5, executionTimes = 5, timeout = 100000)
-	public void test2() throws InterruptedException {
+	public void testFastMethod2() throws InterruptedException {
 		Thread.sleep(5);
 	}
 }

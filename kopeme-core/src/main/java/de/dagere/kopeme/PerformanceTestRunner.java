@@ -76,7 +76,7 @@ public class PerformanceTestRunner {
 	 * @throws Throwable Any error that occurs during the test
 	 */
 	public void evaluate() throws Throwable {
-		final Finishable finishable = new Finishable() {
+		final Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
 				TestResult tr = null;
@@ -95,20 +95,9 @@ public class PerformanceTestRunner {
 				}
 			}
 
-			@Override
-			public boolean isFinished() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void setFinished(final boolean isFinished) {
-				// TODO Auto-generated method stub
-				
-			}
 		};
 
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, timeout);
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(runnable, timeout);
 		tbe.execute();
 
 		log.trace("Test {} beendet", filename);

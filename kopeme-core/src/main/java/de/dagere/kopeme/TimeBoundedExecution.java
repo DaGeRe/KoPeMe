@@ -64,19 +64,6 @@ public class TimeBoundedExecution {
 		this.timeout = timeout;
 	}
 
-//	/**
-//	 * Initializes the execution with a given runnable.
-//	 * 
-//	 * @param runnable
-//	 *            The runnable which is used to construct the thread
-//	 * @param timeout
-//	 *            The timeout for canceling the execution
-//	 */
-//	public TimeBoundedExecution(final Runnable runnable, final int timeout) {
-//		this.mainThread = new InterruptableThread(runnable);
-//		this.timeout = timeout;
-//	}
-
 	/**
 	 * Executes the TimeBoundedExecution.
 	 * 
@@ -96,7 +83,7 @@ public class TimeBoundedExecution {
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
 			mainThread.setFinished(true);
-			LOG.error("Test timed out because of method-timeout!");
+			LOG.error("Test " + mainThread.getName() + " timed out!");
 			for (int i = 0; i < 5; i++){
 				mainThread.interrupt();
 				// asure, that the test does not catch the interrupt state itself
