@@ -47,7 +47,7 @@ public class PerformanceTestRunner {
 		this.instanz = instance;
 		this.method = method;
 
-		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
+		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
@@ -56,12 +56,12 @@ public class PerformanceTestRunner {
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
 
-			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+			for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
 				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
 			assertationvalues = new HashMap<>();
-			for (Assertion a : annotation.assertions()) {
+			for (final Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		}
@@ -76,7 +76,7 @@ public class PerformanceTestRunner {
 	 * @throws Throwable Any error that occurs during the test
 	 */
 	public void evaluate() throws Throwable {
-		final Thread mainThread = new Thread(new Runnable() {
+		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {
 				TestResult tr = null;
@@ -94,9 +94,21 @@ public class PerformanceTestRunner {
 					e.printStackTrace();
 				}
 			}
-		});
 
-		TimeBoundedExecution tbe = new TimeBoundedExecution(mainThread, timeout);
+			@Override
+			public boolean isFinished() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void setFinished(final boolean isFinished) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, timeout);
 		tbe.execute();
 
 		log.trace("Test {} beendet", filename);
@@ -110,8 +122,8 @@ public class PerformanceTestRunner {
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
 	 */
 	private TestResult executeComplexTest() throws IllegalAccessException, InvocationTargetException {
-		TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
-		Object[] params = { tr };
+		final TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
+		final Object[] params = { tr };
 		runWarmup(params);
 		TestResult newResult = null;
 		try {
@@ -120,9 +132,9 @@ public class PerformanceTestRunner {
 			}
 			newResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 			params[0] = newResult;
-			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
+			final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
 			runMainExecution(pts, newResult);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, warmupExecutions, true));
 			throw t;
@@ -141,18 +153,18 @@ public class PerformanceTestRunner {
 	 */
 	private TestResult executeSimpleTest() throws IllegalAccessException, InvocationTargetException {
 		TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
-		Object[] params = {};
+		final Object[] params = {};
 		runWarmup(params);
 		tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			log.warn("Not all Collectors are valid!");
 		}
-		long start = System.currentTimeMillis();
+		final long start = System.currentTimeMillis();
 		try {
-			PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
+			final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
 			runMainExecution(pts, tr);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, warmupExecutions, true));
 			throw t;
@@ -173,7 +185,7 @@ public class PerformanceTestRunner {
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
 	 */
 	private void runWarmup(final Object[] params) throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "." + method.getName();
+		final String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
 			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
@@ -190,13 +202,13 @@ public class PerformanceTestRunner {
 	 * @throws InvocationTargetException Thrown if an error during method access occurs
 	 */
 	private void runMainExecution(final PerformanceKoPeMeStatement pts, final TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "." + method.getName();
+		final String methodString = method.getClass().getName() + "." + method.getName();
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
 			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
 			pts.evaluate();
 			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
-			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
 			}
 			tr.setRealExecutions(executions);

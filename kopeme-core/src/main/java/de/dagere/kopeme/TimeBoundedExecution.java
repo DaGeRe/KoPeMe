@@ -15,7 +15,7 @@ public class TimeBoundedExecution {
 
 	private static final Logger LOG = LogManager.getLogger(TimeBoundedExecution.class);
 
-	private final Thread mainThread;
+	private final FinishableThread mainThread;
 	private final int timeout;
 	private Throwable testError;
 
@@ -27,23 +27,55 @@ public class TimeBoundedExecution {
 	 * @param timeout
 	 *            The timeout for canceling the execution
 	 */
-	public TimeBoundedExecution(final Thread thread, final int timeout) {
+	public TimeBoundedExecution(final FinishableThread thread, final int timeout) {
 		this.mainThread = thread;
 		this.timeout = timeout;
 	}
-
-	/**
-	 * Initializes the execution with a given runnable.
-	 * 
-	 * @param runnable
-	 *            The runnable which is used to construct the thread
-	 * @param timeout
-	 *            The timeout for canceling the execution
-	 */
-	public TimeBoundedExecution(final Runnable runnable, final int timeout) {
-		this.mainThread = new Thread(runnable);
+	
+	public TimeBoundedExecution(final Finishable finishable, final int timeout) {
+		this.mainThread = new FinishableThread(finishable);
 		this.timeout = timeout;
 	}
+	
+	/**
+	 * Initializes a timebounded execution where the object is not set to finish. This indicates that
+	 * whenever an interrupt state is caught, the process will run even if the time bounded execution should finish.
+	 * @param finishable
+	 * @param timeout
+	 */
+	public TimeBoundedExecution(final Runnable finishable, final int timeout) {
+		this.mainThread = new FinishableThread(new Finishable() {
+			
+			@Override
+			public void run() {
+				finishable.run();
+			}
+			
+			@Override
+			public void setFinished(final boolean isFinished) {
+				LOG.debug("Warning: Thread can not be finished");
+			}
+			
+			@Override
+			public boolean isFinished() {
+				return false;
+			}
+		});
+		this.timeout = timeout;
+	}
+
+//	/**
+//	 * Initializes the execution with a given runnable.
+//	 * 
+//	 * @param runnable
+//	 *            The runnable which is used to construct the thread
+//	 * @param timeout
+//	 *            The timeout for canceling the execution
+//	 */
+//	public TimeBoundedExecution(final Runnable runnable, final int timeout) {
+//		this.mainThread = new InterruptableThread(runnable);
+//		this.timeout = timeout;
+//	}
 
 	/**
 	 * Executes the TimeBoundedExecution.
@@ -63,6 +95,7 @@ public class TimeBoundedExecution {
 		});
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
+			mainThread.setFinished(true);
 			LOG.error("Test timed out because of method-timeout!");
 			for (int i = 0; i < 5; i++){
 				mainThread.interrupt();

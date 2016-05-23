@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit3.example.tests;
+package de.dagere.kopeme.junit.exampletests;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;

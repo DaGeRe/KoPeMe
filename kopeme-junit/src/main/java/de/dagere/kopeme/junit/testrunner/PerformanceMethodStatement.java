@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.annotations.Assertion;
@@ -34,6 +35,7 @@ public class PerformanceMethodStatement extends Statement {
 	private final DataCollectorList datacollectors;
 	private final String methodName, filename;
 	private final boolean saveFullData;
+	private boolean isFinished = false;
 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final FrameworkMethod method, final boolean saveFullData) {
 		super();
@@ -78,7 +80,8 @@ public class PerformanceMethodStatement extends Statement {
 	@Override
 	public void evaluate() throws Throwable {
 
-		final Runnable mainRunnable = new Runnable() {
+		final Finishable mainRunnable = new Finishable() {
+			
 			@Override
 			public void run() {
 				try {
@@ -104,7 +107,18 @@ public class PerformanceMethodStatement extends Statement {
 					LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
 				}
 			}
+			
+			@Override
+			public void setFinished(final boolean isFinished) {
+				PerformanceMethodStatement.this.isFinished = isFinished;
+			}
+			
+			@Override
+			public boolean isFinished() {
+				return isFinished;
+			}
 		};
+			
 		final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout);
 		tbe.execute();
 		LOG.debug("Timebounded execution finished");
@@ -195,7 +209,7 @@ public class PerformanceMethodStatement extends Statement {
 			}
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted);
-			if (interrupted) {
+			if (isFinished || interrupted) {
 				throw new InterruptedException();
 			}
 			Thread.sleep(1); // To let other threads "breath"
