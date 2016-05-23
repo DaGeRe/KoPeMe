@@ -242,6 +242,7 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 
 	@Override
 	public void setFinished(final boolean isFinished) {
+		LOG.debug("Setze finished: " + isFinished + " " + mainRunnable);
 		if (mainRunnable != null) {
 			mainRunnable.setFinished(isFinished);
 		}
