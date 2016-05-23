@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -218,8 +220,19 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
 			initValues(currentMethod);
 
-			currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, saveFullData);
-			return currentMethodStatement;
+			if (!classFinished){
+				currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, saveFullData);
+				return currentMethodStatement;
+			}else{
+				return new Statement() {
+					
+					@Override
+					public void evaluate() throws Throwable {
+						throw new AssertionFailedError("Test class has already timed out.");
+					}
+				};
+			}
+			
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
