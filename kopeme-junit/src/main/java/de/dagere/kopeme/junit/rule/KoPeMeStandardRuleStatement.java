@@ -27,18 +27,22 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
 	private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 	
+	private final TestResult tr;
+	
 	public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super(runnables, method, filename);
+		 tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
 	}
 
 	@Override
 	public void evaluate() throws Throwable {
+//		final TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
 		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
+				
 				try {
-					tr = executeSimpleTest(tr);
+					executeSimpleTest(tr);
 					if (!assertationvalues.isEmpty()) {
 						tr.checkValues(assertationvalues);
 					}
@@ -62,12 +66,10 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		
 		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout());
 		tbe.execute();
-
-
 		LOG.info("Test {} beendet", filename);
 	}
 
-	private TestResult executeSimpleTest(final TestResult tr) throws Throwable {
+	private void executeSimpleTest(final TestResult tr) throws Throwable {
 		if (!checkCollectorValidity(tr)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
@@ -77,16 +79,18 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 			runMainExecution(tr, "execution ", annotation.executionTimes());
 		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, annotation.warmupExecutions(), true));
+			saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, annotation.warmupExecutions(), true));
+			saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, annotation.warmupExecutions(), true));
+		saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
+	}
 
-		return tr;
+	public void setMethodName(final String methodName) {
+		tr.setMethodName(methodName);
 	}
 }

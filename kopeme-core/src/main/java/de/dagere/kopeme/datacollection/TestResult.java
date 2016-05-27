@@ -37,7 +37,7 @@ public class TestResult {
 	protected int index;
 	protected Checker checker;
 	private int realExecutions;
-	private final String testcase;
+	private String methodName;
 	private final HistoricalTestResults historicalResults;
 
 	private final Map<String, MeasureSummarizer> collectorSummarizerMap;
@@ -45,18 +45,22 @@ public class TestResult {
 	/**
 	 * Initializes the TestResult with a Testcase-Name and the executionTimes.
 	 * 
-	 * @param testcase Name of the Testcase
+	 * @param methodName Name of the Testcase
 	 * @param executionTimes Count of the planned executions
 	 */
-	public TestResult(final String testcase, final int executionTimes, final DataCollectorList collectors) {
+	public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
 		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
 		index = 0;
-		this.testcase = testcase;
-		historicalResults = new HistoricalTestResults(testcase);
+		this.methodName = methodName;
+		historicalResults = new HistoricalTestResults(methodName);
 
 		collectorSummarizerMap = new HashMap<>();
 		dataCollectors = collectors.getDataCollectors();
+	}
+	
+	public void setMethodName(final String methodName){
+		this.methodName = methodName;
 	}
 
 	/**
@@ -65,7 +69,7 @@ public class TestResult {
 	 * @return Name of the Testcase
 	 */
 	public String getTestcase() {
-		return testcase;
+		return methodName;
 	}
 
 	/**
@@ -402,5 +406,9 @@ public class TestResult {
 	 */
 	public HistoricalTestResults getHistoricalResults() {
 		return historicalResults;
+	}
+
+	public String getMethodName() {
+		return methodName;
 	}
 }
