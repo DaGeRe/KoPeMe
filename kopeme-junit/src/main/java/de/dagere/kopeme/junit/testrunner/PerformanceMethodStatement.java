@@ -132,13 +132,13 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	 *             Any exception that occurs during the test
 	 */
 	private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-		final TestResult tr = new TestResult(methodName, annotation.executionTimes(), datacollectors);
+		final TestResult tr = new TestResult(methodName, annotation.warmupExecutions(), datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, "warmup execution ", warmupExecutions, callee);
+			runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee);
 			warmupExecutions = tr.getRealExecutions();
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
