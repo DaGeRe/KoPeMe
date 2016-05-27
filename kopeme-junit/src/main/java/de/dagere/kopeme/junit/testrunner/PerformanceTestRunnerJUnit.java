@@ -48,7 +48,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
 	private final Class<?> klasse;
-	protected boolean saveFullData;
+	protected boolean logFullData;
 	protected FrameworkMethod method;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
@@ -96,7 +96,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 				currentMethodStatement.setFinished(isFinished);
 			}
 		};
-		saveFullData = ptc.logFullData();
+		logFullData = ptc.logFullData();
 		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout());
 		try {
 			final boolean finished = tbe.execute();
@@ -221,7 +221,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			initValues(currentMethod);
 
 			if (!classFinished){
-				currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, saveFullData);
+				currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, logFullData);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {

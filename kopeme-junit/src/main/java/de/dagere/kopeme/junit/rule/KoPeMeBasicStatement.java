@@ -13,13 +13,14 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * A statement for running performance tests.
  * 
- * Should once become base class of several TestExecutingStatements - isn't yet.
+ * Should once become base class of several TestExecutingStatements - is yet only base class of rule and throughput statement.
  * 
  * @author reichelt
  *
@@ -34,6 +35,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	protected Method method;
 	protected TestRunnables runnables;
 	protected boolean isFinished;
+	protected DataCollectorList datacollectors;
 
 	protected PerformanceTest annotation;
 
@@ -55,6 +57,17 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 		annotation = method.getAnnotation(PerformanceTest.class);
 
+		if (annotation.dataCollectors().equals("STANDARD")) {
+			datacollectors = DataCollectorList.STANDARD;
+		} else if (annotation.dataCollectors().equals("ONLYTIME")) {
+			datacollectors = DataCollectorList.ONLYTIME;
+		} else if (annotation.dataCollectors().equals("NONE")) {
+			datacollectors = DataCollectorList.NONE;
+		} else {
+			datacollectors = DataCollectorList.ONLYTIME;
+			LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE ARE ALLOWED");
+		}
+		
 		if (annotation != null) {
 			try {
 				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
