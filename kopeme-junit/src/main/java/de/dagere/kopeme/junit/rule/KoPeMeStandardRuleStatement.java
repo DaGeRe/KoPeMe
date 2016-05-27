@@ -25,7 +25,7 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
  */
 public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
-	static Logger log = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
+	private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 	
 	public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super(runnables, method, filename);
@@ -64,14 +64,12 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		tbe.execute();
 
 
-		log.info("Test {} beendet", filename);
+		LOG.info("Test {} beendet", filename);
 	}
 
 	private TestResult executeSimpleTest(final TestResult tr) throws Throwable {
-//		tr = new TestResult(method.getName(), annotation.timeout(), DataCollectorList.STANDARD);
-
 		if (!checkCollectorValidity(tr)) {
-			log.warn("Not all Collectors are valid!");
+			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
 			//Run warmup
