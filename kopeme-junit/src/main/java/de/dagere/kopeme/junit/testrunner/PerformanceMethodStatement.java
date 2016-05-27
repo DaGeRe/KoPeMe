@@ -2,44 +2,34 @@ package de.dagere.kopeme.junit.testrunner;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundedExecution;
-import de.dagere.kopeme.annotations.Assertion;
-import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
-public class PerformanceMethodStatement extends Statement implements Finishable {
+public class PerformanceMethodStatement extends KoPeMeBasicStatement implements Finishable {
 
 	private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 
 	private final PerformanceJUnitStatement callee;
-	private final Map<String, Long> assertationvalues;
-	private final Map<String, Double> maximalRelativeStandardDeviation;
-	private final int timeout, minEarlyStopExecutions;
+	private final int timeout;
 	private int warmupExecutions;
 
-	private final int executionTimes;
-	private final DataCollectorList datacollectors;
-	private final String className, methodName, filename;
+	private final String className, methodName;
 	private final boolean saveFullData;
 	private boolean isFinished = false;
 	private Finishable mainRunnable;
 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final FrameworkMethod method, final boolean saveFullData) {
-		super();
+		super(null, method.getMethod(), filename);
 		this.callee = callee;
 		
 		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
@@ -49,35 +39,13 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 			System.err.println("kieker has failed!");
 			e.printStackTrace();
 		}
-		if (annotation.dataCollectors().equals("STANDARD")) {
-			datacollectors = DataCollectorList.STANDARD;
-		} else if (annotation.dataCollectors().equals("ONLYTIME")) {
-			datacollectors = DataCollectorList.ONLYTIME;
-		} else if (annotation.dataCollectors().equals("NONE")) {
-			datacollectors = DataCollectorList.NONE;
-		} else {
-			datacollectors = DataCollectorList.ONLYTIME;
-			LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE ARE ALLOWED");
-		}
 
 		this.saveFullData = saveFullData;
-		executionTimes = annotation.executionTimes();
 		warmupExecutions = annotation.warmupExecutions();
-		minEarlyStopExecutions = annotation.minEarlyStopExecutions();
 		timeout = annotation.timeout();
-		maximalRelativeStandardDeviation = new HashMap<>();
-
-		for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
-			maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
-		}
-		this.filename = filename;
 		this.methodName = method.getName();
 		this.className = method.getDeclaringClass().getSimpleName();
 
-		assertationvalues = new HashMap<>();
-		for (final Assertion a : annotation.assertions()) {
-			assertationvalues.put(a.collectorname(), a.maxvalue());
-		}
 	}
 
 	@Override
@@ -138,13 +106,13 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 	 *             Any exception that occurs during the test
 	 */
 	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee) throws Throwable {
-		final TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
+		final TestResult tr = new TestResult(methodName, annotation.executionTimes(), datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true, "execution ", executionTimes);
+			runMainExecution(tr, "execution ", annotation.executionTimes(), callee);
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
@@ -164,13 +132,13 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 	 *             Any exception that occurs during the test
 	 */
 	private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-		final TestResult tr = new TestResult(methodName, executionTimes, datacollectors);
+		final TestResult tr = new TestResult(methodName, annotation.executionTimes(), datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, callee, true, "warmup execution ", warmupExecutions);
+			runMainExecution(tr, "warmup execution ", warmupExecutions, callee);
 			warmupExecutions = tr.getRealExecutions();
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
@@ -191,22 +159,18 @@ public class PerformanceMethodStatement extends Statement implements Finishable 
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private void runMainExecution(final TestResult tr, final PerformanceJUnitStatement callee, final boolean simple, final String warmupString, final int executions) throws Throwable {
+	private void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {
 
 			callee.preEvaluate();
-			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executionTimes + " ---");
-			if (simple)
-				tr.startCollection();
+			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			callee.evaluate();
-			if (simple)
-				tr.stopCollection();
-			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executionTimes + " ---");
+			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
 			callee.postEvaluate();
 			tr.setRealExecutions(execution);
-			if (execution >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				LOG.info("Exiting because of deviation reached");
 				break;
