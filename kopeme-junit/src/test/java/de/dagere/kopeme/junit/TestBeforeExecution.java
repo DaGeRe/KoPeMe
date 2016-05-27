@@ -75,10 +75,10 @@ public class TestBeforeExecution {
 			System.out.println(failure.toString());
 		}
 		final String canonicalName = junitTestClass.getCanonicalName();
-		final File f = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
-		LOG.debug("Suche: {} Existiert: {}", f.getAbsolutePath(), f.exists());
-		Assert.assertThat(f.exists(), Matchers.equalTo(true));
-		final Integer time = getTimeResult(f, testname);
+		final File resultFile = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
+		LOG.debug("Suche: {} Existiert: {}", resultFile.getAbsolutePath(), resultFile.exists());
+		Assert.assertThat(resultFile.exists(), Matchers.equalTo(true));
+		final Integer time = getTimeResult(resultFile, testname);
 		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * 1000));
 		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * 1000));
 	}

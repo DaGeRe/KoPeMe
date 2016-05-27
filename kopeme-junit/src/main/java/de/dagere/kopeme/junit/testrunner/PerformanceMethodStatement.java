@@ -166,7 +166,9 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 
 			callee.preEvaluate();
 			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
+			tr.startCollection();
 			callee.evaluate();
+			tr.stopCollection();
 			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
 			callee.postEvaluate();
 			tr.setRealExecutions(execution);
@@ -193,8 +195,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
+		// Never called, as the class is called via evaluate - only needs to be implemented to meet the interface
 	}
 
 	@Override
