@@ -64,7 +64,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 			}
 		};
 		
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout());
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout(), "method");
 		tbe.execute();
 		LOG.info("Test {} beendet", filename);
 	}
@@ -75,7 +75,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 		}
 		try {
 			//Run warmup
-			runMainExecution(new TestResult(method.getName(), annotation.timeout(), datacollectors), "warmup execution ", annotation.warmupExecutions());
+			runMainExecution(new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors), "warmup execution ", annotation.warmupExecutions());
 			runMainExecution(tr, "execution ", annotation.executionTimes());
 		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();

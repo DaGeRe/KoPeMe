@@ -18,6 +18,7 @@ public class TimeBoundedExecution {
 	private static final Logger LOG = LogManager.getLogger(TimeBoundedExecution.class);
 
 	private final FinishableThread mainThread;
+	private final String type;
 	private final int timeout;
 	private Throwable testError;
 
@@ -29,18 +30,20 @@ public class TimeBoundedExecution {
 	 * @param timeout
 	 *            The timeout for canceling the execution
 	 */
-	public TimeBoundedExecution(final FinishableThread thread, final int timeout) {
+	public TimeBoundedExecution(final FinishableThread thread, final int timeout, final String type) {
 		this.mainThread = thread;
 		this.timeout = timeout;
+		this.type = type;
 	}
 
-	public TimeBoundedExecution(final Finishable finishable, final int timeout) {
+	public TimeBoundedExecution(final Finishable finishable, final int timeout, final String type) {
 		String threadName;
 		synchronized (LOG) {
 			threadName = "timebounded-" + (id++);
 		}
 		this.mainThread = new FinishableThread(finishable, threadName);
 		this.timeout = timeout;
+		this.type = type;
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class TimeBoundedExecution {
 	 * @param finishable
 	 * @param timeout
 	 */
-	public TimeBoundedExecution(final Runnable finishable, final int timeout) {
+	public TimeBoundedExecution(final Runnable finishable, final int timeout, final String type) {
 		this.mainThread = new FinishableThread(new Finishable() {
 
 			@Override
@@ -69,6 +72,7 @@ public class TimeBoundedExecution {
 			}
 		});
 		this.timeout = timeout;
+		this.type = type;
 	}
 
 	/**
@@ -91,7 +95,7 @@ public class TimeBoundedExecution {
 		mainThread.join(timeout);
 		if (mainThread.isAlive()) {
 			mainThread.setFinished(true);
-			LOG.error("Test " + mainThread.getName() + " timed out!");
+			LOG.error("Test " + type + " " + mainThread.getName() + " timed out!");
 			for (int i = 0; i < 5; i++) {
 				mainThread.interrupt();
 				// asure, that the test does not catch the interrupt state itself

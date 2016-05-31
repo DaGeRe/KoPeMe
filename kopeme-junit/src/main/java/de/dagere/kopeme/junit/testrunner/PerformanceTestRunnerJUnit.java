@@ -97,7 +97,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			}
 		};
 		logFullData = ptc.logFullData();
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout());
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout(), "class");
 		try {
 			final boolean finished = tbe.execute();
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);

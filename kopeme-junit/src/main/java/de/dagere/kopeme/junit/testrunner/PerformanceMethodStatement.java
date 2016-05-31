@@ -90,7 +90,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			}
 		};
 		if (!isFinished){
-			final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout);
+			final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout, "method");
 			tbe.execute();
 		}
 		LOG.debug("Timebounded execution finished");
