@@ -33,11 +33,11 @@ public class ExampleAssertionTest {
 			public void testAssertionAddition() throws FileNotFoundException {
 		int a = 0;
 		System.setOut(new PrintStream(new File("target/test.txt")));
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			a += i;
 			giveMeOutput(i);
 		}
-		Assert.assertEquals(100000 * 99999 / 2, a);
+		Assert.assertEquals(10000 * 9999 / 2, a);
 		try {
 			Thread.sleep(20);
 		} catch (final InterruptedException e) {

@@ -42,7 +42,7 @@ public final class XMLDataStorer implements DataStorer {
 		final String filename = methodname + ".xml";
 		file = new File(foldername, filename);
 		if (file.exists()) {
-			XMLDataLoader loader = new XMLDataLoader(file);
+			final XMLDataLoader loader = new XMLDataLoader(file);
 			data = loader.getFullData();
 		} else {
 			createXMLData(classname);
@@ -57,7 +57,7 @@ public final class XMLDataStorer implements DataStorer {
 	public void createXMLData(final String classname) {
 		data = new Kopemedata();
 		data.setTestcases(new Testcases());
-		Testcases tc = data.getTestcases();
+		final Testcases tc = data.getTestcases();
 		tc.setClazz(classname);
 		storeData();
 	}
@@ -84,20 +84,20 @@ public final class XMLDataStorer implements DataStorer {
 		r.setMin(performanceDataMeasure.min);
 		r.setFirst10Percentile(performanceDataMeasure.first10percentile);
 		if (values != null) {
-			Fulldata fd = new Fulldata();
-			for (Long l : values) {
+			final Fulldata fd = new Fulldata();
+			for (final Long l : values) {
 				fd.getValue().add("" + l);
 			}
 			r.setFulldata(fd);
 		}
 
-		Datacollector dc = getOrCreateDatacollector(performanceDataMeasure, test);
+		final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure, test);
 		dc.getResult().add(r);
 	}
 
 	private Datacollector getOrCreateDatacollector(final PerformanceDataMeasure performanceDataMeasure, final TestcaseType test) {
 		Datacollector dc = null;
-		for (Datacollector dc2 : test.getDatacollector()) {
+		for (final Datacollector dc2 : test.getDatacollector()) {
 			LOG.trace("Name: {} Collectorname: {}", dc2.getName(), performanceDataMeasure.collectorname);
 			if (dc2.getName().equals(performanceDataMeasure.collectorname)) {
 				LOG.trace("Equals");
@@ -116,7 +116,7 @@ public final class XMLDataStorer implements DataStorer {
 
 	private TestcaseType getOrCreateTestcase(final PerformanceDataMeasure performanceDataMeasure) {
 		TestcaseType test = null;
-		for (TestcaseType tc : data.getTestcases().getTestcase()) {
+		for (final TestcaseType tc : data.getTestcases().getTestcase()) {
 			if (tc.getName().equals(performanceDataMeasure.testcase)) {
 				test = tc;
 			}
@@ -134,13 +134,14 @@ public final class XMLDataStorer implements DataStorer {
 	public void storeData() {
 		JAXBContext jaxbContext;
 		try {
+//			ExceptionUtils.printRootCauseStackTrace(new RuntimeException());
 			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 			jaxbMarshaller.marshal(data, file);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
 	}
@@ -154,13 +155,13 @@ public final class XMLDataStorer implements DataStorer {
 	public static void storeData(final File file, final Kopemedata currentdata) {
 		JAXBContext jaxbContext;
 		try {
-			// log.debug("Storing data to: {}", file.getAbsoluteFile());
+			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 			jaxbMarshaller.marshal(currentdata, file);
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
 	}
