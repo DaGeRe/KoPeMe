@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>kopeme-junit</artifactId>
 	<packaging>jar</packaging>
@@ -7,14 +6,14 @@
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
 		<artifactId>kopeme-parent</artifactId>
-		<version>0.7-SNAPSHOT</version>
+		<version>0.7</version>
 	</parent>
 
 	<name>KoPeMe - JUnit</name>
 	<description>KoPeMe-JUnit integration module</description>
 	<url>http://dagere.de/KoPeMe</url>
 
-	<properties></properties>
+	<properties />
 
 	<build>
 		<plugins>
@@ -71,7 +70,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.11-SNAPSHOT</version>
+			<version>0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -81,7 +80,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.11-SNAPSHOT</version>
+			<version>0.11</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
