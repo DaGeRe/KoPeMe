@@ -9,13 +9,6 @@ import java.util.List;
  *
  */
 public interface DataStorer {
-	/**
-	 * Stores a given value for the given collector.
-	 * 
-	 * @param name Name of the collector
-	 * @param value Value for storage
-	 */
-	void storeValue(String name, long value);
 
 	/**
 	 * Stores all already given data to the hard disk.

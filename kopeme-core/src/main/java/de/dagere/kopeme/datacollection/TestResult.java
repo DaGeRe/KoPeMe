@@ -247,7 +247,8 @@ public class TestResult {
 	}
 
 	/**
-	 * Returns the values of measures, that are not collected via DataCollectors.
+	 * Returns the values of measures, that are not collected via DataCollectors. After the finalization, all values are contained
+	 * in order to make assertion over these values as well.
 	 * 
 	 * @return Additional Values
 	 */
