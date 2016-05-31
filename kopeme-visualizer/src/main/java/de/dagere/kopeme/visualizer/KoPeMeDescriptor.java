@@ -7,12 +7,11 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 
@@ -23,7 +22,6 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import de.dagere.kopeme.visualizer.data.GraphVisualizer;
-
 
 /**
  * Describes the plugin
@@ -45,7 +43,8 @@ public final class KoPeMeDescriptor extends
 		load();
 	}
 
-	public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+	@Override
+	public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
 		return true;
 	}
 
@@ -60,7 +59,7 @@ public final class KoPeMeDescriptor extends
 		return "/plugin/postbuild-task/help/main.html";
 	}
 
-	public static JSONArray getArray(Object data) {
+	public static JSONArray getArray(final Object data) {
 		JSONArray result;
 		if (data instanceof JSONArray)
 			result = (JSONArray) data;
@@ -72,7 +71,7 @@ public final class KoPeMeDescriptor extends
 		return result;
 	}
 
-	public FormValidation doCheckName(@QueryParameter String value) throws IOException, ServletException {
+	public FormValidation doCheckName(@QueryParameter final String value) throws IOException, ServletException {
 		log.info("Checking Name: " + value);
 		if (publisher == null)
 			return FormValidation.ok();
@@ -84,13 +83,12 @@ public final class KoPeMeDescriptor extends
 	}
 
 	@Override
-	public KoPeMePublisher newInstance(StaplerRequest req, JSONObject formData)
+	public KoPeMePublisher newInstance(final StaplerRequest req, final JSONObject formData)
 			throws FormException {
 		log.info("Creating new Instance");
 		publisher = new KoPeMePublisher();
-		
 		// es gibt es kein grouping, wenn kein radiobutton gewaehlt ist
-		// kann bei hinzufuegen der visualisierung vorkommen 
+		// kann bei hinzufuegen der visualisierung vorkommen
 		if (formData.optJSONObject("grouping") != null) {
 
 			JSONArray dataArray = getArray(formData.optJSONObject("grouping").get("testcases"));
@@ -98,7 +96,7 @@ public final class KoPeMeDescriptor extends
 
 			List<GraphVisualizer> testcases = publisher.getTestcases();
 			for (Object data : dataArray) {
-			
+
 				final Map<String, Map<Date, Long>> dataTemp = Collections.emptyMap();
 				final String name = ((JSONObject) data).getString("name");
 				final Boolean visible = ((JSONObject) data).getBoolean("visible");
@@ -107,7 +105,7 @@ public final class KoPeMeDescriptor extends
 			publisher.setTestcases(testcases);
 			publisher.setLastTestcasesSortOrder(lastTestcasesSortOrder);
 		}
-		
+
 		return publisher;
 	}
 }

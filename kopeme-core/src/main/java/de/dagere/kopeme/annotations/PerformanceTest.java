@@ -6,6 +6,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import kieker.common.record.controlflow.OperationExecutionRecord;
+import kieker.monitoring.core.controller.MonitoringController;
+
 /**
  * This annotation for <code>public void</code> methods is telling that the method is a KoPeMe-Testcase. This means that it is executed several times with
  * performance measurements to get performance measures for the testcase. It is possible to specify the count of executions and other configuration via
@@ -62,7 +65,14 @@ public @interface PerformanceTest {
 	 * @return Assertations that should be checked
 	 */
 	Assertion[] assertions() default {};
-
+	
+	/**
+	 * Sets the Datacollectors - possible values are STANDARD, ONLYTIME and NONE.
+	 * 
+	 * @return Datacollectors that should be used
+	 */
+	String dataCollectors() default "STANDARD";
+	
 	/**
 	 * Optionally specify for <emph>all<emph> datacollectors, for which maximal standard deviation an early stop is executed. This means that, if all relative
 	 * standard deviations fall below the given maximale relative deviations thresholds, the test is stoped and the measured value until the stop is the final
@@ -78,4 +88,14 @@ public @interface PerformanceTest {
 	 * @return Minimal execution times for early abortion of the test
 	 */
 	int minEarlyStopExecutions() default 10;
+	
+	/**
+	 * Optionally specifies that kieker should be used to collect method execution times. 
+	 * When set to true, the user must ensure that the code will produce {@link OperationExecutionRecord} for the kieker {@link MonitoringController}.
+	 * This can be achieved using manual calls to the later class or using the Aspect J weaving mechanism. 
+	 * The last one is recommended. 
+	 * 
+	 * @return true if the kieker framework should be used
+	 */
+	boolean useKieker() default true;
 }

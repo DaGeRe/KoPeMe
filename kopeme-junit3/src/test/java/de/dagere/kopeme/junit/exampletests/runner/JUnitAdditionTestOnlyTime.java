@@ -32,7 +32,6 @@ public class JUnitAdditionTestOnlyTime extends KoPeMeTestcase {
 
 	@Override
 	protected boolean logFullData() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

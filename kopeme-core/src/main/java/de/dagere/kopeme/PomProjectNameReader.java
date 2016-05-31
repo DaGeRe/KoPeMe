@@ -84,4 +84,41 @@ public class PomProjectNameReader {
 		}
 	}
 
+	public ProjectInfo getProjectInfo(final File pomXmlFile) {
+		MavenXpp3Reader reader = new MavenXpp3Reader();
+		try {
+			Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
+			final String groupId = getGroupid(model);
+			return new ProjectInfo(model.getArtifactId(), groupId);
+		} catch (IOException | XmlPullParserException e) {
+			System.err.println("There was a problem while reading the pom.xml file!");
+			e.printStackTrace();
+			throw new RuntimeException("No or unreadable pom.xml found");
+		}
+	}
+
+	public static class ProjectInfo {
+		final String artifactId, groupId;
+
+		public ProjectInfo(final String artifactId, final String groupId) {
+			super();
+			this.artifactId = artifactId;
+			this.groupId = groupId;
+		}
+
+		/**
+		 * @return the artifactId
+		 */
+		public String getArtifactId() {
+			return artifactId;
+		}
+
+		/**
+		 * @return the groupId
+		 */
+		public String getGroupId() {
+			return groupId;
+		}
+	}
+
 }

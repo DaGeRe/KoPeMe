@@ -9,8 +9,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 /**
- * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that
- * a rule-execution does measure the time needed for @Before-Executions together with the main execution time, but not the @BeforeClass-Execution.
+ * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution does measure the time
+ * needed for @Before-Executions together with the main execution time, but not the @BeforeClass-Execution.
  * 
  * @author DaGeRe
  *
@@ -24,6 +24,8 @@ public class KoPeMeRule implements TestRule {
 	public KoPeMeRule(final Object testObject) {
 		this.testObject = testObject;
 	}
+	
+	private KoPeMeStandardRuleStatement koPeMeStandardRuleStatement;
 
 	@Override
 	public Statement apply(final Statement stmt, final Description descr) {
@@ -37,23 +39,30 @@ public class KoPeMeRule implements TestRule {
 			} catch (NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}
-			TestRunnables runnables = new TestRunnables(new Runnable() {
+			final TestRunnables runnables = new TestRunnables(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
 						stmt.evaluate();
-					} catch (Throwable e) {
+					} catch (final Throwable e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}, testClass, testObject);
 
-			return new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName() + ".yaml"); //FIXME WHAT THE FUCK?!
+			koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName());
+			return koPeMeStandardRuleStatement; 
 		} else {
 			return stmt;
 		}
+	}
 
+	/**
+	 * Changes the name of the result - can be used e.g. when a parameterized test is executed and the result should be saved with a differend method name.
+	 */
+	public void setMethodName(final String name) {
+		koPeMeStandardRuleStatement.setMethodName(name);
 	}
 }

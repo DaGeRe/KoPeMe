@@ -9,6 +9,8 @@ import de.dagere.kopeme.KoPeMeConfiguration;
 
 public class FolderProvider {
 
+	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
+
 	static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME") : System.getenv("HOME") + File.separator + ".KoPeMe"
 			+ File.separator;
 
@@ -29,10 +31,14 @@ public class FolderProvider {
 		setKopemeDefaultFolder(kopemeDefaultFolder);
 	}
 
-	public File getFolderForNewPerformanceresult(final String filename) {
-		String nowAsString = Long.valueOf(System.currentTimeMillis()).toString();
+	public File getFolderForCurrentPerformanceresults(final String filename) {
+		String nowAsString = MEASURE_TIME.toString();
 		File returnable = new File(getFolderFor(filename) + nowAsString);
 		return returnable;
+	}
+
+	public File getFolderForCurrentPerformanceresults(final String testFileName, final String testCaseName) {
+		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath() + File.separator + testCaseName);
 	}
 
 	public String getFolderFor(final String filename) {

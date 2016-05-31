@@ -13,12 +13,14 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * A statement for running performance tests.
  * 
- * Should once become base class of several TestExecutingStatements - isn't yet.
+ * Should once become base class of several TestExecutingStatements - is yet only base class of rule and throughput statement.
  * 
  * @author reichelt
  *
@@ -29,18 +31,23 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
-	protected String filename;
+	protected final String filename;
 	protected Method method;
 	protected TestRunnables runnables;
+	protected boolean isFinished;
+	protected DataCollectorList datacollectors;
 
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
+	protected PerformanceTest annotation;
 
 	/**
 	 * Initializes the KoPemeBasicStatement.
 	 * 
-	 * @param runnables Runnables that should be run
-	 * @param method Method that should be executed
-	 * @param filename Name of the
+	 * @param runnables
+	 *            Runnables that should be run
+	 * @param method
+	 *            Method that should be executed
+	 * @param filename
+	 *            Name of the
 	 */
 	public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super();
@@ -48,20 +55,33 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		this.filename = filename;
 		this.method = method;
 
-		PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
+		annotation = method.getAnnotation(PerformanceTest.class);
 
+		if (annotation.dataCollectors().equals("STANDARD")) {
+			datacollectors = DataCollectorList.STANDARD;
+		} else if (annotation.dataCollectors().equals("ONLYTIME")) {
+			datacollectors = DataCollectorList.ONLYTIME;
+		} else if (annotation.dataCollectors().equals("NONE")) {
+			datacollectors = DataCollectorList.NONE;
+		} else {
+			datacollectors = DataCollectorList.ONLYTIME;
+			LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE ARE ALLOWED");
+		}
+		
 		if (annotation != null) {
-			executionTimes = annotation.executionTimes();
-			warmupExecutions = annotation.warmupExecutions();
-			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
-			timeout = annotation.timeout();
+			try {
+				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+			} catch (final Exception e) {
+				System.err.println("kieker has failed!");
+				e.printStackTrace();
+			}
 			maximalRelativeStandardDeviation = new HashMap<>();
 			assertationvalues = new HashMap<>();
-			for (MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+			for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
 				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
 			}
 
-			for (Assertion a : annotation.assertions()) {
+			for (final Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
 		} else {
@@ -72,44 +92,45 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	/**
 	 * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
 	 * 
-	 * @param tr Test Result that should be checked
+	 * @param tr
+	 *            Test Result that should be checked
 	 * @return Weather the result is valid
 	 */
-	protected boolean checkCollectorValidity(TestResult tr) {
+	protected boolean checkCollectorValidity(final TestResult tr) {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
 	}
 
-	protected void runMainExecution(TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		int executions;
-		for (executions = 1; executions <= executionTimes; executions++) {
+	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions) throws IllegalAccessException, InvocationTargetException, InterruptedException {
+		int execution;
+		for (execution = 1; execution <= executions; execution++) {
 
-			LOG.debug("--- Starting execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting " + warmupString + execution + "/" + executions + " ---");
 			runnables.getBeforeRunnable().run();
 			tr.startCollection();
 			runnables.getTestRunnable().run();
 			tr.stopCollection();
 			runnables.getAfterRunnable().run();
-
-			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
-			for (Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
+			tr.setRealExecutions(execution - 1);
+			LOG.debug("--- Stopping execution " + execution + "/" + executions + " ---");
+			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+			if (isFinished){
+				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
+				throw new InterruptedException("Test timed out.");
+			}
+			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
+			final boolean interrupted = Thread.interrupted();
+			LOG.debug("Interrupt state: {}", interrupted );
+			if (interrupted) {
+				LOG.debug("Exiting thread.");
+				throw new InterruptedException("Test was interrupted and eventually timed out.");
+			}
 		}
-		LOG.debug("Executions: " + (executions - 1));
-		tr.setRealExecutions(executions - 1);
-	}
-
-	protected void runWarmup(String methodString) {
-		for (int i = 1; i <= warmupExecutions; i++) {
-			runnables.getBeforeRunnable().run();
-			LOG.info("--- Starting warmup execution " + methodString + " " + i + "/" + warmupExecutions + " ---");
-			runnables.getTestRunnable().run();
-			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
-			runnables.getAfterRunnable().run();
-		}
+		LOG.debug("Executions: " + (execution - 1));
+		tr.setRealExecutions(execution - 1);
 	}
 }

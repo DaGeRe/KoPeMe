@@ -95,7 +95,7 @@ public final class PerformanceTestUtils {
 				long max = tr.getMaximumCurrentValue(key);
 				double first10percentile = getPercentile(tr.getValues(key), 10);
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
-						tr.getRealExecutions(), min, max, first10percentile);
+						tr.getRealExecutions(), data.getWarmupExecutions(), min, max, first10percentile);
 				List<Long> values = data.isSaveValues() ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
@@ -103,7 +103,7 @@ public final class PerformanceTestUtils {
 			}
 			for (String additionalKey : tr.getAdditionValueKeys()) {
 				PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
-						tr.getRealExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
+						tr.getRealExecutions(), data.getWarmupExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
 				List<Long> vales = new LinkedList<Long>();
 				xds.storeValue(performanceDataMeasure, vales);
 			}

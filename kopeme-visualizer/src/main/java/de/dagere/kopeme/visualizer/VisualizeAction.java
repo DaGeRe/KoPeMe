@@ -97,7 +97,6 @@ public class VisualizeAction implements Action, Serializable {
 
 			if (graphMap == null)
 				graphMap = new HashMap<String, GraphVisualizer>();
-
 			final FilePath workspace = project.getSomeWorkspace();
 			if (workspace != null) // prevent error, when workspace for project isn't initialized
 			{

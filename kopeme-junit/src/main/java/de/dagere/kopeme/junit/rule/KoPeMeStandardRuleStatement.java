@@ -10,6 +10,8 @@ import junit.framework.AssertionFailedError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.TimeBoundedExecution;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
@@ -23,62 +25,72 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
  */
 public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
-	static Logger log = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
-
+	private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
+	
+	private final TestResult tr;
+	
 	public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
 		super(runnables, method, filename);
+		 tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
 	}
 
 	@Override
 	public void evaluate() throws Throwable {
-		final Thread mainThread = new Thread(new Runnable() {
+//		final TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
+		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {
-				TestResult tr = new TestResult(method.getName(), warmupExecutions);
+				
 				try {
-					tr = executeSimpleTest(tr);
+					executeSimpleTest(tr);
 					if (!assertationvalues.isEmpty()) {
 						tr.checkValues(assertationvalues);
 					}
 				} catch (IllegalAccessException | InvocationTargetException e) {
-					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (final Throwable e) {
 					e.printStackTrace();
 				}
 			}
-		});
 
-		mainThread.start();
-		mainThread.join(timeout);
-		if (mainThread.isAlive()) {
-			mainThread.interrupt();
-		}
+			@Override
+			public boolean isFinished() {
+				return KoPeMeStandardRuleStatement.this.isFinished;
+			}
 
-		log.info("Test {} beendet", filename);
+			@Override
+			public void setFinished(final boolean isFinished) {
+				KoPeMeStandardRuleStatement.this.isFinished = isFinished;
+			}
+		};
+		
+		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout(), "method");
+		tbe.execute();
+		LOG.info("Test {} beendet", filename);
 	}
 
-	private TestResult executeSimpleTest(TestResult tr) throws IllegalAccessException, InvocationTargetException {
-		String methodString = method.getClass().getName() + "." + method.getName();
-		runWarmup(methodString);
-
-		tr = new TestResult(method.getName(), executionTimes);
-
+	private void executeSimpleTest(final TestResult tr) throws Throwable {
 		if (!checkCollectorValidity(tr)) {
-			log.warn("Not all Collectors are valid!");
+			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr);
-		} catch (AssertionFailedError t) {
+			//Run warmup
+			runMainExecution(new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors), "warmup execution ", annotation.warmupExecutions());
+			runMainExecution(tr, "execution ", annotation.executionTimes());
+		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createAssertFailedTestData(method.getName(), filename, tr, true));
+			saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, true));
+			saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, true));
+		saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), true));
+	}
 
-		return tr;
+	public void setMethodName(final String methodName) {
+		tr.setMethodName(methodName);
 	}
 }

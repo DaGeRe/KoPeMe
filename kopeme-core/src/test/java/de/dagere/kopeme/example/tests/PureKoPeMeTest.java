@@ -31,23 +31,24 @@ public class PureKoPeMeTest {
 	
 	@Test
 	public void testPureKoPeMeExecution() throws Throwable {
-		String params[] = new String[] { ExamplePurePerformanceTests.class.getName() };
+		final String params[] = new String[] { ExamplePurePerformanceTests.class.getName() };
 		PerformanceTestRunnerKoPeMe.main(params);
 	}
 	
 	@Test
 	public void testExecutionTimeMeasurement() throws Throwable {
-		long start = System.currentTimeMillis();
+		final long start = System.currentTimeMillis();
 		PerformanceTestRunnerKoPeMe.main(new String[] { TestTimeTest.class.getName() });
-		long duration = System.currentTimeMillis() - start;
+		final long duration = System.currentTimeMillis() - start;
 		log.debug("Overall Duration: " + duration);
-		String className = TestTimeTest.class.getCanonicalName();
-		String folderName = FolderProvider.getInstance().getFolderFor(className);
-		String filename = className + ".simpleTest.xml";
-		XMLDataLoader xdl = new XMLDataLoader(new File(folderName + File.separator + filename));
-		Kopemedata kd = xdl.getFullData();
-		List<Datacollector> collector = null;
-		for (TestcaseType tct : kd.getTestcases().getTestcase()) {
+		final String className = TestTimeTest.class.getCanonicalName();
+		final String folderName = FolderProvider.getInstance().getFolderFor(className);
+		final String filename = "simpleTest.xml";
+		log.info("Suche in: {}", folderName);
+		final XMLDataLoader xdl = new XMLDataLoader(new File(folderName, filename));
+		final Kopemedata kd = xdl.getFullData();
+		List<Datacollector> collector = null; 
+		for (final TestcaseType tct : kd.getTestcases().getTestcase()) {
 			if (tct.getName().contains("simpleTest")) {
 				collector = tct.getDatacollector();
 			}
@@ -55,14 +56,14 @@ public class PureKoPeMeTest {
 		Assert.assertNotNull(collector);
 
 		double timeConsumption = 0.0;
-		for (Datacollector c : collector) {
+		for (final Datacollector c : collector) {
 			if (c.getName().contains("TimeData")) {
 				timeConsumption = Double.parseDouble(c.getResult().get(c.getResult().size() - 1).getValue());
 			}
 		}
 		Assert.assertNotEquals(timeConsumption, 0.0);
 
-		int milisecondTime = (int) ((timeConsumption * 40) / 1000);
+		final int milisecondTime = (int) ((timeConsumption * 40) / 1000);
 
 		Assert.assertThat((long) milisecondTime, Matchers.lessThan(duration));
 	}

@@ -39,7 +39,7 @@ public final class XMLDataStorer implements DataStorer {
 	 * @throws JAXBException Thrown if an XML Writing error occurs
 	 */
 	public XMLDataStorer(final File foldername, final String classname, final String methodname) throws JAXBException {
-		String filename = classname + "." + methodname + ".xml";
+		final String filename = methodname + ".xml";
 		file = new File(foldername, filename);
 		if (file.exists()) {
 			XMLDataLoader loader = new XMLDataLoader(file);
@@ -79,6 +79,7 @@ public final class XMLDataStorer implements DataStorer {
 		r.setValue("" + performanceDataMeasure.value);
 		r.setDeviation(performanceDataMeasure.deviation);
 		r.setExecutionTimes(performanceDataMeasure.executionTimes);
+		r.setWarmupExecutions(performanceDataMeasure.getWarmupExecutions());
 		r.setMax(performanceDataMeasure.max);
 		r.setMin(performanceDataMeasure.min);
 		r.setFirst10Percentile(performanceDataMeasure.first10percentile);

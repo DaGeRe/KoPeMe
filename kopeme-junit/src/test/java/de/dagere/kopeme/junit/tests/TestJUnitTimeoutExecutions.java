@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class TestJUnitTimeoutExecutions {
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
-	public static Logger log = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
+	public static Logger LOG = LogManager.getLogger(TestJUnitTimeoutExecutions.class);
 
 	// @Test(timeout = 600)
 	// public void testClassTimeout() {
@@ -39,33 +40,37 @@ public class TestJUnitTimeoutExecutions {
 	// jc.run(ExampleClassTimeoutTest.class);
 	// }
 
-	@Test(timeout = 1600)
+	@Test(timeout = 2000)
 	public void testMethodTimeout() {
-		JUnitCore jc = new JUnitCore();
+		final JUnitCore jc = new JUnitCore();
 		jc.run(ExampleMethodTimeoutTest.class);
 	}
 
 	@Test
 	public void testNoTimeout() {
-		JUnitCore jc = new JUnitCore();
-		Result r = jc.run(NoTimeoutOutput.class);
+		final JUnitCore jc = new JUnitCore();
+		final Result r = jc.run(NoTimeoutOutput.class);
 		Assert.assertEquals(2, r.getRunCount());
 		Assert.assertEquals(0, r.getFailureCount());
 	}
 
 	@Test
 	public void testMultipleClassTimeout() throws InterruptedException {
-		JUnitCore jc = new JUnitCore();
-		Result r = jc.run(MultipleCallClassTimeout.class);
+		final JUnitCore jc = new JUnitCore();
+		final Result r = jc.run(MultipleCallClassTimeout.class);
 		assertFailureDocumentation(r);
 	}
 
 	private void assertFailureDocumentation(final Result r) {
-		List<Failure> failures = r.getFailures();
-		assertEquals(5, r.getFailureCount());
+		final List<Failure> failures = r.getFailures();
+		for (final Failure f : failures) {
+			LOG.info(f.getTrace());
+		}
+		Assert.assertThat(r.getFailureCount(), Matchers.greaterThanOrEqualTo(6));
+		// 7 -> 1 parent (class timed out because..),3 methods, 1 * initial method, 1 * assertion failed
 		int countTimeoutException = 0, countInterruptedException = 0;
-		for (Failure f : failures) {
-			Class<? extends Throwable> execeptionType = f.getException().getClass();
+		for (final Failure f : failures) {
+			final Class<? extends Throwable> execeptionType = f.getException().getClass();
 			if (execeptionType.isAssignableFrom(TimeoutException.class)) {
 				// this exception should occur four times:
 				// for each test one time (we have three in the example) + one for the whole class
@@ -80,7 +85,7 @@ public class TestJUnitTimeoutExecutions {
 	}
 
 	public void testNormalJUnitExecution() {
-		JUnitCore jc = new JUnitCore();
+		final JUnitCore jc = new JUnitCore();
 		jc.run(ExampleJUnitTests.class);
 	}
 }
