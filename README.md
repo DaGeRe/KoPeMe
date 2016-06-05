@@ -11,9 +11,9 @@ KoPeMe is in maven central, so to get started, just add
 
 ```xml
 <dependency>
-	<groupId>de.dagere.kopeme</groupId>
-	<artifactId>kopeme-junit</artifactId>
-	<version>0.4</version>
+    <groupId>de.dagere.kopeme</groupId>
+    <artifactId>kopeme-junit</artifactId>
+    <version>0.7</version>
 </dependency>
 ```
 
