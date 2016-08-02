@@ -3,12 +3,12 @@
   <parent>
     <artifactId>kopeme-parent</artifactId>
     <groupId>de.dagere.kopeme</groupId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.8-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>kopeme-visualizer-core</artifactId>
   <name>KoPeMe-Visualizer-Core</name>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.8-SNAPSHOT</version>
   <description>Dieser Projekt ermöglicht es, KoPeMe-Ergebnisdaten zu visualisieren.</description>
   <url>http://kopeme.dagere.de</url>
   <build>

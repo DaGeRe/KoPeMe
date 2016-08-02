@@ -8,7 +8,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -130,7 +129,6 @@ public final class XMLDataStorer implements DataStorer {
 	public void storeData() {
 		JAXBContext jaxbContext;
 		try {
-			ExceptionUtils.printRootCauseStackTrace(new RuntimeException());
 			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

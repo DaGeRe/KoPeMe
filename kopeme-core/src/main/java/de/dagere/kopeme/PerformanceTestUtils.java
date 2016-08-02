@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.SaveableTestData;
@@ -95,6 +96,10 @@ public final class PerformanceTestUtils {
 			}
 			final DataStorer xds = new XMLDataStorer(f, data.getFilename(), testcasename);
 			final TestResult tr = data.getTr();
+			final long timeValue = tr.getValue(TimeDataCollector.class.getName());
+			if (timeValue != 0){
+				LOG.info("Execution Time: {}", timeValue);
+			}
 			for (final String key : tr.getKeys()) {
 				LOG.info("Key: " + key);
 				final double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
