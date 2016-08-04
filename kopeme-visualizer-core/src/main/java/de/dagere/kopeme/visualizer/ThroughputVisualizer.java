@@ -23,15 +23,15 @@ public class ThroughputVisualizer {
 
 	private static final Logger log = LogManager.getLogger(ThroughputVisualizer.class);
 
-	public static List<ChartObject> createSizeGraphs(XMLDataLoader xdl, int width, int height, Map<Long, Integer> sizes) throws JAXBException {
-		List<ChartObject> charts = new LinkedList<>();
-		for (TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
-			for (Datacollector dc : tc.getDatacollector()) {
+	public static List<ChartObject> createSizeGraphs(final XMLDataLoader xdl, final int width, final int height, final Map<Long, Integer> sizes) throws JAXBException {
+		final List<ChartObject> charts = new LinkedList<>();
+		for (final TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
+			for (final Datacollector dc : tc.getDatacollector()) {
 				if (!dc.getName().equals("size")) {
 					final XYSeries ts = new XYSeries(dc.getName());
-					for (Result r : dc.getResult()) {
+					for (final Result r : dc.getResult()) {
 
-						final int value = Integer.parseInt(r.getValue());
+						final int value = (int) r.getValue();
 						log.trace("Date: {}", r.getDate());
 						final Integer count = sizes.get(r.getDate());
 						if (count != null) {

@@ -38,7 +38,7 @@
 						<xs:element name="result" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="value" type="xs:string" />
+									<xs:element name="value" type="xs:double" />
 									<xs:element name="deviation" type="xs:double" />
 									<xs:element name="warmupExecutions" type="xs:long"/>
 									<xs:element name="executionTimes" type="xs:long"/>

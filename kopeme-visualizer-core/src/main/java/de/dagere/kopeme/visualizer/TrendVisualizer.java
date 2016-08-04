@@ -17,15 +17,15 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 
 public class TrendVisualizer {
-	public static List<ChartObject> createNormalGraphs(XMLDataLoader xdl, int width, int height) throws JAXBException {
-		List<ChartObject> charts = new LinkedList<>();
-		for (TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
-			for (Datacollector dc : tc.getDatacollector()) {
+	public static List<ChartObject> createNormalGraphs(final XMLDataLoader xdl, final int width, final int height) throws JAXBException {
+		final List<ChartObject> charts = new LinkedList<>();
+		for (final TestcaseType tc : xdl.getFullData().getTestcases().getTestcase()) {
+			for (final Datacollector dc : tc.getDatacollector()) {
 				if (!dc.getName().equals("size")) {
 					final XYSeries ts = new XYSeries(dc.getName());
-					for (Result r : dc.getResult()) {
+					for (final Result r : dc.getResult()) {
 
-						final int value = Integer.parseInt(r.getValue());
+						final int value = (int) r.getValue();
 						ts.add((Number) r.getDate(), (Number) value);
 					}
 					final XYSeriesCollection data = new XYSeriesCollection(ts);

@@ -92,7 +92,7 @@ public class TestFileWriting {
 			Assert.assertNotNull(timeCollector);
 
 			for (final Result r : timeCollector.getResult()) {
-				final int val = new Integer(r.getValue());
+				final int val = (int)r.getValue();
 				final int min = (int) r.getMin();
 				final int max = (int) r.getMax();
 				Assert.assertThat(val, Matchers.greaterThan(0));

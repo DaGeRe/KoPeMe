@@ -58,7 +58,7 @@ public class PureKoPeMeTest {
 		double timeConsumption = 0.0;
 		for (final Datacollector c : collector) {
 			if (c.getName().contains("TimeData")) {
-				timeConsumption = Double.parseDouble(c.getResult().get(c.getResult().size() - 1).getValue());
+				timeConsumption = c.getResult().get(c.getResult().size() - 1).getValue();
 			}
 		}
 		Assert.assertNotEquals(timeConsumption, 0.0);

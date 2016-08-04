@@ -71,7 +71,7 @@ public final class XMLDataStorer implements DataStorer {
 
 		final Result r = new Result();
 		r.setDate(new Date().getTime());
-		r.setValue("" + performanceDataMeasure.value);
+		r.setValue(performanceDataMeasure.value);
 		r.setDeviation(performanceDataMeasure.deviation);
 		r.setExecutionTimes(performanceDataMeasure.executionTimes);
 		r.setWarmupExecutions(performanceDataMeasure.getWarmupExecutions());
