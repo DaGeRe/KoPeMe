@@ -97,7 +97,7 @@ public class PerformanceTestRunner {
 
 		};
 
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(runnable, timeout, "method");
+		final TimeBoundExecution tbe = new TimeBoundExecution(runnable, timeout, "method");
 		tbe.execute();
 
 		log.trace("Test {} beendet", filename);

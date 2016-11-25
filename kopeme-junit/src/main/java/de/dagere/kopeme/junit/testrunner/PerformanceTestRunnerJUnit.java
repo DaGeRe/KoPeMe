@@ -24,7 +24,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.Finishable;
-import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
@@ -97,7 +97,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			}
 		};
 		logFullData = ptc.logFullData();
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout(), "class");
+		final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), "class");
 		try {
 			final boolean finished = tbe.execute();
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);

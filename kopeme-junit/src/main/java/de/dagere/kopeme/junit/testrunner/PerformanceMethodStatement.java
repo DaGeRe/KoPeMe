@@ -8,7 +8,7 @@ import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
@@ -90,7 +90,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			}
 		};
 		if (!isFinished){
-			final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout, "method");
+			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, "method");
 			tbe.execute();
 		}
 		LOG.debug("Timebounded execution finished");

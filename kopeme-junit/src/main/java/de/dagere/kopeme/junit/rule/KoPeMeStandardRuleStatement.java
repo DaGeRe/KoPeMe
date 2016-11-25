@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
-import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
@@ -64,7 +64,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 			}
 		};
 		
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(finishable, annotation.timeout(), "method");
+		final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), "method");
 		tbe.execute();
 		LOG.info("Test {} beendet", filename);
 	}
