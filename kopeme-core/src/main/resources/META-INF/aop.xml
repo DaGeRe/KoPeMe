@@ -1,11 +1,12 @@
 <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.aspectj.org/dtd/aspectj_1_5_0.dtd">
 <aspectj>
-	<weaver options="-verbose -showWeaveInfo">
+	<weaver options="-verbose">
 		<include within="*" />
 		<exclude within="org.apache.commons.logging..*" />
 		<exclude within="org.slf4j..*" />
 		<exclude within="org.eclipse..*" />
 		<exclude within="org.apache.log4j..*" />
+		<exclude within="org.apache.logging.log4j..*" />
 		<exclude within="org.apache.maven.surefire.util..*" />
 		<exclude within="org.apache.maven.surefire.booter..*" />
 		<exclude within="org.apache.maven.surefire.report..*" />

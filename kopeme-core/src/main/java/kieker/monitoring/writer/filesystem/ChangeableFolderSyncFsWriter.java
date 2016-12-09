@@ -43,12 +43,12 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	private final List<RegistryRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
-	private final Logger logger = Logger.getLogger(getClass().getName());
+	private static final Logger LOG = Logger.getLogger(ChangeableFolderSyncFsWriter.class.getName());
 	private SyncFsWriter currentWriter;
 
 	public ChangeableFolderSyncFsWriter(final Configuration configuration) {
 		super(configuration);
-		System.out.println("Initialisiere..");
+		LOG.info("Initialisiere..");
 		this.configuration = configuration;
 		currentWriter = new SyncFsWriter(toSyncFsWriterConfiguration(configuration));
 	}
@@ -106,7 +106,7 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 		currentWriter = new SyncFsWriter(resultingConfig);
 		currentWriter.setController(monitoringController);
 		for (RegistryRecord record : mappingRecords) {
-			logger.info("Füge registery records dem neuen fs writer hinzu: " + record);
+			LOG.info("Füge registery records dem neuen fs writer hinzu: " + record);
 			currentWriter.newMonitoringRecord(record);
 		}
 	}
