@@ -130,7 +130,6 @@ public final class XMLDataStorer implements DataStorer {
 	public void storeData() {
 		JAXBContext jaxbContext;
 		try {
-			ExceptionUtils.printRootCauseStackTrace(new RuntimeException());
 			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
