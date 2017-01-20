@@ -20,6 +20,6 @@
 	</weaver>
 	<aspects>
 		<aspect
-			name="kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFullNoGetterAndSetter" />
+			name="kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull" />
 	</aspects>
 </aspectj>
