@@ -17,7 +17,7 @@
 							<xs:element name="testcase" type="testcaseType"
 								maxOccurs="unbounded" />
 						</xs:sequence>
-						<xs:attribute name="class"/>
+						<xs:attribute name="class" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
@@ -40,13 +40,12 @@
 								<xs:sequence>
 									<xs:element name="value" type="xs:string" />
 									<xs:element name="deviation" type="xs:double" />
-									<xs:element name="warmupExecutions" type="xs:long"/>
-									<xs:element name="executionTimes" type="xs:long"/>
-									<xs:element name="version" type="versioninfo"/>
-									<xs:element name="min" type="xs:long"/>
-									<xs:element name="max" type="xs:long"/>
-									<xs:element name="first10percentile" type="xs:double"/>
-									<xs:element name="stacktrace" type="xs:string"/>
+									<xs:element name="warmupExecutions" type="xs:long" />
+									<xs:element name="executionTimes" type="xs:long" />
+									<xs:element name="version" type="versioninfo" />
+									<xs:element name="min" type="xs:long" />
+									<xs:element name="max" type="xs:long" />
+									<xs:element name="first10percentile" type="xs:double" />
 									<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 										<xs:complexType>
 											<xs:sequence minOccurs="1" maxOccurs="unbounded">
@@ -56,10 +55,16 @@
 									</xs:element>
 								</xs:sequence>
 								<xs:attribute name="configuration" />
-								<xs:attribute name="date" type="xs:long" />
-								<xs:attribute name="failure" type="xs:boolean"/>
-								<xs:attribute name="error" type="xs:boolean"/>
-								<xs:attribute name="cputemperature" type="xs:long"/>
+								<xs:attribute name="date" type="xs:long">
+									<xs:annotation>
+										<xs:documentation>Saves the timestamp when the test has been
+											finished
+										</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="failure" type="xs:boolean" />
+								<xs:attribute name="error" type="xs:boolean" />
+								<xs:attribute name="cputemperature" type="xs:long" />
 							</xs:complexType>
 						</xs:element>
 					</xs:sequence>
@@ -71,9 +76,9 @@
 	</xs:complexType>
 	<xs:complexType name="versioninfo">
 		<xs:choice>
-			<xs:element name="gitversion" type="xs:string"/>
-			<xs:element name="committer" type="xs:string"/>
-			<xs:element name="time" type="xs:long"/>
+			<xs:element name="gitversion" type="xs:string" />
+			<xs:element name="committer" type="xs:string" />
+			<xs:element name="time" type="xs:long" />
 		</xs:choice>
 	</xs:complexType>
 </xs:schema>
