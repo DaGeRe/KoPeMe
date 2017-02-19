@@ -49,7 +49,22 @@
 									<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 										<xs:complexType>
 											<xs:sequence minOccurs="1" maxOccurs="unbounded">
-												<xs:element name="value" type="xs:string" />
+												<xs:element name="value">
+													<xs:complexType>
+														<xs:simpleContent>
+															<xs:extension base="xs:string">
+																<xs:attribute name="start" type="xs:long">
+																	<xs:annotation>
+																		<xs:documentation>Saves the time when the execution
+																			has
+																			been started
+																		</xs:documentation>
+																	</xs:annotation>
+																</xs:attribute>
+															</xs:extension>
+														</xs:simpleContent>
+													</xs:complexType>
+												</xs:element>
 											</xs:sequence>
 										</xs:complexType>
 									</xs:element>

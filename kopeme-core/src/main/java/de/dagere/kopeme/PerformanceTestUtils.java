@@ -1,6 +1,7 @@
 package de.dagere.kopeme;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -101,10 +102,10 @@ public final class PerformanceTestUtils {
 				final long value = tr.getValue(key);
 				final long min = tr.getMinumumCurrentValue(key);
 				final long max = tr.getMaximumCurrentValue(key);
-				final double first10percentile = getPercentile(tr.getValues(key), 10);
+				final double first10percentile = getPercentile(tr.getValues(key).values(), 10);
 				final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
 						tr.getRealExecutions(), data.getWarmupExecutions(), min, max, first10percentile);
-				final List<Long> values = data.isSaveValues() ? tr.getValues(key) : null;
+				final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
 				LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
@@ -113,7 +114,7 @@ public final class PerformanceTestUtils {
 				if (!tr.getKeys().contains(additionalKey)) {
 					final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
 							tr.getRealExecutions(), data.getWarmupExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
-					final List<Long> values = data.isSaveValues() ? tr.getValues(additionalKey) : null;
+					final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(additionalKey) : null;
 					xds.storeValue(performanceDataMeasure, values);
 				}
 			}
@@ -127,16 +128,16 @@ public final class PerformanceTestUtils {
 	/**
 	 * Returns a given percentil for a given list of values. The n-percentil is the value for which n % of the values are less then the percentil.
 	 * 
-	 * @param values
+	 * @param collection
 	 *            The list of values for which the percentil should be calculated
 	 * @param percentil
 	 *            Percentage for the percentil
 	 * @return The percentil value
 	 */
-	public static double getPercentile(final List<Long> values, final int percentil) {
-		final double[] wertArray = new double[values.size()];
+	public static double getPercentile(final Collection<Long> collection, final int percentil) {
+		final double[] wertArray = new double[collection.size()];
 		int i = 0;
-		for (final Long l : values) {
+		for (final Long l : collection) {
 			wertArray[i] = l;
 			i++;
 		}

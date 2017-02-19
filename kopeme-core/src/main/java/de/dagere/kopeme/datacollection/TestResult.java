@@ -31,10 +31,11 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 public class TestResult {
 	private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-	protected Map<String, Long> values;
+	protected Map<String, Long> values = new HashMap<String, Long>();
 	protected Map<String, DataCollector> dataCollectors;
 	protected List<Map<String, Long>> realValues;
-	protected int index;
+	protected List<Long> executionStartTimes = new LinkedList<>();
+	protected int index = 0;
 	protected Checker checker;
 	private int realExecutions;
 	private String methodName;
@@ -49,9 +50,7 @@ public class TestResult {
 	 * @param executionTimes Count of the planned executions
 	 */
 	public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
-		values = new HashMap<String, Long>();
 		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
-		index = 0;
 		this.methodName = methodName;
 		historicalResults = new HistoricalTestResults(methodName);
 
@@ -147,6 +146,7 @@ public class TestResult {
 	 * Starts the collection of Data for all Datacollectors.
 	 */
 	public void startCollection() {
+		executionStartTimes.add(System.currentTimeMillis());
 		final Collection<DataCollector> dcCollection = dataCollectors.values();
 		final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
 		final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
@@ -167,6 +167,7 @@ public class TestResult {
 	 * the original time.
 	 */
 	public void startOrRestartCollection() {
+		executionStartTimes.add(System.currentTimeMillis());
 		final Collection<DataCollector> dcCollection = dataCollectors.values();
 		final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
 		final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
@@ -213,6 +214,9 @@ public class TestResult {
 	 * and Assertations over historical data are possible
 	 */
 	public void finalizeCollection() {
+		if (executionStartTimes.size() != realValues.size()){
+			throw new RuntimeException("Count of executions is wrong.");
+		}
 		final AverageSummerizer as = new AverageSummerizer();
 		for (final String collectorName : getKeys()) {
 			LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
@@ -360,10 +364,10 @@ public class TestResult {
 	 * @param key Name of the measure
 	 * @return Values measured
 	 */
-	public List<Long> getValues(final String key) {
-		final List<Long> currentValues = new LinkedList<>();
+	public Map<Long, Long> getValues(final String key) {
+		final Map<Long, Long> currentValues = new HashMap<>();
 		for (int i = 0; i < realValues.size(); i++) {
-			currentValues.add(realValues.get(i).get(key));
+			currentValues.put(executionStartTimes.get(i), realValues.get(i).get(key));
 		}
 		return currentValues;
 	}
