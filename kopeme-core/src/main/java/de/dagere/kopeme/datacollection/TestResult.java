@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -365,7 +366,7 @@ public class TestResult {
 	 * @return Values measured
 	 */
 	public Map<Long, Long> getValues(final String key) {
-		final Map<Long, Long> currentValues = new HashMap<>();
+		final Map<Long, Long> currentValues = new LinkedHashMap<>();
 		for (int i = 0; i < realValues.size(); i++) {
 			currentValues.put(executionStartTimes.get(i), realValues.get(i).get(key));
 		}
