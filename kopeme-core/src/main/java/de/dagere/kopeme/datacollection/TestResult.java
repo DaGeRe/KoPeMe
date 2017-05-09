@@ -32,7 +32,7 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 public class TestResult {
 	private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-	protected Map<String, Long> values = new HashMap<String, Long>();
+	protected Map<String, Long> values = new HashMap<>();
 	protected Map<String, DataCollector> dataCollectors;
 	protected List<Map<String, Long>> realValues;
 	protected List<Long> executionStartTimes = new LinkedList<>();
@@ -51,7 +51,7 @@ public class TestResult {
 	 * @param executionTimes Count of the planned executions
 	 */
 	public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
-		realValues = new ArrayList<Map<String, Long>>(executionTimes + 1);
+		realValues = new ArrayList<>(executionTimes + 1);
 		this.methodName = methodName;
 		historicalResults = new HistoricalTestResults(methodName);
 
@@ -78,7 +78,7 @@ public class TestResult {
 	 * @param dcl List of Datacollectors
 	 */
 	public void setCollectors(final DataCollectorList dcl) {
-		dataCollectors = new HashMap<String, DataCollector>();
+		dataCollectors = new HashMap<>();
 		dataCollectors = dcl.getDataCollectors();
 	}
 
@@ -97,7 +97,7 @@ public class TestResult {
 	 * @return Names of used DataCollectors
 	 */
 	public Set<String> getKeys() {
-		final Set<String> keySet = new HashSet<String>();
+		final Set<String> keySet = new HashSet<>();
 		for (final DataCollector dc : dataCollectors.values()) {
 			keySet.add(dc.getName());
 		}
@@ -189,7 +189,7 @@ public class TestResult {
 	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection.
 	 */
 	public void stopCollection() {
-		final Map<String, Long> runData = new HashMap<String, Long>();
+		final Map<String, Long> runData = new HashMap<>();
 		for (final DataCollector dc : dataCollectors.values()) {
 			dc.stopCollection();
 		}
@@ -216,12 +216,12 @@ public class TestResult {
 	 */
 	public void finalizeCollection() {
 		if (executionStartTimes.size() != realValues.size()){
-			throw new RuntimeException("Count of executions is wrong.");
+			throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes + " but got " + realValues.size());
 		}
 		final AverageSummerizer as = new AverageSummerizer();
 		for (final String collectorName : getKeys()) {
 			LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-			final List<Long> localValues = new LinkedList<Long>();
+			final List<Long> localValues = new LinkedList<>();
 			for (int i = 0; i < realValues.size() - 1; i++) {
 				// log.debug("I: " + i+ " Value: " +
 				// realValues.get(i).get(collectorName));
