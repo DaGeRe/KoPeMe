@@ -32,13 +32,13 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 		super(null, method.getMethod(), filename);
 		this.callee = callee;
 		
-		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-		try {
-			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-		} catch (final Exception e) {
-			System.err.println("kieker has failed!");
-			e.printStackTrace();
-		}
+//		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
+//		try {
+//			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+//		} catch (final Exception e) {
+//			System.err.println("kieker has failed!");
+//			e.printStackTrace();
+//		}
 
 		this.saveFullData = saveFullData;
 		warmupExecutions = annotation.warmupExecutions();
