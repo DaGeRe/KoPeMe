@@ -15,16 +15,15 @@ import java.util.Set;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 
 /**
- * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are
- * inserted into the DataCollectors
+ * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are inserted into the DataCollectors
  * 
  * @author dagere
  * 
@@ -58,8 +57,8 @@ public class TestResult {
 		collectorSummarizerMap = new HashMap<>();
 		dataCollectors = collectors.getDataCollectors();
 	}
-	
-	public void setMethodName(final String methodName){
+
+	public void setMethodName(final String methodName) {
 		this.methodName = methodName;
 	}
 
@@ -103,7 +102,8 @@ public class TestResult {
 		}
 
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i) != null) keySet.addAll(realValues.get(i).keySet());
+			if (realValues.get(i) != null)
+				keySet.addAll(realValues.get(i).keySet());
 		}
 		return keySet;
 	}
@@ -121,7 +121,8 @@ public class TestResult {
 	 * Checks, weather the values are good enough.
 	 */
 	public void checkValues() {
-		if (checker != null) checker.checkValues(this);
+		if (checker != null)
+			checker.checkValues(this);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class TestResult {
 				LOG.debug("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
 				if (dc.getName().equals(entry.getKey())) {
 					LOG.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
-					MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
+					Assert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
 							+ " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
 				}
 			}
@@ -164,8 +165,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Starts or restarts the collection for all Datacollectors, e.g. if a TimeDataCollector was started and stoped before, the Time measured now is added to
-	 * the original time.
+	 * Starts or restarts the collection for all Datacollectors, e.g. if a TimeDataCollector was started and stoped before, the Time measured now is added to the original time.
 	 */
 	public void startOrRestartCollection() {
 		executionStartTimes.add(System.currentTimeMillis());
@@ -185,8 +185,8 @@ public class TestResult {
 	}
 
 	/**
-	 * Stops the collection of data, that are collected via DataCollectors. The collection of self-defined values isn't stopped and historical data are not
-	 * loaded, so assertations over self-defined values and historical data is not possible. For this, call finalizeCollection.
+	 * Stops the collection of data, that are collected via DataCollectors. The collection of self-defined values isn't stopped and historical data are not loaded, so assertations over self-defined
+	 * values and historical data is not possible. For this, call finalizeCollection.
 	 */
 	public void stopCollection() {
 		final Map<String, Long> runData = new HashMap<>();
@@ -211,11 +211,11 @@ public class TestResult {
 	}
 
 	/**
-	 * Called when the collection of data is finally finished, i.e. also the collection of self-defined values is finished. By this time, writing into the file
-	 * and Assertations over historical data are possible
+	 * Called when the collection of data is finally finished, i.e. also the collection of self-defined values is finished. By this time, writing into the file and Assertations over historical data
+	 * are possible
 	 */
 	public void finalizeCollection() {
-		if (executionStartTimes.size() != realValues.size()){
+		if (executionStartTimes.size() != realValues.size()) {
 			throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes + " but got " + realValues.size());
 		}
 		final AverageSummerizer as = new AverageSummerizer();
@@ -238,8 +238,8 @@ public class TestResult {
 	}
 
 	/**
-	 * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a
-	 * certain time) and this value should be saved along with the performance measures which where measured by KoPeMe.
+	 * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a certain time) and this value should be
+	 * saved along with the performance measures which where measured by KoPeMe.
 	 * 
 	 * @param name Name of the measure that should be saved
 	 * @param value Value of the measure
@@ -252,8 +252,7 @@ public class TestResult {
 	}
 
 	/**
-	 * Returns the values of measures, that are not collected via DataCollectors. After the finalization, all values are contained
-	 * in order to make assertion over these values as well.
+	 * Returns the values of measures, that are not collected via DataCollectors. After the finalization, all values are contained in order to make assertion over these values as well.
 	 * 
 	 * @return Additional Values
 	 */
@@ -353,7 +352,8 @@ public class TestResult {
 	public long getMaximumCurrentValue(final String key) {
 		long max = 0;
 		for (int i = 0; i < realValues.size(); i++) {
-			if (realValues.get(i).get(key) > max) max = realValues.get(i).get(key);
+			if (realValues.get(i).get(key) > max)
+				max = realValues.get(i).get(key);
 		}
 		LOG.trace("Maximum ermittelt: " + max);
 		return max;
