@@ -40,7 +40,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 //			e.printStackTrace();
 //		}
 
-		this.saveFullData = saveFullData;
+		this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
 		warmupExecutions = annotation.warmupExecutions();
 		timeout = annotation.timeout();
 		this.methodName = method.getName();
