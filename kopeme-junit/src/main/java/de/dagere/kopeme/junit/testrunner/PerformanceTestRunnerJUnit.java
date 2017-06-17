@@ -221,7 +221,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			this.method = currentMethod;
 
 			if (!classFinished){
-				currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, logFullData);
+				currentMethodStatement = new PerformanceMethodStatement(callee, filename, klasse, method, logFullData);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {
