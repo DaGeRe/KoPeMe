@@ -3,6 +3,7 @@ package de.dagere.kopeme.datastorage;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,6 +18,7 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata.Value;
 
 /**
  * Manages the storing of resultdata of KoPeMe-tests in the KoPeMe-XML-format.
@@ -33,10 +35,14 @@ public final class XMLDataStorer implements DataStorer {
 	/**
 	 * Initializes an XMLDataStorer.
 	 * 
-	 * @param foldername Folder where the result should be saved
-	 * @param classname Name of the test class which was executed
-	 * @param methodname Name of the method which was executed
-	 * @throws JAXBException Thrown if an XML Writing error occurs
+	 * @param foldername
+	 *            Folder where the result should be saved
+	 * @param classname
+	 *            Name of the test class which was executed
+	 * @param methodname
+	 *            Name of the method which was executed
+	 * @throws JAXBException
+	 *             Thrown if an XML Writing error occurs
 	 */
 	public XMLDataStorer(final File foldername, final String classname, final String methodname) throws JAXBException {
 		final String filename = methodname + ".xml";
@@ -52,7 +58,8 @@ public final class XMLDataStorer implements DataStorer {
 	/**
 	 * Initializes XML-Data.
 	 * 
-	 * @param classname Name of the testclass
+	 * @param classname
+	 *            Name of the testclass
 	 */
 	public void createXMLData(final String classname) {
 		data = new Kopemedata();
@@ -63,7 +70,7 @@ public final class XMLDataStorer implements DataStorer {
 	}
 
 	@Override
-	public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final List<Long> values) {
+	public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final Map<Long, Long> values) {
 		if (data.getTestcases() == null) {
 			data.setTestcases(new Testcases());
 		}
@@ -80,8 +87,11 @@ public final class XMLDataStorer implements DataStorer {
 		r.setFirst10Percentile(performanceDataMeasure.first10percentile);
 		if (values != null) {
 			final Fulldata fd = new Fulldata();
-			for (final Long l : values) {
-				fd.getValue().add("" + l);
+			for (final Map.Entry<Long, Long> l : values.entrySet()) {
+				Value v = new Value();
+				v.setStart(l.getKey());
+				v.setValue("" + l.getValue());
+				fd.getValue().add(v);
 			}
 			r.setFulldata(fd);
 		}
@@ -143,8 +153,10 @@ public final class XMLDataStorer implements DataStorer {
 	/**
 	 * Stores the data in the given file.
 	 * 
-	 * @param file File for saving
-	 * @param currentdata Data to save
+	 * @param file
+	 *            File for saving
+	 * @param currentdata
+	 *            Data to save
 	 */
 	public static void storeData(final File file, final Kopemedata currentdata) {
 		JAXBContext jaxbContext;

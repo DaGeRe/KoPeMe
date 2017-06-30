@@ -11,11 +11,11 @@ import org.apache.logging.log4j.Logger;
  * @author reichelt
  *
  */
-public class TimeBoundedExecution {
+public class TimeBoundExecution {
 
 	public static int id = 0;
 
-	private static final Logger LOG = LogManager.getLogger(TimeBoundedExecution.class);
+	private static final Logger LOG = LogManager.getLogger(TimeBoundExecution.class);
 
 	private final FinishableThread mainThread;
 	private final String type;
@@ -30,16 +30,16 @@ public class TimeBoundedExecution {
 	 * @param timeout
 	 *            The timeout for canceling the execution
 	 */
-	public TimeBoundedExecution(final FinishableThread thread, final int timeout, final String type) {
+	public TimeBoundExecution(final FinishableThread thread, final int timeout, final String type) {
 		this.mainThread = thread;
 		this.timeout = timeout;
 		this.type = type;
 	}
 
-	public TimeBoundedExecution(final Finishable finishable, final int timeout, final String type) {
+	public TimeBoundExecution(final Finishable finishable, final int timeout, final String type) {
 		String threadName;
 		synchronized (LOG) {
-			threadName = "timebounded-" + (id++);
+			threadName = "timebound-" + (id++);
 		}
 		this.mainThread = new FinishableThread(finishable, threadName);
 		this.timeout = timeout;
@@ -53,7 +53,7 @@ public class TimeBoundedExecution {
 	 * @param finishable
 	 * @param timeout
 	 */
-	public TimeBoundedExecution(final Runnable finishable, final int timeout, final String type) {
+	public TimeBoundExecution(final Runnable finishable, final int timeout, final String type) {
 		this.mainThread = new FinishableThread(new Finishable() {
 
 			@Override

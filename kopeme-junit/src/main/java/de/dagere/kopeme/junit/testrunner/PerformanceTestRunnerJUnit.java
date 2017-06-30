@@ -24,7 +24,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.Finishable;
-import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
@@ -50,8 +50,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	private final Class<?> klasse;
 	protected boolean logFullData;
 	protected FrameworkMethod method;
-	protected Map<String, Double> maximalRelativeStandardDeviation;
-	protected Map<String, Long> assertationvalues;
+//	protected Map<String, Double> maximalRelativeStandardDeviation;
+//	protected Map<String, Long> assertationvalues;
 	protected final String filename;
 	private boolean classFinished = false;
 	
@@ -97,7 +97,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			}
 		};
 		logFullData = ptc.logFullData();
-		final TimeBoundedExecution tbe = new TimeBoundedExecution(testRunRunnable, ptc.overallTimeout(), "class");
+		final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), "class");
 		try {
 			final boolean finished = tbe.execute();
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
@@ -218,10 +218,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			
 			LOG.trace("Im methodBlock für " + currentMethod.getName());
 
-			initValues(currentMethod);
+			this.method = currentMethod;
 
 			if (!classFinished){
-				currentMethodStatement = new PerformanceMethodStatement(callee, filename, method, logFullData);
+				currentMethodStatement = new PerformanceMethodStatement(callee, filename, klasse, method, logFullData);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {
@@ -234,36 +234,6 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 			
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Initializes the value of the PerformanceTestRunnerJUnit-Object by reading the annotations.
-	 * 
-	 * @param method
-	 *            The method for which the values should be initialized
-	 */
-	private void initValues(final FrameworkMethod method) {
-		this.method = method;
-		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-		if (annotation != null) {
-			try {
-				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-			} catch (final Exception e) {
-				System.err.println("kieker has failed!");
-				e.printStackTrace();
-			}
-
-			maximalRelativeStandardDeviation = new HashMap<>();
-
-			for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
-				maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
-			}
-
-			assertationvalues = new HashMap<>();
-			for (final Assertion a : annotation.assertions()) {
-				assertationvalues.put(a.collectorname(), a.maxvalue());
-			}
 		}
 	}
 }

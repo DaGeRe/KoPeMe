@@ -8,7 +8,7 @@ import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TimeBoundedExecution;
+import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
@@ -28,24 +28,23 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	private boolean isFinished = false;
 	private Finishable mainRunnable;
 
-	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final FrameworkMethod method, final boolean saveFullData) {
+	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(null, method.getMethod(), filename);
 		this.callee = callee;
 		
-		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-		try {
-			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-		} catch (final Exception e) {
-			System.err.println("kieker has failed!");
-			e.printStackTrace();
-		}
+//		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
+//		try {
+//			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+//		} catch (final Exception e) {
+//			System.err.println("kieker has failed!");
+//			e.printStackTrace();
+//		}
 
-		this.saveFullData = saveFullData;
+		this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
 		warmupExecutions = annotation.warmupExecutions();
 		timeout = annotation.timeout();
 		this.methodName = method.getName();
-		this.className = method.getDeclaringClass().getSimpleName();
-
+		this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass anyway
 	}
 
 	@Override
@@ -65,6 +64,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 					}
 				} catch (final Exception e) {
 					if (e instanceof RuntimeException) {
+						e.printStackTrace();
 						throw (RuntimeException) e;
 					}
 					if (e instanceof InterruptedException) {
@@ -90,7 +90,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			}
 		};
 		if (!isFinished){
-			final TimeBoundedExecution tbe = new TimeBoundedExecution(mainRunnable, timeout, "method");
+			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, "method");
 			tbe.execute();
 		}
 		LOG.debug("Timebounded execution finished");

@@ -89,11 +89,6 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.2</version>
 		</dependency>
-		<dependency>
-			<groupId>bigml</groupId>
-			<artifactId>histogram</artifactId>
-			<version>4.1.2</version>
-		</dependency>
 	</dependencies>
 
 	<repositories>

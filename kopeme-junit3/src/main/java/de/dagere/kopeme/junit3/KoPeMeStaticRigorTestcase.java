@@ -2,6 +2,8 @@ package de.dagere.kopeme.junit3;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -314,7 +316,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions - 1);
 		for (String collector : tr.getKeys()) {
-			List<Long> values = tr.getValues(collector);
+			List<Long> values = new ArrayList<>(tr.getValues(collector).values());
 			EmpiricalDistribution distribution = getDistribution(values);
 			Set<Long> outliers = new HashSet<>();
 			for (long measurement : values) {
@@ -336,7 +338,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		}
 	}
 
-	private EmpiricalDistribution getDistribution(final List<Long> listValues) {
+	private EmpiricalDistribution getDistribution(final Collection<Long> listValues) {
 		double[] values = new double[listValues.size()];
 		int j = 0;
 		for (Long measurements : listValues) {

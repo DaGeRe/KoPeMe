@@ -1,6 +1,7 @@
 package de.dagere.kopeme.datastorage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for storing KoPeMe-data.
@@ -15,11 +16,5 @@ public interface DataStorer {
 	 */
 	void storeData();
 
-	/**
-	 * Stores a list of values for one execution for a given PerformanceDataMeasure, which represents the aggregated data.
-	 * 
-	 * @param performanceDataMeasure Aggregated data of a run.
-	 * @param values List of value that should be stored
-	 */
-	void storeValue(PerformanceDataMeasure performanceDataMeasure, List<Long> values);
+	void storeValue(PerformanceDataMeasure performanceDataMeasure, Map<Long, Long> values);
 }

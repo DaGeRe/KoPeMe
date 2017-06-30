@@ -55,7 +55,7 @@ public @interface PerformanceTest {
 	/**
 	 * Optionally specify that all data should be logged, i.e. primarily all measured values instead of only average values.
 	 * 
-	 * @return Weather to log full data
+	 * @return Whether to log full data
 	 */
 	boolean logFullData() default false;
 
