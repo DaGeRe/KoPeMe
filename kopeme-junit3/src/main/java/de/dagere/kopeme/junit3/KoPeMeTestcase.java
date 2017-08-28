@@ -3,9 +3,6 @@ package de.dagere.kopeme.junit3;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +15,8 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Base class for KoPeMe-JUnit3-Testcases.
@@ -212,7 +211,6 @@ public abstract class KoPeMeTestcase extends TestCase {
 		try {
 			final TestResult bulkResult = new TestResult(tr.getTestcase(), executionTimes, getDataCollectors());
 			runMainExecution("warmup", fullName, bulkResult, warmupExecutions);
-
 			runMainExecution("main", fullName, tr, executionTimes);
 		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
