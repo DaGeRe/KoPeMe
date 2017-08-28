@@ -21,11 +21,19 @@ public class TimeBasedTestcase extends TestCase {
 	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
 	private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
 
+	/**
+	 * Returns the expected duration of the test in milliseconds
+	 * @return
+	 */
+	public long getDuration(){
+		return 10000;
+	}
+	
 	@Override
 	public void runBare() throws InterruptedException {
 		LOG.debug("Running TimeBasedTestcase");
 
-		final int durationInMilliseconds = 1000;
+		final long durationInMilliseconds = getDuration();
 		final long maximumDuration = durationInMilliseconds * 1000 * NANOTOMIKRO; // Default maximum test duration: 1000 ms = 1 second
 		final int executions = calibrateMeasurement(maximumDuration);
 		runMeasurement(maximumDuration, executions);
@@ -56,7 +64,7 @@ public class TimeBasedTestcase extends TestCase {
 		while (calibration < maximumDuration / 2) {
 			final long value = measureNTimes(1);
 			calibration += value;
-			// LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO);
+//			 LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration);
 			calibrationValues.add(value);
 		}
 
