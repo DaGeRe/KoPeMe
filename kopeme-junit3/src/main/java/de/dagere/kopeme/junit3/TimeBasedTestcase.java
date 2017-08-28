@@ -13,7 +13,8 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import junit.framework.TestCase;
 
 public class TimeBasedTestcase extends TestCase {
-	private static final int INTERRUPT_TRIES = 10;
+	private static final int NANOTOMIKRO = 1000;
+
 
 	private static final Logger LOG = LogManager.getLogger(TimeBasedTestcase.class);
 
@@ -24,8 +25,30 @@ public class TimeBasedTestcase extends TestCase {
 	public void runBare() throws InterruptedException {
 		LOG.debug("Running TimeBasedTestcase");
 
-		final long maximumDuration = 1000 * 1000 * 1000; // Default maximum test duration: 1000 ms = 1 second
+		final int durationInMilliseconds = 1000;
+		final long maximumDuration = durationInMilliseconds * 1000 * NANOTOMIKRO; // Default maximum test duration: 1000 ms = 1 second
+		final int executions = calibrateMeasurement(maximumDuration);
+		runMeasurement(maximumDuration, executions);
 
+		LOG.debug("KoPeMe-Test {} finished", getName());
+	}
+
+	private void runMeasurement(final long maximumDuration, final int executions) {
+		final List<Long> values = new LinkedList<>();
+		long finalTime = 0;
+		while (finalTime < maximumDuration / 2) {
+			final long value = measureNTimes(executions);
+			values.add(value);
+			finalTime += value;
+		}
+
+		final DescriptiveStatistics statistics = new DescriptiveStatistics();
+		values.forEach(value -> statistics.addValue(value));
+		LOG.debug("Durations: {}", values);
+		LOG.debug("Average: {} ns / Execution", statistics.getMean() / executions);
+	}
+
+	private int calibrateMeasurement(final long maximumDuration) {
 		final long basicDuration =  measureNTimes(1);
 		long calibration = basicDuration;
 		final List<Long> calibrationValues = new LinkedList<>();
@@ -33,26 +56,18 @@ public class TimeBasedTestcase extends TestCase {
 		while (calibration < maximumDuration / 2) {
 			final long value = measureNTimes(1);
 			calibration += value;
-			calibrationValues.add(calibration);
+			// LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO);
+			calibrationValues.add(value);
 		}
 
 		final DescriptiveStatistics statistics = new DescriptiveStatistics();
-		calibrationValues.forEach(value -> statistics.addValue(value / 1000000));
+		calibrationValues.forEach(value -> statistics.addValue(value));
 
-		LOG.debug("Mean: " + statistics.getMean() + " " + statistics.getPercentile(20));
+		LOG.debug("Mean: " + statistics.getMean() / NANOTOMIKRO + " " + statistics.getPercentile(20) / NANOTOMIKRO + " Calibration time: " + calibration / NANOTOMIKRO);
 
-		final List<Long> values = new LinkedList<>();
-
-		long finalTime = 0;
-		while (finalTime < maximumDuration / 2) {
-			final long value = measureNTimes(1);
-			values.add(value);
-			finalTime += value;
-		}
-
-		// LOG.debug("Durations: {}", values);
-
-		LOG.debug("KoPeMe-Test {} finished", getName());
+		final int executions = (int) (((maximumDuration / 2) / statistics.getMean()) / 10);
+		LOG.debug("Executions: {}", executions, (maximumDuration / statistics.getMean()));
+		return executions;
 	}
 
 	private long measureNTimes(final int n) {
