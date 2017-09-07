@@ -57,7 +57,9 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 		annotation = method.getAnnotation(PerformanceTest.class);
 
-		if (annotation.dataCollectors().equals("STANDARD")) {
+		if (annotation.dataCollectors().equals("EXTENDED")) {
+			datacollectors = DataCollectorList.EXTENDED;
+		} else if (annotation.dataCollectors().equals("STANDARD")) {
 			datacollectors = DataCollectorList.STANDARD;
 		} else if (annotation.dataCollectors().equals("ONLYTIME")) {
 			datacollectors = DataCollectorList.ONLYTIME;
@@ -67,7 +69,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			datacollectors = DataCollectorList.ONLYTIME;
 			LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE are allowed");
 		}
-		
+
 		if (annotation != null) {
 			try {
 				KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
@@ -115,8 +117,8 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (isFinished){
-				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
+			if (isFinished) {
+				LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
 				throw new InterruptedException("Test timed out.");
 			}
 			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
@@ -124,7 +126,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 				break;
 			}
 			final boolean interrupted = Thread.interrupted();
-			LOG.debug("Interrupt state: {}", interrupted );
+			LOG.debug("Interrupt state: {}", interrupted);
 			if (interrupted) {
 				LOG.debug("Exiting thread.");
 				throw new InterruptedException("Test was interrupted and eventually timed out.");

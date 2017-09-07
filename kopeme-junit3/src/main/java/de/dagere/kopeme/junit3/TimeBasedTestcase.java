@@ -26,7 +26,7 @@ public class TimeBasedTestcase extends TestCase {
 	 * @return
 	 */
 	public long getDuration(){
-		return 10000;
+		return Integer.parseInt(System.getenv().get("duration"));
 	}
 	
 	@Override
@@ -34,6 +34,7 @@ public class TimeBasedTestcase extends TestCase {
 		LOG.debug("Running TimeBasedTestcase");
 
 		final long durationInMilliseconds = getDuration();
+		LOG.debug("Duration: " + durationInMilliseconds);
 		final long maximumDuration = durationInMilliseconds * 1000 * NANOTOMIKRO; // Default maximum test duration: 1000 ms = 1 second
 		final int executions = calibrateMeasurement(maximumDuration);
 		runMeasurement(maximumDuration, executions);

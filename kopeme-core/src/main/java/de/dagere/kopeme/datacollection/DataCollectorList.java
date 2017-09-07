@@ -13,6 +13,12 @@ import java.util.Set;
  * 
  */
 public class DataCollectorList {
+	
+	/**
+	 * The list, containing additional data collectors to standard, e.g. the data collector that is collecting the reserved RAM of the current vm.
+	 */
+	public static final DataCollectorList EXTENDED;
+	
 	/**
 	 * The list, containing the standard-Collectors, i.e. collectors for Time, Hard disk usage and cpu usage.
 	 */
@@ -26,13 +32,19 @@ public class DataCollectorList {
 	 */
 	public static final DataCollectorList NONE;
 
-	private Set<Class<DataCollector>> collectors;
+	private final Set<Class<DataCollector>> collectors;
 
 	static {
 		STANDARD = new DataCollectorList();
 		STANDARD.addDataCollector(TimeDataCollector.class);
 		STANDARD.addDataCollector(CPUUsageCollector.class);
 		STANDARD.addDataCollector(RAMUsageCollector.class);
+		
+		EXTENDED = new DataCollectorList();
+		EXTENDED.addDataCollector(TimeDataCollector.class);
+		EXTENDED.addDataCollector(CPUUsageCollector.class);
+		EXTENDED.addDataCollector(RAMUsageCollector.class);
+		EXTENDED.addDataCollector(EndRAMCollector.class);
 
 		ONLYTIME = new DataCollectorList();
 		ONLYTIME.addDataCollector(TimeDataCollector.class);
@@ -44,7 +56,7 @@ public class DataCollectorList {
 	 * Initializes a DataCollectorList with empty list.
 	 */
 	protected DataCollectorList() {
-		collectors = new HashSet<Class<DataCollector>>();
+		collectors = new HashSet<>();
 	}
 
 	/**
@@ -65,15 +77,15 @@ public class DataCollectorList {
 	 * @return DataCollectors, which are saved in the current DataCollectorList.
 	 */
 	public final Map<String, DataCollector> getDataCollectors() {
-		Map<String, DataCollector> collectorsRet = new HashMap<String, DataCollector>();
-		for (Class<DataCollector> c : collectors) {
+		final Map<String, DataCollector> collectorsRet = new HashMap<>();
+		for (final Class<DataCollector> c : collectors) {
 			DataCollector dc;
 			try {
 				dc = c.newInstance();
 				collectorsRet.put(dc.getName(), dc);
-			} catch (InstantiationException e) {
+			} catch (final InstantiationException e) {
 				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (final IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
