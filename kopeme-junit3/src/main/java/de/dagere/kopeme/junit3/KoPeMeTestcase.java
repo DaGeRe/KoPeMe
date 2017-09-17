@@ -59,6 +59,15 @@ public abstract class KoPeMeTestcase extends TestCase {
 	}
 
 	/**
+	 * Returns the count of repetitions, default is 1.
+	 * 
+	 * @return Repetitions executions
+	 */
+	protected int getRepetitions() {
+		return annoTestcase.repetitions();
+	}
+
+	/**
 	 * Returns the count of real executions.
 	 * 
 	 * @return real executions
@@ -244,7 +253,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 			LOG.debug(firstPart + executions + endPart);
 			setUp();
 			tr.startCollection();
-			KoPeMeTestcase.super.runTest();
+			for (int repetion = 0; repetion < getRepetitions(); repetion++) {
+				KoPeMeTestcase.super.runTest();
+			}
+
 			tr.stopCollection();
 			tearDown();
 			tr.getValue(TimeDataCollector.class.getName());

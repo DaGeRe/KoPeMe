@@ -25,12 +25,12 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
  */
 public class PerformanceTestRunner {
 
-	private static Logger log = LogManager.getLogger(PerformanceTestRunner.class);
+	private static Logger LOG = LogManager.getLogger(PerformanceTestRunner.class);
 
 	protected final Class klasse;
 	protected final Object instanz;
 	protected final Method method;
-	protected int executionTimes, warmupExecutions, minEarlyStopExecutions, timeout;
+	protected int executionTimes, warmupExecutions, repetitions, minEarlyStopExecutions, timeout;
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
@@ -52,6 +52,7 @@ public class PerformanceTestRunner {
 		if (annotation != null) {
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
+			repetitions = annotation.repetitions();
 			minEarlyStopExecutions = annotation.minEarlyStopExecutions();
 			timeout = annotation.timeout();
 			maximalRelativeStandardDeviation = new HashMap<>();
@@ -67,7 +68,7 @@ public class PerformanceTestRunner {
 		}
 
 		filename = klasse.getName();
-		log.info("Executing Performancetest: " + filename);
+		LOG.info("Executing Performancetest: " + filename);
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class PerformanceTestRunner {
 		final TimeBoundExecution tbe = new TimeBoundExecution(runnable, timeout, "method");
 		tbe.execute();
 
-		log.trace("Test {} beendet", filename);
+		LOG.trace("Test {} beendet", filename);
 	}
 
 	/**
@@ -117,7 +118,7 @@ public class PerformanceTestRunner {
 		TestResult newResult = null;
 		try {
 			if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
-				log.warn("Not all Collectors are valid!");
+				LOG.warn("Not all Collectors are valid!");
 			}
 			newResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 			params[0] = newResult;
@@ -147,7 +148,7 @@ public class PerformanceTestRunner {
 		tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
-			log.warn("Not all Collectors are valid!");
+			LOG.warn("Not all Collectors are valid!");
 		}
 		final long start = System.currentTimeMillis();
 		try {
@@ -158,7 +159,7 @@ public class PerformanceTestRunner {
 			saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, warmupExecutions, true));
 			throw t;
 		}
-		log.trace("Zeit: " + (System.currentTimeMillis() - start));
+		LOG.trace("Zeit: " + (System.currentTimeMillis() - start));
 		tr.finalizeCollection();
 		saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, warmupExecutions, true));
 		// TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden sollen
@@ -176,9 +177,9 @@ public class PerformanceTestRunner {
 	private void runWarmup(final Object[] params) throws IllegalAccessException, InvocationTargetException {
 		final String methodString = method.getClass().getName() + "." + method.getName();
 		for (int i = 1; i <= warmupExecutions; i++) {
-			log.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Starting warmup execution " + methodString + " - " + i + "/" + warmupExecutions + " ---");
 			method.invoke(instanz, params);
-			log.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
+			LOG.info("--- Stopping warmup execution " + i + "/" + warmupExecutions + " ---");
 		}
 	}
 
@@ -194,11 +195,13 @@ public class PerformanceTestRunner {
 		final String methodString = method.getClass().getName() + "." + method.getName();
 		int executions;
 		for (executions = 1; executions <= executionTimes; executions++) {
-			log.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
-			pts.evaluate();
-			log.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
+			LOG.debug("--- Starting execution " + methodString + " " + executions + "/" + executionTimes + " ---");
+			for (int reptition = 0; reptition < repetitions; reptition++) {
+				pts.evaluate();
+			}
+			LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
 			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-				log.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
+				LOG.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
 			}
 			tr.setRealExecutions(executions);
 			if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
@@ -207,7 +210,7 @@ public class PerformanceTestRunner {
 			}
 
 		}
-		log.debug("Executions: " + executions);
+		LOG.debug("Executions: " + executions);
 		tr.setRealExecutions(executions);
 	}
 }

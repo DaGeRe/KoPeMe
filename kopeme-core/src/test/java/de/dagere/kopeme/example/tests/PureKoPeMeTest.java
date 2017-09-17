@@ -47,18 +47,18 @@ public class PureKoPeMeTest {
 		log.info("Suche in: {}", folderName);
 		final XMLDataLoader xdl = new XMLDataLoader(new File(folderName, filename));
 		final Kopemedata kd = xdl.getFullData();
-		List<Datacollector> collector = null; 
+		List<Datacollector> collectors = null; 
 		for (final TestcaseType tct : kd.getTestcases().getTestcase()) {
 			if (tct.getName().contains("simpleTest")) {
-				collector = tct.getDatacollector();
+				collectors = tct.getDatacollector();
 			}
 		}
-		Assert.assertNotNull(collector);
+		Assert.assertNotNull(collectors);
 
 		double timeConsumption = 0.0;
-		for (final Datacollector c : collector) {
-			if (c.getName().contains("TimeData")) {
-				timeConsumption = c.getResult().get(c.getResult().size() - 1).getValue();
+		for (final Datacollector collector : collectors) {
+			if (collector.getName().contains("TimeData")) {
+				timeConsumption = collector.getResult().get(collector.getResult().size() - 1).getValue();
 			}
 		}
 		Assert.assertNotEquals(timeConsumption, 0.0);

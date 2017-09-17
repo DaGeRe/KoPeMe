@@ -38,6 +38,13 @@ public @interface PerformanceTest {
 	int executionTimes() default 10;
 
 	/**
+	 * Optionally specify count of reptitions of same test.
+	 * 
+	 * @return
+	 */
+	int repetitions() default 1;
+
+	/**
 	 * Optionally specify the count of executions, that should be executed before the measuring begins.
 	 * 
 	 * @return Execution times of the test
