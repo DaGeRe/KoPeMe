@@ -105,4 +105,10 @@ public @interface PerformanceTest {
 	 * @return true if the kieker framework should be used
 	 */
 	boolean useKieker() default true;
+
+	/**
+	 * Defines the duration for a timebased testcase in milliseconds
+	 * @return duration of the timebased testcase
+	 */
+	int duration() default 60000;
 }
