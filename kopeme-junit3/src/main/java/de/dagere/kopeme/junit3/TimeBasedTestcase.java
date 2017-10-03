@@ -37,6 +37,22 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
 	private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
 
+	/**
+	 * Initializes the testcase.
+	 */
+	public TimeBasedTestcase() {
+	}
+
+	/**
+	 * Initializes the testcase with its name.
+	 * 
+	 * @param name
+	 *            Name of the testcase
+	 */
+	public TimeBasedTestcase(final String name) {
+		super(name);
+	}
+	
 	@Override
 	public int getRepetitions() {
 		return 200; // Default 200 repetitions - can still be changed
