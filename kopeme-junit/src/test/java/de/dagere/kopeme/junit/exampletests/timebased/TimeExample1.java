@@ -19,5 +19,4 @@ public class TimeExample1 {
 		}
 		System.out.println(rm.getValue());
 	}
-	
 }

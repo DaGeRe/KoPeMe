@@ -13,6 +13,6 @@ public class TimeExample2 extends TimeBasedTestcase {
 	
 	@Override
 	public long getDuration() {
-		return 300000;
+		return 10000;
 	}
 }
