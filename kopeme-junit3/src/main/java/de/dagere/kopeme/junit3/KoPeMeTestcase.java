@@ -245,7 +245,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 *            How often the test should be executed
 	 * @throws Throwable
 	 */
-	private void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
+	protected void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
 		final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
 		final String endPart = "/" + executionTimes + " ---";

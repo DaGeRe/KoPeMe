@@ -87,10 +87,10 @@ public final class XMLDataStorer implements DataStorer {
 		r.setFirst10Percentile(performanceDataMeasure.first10percentile);
 		if (values != null) {
 			final Fulldata fd = new Fulldata();
-			for (final Map.Entry<Long, Long> l : values.entrySet()) {
+			for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
 				Value v = new Value();
-				v.setStart(l.getKey());
-				v.setValue("" + l.getValue());
+				v.setStart(valueEntry.getKey());
+				v.setValue("" + valueEntry.getValue());
 				fd.getValue().add(v);
 			}
 			r.setFulldata(fd);

@@ -9,4 +9,9 @@ public class SysoutExample extends TimeBasedTestcase {
 	public void testMe() {
 		System.out.println(new Random().nextInt(100));
 	}
+	
+	@Override
+	public long getDuration() {
+		return 10000;
+	}
 }

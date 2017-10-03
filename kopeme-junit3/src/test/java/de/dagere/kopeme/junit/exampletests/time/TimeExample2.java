@@ -10,4 +10,9 @@ public class TimeExample2 extends TimeBasedTestcase {
 		}
 		System.out.println(rm.getValue());
 	}
+	
+	@Override
+	public long getDuration() {
+		return 300000;
+	}
 }

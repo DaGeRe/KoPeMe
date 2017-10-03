@@ -6,4 +6,9 @@ public class EmptyExample  extends TimeBasedTestcase{
 	public void testMe() {
 		
 	}
+
+	@Override
+	public long getDuration() {
+		return 10000;
+	}
 }
