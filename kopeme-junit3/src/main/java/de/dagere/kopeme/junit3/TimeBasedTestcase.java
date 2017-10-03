@@ -39,11 +39,9 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
 	private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
 
-	private int repetitions = 100;
-
 	@Override
 	public int getRepetitions() {
-		return repetitions;
+		return 200; // Default 200 repetitions - can still be changed
 	}
 
 	/**
@@ -117,7 +115,7 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		LOG.debug("Mean: " + statistics.getMean() / NANOTOMIKRO + " " + statistics.getPercentile(20) / NANOTOMIKRO + " Calibration time: " + calibration / NANOTOMIKRO);
 
 		long halfTime = maximumDuration / 2;
-		final int executions = (int) ((halfTime / statistics.getMean()) / repetitions);
+		final int executions = (int) ((halfTime / statistics.getMean()) / getRepetitions());
 		LOG.debug("Executions: {}", executions, (maximumDuration / statistics.getMean()));
 		long calibrationEnd = System.nanoTime();
 		LOG.debug("Duration of calibration: {}", (calibrationEnd - calibrationStart) / NANOTOMIKRO);
