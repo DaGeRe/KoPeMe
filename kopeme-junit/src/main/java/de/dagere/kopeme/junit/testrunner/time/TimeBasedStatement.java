@@ -93,12 +93,13 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 		int executions = 1;
 		final long calibrationStart = System.nanoTime();
 		try {
-			long basicDuration = runMainExecution2(tr, executionTypName, 1, callee);
+			long emptyDuration = runMainExecution2(tr, executionTypName, 1, callee, 1);
+			long basicDuration = runMainExecution2(tr, executionTypName, 1, callee, 1);
 			long calibration = basicDuration;
 			final List<Long> calibrationValues = new LinkedList<>();
 
 			while (calibration < maximumDuration / 2) {
-				final long value = runMainExecution2(tr, executionTypName, 1, callee);
+				final long value = runMainExecution2(tr, executionTypName, 1, callee, 1);
 				calibration += value;
 				LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration/ NANOTOMIKRO);
 				calibrationValues.add(value);
@@ -110,7 +111,9 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 
 			long halfTime = maximumDuration / 2;
 			
-			executions = (int) ((halfTime / statistics.getMean()) / repetitions);
+			final double estimatedExecutionDuration = Math.abs(statistics.getMean() - emptyDuration);
+			LOG.debug("Estimated Execution Duration: {} Half-Time: {}", estimatedExecutionDuration / NANOTOMIKRO, halfTime / NANOTOMIKRO);
+			executions = (int) (halfTime / (emptyDuration + estimatedExecutionDuration));
 			LOG.debug("Executions: {}", executions, (maximumDuration / statistics.getMean()));
 			long calibrationEnd = System.nanoTime();
 			LOG.debug("Duration of calibration: {}", (calibrationEnd - calibrationStart) / 1000);
@@ -135,7 +138,7 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private long runMainExecution2(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
+	private long runMainExecution2(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, int repetitions) throws Throwable {
 		long beginTime = System.nanoTime();
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
@@ -144,7 +147,9 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 			callee.preEvaluate();
 			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			tr.startCollection();
-			callee.evaluate();
+			for (int i = 0; i < repetitions; i++){
+				callee.evaluate();
+			}
 			tr.stopCollection();
 			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
 			callee.postEvaluate();
