@@ -20,45 +20,29 @@ import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
+import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
-public class TimeMethodStatement extends KoPeMeBasicStatement implements Finishable {
+/**
+ * Statement for executing a timebased test
+ * @author reichelt
+ *
+ */
+public class TimeBasedStatement extends PerformanceMethodStatement implements Finishable {
 
-	private static final Logger LOG = LogManager.getLogger(TimeMethodStatement.class);
+	private static final Logger LOG = LogManager.getLogger(TimeBasedStatement.class);
 
 	private static final long NANOTOMIKRO = 1000;
 
-	private final PerformanceJUnitStatement callee;
-	private final int timeout, repetitions;
+	private int repetitions;
 	private final long duration;
-	private int warmupExecutions;
 
-	private final String className, methodName;
-	private final boolean saveFullData;
-	private boolean isFinished = false;
-	private Finishable mainRunnable;
-
-	public TimeMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
-		super(null, method.getMethod(), filename);
-		this.callee = callee;
-		
-//		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-//		try {
-//			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-//		} catch (final Exception e) {
-//			System.err.println("kieker has failed!");
-//			e.printStackTrace();
-//		}
-
-		this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
-		warmupExecutions = annotation.warmupExecutions();
-		timeout = annotation.timeout();
+	public TimeBasedStatement(PerformanceJUnitStatement callee, String filename, Class<?> calledClass, FrameworkMethod method, boolean saveFullData) {
+		super(callee, filename, calledClass, method, saveFullData);
 		duration = annotation.duration() * NANOTOMIKRO;
 		repetitions = annotation.repetitions();
-		this.methodName = method.getName();
-		this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass anyway
 	}
-
+	
 	@Override
 	public void evaluate() throws Throwable {
 		mainRunnable = new Finishable() {
@@ -92,7 +76,7 @@ public class TimeMethodStatement extends KoPeMeBasicStatement implements Finisha
 
 			@Override
 			public void setFinished(final boolean isFinished) {
-				TimeMethodStatement.this.isFinished = isFinished;
+				TimeBasedStatement.this.isFinished = isFinished;
 			}
 
 			@Override
@@ -107,43 +91,16 @@ public class TimeMethodStatement extends KoPeMeBasicStatement implements Finisha
 		LOG.debug("Timebounded execution finished");
 	}
 
-	/**
-	 * Executes a simple test, i.e. a test without parameters.
-	 * 
-	 * @param callee
-	 *            Statement that should be called to measure performance and execute the test
-	 * @return The result of the test
-	 * @throws Throwable
-	 *             Any exception that occurs during the test
-	 */
-	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee, int executions) throws Throwable {
-		final TestResult tr = new TestResult(methodName, executions, datacollectors);
-
-		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
-			LOG.warn("Not all Collectors are valid!");
-		}
-		try {
-			runMainExecution(tr, "execution ", executions, callee);
-		} catch (final Throwable t) {
-			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
-			throw t;
-		}
-		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, saveFullData));
-		return tr;
-	}
-	
 	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration, int repetitions, PerformanceJUnitStatement callee) {
 		int executions = 1;
 		final long calibrationStart = System.nanoTime();
 		try {
-			long basicDuration = runMainExecution(tr, executionTypName, 1, callee);
+			long basicDuration = runMainExecution2(tr, executionTypName, 1, callee);
 			long calibration = basicDuration;
 			final List<Long> calibrationValues = new LinkedList<>();
 
 			while (calibration < maximumDuration / 2) {
-				final long value = runMainExecution(tr, executionTypName, 1, callee);
+				final long value = runMainExecution2(tr, executionTypName, 1, callee);
 				calibration += value;
 				LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration/ NANOTOMIKRO);
 				calibrationValues.add(value);
@@ -180,7 +137,7 @@ public class TimeMethodStatement extends KoPeMeBasicStatement implements Finisha
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private long runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
+	private long runMainExecution2(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
 		long beginTime = System.nanoTime();
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
@@ -217,25 +174,4 @@ public class TimeMethodStatement extends KoPeMeBasicStatement implements Finisha
 		return (endTime - beginTime) / NANOTOMIKRO;
 	}
 
-	@Override
-	public void run() {
-		// Never called, as the class is called via evaluate - only needs to be implemented to meet the interface
-	}
-
-	@Override
-	public boolean isFinished() {
-		if (mainRunnable != null) {
-			return mainRunnable.isFinished();
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public void setFinished(final boolean isFinished) {
-		LOG.debug("Setze finished: " + isFinished + " " + mainRunnable);
-		if (mainRunnable != null) {
-			mainRunnable.setFinished(isFinished);
-		}
-	}
 }

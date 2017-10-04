@@ -34,6 +34,7 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.junit.testrunner.PerformanceFail;
 import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
 import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
+import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
@@ -45,21 +46,10 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
  * @author dagere
  * 
  */
-public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
+public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 
 	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = AnnotationDefaults.of(PerformanceTestingClass.class);
 	private final static Logger LOG = LogManager.getLogger(TimeBasedTestRunner.class);
-
-	private final Class<?> klasse;
-	protected boolean logFullData;
-	protected FrameworkMethod method;
-//	protected Map<String, Double> maximalRelativeStandardDeviation;
-//	protected Map<String, Long> assertationvalues;
-	protected final String filename;
-	private boolean classFinished = false;
-	
-	private TimeMethodStatement currentMethodStatement;
-	
 
 	/**
 	 * Initializes a PerformanceTestRunnerJUnit
@@ -71,8 +61,6 @@ public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
 	 */
 	public TimeBasedTestRunner(final Class<?> klasse) throws InitializationError {
 		super(klasse);
-		this.klasse = klasse;
-		filename = klasse.getName();
 	}
 
 	@Override
@@ -112,35 +100,6 @@ public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
 		} catch (final Exception e) {
 			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Sets that tests are failed.
-	 * 
-	 * @param notifier
-	 *            Notifier that should be notified
-	 */
-	private void setTestsToFail(final RunNotifier notifier) {
-		final Description description = getDescription();
-		final ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all testmethods will be covered and set to failed here
-		toBeFailed.add(description); // the whole test class failed
-		for (final Description d : toBeFailed) {
-			final EachTestNotifier testNotifier = new EachTestNotifier(notifier, d);
-			testNotifier.addFailure(new TimeoutException("Test timed out because of class timeout"));
-		}
-	}
-
-	@Override
-	protected void validateTestMethods(final List<Throwable> errors) {
-		for (final FrameworkMethod each : computeTestMethods()) {
-			if (each.getMethod().getParameterTypes().length > 1) {
-				errors.add(new Exception("Method " + each.getName() + " is supposed to have one or zero parameters, who's type is TestResult"));
-			} else {
-				if (each.getMethod().getParameterTypes().length == 1 && each.getMethod().getParameterTypes()[0] != TestResult.class) {
-					errors.add(new Exception("Method " + each.getName() + " has wrong parameter Type: " + each.getMethod().getParameterTypes()[0]));
-				}
-			}
 		}
 	}
 
@@ -199,15 +158,6 @@ public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
 		}
 	}
 
-	@Override
-	protected Statement methodBlock(final FrameworkMethod currentMethod) {
-		if (currentMethod.getAnnotation(PerformanceTest.class) == null) {
-			return super.methodBlock(currentMethod);
-		} else {
-			return createPerformanceStatementFromMethod(currentMethod);
-		}
-	}
-
 	/**
 	 * Creates a PerformanceStatement out of a method
 	 * 
@@ -215,7 +165,7 @@ public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
 	 *            Method for which the statement should be created
 	 * @return The statement
 	 */
-	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
+	protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
 		try {
 			final PerformanceJUnitStatement callee = getStatement(currentMethod);
 			
@@ -224,7 +174,7 @@ public class TimeBasedTestRunner extends BlockJUnit4ClassRunner {
 			this.method = currentMethod;
 
 			if (!classFinished){
-				currentMethodStatement = new TimeMethodStatement(callee, filename, klasse, method, logFullData);
+				currentMethodStatement = new TimeBasedStatement(callee, filename, klasse, method, logFullData);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {

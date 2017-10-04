@@ -19,14 +19,14 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 
 	private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 
-	private final PerformanceJUnitStatement callee;
-	private final int timeout;
-	private int warmupExecutions;
+	protected final PerformanceJUnitStatement callee;
+	protected final int timeout;
+	protected int warmupExecutions;
 
-	private final String className, methodName;
-	private final boolean saveFullData;
-	private boolean isFinished = false;
-	private Finishable mainRunnable;
+	protected final String className, methodName;
+	protected final boolean saveFullData;
+	protected boolean isFinished = false;
+	protected Finishable mainRunnable;
 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(null, method.getMethod(), filename);
@@ -56,7 +56,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			public void run() {
 				try {
 					runWarmup(callee);
-					final TestResult tr = executeSimpleTest(callee);
+					final TestResult tr = executeSimpleTest(callee,  annotation.executionTimes());
 					tr.checkValues();
 					if (!assertationvalues.isEmpty()) {
 						LOG.info("Checking: " + assertationvalues.size());
@@ -105,14 +105,14 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private TestResult executeSimpleTest(final PerformanceJUnitStatement callee) throws Throwable {
-		final TestResult tr = new TestResult(methodName, annotation.executionTimes(), datacollectors);
+	protected TestResult executeSimpleTest(final PerformanceJUnitStatement callee, int executions) throws Throwable {
+		final TestResult tr = new TestResult(methodName, executions, datacollectors);
 
 		if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, "execution ", annotation.executionTimes(), callee);
+			runMainExecution(tr, "execution ",executions, callee);
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
@@ -159,7 +159,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
+	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {

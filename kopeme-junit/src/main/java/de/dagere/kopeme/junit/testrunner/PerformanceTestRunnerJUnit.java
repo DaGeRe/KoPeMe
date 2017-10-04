@@ -47,15 +47,15 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	private static final PerformanceTestingClass DEFAULTPERFORMANCETESTINGCLASS = AnnotationDefaults.of(PerformanceTestingClass.class);
 	private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
-	private final Class<?> klasse;
+	protected final Class<?> klasse;
 	protected boolean logFullData;
 	protected FrameworkMethod method;
 //	protected Map<String, Double> maximalRelativeStandardDeviation;
 //	protected Map<String, Long> assertationvalues;
 	protected final String filename;
-	private boolean classFinished = false;
+	protected boolean classFinished = false;
 	
-	private PerformanceMethodStatement currentMethodStatement;
+	protected PerformanceMethodStatement currentMethodStatement;
 	
 
 	/**
@@ -118,7 +118,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 * @param notifier
 	 *            Notifier that should be notified
 	 */
-	private void setTestsToFail(final RunNotifier notifier) {
+	protected void setTestsToFail(final RunNotifier notifier) {
 		final Description description = getDescription();
 		final ArrayList<Description> toBeFailed = new ArrayList<>(description.getChildren()); // all testmethods will be covered and set to failed here
 		toBeFailed.add(description); // the whole test class failed
@@ -212,7 +212,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	 *            Method for which the statement should be created
 	 * @return The statement
 	 */
-	private Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
+	protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
 		try {
 			final PerformanceJUnitStatement callee = getStatement(currentMethod);
 			
