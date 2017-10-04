@@ -34,13 +34,11 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 
 	private static final long NANOTOMIKRO = 1000;
 
-	private int repetitions;
 	private final long duration;
 
 	public TimeBasedStatement(PerformanceJUnitStatement callee, String filename, Class<?> calledClass, FrameworkMethod method, boolean saveFullData) {
 		super(callee, filename, calledClass, method, saveFullData);
 		duration = annotation.duration() * NANOTOMIKRO;
-		repetitions = annotation.repetitions();
 	}
 	
 	@Override

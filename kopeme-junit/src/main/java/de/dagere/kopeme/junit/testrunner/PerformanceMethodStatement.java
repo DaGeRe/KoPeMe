@@ -27,6 +27,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	protected final boolean saveFullData;
 	protected boolean isFinished = false;
 	protected Finishable mainRunnable;
+	protected final int repetitions;
 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(null, method.getMethod(), filename);
@@ -42,6 +43,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 
 		this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
 		warmupExecutions = annotation.warmupExecutions();
+		repetitions = annotation.repetitions();
 		timeout = annotation.timeout();
 		this.methodName = method.getName();
 		this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass anyway
@@ -167,7 +169,9 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			callee.preEvaluate();
 			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			tr.startCollection();
-			callee.evaluate();
+			for (int i = 0; i < repetitions; i++){
+				callee.evaluate();
+			}
 			tr.stopCollection();
 			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
 			callee.postEvaluate();

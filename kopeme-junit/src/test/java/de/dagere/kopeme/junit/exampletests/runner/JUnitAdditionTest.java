@@ -26,7 +26,7 @@ public class JUnitAdditionTest {
 	}
 
 	@Test
-	@PerformanceTest(executionTimes = 5)
+	@PerformanceTest(executionTimes = 5, repetitions = 1000)
 	public void testAddition() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {
