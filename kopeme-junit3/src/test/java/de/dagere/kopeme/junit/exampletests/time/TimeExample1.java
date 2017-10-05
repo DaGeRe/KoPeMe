@@ -14,6 +14,7 @@ public class TimeExample1 extends TimeBasedTestcase {
 	
 	@Override
 	public long getDuration() {
-		return 10000;
+		final String env = System.getenv("DURATION");
+		return env != null ? Integer.parseInt(env) : 10000;
 	}
 }
