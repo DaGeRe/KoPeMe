@@ -8,15 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.annotations.AnnotationDefaults;
-import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.annotations.PerformanceTestingClass;
-import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import junit.framework.TestCase;
 
 /**
  * Only measures time for testcases of arbitrary length in a given time. Therefore, the testcases are executed the first half of the time on order to get an prediction of the duration, and in the
@@ -34,9 +28,6 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 
 	private static final Logger LOG = LogManager.getLogger(TimeBasedTestcase.class);
 
-	private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
-	private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
-
 	/**
 	 * Initializes the testcase.
 	 */
@@ -52,7 +43,7 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 	public TimeBasedTestcase(final String name) {
 		super(name);
 	}
-	
+
 	@Override
 	public int getRepetitions() {
 		return 200; // Default 200 repetitions - can still be changed
@@ -75,12 +66,12 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		final long maximumDuration = durationInMilliseconds * 1000 * NANOTOMIKRO; // Default maximum test duration: 1000 ms = 1 second
 		final int executionTimes = calibrateMeasurement("warmup", testClassName, new TestResult(testClassName, 1, DataCollectorList.ONLYTIME), maximumDuration);
 
-		TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.ONLYTIME);
+		final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.ONLYTIME);
 
 		final String fullName = this.getClass().getName() + "." + getName();
 		try {
 			runMainExecution("main", fullName, tr, executionTimes);
-		} catch (Throwable e) {
+		} catch (final Throwable e) {
 			e.printStackTrace();
 		}
 
@@ -89,44 +80,46 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 	}
 
 	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration) {
-		final long calibrationStart = System.nanoTime();
-		final long emptyDuration = measureNTimes(executionTypName, name, tr, 0);
-		final long basicDuration = measureNTimes(executionTypName, name, tr, 1);
-		long calibration = basicDuration;
-		final List<Long> calibrationValues = new LinkedList<>();
+		try {
+			final long calibrationStart = System.nanoTime();
+			final long emptyDuration = measureNTimes(executionTypName, name, tr, 0);
+			final long basicDuration = measureNTimes(executionTypName, name, tr, 1);
+			long calibration = basicDuration;
+			final List<Long> calibrationValues = new LinkedList<>();
 
-		while (calibration < maximumDuration / 2) {
-			final long value = measureNTimes(executionTypName, name, tr, 1);
-			calibration += value;
-			// LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration);
-			calibrationValues.add(value);
+			while (calibration < maximumDuration / 2) {
+				final long value = measureNTimes(executionTypName, name, tr, 1);
+				calibration += value;
+				// LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration);
+				calibrationValues.add(value);
+			}
+
+			final DescriptiveStatistics statistics = new DescriptiveStatistics();
+			calibrationValues.forEach(value -> statistics.addValue(value));
+
+			LOG.debug("Mean: " + statistics.getMean() / NANOTOMIKRO + " " + statistics.getPercentile(20) / NANOTOMIKRO + " Calibration time: " + calibration / NANOTOMIKRO);
+			LOG.debug("Empty: {} Per-Execution-Duration: {}", emptyDuration / NANOTOMIKRO, Math.abs(statistics.getMean() - emptyDuration) / NANOTOMIKRO);
+
+			final long halfTime = maximumDuration / 2;
+			// final int executions = (int) ((halfTime / statistics.getMean()) / getRepetitions());
+			final double estimatedExecutionDuration = Math.abs(statistics.getMean() - emptyDuration);
+			LOG.debug("Estimated Execution Duration: {} Half-Time: {}", estimatedExecutionDuration / NANOTOMIKRO, halfTime / NANOTOMIKRO);
+			final int executions = (int) (halfTime / (emptyDuration + estimatedExecutionDuration));
+			LOG.debug("Executions: {}", executions, (maximumDuration / statistics.getMean()));
+			final long calibrationEnd = System.nanoTime();
+			LOG.debug("Duration of calibration: {}", (calibrationEnd - calibrationStart) / NANOTOMIKRO);
+			return executions;
+		} catch (final Throwable e) {
+			e.printStackTrace(); 
+			return 1;// When an test throws an exception, due to whatever reason, its functional behaviour should be fixed first; therefore, it is only run once
 		}
-
-		final DescriptiveStatistics statistics = new DescriptiveStatistics();
-		calibrationValues.forEach(value -> statistics.addValue(value));
-
-		LOG.debug("Mean: " + statistics.getMean() / NANOTOMIKRO + " " + statistics.getPercentile(20) / NANOTOMIKRO + " Calibration time: " + calibration / NANOTOMIKRO);
-		LOG.debug("Empty: {} Per-Execution-Duration: {}", emptyDuration / NANOTOMIKRO, Math.abs(statistics.getMean() - emptyDuration) / NANOTOMIKRO);
-
-		long halfTime = maximumDuration / 2;
-		// final int executions = (int) ((halfTime / statistics.getMean()) / getRepetitions());
-		double estimatedExecutionDuration = Math.abs(statistics.getMean() - emptyDuration);
-		LOG.debug("Estimated Execution Duration: {} Half-Time: {}", estimatedExecutionDuration / NANOTOMIKRO, halfTime / NANOTOMIKRO);
-		final int executions = (int) (halfTime / (emptyDuration + estimatedExecutionDuration));
-		LOG.debug("Executions: {}", executions, (maximumDuration / statistics.getMean()));
-		long calibrationEnd = System.nanoTime();
-		LOG.debug("Duration of calibration: {}", (calibrationEnd - calibrationStart) / NANOTOMIKRO);
-		return executions;
+		
 	}
 
-	private long measureNTimes(final String executionTypName, final String name, final TestResult tr, final int n) {
-		long overheadStart = System.nanoTime();
-		try {
-			runMainExecution(executionTypName, name, tr, n);
-		} catch (Throwable e1) {
-			e1.printStackTrace();
-		}
-		long overheadEnd = System.nanoTime();
+	private long measureNTimes(final String executionTypName, final String name, final TestResult tr, final int n) throws Throwable {
+		final long overheadStart = System.nanoTime();
+		runMainExecution(executionTypName, name, tr, n);
+		final long overheadEnd = System.nanoTime();
 		return overheadEnd - overheadStart;
 
 		// final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
