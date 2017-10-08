@@ -122,40 +122,5 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		runMainExecution(executionTypName, name, tr, n);
 		final long overheadEnd = System.nanoTime();
 		return overheadEnd - overheadStart;
-
-		// final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
-		// final String endPart = "/" + n + " ---";
-		//
-		// try {
-		// LOG.debug(firstPart + n + endPart);
-		// setUp();
-		// tr.startCollection();
-		// TimeBasedTestcase.super.runTest();
-		// tr.stopCollection();
-		// tearDown();
-		// } catch (Throwable e) {
-		// e.printStackTrace();
-		// }
-		//
-		// long retval = tr.getValue(TimeDataCollector.class.getName());
-		// tr.setRealExecutions(n);
-		// LOG.debug("--- Stopping " + executionTypName + " execution " + n + endPart);
-		// if (Thread.interrupted()) {
-		// return retval;
-		// } else {
-		// LOG.trace("Not interrupted!");
-		// }
-		// long overheadEnd = System.nanoTime();
-		// return overheadEnd - overheadStart;
-		// final long start = System.nanoTime();
-		// try {
-		// for (int i = 0; i < n; i++) {
-		// TimeBasedTestcase.super.runTest();
-		// }
-		// } catch (final Throwable e) {
-		// e.printStackTrace();
-		// }
-		// final long end = System.nanoTime();
-		// return end - start;
 	}
 }
