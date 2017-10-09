@@ -11,7 +11,7 @@ import de.dagere.kopeme.junit.testrunner.time.TimeBasedTestRunner;
 public class TimeExample1 {
 
 	@Test
-	@PerformanceTest(duration=10000, repetitions = 100)
+	@PerformanceTest(duration=10000, repetitions = 100, logFullData=true)
 	public void testMe() {
 		final AddRandomNumbers rm = new AddRandomNumbers();
 		for (int i = 0; i < 5; i++) {
