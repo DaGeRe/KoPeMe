@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit.exampletests.runner;
 
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit.exampletests.time.AddRandomNumbers;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
@@ -18,6 +19,11 @@ public class TimeRunnerExample extends KoPeMeTestcase {
 	@Override
 	protected int getExecutionTimes() {
 		return 18000;
+	}
+	
+	@Override
+	protected DataCollectorList getDataCollectors() {
+		return DataCollectorList.ONLYTIME;
 	}
 	
 	@Override
