@@ -10,10 +10,10 @@ import de.dagere.kopeme.junit.testrunner.time.TimeBasedTestRunner;
 public class TimeExample2 {
 
 	@Test
-	@PerformanceTest(duration=1000)
+	@PerformanceTest(duration=1000, repetitions = 100)
 	public void testMe() {
 		final AddRandomNumbers rm = new AddRandomNumbers();
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 6; i++) {
 			rm.addSomething();
 		}
 		System.out.println(rm.getValue());

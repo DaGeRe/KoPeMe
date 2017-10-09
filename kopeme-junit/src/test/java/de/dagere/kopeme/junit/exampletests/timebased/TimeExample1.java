@@ -14,7 +14,7 @@ public class TimeExample1 {
 	@PerformanceTest(duration=10000, repetitions = 100)
 	public void testMe() {
 		final AddRandomNumbers rm = new AddRandomNumbers();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 5; i++) {
 			rm.addSomething();
 		}
 		System.out.println(rm.getValue());
