@@ -34,7 +34,7 @@ public class CopyOfJUnitTimeoutTest extends KoPeMeTestcase {
 	}
 
 	@Override
-	protected int getMaximalTime() {
+	protected long getMaximalTime() {
 		return 1000;
 	}
 

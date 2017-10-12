@@ -14,7 +14,7 @@ public class JUnit3EndlessTest extends KoPeMeTestcase {
 			log.debug("Simply doing nothing in endless loop..");
 			try {
 				Thread.sleep(500);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -38,7 +38,7 @@ public class JUnit3EndlessTest extends KoPeMeTestcase {
 	}
 
 	@Override
-	protected int getMaximalTime() {
+	protected long getMaximalTime() {
 		return 5000;
 	}
 

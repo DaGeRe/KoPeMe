@@ -90,7 +90,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	 * 
 	 * @return Maximal time of all test executions
 	 */
-	protected int getMaximalTime() {
+	protected long getMaximalTime() {
 		return annoTestClass.overallTimeout();
 	}
 
@@ -118,7 +118,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
 		final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
 		final boolean fullData = logFullData();
-		final int timeoutTime = getMaximalTime();
+		final long timeoutTime = getMaximalTime();
 
 		final String testClassName = this.getClass().getName();
 		final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.STANDARD);
@@ -175,7 +175,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
 
-	private void waitForTestEnd(final int timeoutTime, final Thread thread) throws InterruptedException {
+	private void waitForTestEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
 		thread.start();
 
 		thread.join(timeoutTime);

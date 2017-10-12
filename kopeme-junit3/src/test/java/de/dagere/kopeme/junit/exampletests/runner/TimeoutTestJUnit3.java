@@ -11,7 +11,7 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
 	public void testAddition() {
 		try {
 			Thread.sleep(300);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -34,7 +34,7 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
 	}
 
 	@Override
-	protected int getMaximalTime() {
+	protected long getMaximalTime() {
 		return 1000;
 	}
 
