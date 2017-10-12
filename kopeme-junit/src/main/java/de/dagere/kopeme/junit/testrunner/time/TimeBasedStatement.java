@@ -20,7 +20,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
  * @author reichelt
  *
  */
-public class TimeBasedStatement extends PerformanceMethodStatement implements Finishable {
+public class TimeBasedStatement extends PerformanceMethodStatement {
 
 	private static final Logger LOG = LogManager.getLogger(TimeBasedStatement.class);
 
@@ -85,13 +85,13 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 		int executions = 1;
 		final long calibrationStart = System.nanoTime();
 		try {
-			final long emptyDuration = runMainExecution2(tr, executionTypName, 0, callee, 1);
-			final long basicDuration = runMainExecution2(tr, executionTypName, 1, callee, 1);
+			final long emptyDuration = runMainExecutionTimed(tr, executionTypName, 0, callee, 1);
+			final long basicDuration = runMainExecutionTimed(tr, executionTypName, 1, callee, 1);
 			long calibration = basicDuration;
 			final List<Long> calibrationValues = new LinkedList<>();
 
 			while (calibration < maximumDuration / 2) {
-				final long value = runMainExecution2(tr, executionTypName, 1, callee, 1);
+				final long value = runMainExecutionTimed(tr, executionTypName, 1, callee, 1);
 				calibration += value;
 				LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration/ NANOTOMIKRO);
 				calibrationValues.add(value);
@@ -129,41 +129,9 @@ public class TimeBasedStatement extends PerformanceMethodStatement implements Fi
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private long runMainExecution2(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
+	private long runMainExecutionTimed(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
 		final long beginTime = System.nanoTime();
-		final String methodString = className + "." + tr.getTestcase();
-		int execution;
-		for (execution = 1; execution <= executions; execution++) {
-
-			callee.preEvaluate();
-			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
-			tr.startCollection();
-			for (int i = 0; i < repetitions; i++){
-				callee.evaluate();
-			}
-			tr.stopCollection();
-			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
-			callee.postEvaluate();
-			tr.setRealExecutions(execution);
-			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-				LOG.info("Exiting because of deviation reached");
-				break;
-			}
-			if (isFinished){
-				LOG.debug("Exiting finished thread: {}." , Thread.currentThread().getName());
-				throw new InterruptedException("Test timed out.");
-			}
-			final boolean interrupted = Thread.interrupted();
-			LOG.debug("Interrupt state: {}", interrupted);
-			if (interrupted) {
-				LOG.debug("Exiting thread.");
-				throw new InterruptedException("Test was interrupted and eventually timed out.");
-			}
-			Thread.sleep(1); // To let other threads "breath"
-		}
-		LOG.debug("Executions: " + execution);
-		tr.setRealExecutions(execution);
+		runMainExecution(tr, warmupString, executions, callee, repetitions);
 		final long endTime = System.nanoTime();
 		return (endTime - beginTime) / NANOTOMIKRO;
 	}

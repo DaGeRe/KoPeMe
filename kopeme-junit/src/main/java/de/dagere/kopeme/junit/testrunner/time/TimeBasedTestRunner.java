@@ -63,46 +63,6 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 		super(klasse);
 	}
 
-	@Override
-	public void run(final RunNotifier notifier) {
-		final long start = System.nanoTime();
-		PerformanceTestingClass ptc = klasse.getAnnotation(PerformanceTestingClass.class);
-		if (ptc == null) {
-			ptc = DEFAULTPERFORMANCETESTINGCLASS;
-		}
-		final Finishable testRunRunnable = new Finishable() {
-			@Override
-			public void run() {
-				TimeBasedTestRunner.super.run(notifier);
-			}
-
-			@Override
-			public boolean isFinished() {
-				return false;
-			}
-
-			@Override
-			public void setFinished(final boolean isFinished) {
-				classFinished = isFinished;
-				currentMethodStatement.setFinished(isFinished);
-			}
-		};
-		logFullData = ptc.logFullData();
-		final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), "class");
-		try {
-			final boolean finished = tbe.execute();
-			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
-			if (!finished){
-				classFinished = true;
-				LOG.debug("Not finished.");
-				setTestsToFail(notifier);
-			}
-		} catch (final Exception e) {
-			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Gets the PerformanceJUnitStatement for the test execution of the given method.
 	 * 

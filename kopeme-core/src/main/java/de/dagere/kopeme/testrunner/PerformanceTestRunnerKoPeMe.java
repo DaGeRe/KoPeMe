@@ -9,11 +9,10 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.PerformanceTestRunner;
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.paralleltests.ParallelPerformanceTest;
-import de.dagere.kopeme.paralleltests.ParallelTestRunner;
 
 /**
- * Runs a performance test via the pure test Runner, which does not need any additional librarys.
+ * Runs a performance test via the pure test Runner, which does not need any
+ * additional librarys.
  * 
  * @author dagere
  *
@@ -31,8 +30,10 @@ public final class PerformanceTestRunnerKoPeMe {
 	/**
 	 * Starts testing a given class.
 	 * 
-	 * @param args Only the classname
-	 * @throws Throwable Any possible exception during testing the class
+	 * @param args
+	 *            Only the classname
+	 * @throws Throwable
+	 *             Any possible exception during testing the class
 	 */
 	public static void main(final String[] args) throws Throwable {
 		if (args.length == 0) {
@@ -54,10 +55,12 @@ public final class PerformanceTestRunnerKoPeMe {
 	/**
 	 * Runs all tests for the given class.
 	 * 
-	 * @param clazz Class-Object, for which the tests should be run
-	 * @throws Throwable Any possible exception during the run
+	 * @param clazz
+	 *            Class-Object, for which the tests should be run
+	 * @throws Throwable
+	 *             Any possible exception during the run
 	 */
-	public static void runTestsWithClass(final Class clazz) throws Throwable {
+	public static void runTestsWithClass(final Class<?> clazz) throws Throwable {
 		Object instance = null;
 		try {
 			instance = clazz.newInstance();
@@ -74,14 +77,8 @@ public final class PerformanceTestRunnerKoPeMe {
 		List<AssertionError> errors = new LinkedList<AssertionError>();
 		for (Method method : clazz.getMethods()) {
 			try {
-				if (method.isAnnotationPresent(PerformanceTest.class) && !method.isAnnotationPresent(ParallelPerformanceTest.class))
-				{
+				if (method.isAnnotationPresent(PerformanceTest.class)) {
 					PerformanceTestRunner te = new PerformanceTestRunner(clazz, instance, method);
-					te.evaluate();
-				}
-				if (method.isAnnotationPresent(PerformanceTest.class) && method.isAnnotationPresent(ParallelPerformanceTest.class))
-				{
-					ParallelTestRunner te = new ParallelTestRunner(clazz, instance, method);
 					te.evaluate();
 				}
 			} catch (AssertionError ae) {

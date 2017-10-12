@@ -36,7 +36,6 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
 	@Override
 	public void evaluate() throws Throwable {
-//		final TestResult tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
 		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {

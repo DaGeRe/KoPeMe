@@ -67,8 +67,6 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		final TestResult tr = new TestResult(testClassName, -1, DataCollectorList.ONLYTIME);
 		final int executionTimes = calibrateMeasurement("warmup", testClassName, tr, maximumDuration);
 
-		
-
 		final String fullName = this.getClass().getName() + "." + getName();
 		try {
 			runMainExecution("main", fullName, tr, executionTimes);

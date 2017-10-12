@@ -56,9 +56,9 @@ public class TestRunnables {
 
 			@Override
 			public void run() {
-				for (Method m : beforeMethods) {
+				for (Method method : beforeMethods) {
 					try {
-						m.invoke(testObject);
+						method.invoke(testObject);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -72,11 +72,10 @@ public class TestRunnables {
 
 			@Override
 			public void run() {
-				for (Method m : afterMethods) {
+				for (Method method : afterMethods) {
 					try {
-						m.invoke(testObject);
+						method.invoke(testObject);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

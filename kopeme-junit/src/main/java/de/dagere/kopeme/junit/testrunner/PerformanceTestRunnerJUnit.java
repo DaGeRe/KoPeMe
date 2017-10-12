@@ -50,11 +50,8 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 	protected final Class<?> klasse;
 	protected boolean logFullData;
 	protected FrameworkMethod method;
-//	protected Map<String, Double> maximalRelativeStandardDeviation;
-//	protected Map<String, Long> assertationvalues;
 	protected final String filename;
 	protected boolean classFinished = false;
-	
 	protected PerformanceMethodStatement currentMethodStatement;
 	
 

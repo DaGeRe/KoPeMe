@@ -15,14 +15,13 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
-public class PerformanceMethodStatement extends KoPeMeBasicStatement implements Finishable {
+public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
 	private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 
 	protected final PerformanceJUnitStatement callee;
 	protected final int timeout;
 	protected int warmupExecutions;
-
 	protected final String className, methodName;
 	protected final boolean saveFullData;
 	protected boolean isFinished = false;
@@ -32,15 +31,6 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(null, method.getMethod(), filename);
 		this.callee = callee;
-		
-//		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
-//		try {
-//			KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
-//		} catch (final Exception e) {
-//			System.err.println("kieker has failed!");
-//			e.printStackTrace();
-//		}
-
 		this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
 		warmupExecutions = annotation.warmupExecutions();
 		repetitions = annotation.repetitions();
@@ -114,7 +104,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, "execution ",executions, callee);
+			runMainExecution(tr, "execution ",executions, callee, repetitions);
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
@@ -140,7 +130,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 			LOG.warn("Not all Collectors are valid!");
 		}
 		try {
-			runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee);
+			runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, repetitions);
 			warmupExecutions = tr.getRealExecutions();
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
@@ -161,11 +151,10 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee) throws Throwable {
+	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {
-
 			callee.preEvaluate();
 			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			tr.startCollection();
@@ -197,21 +186,6 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement implements 
 		tr.setRealExecutions(execution);
 	}
 
-	@Override
-	public void run() {
-		// Never called, as the class is called via evaluate - only needs to be implemented to meet the interface
-	}
-
-	@Override
-	public boolean isFinished() {
-		if (mainRunnable != null) {
-			return mainRunnable.isFinished();
-		} else {
-			return false;
-		}
-	}
-
-	@Override
 	public void setFinished(final boolean isFinished) {
 		LOG.debug("Setze finished: " + isFinished + " " + mainRunnable);
 		if (mainRunnable != null) {
