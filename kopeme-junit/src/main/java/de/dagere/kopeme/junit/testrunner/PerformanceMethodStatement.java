@@ -155,15 +155,17 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 		final String methodString = className + "." + tr.getTestcase();
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {
-			callee.preEvaluate();
+			
 			LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
 			tr.startCollection();
 			for (int i = 0; i < repetitions; i++){
+				callee.preEvaluate();
 				callee.evaluate();
+				callee.postEvaluate();
 			}
 			tr.stopCollection();
 			LOG.debug("--- Stopping " + warmupString + +execution + "/" + executions + " ---");
-			callee.postEvaluate();
+			
 			tr.setRealExecutions(execution);
 			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {

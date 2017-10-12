@@ -251,14 +251,14 @@ public abstract class KoPeMeTestcase extends TestCase {
 		final String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
-			setUp();
 			tr.startCollection();
 			for (int repetion = 0; repetion < getRepetitions(); repetion++) {
+				setUp();
 				KoPeMeTestcase.super.runTest();
+				tearDown();
 			}
 
 			tr.stopCollection();
-			tearDown();
 			tr.getValue(TimeDataCollector.class.getName());
 			tr.setRealExecutions(executions);
 			LOG.debug("--- Stopping " + executionTypName + " execution " + executions + endPart);
