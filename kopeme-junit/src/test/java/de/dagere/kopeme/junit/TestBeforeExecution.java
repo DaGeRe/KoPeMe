@@ -48,11 +48,11 @@ public class TestBeforeExecution {
 			{ExampleBeforeTestRule.class, TEST_NAME},
 			{ExampleBeforeClassTest.class, TEST_NAME},
 			{ExampleNoBeforeTest.class, TEST_NAME},
-			{ExampleNonMeasuringBefore.class, TEST_NAME},
-			{ExampleBeforeTestRunner.class, "testMethod"}
+			{ExampleNonMeasuringBefore.class, TEST_NAME}
 		});
 	}
-	
+//	,
+//	{ExampleBeforeTestRunner.class, "testMethod"}
 	@Parameter(0)
 	public Class<?> junitTestClass;
 	
