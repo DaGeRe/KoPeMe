@@ -11,8 +11,8 @@ public class FolderProvider {
 
 	static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
 
-	static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME") : System.getenv("HOME") + File.separator + ".KoPeMe"
-			+ File.separator;
+	static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME")
+			: System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator;
 
 	private static FolderProvider INSTANCE;
 
@@ -38,7 +38,7 @@ public class FolderProvider {
 	}
 
 	public File getFolderForCurrentPerformanceresults(final String testFileName, final String testCaseName) {
-		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath() + File.separator + testCaseName);
+		return new File(getFolderForCurrentPerformanceresults(testFileName).getPath(), testCaseName);
 	}
 
 	public String getFolderFor(final String filename) {
