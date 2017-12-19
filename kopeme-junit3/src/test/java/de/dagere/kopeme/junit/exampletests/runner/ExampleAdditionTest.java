@@ -9,7 +9,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
 public class ExampleAdditionTest extends KoPeMeTestcase {
-	private final static Logger log = LogManager.getLogger(ExampleAdditionTest.class);
+	private final static Logger LOG = LogManager.getLogger(ExampleAdditionTest.class);
 
 	public void testAddition() {
 		int a = 0;
@@ -17,7 +17,7 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 			a += i;
 		}
 		Assert.assertEquals(10000 * 9999 / 2, a);
-		log.debug("Addition beendet");
+		LOG.debug("Addition beendet");
 		giveMeOutput();
 	}
 

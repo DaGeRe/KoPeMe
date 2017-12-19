@@ -7,7 +7,7 @@ import de.dagere.kopeme.datastorage.FolderProvider;
 
 public class TestUtils {
 
-	private static FolderProvider p = FolderProvider.getInstance();
+	private static FolderProvider provider = FolderProvider.getInstance();
 	
 	public static final String KOPEME_DEFAULT_FOLDER = "target/test-classes/.KoPeMe";
 	public static final String TEST_ADDITION = "testAddition";
@@ -27,7 +27,7 @@ public class TestUtils {
 	}
 
 	public static void cleanAndSetKoPeMeOutputFolder() {
-		p.setKopemeDefaultFolder(KOPEME_DEFAULT_FOLDER);
+		provider.setKopemeDefaultFolder(KOPEME_DEFAULT_FOLDER);
 		deleteRecursively(Paths.get(KOPEME_DEFAULT_FOLDER).toFile());
 	}
 
@@ -39,7 +39,7 @@ public class TestUtils {
 	 * @return File containing the test result
 	 */
 	public static File xmlFileForKoPeMeTest(final String canonicalName, final String testCaseName) {
-		final String folder = p.getFolderFor("");
+		final String folder = provider.getFolderFor("");
 		return Paths.get(folder, canonicalName, testCaseName + ".xml").toFile();
 	}
 

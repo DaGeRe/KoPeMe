@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import java.util.concurrent.TimeoutException;
 
 import junit.framework.AssertionFailedError;
@@ -97,14 +98,14 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 		final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), "class");
 		try {
 			final boolean finished = tbe.execute();
-			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
+			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6 + " milliseconds");
 			if (!finished){
 				classFinished = true;
 				LOG.debug("Not finished.");
 				setTestsToFail(notifier);
 			}
 		} catch (final Exception e) {
-			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6);
+			LOG.debug("Time: " + (System.nanoTime() - start) / 10E6 + " milliseconds");
 			e.printStackTrace();
 		}
 	}
