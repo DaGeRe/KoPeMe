@@ -249,10 +249,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 		int executions;
 		final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
 		final String endPart = "/" + executionTimes + " ---";
+		final int repetitions = getRepetitions();
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
 			tr.startCollection();
-			for (int repetion = 0; repetion < getRepetitions(); repetion++) {
+			for (int repetion = 0; repetion < repetitions; repetion++) {
 				setUp();
 				KoPeMeTestcase.super.runTest();
 				tearDown();
