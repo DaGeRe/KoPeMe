@@ -13,11 +13,13 @@ import org.junit.Test;
 
 
 public class TestKieker {
+	
+	protected static final String KIEKER_ARG_LINE = "-javaagent:" + System.getProperty("user.home") + "/.m2/repository/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar";
 
 	@Test
 	public void testDataCreation() throws IOException, InterruptedException{
 		final File tempFolder = Files.createTempDirectory("kopeme-test").toFile();
-		final String arglineString = "-DargLine=-javaagent:/home/reichelt/.m2/repository/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar";
+		final String arglineString = "-DargLine=" + KIEKER_ARG_LINE;
 		final ProcessBuilder builder = new ProcessBuilder("mvn", "surefire:test", "-Dtest=ExampleKiekerUsageTest", arglineString);
 		builder.environment().put("KOPEME_HOME", tempFolder.getAbsolutePath());
 		
