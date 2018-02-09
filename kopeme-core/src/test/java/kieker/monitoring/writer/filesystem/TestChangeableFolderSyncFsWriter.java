@@ -43,14 +43,14 @@ public class TestChangeableFolderSyncFsWriter {
 		NEW_FOLDER_AT_RUNTIME.mkdirs();
 		final Configuration config = ConfigurationFactory.createSingletonConfiguration();
 		final String absolutePath = DEFAULT_FOLDER.getAbsolutePath();
-		config.setProperty("kieker.monitoring.writer", ChangeableFolderSyncFsWriter.class.getName());
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_PATH, absolutePath);
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXENTRIESINFILE, "100");
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXLOGFILES, "-1");
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXLOGSIZE, "1");
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_FLUSH, "true");
-		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_BUFFER, "8192");
-		config.setProperty(ChangeableFolderSyncFsWriter.REAL_WRITER, "SyncFsWriter");
+		config.setProperty("kieker.monitoring.writer", ChangeableFolderWriter.class.getName());
+		config.setProperty(ChangeableFolderWriter.CONFIG_PATH, absolutePath);
+		config.setProperty(ChangeableFolderWriter.CONFIG_MAXENTRIESINFILE, "100");
+		config.setProperty(ChangeableFolderWriter.CONFIG_MAXLOGFILES, "-1");
+		config.setProperty(ChangeableFolderWriter.CONFIG_MAXLOGSIZE, "1");
+		config.setProperty(ChangeableFolderWriter.CONFIG_FLUSH, "true");
+		config.setProperty(ChangeableFolderWriter.CONFIG_BUFFER, "8192");
+		config.setProperty(ChangeableFolderWriter.REAL_WRITER, "SyncFsWriter");
 		MONITORING_CONTROLLER = MonitoringController.createInstance(config);
 	}
 
@@ -90,8 +90,8 @@ public class TestChangeableFolderSyncFsWriter {
 	public void testConfigConvertion() throws Exception {
 		final Configuration c = new Configuration();
 		final int fixture = 100;
-		c.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
-		final ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
+		c.setProperty(ChangeableFolderWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
+		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance(MONITORING_CONTROLLER);
 		final Configuration result = testable.toWriterConfiguration(c, SyncFsWriter.class);
 		final int intResult = result.getIntProperty(SyncFsWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
@@ -99,7 +99,7 @@ public class TestChangeableFolderSyncFsWriter {
 
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
-		final ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
+		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance(MONITORING_CONTROLLER);
 		final int rounds = 15, lines = 15;
 		runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME);

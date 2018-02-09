@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
-import kieker.monitoring.writer.filesystem.ChangeableFolderSyncFsWriter;
+import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
  * Class to control kieker tracing for KoPeMe.
@@ -29,10 +29,10 @@ public enum KoPeMeKiekerSupport {
 	public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
 //		System.out.println("Initialisiere Kieker-Support");
 		// AsyncFsWriter fsWriter2 = AsyncFsWriter.
-		ChangeableFolderSyncFsWriter fsWriter = ChangeableFolderSyncFsWriter.getInstance(MonitoringController.getInstance());
+		ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
 		if (fsWriter == null) {
 			if (useIt) {
-				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderSyncFsWriter.class.getCanonicalName() + " has to be used!");
+				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
 			}
 		} else {
 			LOG.info("Initializing KoPeMe-Kieker-Support");

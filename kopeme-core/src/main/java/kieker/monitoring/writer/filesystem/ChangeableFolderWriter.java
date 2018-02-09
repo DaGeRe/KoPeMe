@@ -17,15 +17,15 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 /**
  * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is set to the
- * {@link ChangeableFolderSyncFsWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a List and written to every new {@link SyncFsWriter}
+ * {@link ChangeableFolderWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a List and written to every new {@link SyncFsWriter}
  * that is created with a new folder.
  * 
  * @author reichelt
  *
  */
-public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
+public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 
-	public static final String PREFIX = ChangeableFolderSyncFsWriter.class.getName() + ".";
+	public static final String PREFIX = ChangeableFolderWriter.class.getName() + ".";
 	public static final String CONFIG_PATH = PREFIX + "customStoragePath";
 	public static final String CONFIG_MAXENTRIESINFILE = PREFIX + "maxEntriesInFile";
 	public static final String CONFIG_MAXLOGSIZE = PREFIX + "maxLogSize";
@@ -35,41 +35,37 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 	public static final String CONFIG_FLUSH = PREFIX + "flush";
 	public static final String CONFIG_BUFFER = PREFIX + "bufferSize";
 
-	private static final Map<IMonitoringController, ChangeableFolderSyncFsWriter> instanceMapping = new HashMap<>();
+	private static final Map<IMonitoringController, ChangeableFolderWriter> instanceMapping = new HashMap<>();
 
-	public static synchronized ChangeableFolderSyncFsWriter getInstance(final IMonitoringController controler) {
+	public static synchronized ChangeableFolderWriter getInstance(final IMonitoringController controler) {
 		return instanceMapping.get(controler);
 	}
 
 	private final List<RegistryRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
-	private static final Logger LOG = Logger.getLogger(ChangeableFolderSyncFsWriter.class.getName());
+	private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
 	private AbstractMonitoringWriter currentWriter;
 
-	public ChangeableFolderSyncFsWriter(final Configuration configuration) {
+	public ChangeableFolderWriter(final Configuration configuration) {
 		super(configuration);
 		LOG.info("Init..");
 		this.configuration = configuration;
 		currentWriter = createWriter(configuration);
 	}
 	
-//	public static void main(String[] args) {
-//		final Class clazz = AsyncFsWriter.class;
-//		System.out.println(clazz);
-//		System.out.println(clazz.getSimpleName());
-//	}
-
 	private AbstractMonitoringWriter createWriter(final Configuration configuration) {
 		final String writerName = configuration.getStringProperty(REAL_WRITER);
-		if (writerName.equals("AsyncFsWriter")) {
+		if (writerName.equals(AsyncFsWriter.class.getSimpleName())) {
 			final Configuration newConfig = toWriterConfiguration(configuration, AsyncFsWriter.class);
 			return new AsyncFsWriter(newConfig);
-		}
-		if (writerName.equals("SyncFsWriter")) {
+		} else if (writerName.equals(SyncFsWriter.class.getSimpleName())) {
+			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
+			return new SyncFsWriter(newConfig);
+		} else{
+			System.out.println("Defined writer " + writerName + " not found - using default SyncFsWriter");
 			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
 			return new SyncFsWriter(newConfig);
 		}
-		return null;
 	}
 
 	Configuration toWriterConfiguration(final Configuration c, Class<?> writerClass) {
