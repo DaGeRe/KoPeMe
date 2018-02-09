@@ -16,11 +16,11 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class ExampleKiekerUsageTest {
 
 	@Test
-	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 50, warmupExecutions = 10, useKieker=true)
+	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 2, warmupExecutions = 2, useKieker=true)
 	public void testAssertionAddition() throws FileNotFoundException {
 		int a = 0;
 		System.setOut(new PrintStream(new NullOutputStream()));
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 100; i++) {
 			a += i;
 			System.out.println(callMe(a));
 		}

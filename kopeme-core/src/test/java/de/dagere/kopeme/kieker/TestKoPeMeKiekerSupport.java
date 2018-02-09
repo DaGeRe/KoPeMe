@@ -1,9 +1,10 @@
 package de.dagere.kopeme.kieker;
 
-import static org.junit.Assert.*;
-import kieker.monitoring.core.controller.MonitoringController;
-
+import org.junit.Assert;
 import org.junit.Test;
+
+import kieker.monitoring.core.controller.MonitoringController;
+import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 public class TestKoPeMeKiekerSupport {
 
@@ -11,5 +12,8 @@ public class TestKoPeMeKiekerSupport {
 	public void testThatTheworldisnotSinkingIntoABlockHole() throws Exception {
 		MonitoringController.getInstance();
 		KoPeMeKiekerSupport.INSTANCE.useKieker(true, "myClass", "myTestCaseName");
+		
+		final ChangeableFolderWriter writer = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
+		Assert.assertNotNull(writer);
 	}
 }
