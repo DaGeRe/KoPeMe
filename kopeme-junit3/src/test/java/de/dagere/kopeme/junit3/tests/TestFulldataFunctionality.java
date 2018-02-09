@@ -1,12 +1,9 @@
-package de.dagere.kopeme.junit.exampletests;
+package de.dagere.kopeme.junit3.tests;
 
 import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -14,6 +11,9 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import junit.textui.TestRunner;
 
 public class TestFulldataFunctionality extends TestCase {
 
@@ -24,16 +24,15 @@ public class TestFulldataFunctionality extends TestCase {
 	
 	public void testFullWriting() {
 		TestRunner.run(JUnitAdditionTestFullData.class);
-		File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+		final File file = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
+		Assert.assertTrue("File " + file + " should exist.", file.exists());
 
-		XMLDataLoader xdl;
 		try {
-			xdl = new XMLDataLoader(f);
-			TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-			for (Datacollector dc : testcase.getDatacollector()) {
-				for (Result r : dc.getResult()) {
-					Fulldata fd = r.getFulldata();
+			final XMLDataLoader xdl = new XMLDataLoader(file);
+			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
+			for (final Datacollector dc : testcase.getDatacollector()) {
+				for (final Result r : dc.getResult()) {
+					final Fulldata fd = r.getFulldata();
 					if (fd == null) {
 						Assert.fail();
 					} else {
@@ -41,7 +40,7 @@ public class TestFulldataFunctionality extends TestCase {
 					}
 				}
 			}
-		} catch (JAXBException e) {
+		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
 

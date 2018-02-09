@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.exampletests;
+package de.dagere.kopeme.junit3.tests;
 
 import java.io.File;
 import java.util.List;
