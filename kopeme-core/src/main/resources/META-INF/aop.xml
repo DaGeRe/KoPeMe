@@ -3,7 +3,6 @@
 	<weaver options="-verbose">
 		<exclude within="org.junit..*" />
 		<exclude within="junit.framework..*" />
-		<exclude within="de.dagere.kopeme..*" />
 	</weaver>
 	<aspects>
 		<aspect

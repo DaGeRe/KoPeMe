@@ -11,15 +11,14 @@ import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
-import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.common.record.misc.RegistryRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 /**
- * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is
- * set to the {@link ChangeableFolderSyncFsWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a
- * List and written to every new {@link SyncFsWriter} that is created with a new folder.
+ * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is set to the
+ * {@link ChangeableFolderSyncFsWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a List and written to every new {@link SyncFsWriter}
+ * that is created with a new folder.
  * 
  * @author reichelt
  *
@@ -30,6 +29,7 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 	public static final String CONFIG_PATH = PREFIX + "customStoragePath";
 	public static final String CONFIG_MAXENTRIESINFILE = PREFIX + "maxEntriesInFile";
 	public static final String CONFIG_MAXLOGSIZE = PREFIX + "maxLogSize";
+	public static final String REAL_WRITER = PREFIX + "realwriter";
 
 	public static final String CONFIG_MAXLOGFILES = PREFIX + "maxLogFiles";
 	public static final String CONFIG_FLUSH = PREFIX + "flush";
@@ -44,21 +44,40 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 	private final List<RegistryRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
 	private static final Logger LOG = Logger.getLogger(ChangeableFolderSyncFsWriter.class.getName());
-	private SyncFsWriter currentWriter;
+	private AbstractMonitoringWriter currentWriter;
 
 	public ChangeableFolderSyncFsWriter(final Configuration configuration) {
 		super(configuration);
-		LOG.info("Initialisiere..");
+		LOG.info("Init..");
 		this.configuration = configuration;
-		currentWriter = new SyncFsWriter(toSyncFsWriterConfiguration(configuration));
+		currentWriter = createWriter(configuration);
+	}
+	
+//	public static void main(String[] args) {
+//		final Class clazz = AsyncFsWriter.class;
+//		System.out.println(clazz);
+//		System.out.println(clazz.getSimpleName());
+//	}
+
+	private AbstractMonitoringWriter createWriter(final Configuration configuration) {
+		final String writerName = configuration.getStringProperty(REAL_WRITER);
+		if (writerName.equals("AsyncFsWriter")) {
+			final Configuration newConfig = toWriterConfiguration(configuration, AsyncFsWriter.class);
+			return new AsyncFsWriter(newConfig);
+		}
+		if (writerName.equals("SyncFsWriter")) {
+			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
+			return new SyncFsWriter(newConfig);
+		}
+		return null;
 	}
 
-	Configuration toSyncFsWriterConfiguration(final Configuration c) {
-		Configuration returnable = new Configuration();
-		for (Iterator<Entry<Object, Object>> iterator = c.entrySet().iterator(); iterator.hasNext();) {
-			Entry<Object, Object> entry = iterator.next();
-			String keyAsString = entry.getKey().toString();
-			String replacedPropertyName = keyAsString.replace(getClass().getName(), SyncFsWriter.class.getName());
+	Configuration toWriterConfiguration(final Configuration c, Class<?> writerClass) {
+		final Configuration returnable = new Configuration();
+		for (final Iterator<Entry<Object, Object>> iterator = c.entrySet().iterator(); iterator.hasNext();) {
+			final Entry<Object, Object> entry = iterator.next();
+			final String keyAsString = entry.getKey().toString();
+			final String replacedPropertyName = keyAsString.replace(getClass().getName(), writerClass.getName());
 			returnable.setProperty(replacedPropertyName, entry.getValue().toString());
 		}
 		return returnable;
@@ -66,16 +85,9 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 
 	@Override
 	public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
-		
 		if (record instanceof RegistryRecord) {
 			mappingRecords.add((RegistryRecord) record);
 		}
-//		else{
-//			if (record instanceof OperationExecutionRecord){
-//				OperationExecutionRecord operationExecutionRecord = (OperationExecutionRecord)record;
-//				System.out.println("schreibe: " + operationExecutionRecord.getOperationSignature() + " ");
-//			}
-//		}
 		if (currentWriter == null) {
 			return true;
 		} else {
@@ -101,21 +113,21 @@ public class ChangeableFolderSyncFsWriter extends AbstractMonitoringWriter {
 			currentWriter.terminate();
 		}
 		writingFolder.mkdirs();
-		String absolutePath = writingFolder.getAbsolutePath();
-		Configuration resultingConfig = createTempConfigWithNewFolder(absolutePath);
-		currentWriter = new SyncFsWriter(resultingConfig);
+		final String absolutePath = writingFolder.getAbsolutePath();
+		configuration.setProperty(CONFIG_PATH, absolutePath);
+		currentWriter = createWriter(configuration);
 		currentWriter.setController(monitoringController);
-		for (RegistryRecord record : mappingRecords) {
+		for (final RegistryRecord record : mappingRecords) {
 			LOG.info("Füge registery records dem neuen fs writer hinzu: " + record);
 			currentWriter.newMonitoringRecord(record);
 		}
 	}
 
-	private Configuration createTempConfigWithNewFolder(final String absolutePath) {
-		Configuration tempConfig = toSyncFsWriterConfiguration(configuration);
-		tempConfig.setProperty(SyncFsWriter.CONFIG_PATH, absolutePath);
-		return tempConfig;
-	}
+//	private Configuration createTempConfigWithNewFolder(final String absolutePath) {
+//		final Configuration tempConfig = toSyncFsWriterConfiguration(configuration);
+//		tempConfig.setProperty(SyncFsWriter.CONFIG_PATH, absolutePath);
+//		return tempConfig;
+//	}
 
 	public IMonitoringController getController() {
 		return monitoringController;

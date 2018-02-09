@@ -10,16 +10,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.ExecutionException;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import de.dagere.kopeme.TestUtils;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import de.dagere.kopeme.TestUtils;
 
 /**
  * Writes Kieker examples result to the kieker monitoring controller for tests.
@@ -27,7 +26,7 @@ import de.dagere.kopeme.TestUtils;
  * @author dhaeb
  *
  */
-public class TestChangeableFoolderSyncFsWriter {
+public class TestChangeableFolderSyncFsWriter {
 
 	private static IMonitoringController MONITORING_CONTROLLER;
 
@@ -42,8 +41,8 @@ public class TestChangeableFoolderSyncFsWriter {
 		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME2);
 		DEFAULT_FOLDER.mkdirs();
 		NEW_FOLDER_AT_RUNTIME.mkdirs();
-		Configuration config = ConfigurationFactory.createSingletonConfiguration();
-		String absolutePath = DEFAULT_FOLDER.getAbsolutePath();
+		final Configuration config = ConfigurationFactory.createSingletonConfiguration();
+		final String absolutePath = DEFAULT_FOLDER.getAbsolutePath();
 		config.setProperty("kieker.monitoring.writer", ChangeableFolderSyncFsWriter.class.getName());
 		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_PATH, absolutePath);
 		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXENTRIESINFILE, "100");
@@ -51,6 +50,7 @@ public class TestChangeableFoolderSyncFsWriter {
 		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXLOGSIZE, "1");
 		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_FLUSH, "true");
 		config.setProperty(ChangeableFolderSyncFsWriter.CONFIG_BUFFER, "8192");
+		config.setProperty(ChangeableFolderSyncFsWriter.REAL_WRITER, "SyncFsWriter");
 		MONITORING_CONTROLLER = MonitoringController.createInstance(config);
 	}
 
@@ -78,7 +78,7 @@ public class TestChangeableFoolderSyncFsWriter {
 			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
 			c();
 			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
-			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".c)");
+			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".c()");
 		}
 
 		protected void c() throws InterruptedException {
@@ -88,19 +88,19 @@ public class TestChangeableFoolderSyncFsWriter {
 
 	@Test
 	public void testConfigConvertion() throws Exception {
-		Configuration c = new Configuration();
-		int fixture = 100;
+		final Configuration c = new Configuration();
+		final int fixture = 100;
 		c.setProperty(ChangeableFolderSyncFsWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
-		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
-		Configuration result = testable.toSyncFsWriterConfiguration(c);
-		int intResult = result.getIntProperty(SyncFsWriter.CONFIG_MAXENTRIESINFILE);
+		final ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
+		final Configuration result = testable.toWriterConfiguration(c, SyncFsWriter.class);
+		final int intResult = result.getIntProperty(SyncFsWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
 	}
 
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
-		ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
-		int rounds = 15, lines = 15;
+		final ChangeableFolderSyncFsWriter testable = ChangeableFolderSyncFsWriter.getInstance(MONITORING_CONTROLLER);
+		final int rounds = 15, lines = 15;
 		runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME);
 		runFixture(rounds);
@@ -114,7 +114,7 @@ public class TestChangeableFoolderSyncFsWriter {
 	private void runFixture(int rounds) throws InterruptedException,
 			ExecutionException {
 		for (int i = 0; i < rounds / 3; i++) {
-			Sample fixture = new Sample();
+			final Sample fixture = new Sample();
 			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
 			fixture.a();
 			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
@@ -122,14 +122,14 @@ public class TestChangeableFoolderSyncFsWriter {
 		}
 	}
 
-	private void assertKiekerFileConstainsLines(File kiekerFolder, int lines) throws IOException {
-		File[] listFiles = kiekerFolder.listFiles();
+	private void assertKiekerFileConstainsLines(final File kiekerFolder, final int lines) throws IOException {
+		final File[] listFiles = kiekerFolder.listFiles();
 		assertEquals(1, listFiles.length); // only the kieker root dir
-		File kiekerRootDir = listFiles[0];
+		final File kiekerRootDir = listFiles[0];
 		assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
-		File[] kiekerFiles = kiekerRootDir.listFiles();
+		final File[] kiekerFiles = kiekerRootDir.listFiles();
 		assertEquals("There should be 2 kieker files!", 2, kiekerFiles.length);
-		File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
+		final File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
 
 			@Override
 			public boolean accept(File pathname) {
@@ -137,7 +137,7 @@ public class TestChangeableFoolderSyncFsWriter {
 			}
 		});
 		assertEquals(1, measureFile.length);
-		File currentMeasureFile = measureFile[0];
+		final File currentMeasureFile = measureFile[0];
 		assertEquals(lines, Files.readAllLines(currentMeasureFile.toPath(), StandardCharsets.UTF_8).size());
 	}
 
