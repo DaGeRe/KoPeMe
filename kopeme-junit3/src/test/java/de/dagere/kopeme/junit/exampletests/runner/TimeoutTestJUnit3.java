@@ -32,6 +32,11 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	protected boolean useKieker() {
+		return false;
+	}
 
 	@Override
 	protected long getMaximalTime() {

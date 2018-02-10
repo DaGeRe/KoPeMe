@@ -27,15 +27,13 @@ public enum KoPeMeKiekerSupport {
 	}
 
 	public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
-//		System.out.println("Initialisiere Kieker-Support");
-		// AsyncFsWriter fsWriter2 = AsyncFsWriter.
 		final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
 		if (fsWriter == null) {
 			if (useIt) {
 				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
 			}
 		} else {
-			LOG.info("Initializing KoPeMe-Kieker-Support");
+			LOG.info("Initializing KoPeMe-Kieker-Support: {}", useIt);
 			final IMonitoringController kiekerController = fsWriter.getController();
 			if (useIt) {
 				// fsWriter.getWriter().

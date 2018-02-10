@@ -266,7 +266,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 			if (Thread.interrupted()) {
 				return;
 			} else {
-				LOG.trace("Nicht interrupted!");
+				LOG.debug("Nicht interrupted!");
 			}
 		}
 		LOG.debug("Executions: " + (executions - 1));

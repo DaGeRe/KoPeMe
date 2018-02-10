@@ -17,8 +17,8 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 /**
  * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is set to the
- * {@link ChangeableFolderWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a List and written to every new {@link SyncFsWriter}
- * that is created with a new folder.
+ * {@link ChangeableFolderWriter}. For storing all mapping data that is produced, every {@link RegistryRecord} that is measured is saved to a List and written to every new {@link SyncFsWriter} that is
+ * created with a new folder.
  * 
  * @author reichelt
  *
@@ -50,9 +50,9 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 		super(configuration);
 		LOG.info("Init..");
 		this.configuration = configuration;
-//		currentWriter = createWriter(configuration);
+		currentWriter = createWriter(configuration);
 	}
-	
+
 	private AbstractMonitoringWriter createWriter(final Configuration configuration) {
 		final String writerName = configuration.getStringProperty(REAL_WRITER);
 		if (writerName.equals(AsyncFsWriter.class.getSimpleName())) {
@@ -63,7 +63,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
 			final SyncFsWriter syncFsWriter = new SyncFsWriter(newConfig);
 			return syncFsWriter;
-		} else{
+		} else {
 			System.out.println("Defined writer " + writerName + " not found - using default SyncFsWriter");
 			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
 			final SyncFsWriter syncFsWriter = new SyncFsWriter(newConfig);
@@ -86,11 +86,11 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 	public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
 		if (record instanceof RegistryRecord) {
 			mappingRecords.add((RegistryRecord) record);
-		}
+		} 
 		if (currentWriter == null) {
 			return true;
 		} else {
-			return currentWriter.newMonitoringRecord(record);
+			return currentWriter.newMonitoringRecordNonBlocking(record);
 		}
 	}
 
@@ -104,7 +104,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 	@Override
 	protected void init() throws Exception {
 		System.out.println("Initializing " + getClass());
-//		currentWriter.setController(monitoringController);
+		currentWriter.setController(monitoringController);
 		instanceMapping.put(monitoringController, this);
 	}
 

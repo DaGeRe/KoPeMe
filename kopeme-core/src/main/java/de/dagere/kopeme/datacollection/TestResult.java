@@ -216,7 +216,7 @@ public class TestResult {
 	 */
 	public void finalizeCollection() {
 		if (executionStartTimes.size() != realValues.size()) {
-			throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes + " but got " + realValues.size());
+			throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size());
 		}
 		final AverageSummerizer as = new AverageSummerizer();
 		for (final String collectorName : getKeys()) {
