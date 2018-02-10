@@ -29,21 +29,22 @@ public enum KoPeMeKiekerSupport {
 	public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
 //		System.out.println("Initialisiere Kieker-Support");
 		// AsyncFsWriter fsWriter2 = AsyncFsWriter.
-		ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
+		final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
 		if (fsWriter == null) {
 			if (useIt) {
 				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
 			}
 		} else {
 			LOG.info("Initializing KoPeMe-Kieker-Support");
-			IMonitoringController kiekerController = fsWriter.getController();
+			final IMonitoringController kiekerController = fsWriter.getController();
 			if (useIt) {
 				// fsWriter.getWriter().
-				File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
+				final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
 				folderForCurrentPerformanceResult.mkdirs();
 				fsWriter.setFolder(folderForCurrentPerformanceResult);
 				
 				kiekerController.enableMonitoring();
+				LOG.debug("Kieker-Monitoring successfully enabled");
 			} else {
 				if (kiekerController.isMonitoringEnabled()) {
 					kiekerController.disableMonitoring();

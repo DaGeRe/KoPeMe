@@ -44,27 +44,30 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 	private final List<RegistryRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
 	private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
-	private AbstractMonitoringWriter currentWriter;
+	private AbstractMonitoringWriter currentWriter = null; // no writer is needed, until data is saved to where it belongs
 
 	public ChangeableFolderWriter(final Configuration configuration) {
 		super(configuration);
 		LOG.info("Init..");
 		this.configuration = configuration;
-		currentWriter = createWriter(configuration);
+//		currentWriter = createWriter(configuration);
 	}
 	
 	private AbstractMonitoringWriter createWriter(final Configuration configuration) {
 		final String writerName = configuration.getStringProperty(REAL_WRITER);
 		if (writerName.equals(AsyncFsWriter.class.getSimpleName())) {
 			final Configuration newConfig = toWriterConfiguration(configuration, AsyncFsWriter.class);
-			return new AsyncFsWriter(newConfig);
+			final AsyncFsWriter asyncFsWriter = new AsyncFsWriter(newConfig);
+			return asyncFsWriter;
 		} else if (writerName.equals(SyncFsWriter.class.getSimpleName())) {
 			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
-			return new SyncFsWriter(newConfig);
+			final SyncFsWriter syncFsWriter = new SyncFsWriter(newConfig);
+			return syncFsWriter;
 		} else{
 			System.out.println("Defined writer " + writerName + " not found - using default SyncFsWriter");
 			final Configuration newConfig = toWriterConfiguration(configuration, SyncFsWriter.class);
-			return new SyncFsWriter(newConfig);
+			final SyncFsWriter syncFsWriter = new SyncFsWriter(newConfig);
+			return syncFsWriter;
 		}
 	}
 
@@ -100,7 +103,8 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 
 	@Override
 	protected void init() throws Exception {
-		currentWriter.setController(monitoringController);
+		System.out.println("Initializing " + getClass());
+//		currentWriter.setController(monitoringController);
 		instanceMapping.put(monitoringController, this);
 	}
 
@@ -114,16 +118,10 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 		currentWriter = createWriter(configuration);
 		currentWriter.setController(monitoringController);
 		for (final RegistryRecord record : mappingRecords) {
-			LOG.info("Füge registery records dem neuen fs writer hinzu: " + record);
+			LOG.info("Adding registry record: " + record);
 			currentWriter.newMonitoringRecord(record);
 		}
 	}
-
-//	private Configuration createTempConfigWithNewFolder(final String absolutePath) {
-//		final Configuration tempConfig = toSyncFsWriterConfiguration(configuration);
-//		tempConfig.setProperty(SyncFsWriter.CONFIG_PATH, absolutePath);
-//		return tempConfig;
-//	}
 
 	public IMonitoringController getController() {
 		return monitoringController;
