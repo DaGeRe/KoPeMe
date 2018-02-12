@@ -34,7 +34,7 @@ public enum KoPeMeKiekerSupport {
 			}
 		} else {
 			LOG.info("Initializing KoPeMe-Kieker-Support: {}", useIt);
-			final IMonitoringController kiekerController = fsWriter.getController();
+			final IMonitoringController kiekerController = MonitoringController.getInstance();
 			if (useIt) {
 				// fsWriter.getWriter().
 				final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
@@ -44,9 +44,9 @@ public enum KoPeMeKiekerSupport {
 				kiekerController.enableMonitoring();
 				LOG.debug("Kieker-Monitoring successfully enabled");
 			} else {
-				if (kiekerController.isMonitoringEnabled()) {
-					kiekerController.disableMonitoring();
-				}
+//				if (kiekerController.isMonitoringEnabled()) {
+//					kiekerController.disableMonitoring();
+//				}
 			}
 		}
 	}

@@ -50,8 +50,9 @@ public class TestChangeableFolderSyncFsWriter {
 		config.setProperty(ChangeableFolderWriter.CONFIG_MAXLOGSIZE, "1");
 		config.setProperty(ChangeableFolderWriter.CONFIG_FLUSH, "true");
 		config.setProperty(ChangeableFolderWriter.CONFIG_BUFFER, "8192");
-		config.setProperty(ChangeableFolderWriter.REAL_WRITER, "AsyncFsWriter");
+		config.setProperty(ChangeableFolderWriter.REAL_WRITER, "AsciiFileWriter");
 		MONITORING_CONTROLLER = MonitoringController.createInstance(config);
+		MONITORING_CONTROLLER.enableMonitoring();
 	}
 
 	private static void createAndWriteOperationExecutionRecord(final long tin, final long tout, String methodSignature) {
@@ -71,7 +72,7 @@ public class TestChangeableFolderSyncFsWriter {
 			b();
 			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
 			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".b()");
-			Thread.sleep(5L);
+			Thread.sleep(2L);
 		}
 
 		private void b() throws InterruptedException {
@@ -82,7 +83,7 @@ public class TestChangeableFolderSyncFsWriter {
 		}
 
 		protected void c() throws InterruptedException {
-			Thread.sleep(5L);
+			Thread.sleep(2L);
 		}
 	}
 
@@ -92,8 +93,8 @@ public class TestChangeableFolderSyncFsWriter {
 		final int fixture = 100;
 		c.setProperty(ChangeableFolderWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
 		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance(MONITORING_CONTROLLER);
-		final Configuration result = testable.toWriterConfiguration(c, SyncFsWriter.class);
-		final int intResult = result.getIntProperty(SyncFsWriter.CONFIG_MAXENTRIESINFILE);
+		final Configuration result = testable.toWriterConfiguration(c, BinaryFileWriter.class);
+		final int intResult = result.getIntProperty(BinaryFileWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
 	}
 
@@ -106,9 +107,9 @@ public class TestChangeableFolderSyncFsWriter {
 		runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME2);
 		runFixture(rounds);
-		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 1); // TODO due to the meta data entry, which is not written when changing the folder
-		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines);
-		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines);
+		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 2); // TODO due to the meta data entry, which are written to every folder
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines + 2);
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines + 2);
 	}
 
 	private void runFixture(int rounds) throws InterruptedException,
@@ -120,6 +121,7 @@ public class TestChangeableFolderSyncFsWriter {
 			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
 			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".a()");
 		}
+		Thread.sleep(5);//TODO: Remove dirty workaround..
 	}
 
 	private void assertKiekerFileConstainsLines(final File kiekerFolder, final int lines) throws IOException {
