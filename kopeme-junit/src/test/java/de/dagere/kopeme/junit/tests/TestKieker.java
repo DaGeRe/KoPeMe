@@ -9,9 +9,16 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
-
+/**
+ * Tests whether Kieker data are written
+ * Does not work at release, because modules are not in repo during release -> Should be transformed to integration test
+ * @author reichelt
+ *
+ */
+@Ignore
 public class TestKieker {
 	
 	protected static final String KIEKER_ARG_LINE = "-javaagent:" + System.getProperty("user.home") + "/.m2/repository/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar";
