@@ -4,6 +4,8 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -23,6 +25,9 @@ public class TestFulldataFunctionality extends TestCase {
 	}
 	
 	public void testFullWriting() {
+		final SummaryStatistics st = new SummaryStatistics();
+		st.addValue(5.0);//If this is not added, for some unexplainable classpath reason, mvn release:prepare fails in the tests (while mvn test succeeds)
+		System.out.println(st.getMean());
 		TestRunner.run(JUnitAdditionTestFullData.class);
 		final File file = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("File " + file + " should exist.", file.exists());
