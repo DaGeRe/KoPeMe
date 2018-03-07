@@ -16,6 +16,11 @@ public class TestKieker3 extends TestCase {
 	protected static final String KIEKER_ARG_LINE = "-javaagent:" + System.getProperty("user.home") + "/.m2/repository/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar";
 
 	public void testDataCreation() throws IOException, InterruptedException {
+		// TODO Integration test -> See TestKieker in kopeme-junit
+		if (true) { // Since JUnit 3 does not have ignore..
+			return;
+		}
+
 		final File tempFolder = Files.createTempDirectory("kopeme3-test").toFile();
 		final String arglineString = "-DargLine=" + KIEKER_ARG_LINE;
 		final ProcessBuilder builder = new ProcessBuilder("mvn", "surefire:test", "-Dtest=KiekerTest", arglineString);
