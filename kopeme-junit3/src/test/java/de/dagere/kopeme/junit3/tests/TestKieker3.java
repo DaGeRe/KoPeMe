@@ -54,6 +54,9 @@ public class TestKieker3 extends TestCase {
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(kiekerFile))) {
 			int count = 0;
+			// Skip Metadata Records
+			reader.readLine();
+			reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				Assert.assertTrue(line.contains("de.dagere.kopeme.junit"));
 				count++;
