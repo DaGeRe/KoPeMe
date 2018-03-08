@@ -25,8 +25,9 @@ public class TestFulldataFunctionality extends TestCase {
 	}
 	
 	public void testFullWriting() {
-		// If this is not added, a strange classpath error occurs
-		new SummaryStatistics().addValue(0.0);
+		final SummaryStatistics st = new SummaryStatistics();
+		st.addValue(5.0);//If this is not added, for some unexplainable classpath reason, mvn release:prepare fails in the tests (while mvn test succeeds)
+		System.out.println(st.getMean());
 		TestRunner.run(JUnitAdditionTestFullData.class);
 		final File file = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("File " + file + " should exist.", file.exists());

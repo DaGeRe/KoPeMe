@@ -42,8 +42,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 	/**
 	 * Initializes the testcase with its name.
 	 * 
-	 * @param name
-	 *            Name of the testcase
+	 * @param name Name of the testcase
 	 */
 	public KoPeMeTestcase(final String name) {
 		super(name);
@@ -203,14 +202,10 @@ public abstract class KoPeMeTestcase extends TestCase {
 	/**
 	 * Runs the whole testcase.
 	 * 
-	 * @param tr
-	 *            Where the results should be saved
-	 * @param warmupExecutions
-	 *            How many warmup executions should be done
-	 * @param executionTimes
-	 *            How many normal executions should be done
-	 * @param fullData
-	 *            Weather to log full data
+	 * @param tr Where the results should be saved
+	 * @param warmupExecutions How many warmup executions should be done
+	 * @param executionTimes How many normal executions should be done
+	 * @param fullData Weather to log full data
 	 * @throws Throwable
 	 */
 	private void runTestCase(final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
@@ -235,19 +230,16 @@ public abstract class KoPeMeTestcase extends TestCase {
 	/**
 	 * Runs the main execution of the test, i.e.useKieker the execution where performance measures are counted.
 	 * 
-	 * @param testCase
-	 *            Runnable that should be run
-	 * @param name
-	 *            Name of the test
-	 * @param tr
-	 *            Where the results should be saved
-	 * @param executionTimes
-	 *            How often the test should be executed
+	 * @param testCase Runnable that should be run
+	 * @param name Name of the test
+	 * @param tr Where the results should be saved
+	 * @param executionTimes How often the test should be executed
 	 * @throws Throwable
 	 */
 	protected void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
 		final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
+		final String firstPartStop = "--- Stopping " + executionTypName + " execution ";
 		final String endPart = "/" + executionTimes + " ---";
 		final int repetitions = getRepetitions();
 		for (executions = 1; executions <= executionTimes; executions++) {
@@ -262,11 +254,11 @@ public abstract class KoPeMeTestcase extends TestCase {
 			tr.stopCollection();
 			tr.getValue(TimeDataCollector.class.getName());
 			tr.setRealExecutions(executions);
-			LOG.debug("--- Stopping " + executionTypName + " execution " + executions + endPart);
+			LOG.debug(firstPartStop + executions + endPart);
 			if (Thread.interrupted()) {
 				return;
 			} else {
-				LOG.debug("Nicht interrupted!");
+				LOG.trace("Not interrupted");
 			}
 		}
 		LOG.debug("Executions: " + (executions - 1));
