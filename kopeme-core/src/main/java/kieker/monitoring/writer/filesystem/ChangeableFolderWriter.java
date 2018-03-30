@@ -102,8 +102,8 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 		if (record instanceof KiekerMetadataRecord) {
 			mappingRecords.add((KiekerMetadataRecord) record);
 		}
-		System.out.println("Writing: " + record);
-		System.out.println(record.getClass());
+//		System.out.println("Writing: " + record);
+//		System.out.println(record.getClass());
 		if (currentWriter != null) {
 			currentWriter.writeMonitoringRecord(record);
 		}
