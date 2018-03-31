@@ -123,12 +123,13 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 		writingFolder.mkdirs();
 		final String absolutePath = writingFolder.getAbsolutePath();
 		configuration.setProperty(CONFIG_PATH, absolutePath);
-		currentWriter = createWriter(configuration);
+		final AbstractMonitoringWriter writer = createWriter(configuration);
 		// currentWriter.setController(monitoringController);
 		for (final KiekerMetadataRecord record : mappingRecords) {
 			LOG.info("Adding registry record: " + record);
-			currentWriter.writeMonitoringRecord(record);
+			writer.writeMonitoringRecord(record);
 		}
+		currentWriter = writer;
 	}
 
 	// @Override
