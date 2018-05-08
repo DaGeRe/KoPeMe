@@ -28,7 +28,9 @@ public class PerformanceDataMeasure {
 	 * @param max maximum value
 	 * @param first10percentile First 10-Percentil of the measured values
 	 */
-	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation,
+	public PerformanceDataMeasure(final String testcase, final String collectorname, 
+	      final long value, 
+	      final double deviation,
 			final int executionTimes,
 			final int warmupExecutions,
 			final long min,

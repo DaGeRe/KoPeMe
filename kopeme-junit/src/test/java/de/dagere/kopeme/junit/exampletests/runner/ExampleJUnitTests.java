@@ -23,11 +23,11 @@ public class ExampleJUnitTests {
 		tr.setCollectors(DataCollectorList.STANDARD);
 		tr.setMeasureSummarizer("de.dagere.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
 		tr.startCollection();
-		int anzahl = 1000 + (int) (Math.random() * 10);
+		final int anzahl = 1000 + (int) (Math.random() * 10);
 		for (int i = 0; i < anzahl; i++) {
 			try {
 				Thread.sleep(1);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
