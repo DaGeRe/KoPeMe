@@ -51,8 +51,7 @@ public final class XMLDataLoader implements DataLoader {
 	 */
 	private void loadData() throws JAXBException {
 		if (file.exists()) {
-			JAXBContext jc;
-			jc = JAXBContext.newInstance(Kopemedata.class);
+			final JAXBContext jc = JAXBContext.newInstance(Kopemedata.class);
 			final Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(file);
 			LOG.trace("Daten geladen, Daten: " + data);
