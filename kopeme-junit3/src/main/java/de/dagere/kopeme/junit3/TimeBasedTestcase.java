@@ -75,7 +75,7 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		}
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, 0, true));
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, 0, 1, true));
 	}
 
 	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration) {

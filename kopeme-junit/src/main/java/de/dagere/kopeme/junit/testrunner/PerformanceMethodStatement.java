@@ -9,11 +9,9 @@ import org.junit.runners.model.FrameworkMethod;
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
-import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
-import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
@@ -107,11 +105,11 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 			runMainExecution(tr, "execution ",executions, callee, repetitions);
 		} catch (final Throwable t) {
 			tr.finalizeCollection();
-			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, saveFullData));
+			saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
 			throw t;
 		}
 		tr.finalizeCollection();
-		saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, saveFullData));
+		saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
 		return tr;
 	}
 

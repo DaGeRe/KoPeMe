@@ -2,7 +2,6 @@ package de.dagere.kopeme;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -109,7 +108,7 @@ public final class PerformanceTestUtils {
 				final long max = tr.getMaximumCurrentValue(key);
 				final double first10percentile = getPercentile(tr.getValues(key).values(), 10);
 				final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
-						tr.getRealExecutions(), data.getWarmupExecutions(), min, max, first10percentile);
+						tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
 				final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(key) : null;
 				xds.storeValue(performanceDataMeasure, values);
 				// xds.storeValue(s, getValue(s));
@@ -118,7 +117,7 @@ public final class PerformanceTestUtils {
 			for (final String additionalKey : tr.getAdditionValueKeys()) {
 				if (!tr.getKeys().contains(additionalKey)) {
 					final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
-							tr.getRealExecutions(), data.getWarmupExecutions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
+							tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
 					final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(additionalKey) : null;
 					xds.storeValue(performanceDataMeasure, values);
 				}

@@ -22,17 +22,17 @@ public class TestSaveableTestData {
 
 	@Test
 	public void testFailureData() throws Exception {
-		assertValuesSet(createAssertFailedTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, SAVE_VALUES));
+		assertValuesSet(createAssertFailedTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, 1, SAVE_VALUES));
 	}
 
 	@Test
 	public void testFineData() throws Exception {
-		assertValuesSet(createFineTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, SAVE_VALUES));
+		assertValuesSet(createFineTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, 1, SAVE_VALUES));
 	}
 
 	@Test
 	public void testErrorData() throws Exception {
-		assertValuesSet(createErrorTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, SAVE_VALUES));
+		assertValuesSet(createErrorTestData(new File(THIS_DIR), MY_TEST_CASE_NAME, RESULT_FILENAME, COMPLEX, 0, 1, SAVE_VALUES));
 	}
 
 	private void assertValuesSet(final SaveableTestData data) {

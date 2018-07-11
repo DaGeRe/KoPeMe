@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -27,6 +24,8 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Base class for KoPeMe-JUnit3-Testcases.
@@ -124,30 +123,30 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		final boolean fullData = logFullData();
 		final int timeoutTime = getMaximalTime();
 
-		String testClassName = this.getClass().getName();
+		final String testClassName = this.getClass().getName();
 		final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.STANDARD);
 		tr.setCollectors(getDataCollectors());
 
 		try {
 			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.err.println("Kieker has failed!");
 			e.printStackTrace();
 		}
 
-		Thread thread = new Thread(new Runnable() {
+		final Thread thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
 					runTestCase(tr, warmupExecutions, executionTimes, fullData);
-				} catch (InvocationTargetException e) {
+				} catch (final InvocationTargetException e) {
 					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+				} catch (final IllegalAccessException e) {
 					e.printStackTrace();
-				} catch (AssertionFailedError e) {
+				} catch (final AssertionFailedError e) {
 					e.printStackTrace();
-				} catch (Throwable e) {
+				} catch (final Throwable e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -174,7 +173,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		waitForTestEnd(timeoutTime, thread);
 		// No matter how the test gets finished, saving should be done here
 		LOG.trace("End-Testcase-Saving begins");
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, fullData));
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, 1, fullData));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}
@@ -216,23 +215,23 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	 */
 	private void runTestCase(final TestResult tr, final int warmupExecutions, final int executionTimes, final boolean fullData)
 			throws Throwable {
-		List<Long> timeMeasurements = new LinkedList<>();
+		final List<Long> timeMeasurements = new LinkedList<>();
 
-		String fullName = this.getClass().getName() + "." + getName();
+		final String fullName = this.getClass().getName() + "." + getName();
 		int i = 1;
 		double mean = 1, standardeviation = 1;
 		while (standardeviation / mean > COEFFICIENT_OF_VARIATION || i < warmupExecutions) {
 			setUp();
 			LOG.info("-- Starting warmup execution " + fullName + " " + i + "/" + warmupExecutions + " -- (" + standardeviation / mean + ")");
-			long start = System.nanoTime();
+			final long start = System.nanoTime();
 			KoPeMeStaticRigorTestcase.super.runTest();
 			final long measurement = System.nanoTime() - start;
 			LOG.info("-- Stopping warmup execution " + i + "/" + warmupExecutions + " --");
 			tearDown();
 			if (i < warmupExecutions) {
 				timeMeasurements.add(measurement);
-				SummaryStatistics st = new SummaryStatistics();
-				for (Long l : timeMeasurements) {
+				final SummaryStatistics st = new SummaryStatistics();
+				for (final Long l : timeMeasurements) {
 					st.addValue(l);
 				}
 
@@ -240,8 +239,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 				standardeviation = st.getStandardDeviation();
 				LOG.trace("Val: {} Mean: {} Abweichung: {}", measurement, mean, Math.abs(mean - measurement));
 			} else {
-				EmpiricalDistribution distribution = getDistribution(timeMeasurements);
-				double cdfValue = distribution.cumulativeProbability(measurement);
+				final EmpiricalDistribution distribution = getDistribution(timeMeasurements);
+				final double cdfValue = distribution.cumulativeProbability(measurement);
 				LOG.trace("Val: {} PDF: {} Mean: {} Abweichung: {}", measurement, cdfValue, mean, Math.abs(mean - measurement));
 
 				final boolean isOutlier = cdfValue > CDF_BOUNDARY;
@@ -253,8 +252,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 					timeMeasurements.remove(0);
 				}
 
-				SummaryStatistics st = new SummaryStatistics();
-				for (Long l : timeMeasurements) {
+				final SummaryStatistics st = new SummaryStatistics();
+				for (final Long l : timeMeasurements) {
 					st.addValue(l);
 				}
 
@@ -275,10 +274,10 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 
 		try {
 			runMainExecution(fullName, tr, executionTimes);
-		} catch (AssertionFailedError t) {
+		} catch (final AssertionFailedError t) {
 			tr.finalizeCollection();
 			throw t;
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			tr.finalizeCollection();
 			throw t;
 		}
@@ -295,8 +294,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	 */
 	private void runMainExecution(final String name, final TestResult tr, final int executionTimes) throws Throwable {
 		int executions;
-		String firstPart = "--- Starting execution " + name + " ";
-		String endPart = "/" + executionTimes + " ---";
+		final String firstPart = "--- Starting execution " + name + " ";
+		final String endPart = "/" + executionTimes + " ---";
 		for (executions = 1; executions <= executionTimes; executions++) {
 			LOG.debug(firstPart + executions + endPart);
 			setUp();
@@ -315,23 +314,23 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		}
 		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions - 1);
-		for (String collector : tr.getKeys()) {
-			List<Long> values = new ArrayList<>(tr.getValues(collector).values());
-			EmpiricalDistribution distribution = getDistribution(values);
-			Set<Long> outliers = new HashSet<>();
-			for (long measurement : values) {
+		for (final String collector : tr.getKeys()) {
+			final List<Long> values = new ArrayList<>(tr.getValues(collector).values());
+			final EmpiricalDistribution distribution = getDistribution(values);
+			final Set<Long> outliers = new HashSet<>();
+			for (final long measurement : values) {
 				try {
-					double cdfValue = distribution.cumulativeProbability(measurement);
+					final double cdfValue = distribution.cumulativeProbability(measurement);
 					final boolean isOutlier = cdfValue > CDF_BOUNDARY;
 					if (isOutlier) {
 						outliers.add(measurement);
 					}
-				} catch (NotStrictlyPositiveException ne) {
+				} catch (final NotStrictlyPositiveException ne) {
 					LOG.debug("Harter Ausreißer: " + measurement);
 				}
 
 			}
-			for (long outlier : outliers) {
+			for (final long outlier : outliers) {
 				values.remove(outlier);
 			}
 			tr.setValues(collector, values);
@@ -339,13 +338,13 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	}
 
 	private EmpiricalDistribution getDistribution(final Collection<Long> listValues) {
-		double[] values = new double[listValues.size()];
+		final double[] values = new double[listValues.size()];
 		int j = 0;
-		for (Long measurements : listValues) {
+		for (final Long measurements : listValues) {
 			values[j] = measurements.doubleValue();
 			j++;
 		}
-		EmpiricalDistribution distribution = new EmpiricalDistribution(listValues.size() > 20 ? listValues.size() / 20 : 1);
+		final EmpiricalDistribution distribution = new EmpiricalDistribution(listValues.size() > 20 ? listValues.size() / 20 : 1);
 		distribution.load(values);
 		return distribution;
 	}

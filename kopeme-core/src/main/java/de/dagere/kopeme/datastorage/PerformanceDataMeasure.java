@@ -11,7 +11,7 @@ public class PerformanceDataMeasure {
 	public final String collectorname;
 	public final long value;
 	public final double deviation;
-	public final int executionTimes, warmupExecutions;
+	public final int executions, warmup, repetitions;
 	public final long min, max;
 	public final double first10percentile;
 	public final boolean failure, error;
@@ -33,6 +33,7 @@ public class PerformanceDataMeasure {
 	      final double deviation,
 			final int executionTimes,
 			final int warmupExecutions,
+			int repetitions,
 			final long min,
 			final long max,
 			final double first10percentile) {
@@ -40,8 +41,9 @@ public class PerformanceDataMeasure {
 		this.collectorname = collectorname;
 		this.value = value;
 		this.deviation = deviation;
-		this.executionTimes = executionTimes;
-		this.warmupExecutions = warmupExecutions;
+		this.executions = executionTimes;
+		this.warmup = warmupExecutions;
+		this.repetitions = repetitions;
 		this.min = min;
 		this.max = max;
 		this.first10percentile = first10percentile;
@@ -65,6 +67,7 @@ public class PerformanceDataMeasure {
 	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation,
 			final int executionTimes,
 			final int warmupExecutions,
+			int repetitions,
 			final long min,
 			final long max, final boolean failure,
 			final boolean error) {
@@ -72,8 +75,9 @@ public class PerformanceDataMeasure {
 		this.collectorname = collectorname;
 		this.value = value;
 		this.deviation = deviation;
-		this.executionTimes = executionTimes;
-		this.warmupExecutions = warmupExecutions;
+		this.executions = executionTimes;
+		this.warmup = warmupExecutions;
+		this.repetitions = repetitions;
 		this.min = min;
 		this.max = max;
 		first10percentile = 10.0;
@@ -113,11 +117,11 @@ public class PerformanceDataMeasure {
 	 * @return the executionTimes
 	 */
 	public int getExecutionTimes() {
-		return executionTimes;
+		return executions;
 	}
 
 	public int getWarmupExecutions() {
-		return warmupExecutions;
+		return warmup;
 	}
 
 	/**
