@@ -17,9 +17,9 @@ import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
 
@@ -31,82 +31,82 @@ import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
  */
 public class TestFileWriting {
 
-	private static final String TEST_MULTIPLICATION = "testMultiplication";
-	private static final String TEST_ADDITION = "testAddition";
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
-	
-	@BeforeClass
-	public static void initClass() throws IOException {
-		TestUtils.cleanAndSetKoPeMeOutputFolder();
-	}
+   private static final String TEST_MULTIPLICATION = "testMultiplication";
+   private static final String TEST_ADDITION = "testAddition";
+   @Rule
+   public TemporaryFolder folder = new TemporaryFolder();
 
-	@Test
-	public void testNormalWriting() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(JUnitAdditionTest.class);
-		final String testClass = JUnitAdditionTest.class.getName();
-		final File f = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		f.delete();
-	}
+   @BeforeClass
+   public static void initClass() throws IOException {
+      TestUtils.cleanAndSetKoPeMeOutputFolder();
+   }
 
-	@Test
-	public void testDoubleWriting() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(JUnitAdditionTest.class);
-		jc.run(JUnitAdditionTest.class);
-		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		f.delete();
-	}
+   @Test
+   public void testNormalWriting() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitAdditionTest.class);
+      final String testClass = JUnitAdditionTest.class.getName();
+      final File f = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
+      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+      f.delete();
+   }
 
-	@Test
-	public void testResults() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(JUnitMultiplicationTest.class);
-		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+   @Test
+   public void testDoubleWriting() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitAdditionTest.class);
+      jc.run(JUnitAdditionTest.class);
+      final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
+      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+      f.delete();
+   }
 
-		try {
-			final Kopemedata kd = new XMLDataLoader(f).getFullData();
-			final Testcases tc = kd.getTestcases();
-			Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
+   @Test
+   public void testResults() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitMultiplicationTest.class);
+      final File f = TestUtils.xmlFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
+      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
-			TestcaseType tct = null;
-			for (final TestcaseType t : tc.getTestcase()) {
-				if (t.getName().equals(TEST_MULTIPLICATION)) {
-					tct = t;
-					break;
-				}
-			}
-			Assert.assertNotNull(tct);
+      try {
+         final Kopemedata kd = new XMLDataLoader(f).getFullData();
+         final Testcases tc = kd.getTestcases();
+         Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
 
-			Datacollector timeCollector = null;
-			for (final Datacollector dc : tct.getDatacollector()) {
-				if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
-					timeCollector = dc;
-					break;
-				}
-			}
-			Assert.assertNotNull(timeCollector);
+         TestcaseType tct = null;
+         for (final TestcaseType t : tc.getTestcase()) {
+            if (t.getName().equals(TEST_MULTIPLICATION)) {
+               tct = t;
+               break;
+            }
+         }
+         Assert.assertNotNull(tct);
 
-			for (final Result r : timeCollector.getResult()) {
-				final int val = (int)r.getValue();
-				final int min = (int) r.getMin();
-				final int max = (int) r.getMax();
-				Assert.assertThat(val, Matchers.greaterThan(0));
-				Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
-				Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
-			}
+         Datacollector timeCollector = null;
+         for (final Datacollector dc : tct.getDatacollector()) {
+            if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
+               timeCollector = dc;
+               break;
+            }
+         }
+         Assert.assertNotNull(timeCollector);
 
-		} catch (final JAXBException e1) {
-			e1.printStackTrace();
-		}
-	}
+         for (final Result r : timeCollector.getResult()) {
+            final int val = (int) r.getValue();
+            final int min = (int) r.getMin();
+            final int max = (int) r.getMax();
+            Assert.assertThat(val, Matchers.greaterThan(0));
+            Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
+            Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
+         }
 
-	@Test
-	public void testExceptionWriting() {
-		//FIXME why is this empty?
-	}
+      } catch (final JAXBException e1) {
+         e1.printStackTrace();
+      }
+   }
+
+   @Test
+   public void testExceptionWriting() {
+      // FIXME why is this empty?
+   }
 }

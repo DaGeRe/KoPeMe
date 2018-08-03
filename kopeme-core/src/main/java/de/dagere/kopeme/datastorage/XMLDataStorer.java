@@ -2,7 +2,6 @@ package de.dagere.kopeme.datastorage;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -14,11 +13,11 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata.Value;
 
 /**
  * Manages the storing of resultdata of KoPeMe-tests in the KoPeMe-XML-format.
@@ -88,7 +87,7 @@ public final class XMLDataStorer implements DataStorer {
 		if (values != null) {
 			final Fulldata fd = new Fulldata();
 			for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
-				Value v = new Value();
+				final Value v = new Value();
 				v.setStart(valueEntry.getKey());
 				v.setValue("" + valueEntry.getValue());
 				fd.getValue().add(v);

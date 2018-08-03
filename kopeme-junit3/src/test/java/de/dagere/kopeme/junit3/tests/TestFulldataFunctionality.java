@@ -8,10 +8,10 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -38,7 +38,7 @@ public class TestFulldataFunctionality extends TestCase {
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
 					final Fulldata fd = r.getFulldata();
-					if (fd == null) {
+					if (fd == null) { 
 						Assert.fail();
 					} else {
 						Assert.assertTrue(fd.getValue().size() > 0);
