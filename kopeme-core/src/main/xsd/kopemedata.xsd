@@ -38,13 +38,15 @@
 						<xs:element name="chunk" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="value" type="xs:double" />
+									<xs:element name="result" maxOccurs="unbounded"
+										type="result" />
 								</xs:sequence>
-								<xs:attribute name="chunkStartTime" />
+								<xs:attribute name="chunkStartTime" type="xs:long" />
 							</xs:complexType>
 						</xs:element>
 						<xs:sequence>
-							<xs:element name="result" maxOccurs="unbounded" type="result"/>
+							<xs:element name="result" maxOccurs="unbounded"
+								type="result" />
 						</xs:sequence>
 					</xs:choice>
 
@@ -76,7 +78,8 @@
 											<xs:annotation>
 												<xs:documentation>Saves the time when the execution
 													has
-													been started
+													been
+													started
 												</xs:documentation>
 											</xs:annotation>
 										</xs:attribute>
