@@ -13,7 +13,7 @@ public class TestKoPeMeKiekerSupport {
 		MonitoringController.getInstance();
 		KoPeMeKiekerSupport.INSTANCE.useKieker(true, "myClass", "myTestCaseName");
 		
-		final ChangeableFolderWriter writer = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
+		final ChangeableFolderWriter writer = ChangeableFolderWriter.getInstance();
 		Assert.assertNotNull(writer);
 	}
 }

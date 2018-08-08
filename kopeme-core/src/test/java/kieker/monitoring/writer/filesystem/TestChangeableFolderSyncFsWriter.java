@@ -92,7 +92,7 @@ public class TestChangeableFolderSyncFsWriter {
 		final Configuration c = new Configuration();
 		final int fixture = 100;
 		c.setProperty(ChangeableFolderWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
-		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance(MONITORING_CONTROLLER);
+		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance();
 		final Configuration result = testable.toWriterConfiguration(c, BinaryFileWriter.class);
 		final int intResult = result.getIntProperty(BinaryFileWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
@@ -100,7 +100,7 @@ public class TestChangeableFolderSyncFsWriter {
 
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
-		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance(MONITORING_CONTROLLER);
+		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance();
 		final int rounds = 15, lines = 15;
 		runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME);

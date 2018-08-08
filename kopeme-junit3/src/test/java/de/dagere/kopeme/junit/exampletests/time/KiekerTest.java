@@ -20,6 +20,11 @@ public class KiekerTest extends KoPeMeTestcase{
 		stage1_3();
 	}
 	
+	public void testMeAlso(){
+      stage1_1();
+      stage1_2();
+   }
+	
 	public void stage1_1(){
 		System.out.println("Test 1 1");
 	}

@@ -1,13 +1,18 @@
 package de.dagere.kopeme.kieker;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.FolderProvider;
+import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
+import kieker.monitoring.core.controller.WriterController;
 import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
@@ -17,38 +22,59 @@ import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
  *
  */
 public enum KoPeMeKiekerSupport {
-	INSTANCE;
-	private static final Logger LOG = LogManager.getLogger(KoPeMeKiekerSupport.class);
+   INSTANCE;
+   private static final Logger LOG = LogManager.getLogger(KoPeMeKiekerSupport.class);
 
-	private final FolderProvider fp;
+   private final FolderProvider fp;
 
-	private KoPeMeKiekerSupport() {
-		fp = FolderProvider.getInstance();
-	}
+   private KoPeMeKiekerSupport() {
+      fp = FolderProvider.getInstance();
+   }
 
-	public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
-		final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance(MonitoringController.getInstance());
-		if (fsWriter == null) {
-			if (useIt) {
-				System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
-			}
-		} else {
-			LOG.info("Initializing KoPeMe-Kieker-Support: {}", useIt);
-			final IMonitoringController kiekerController = MonitoringController.getInstance();
-			if (useIt) {
-				// fsWriter.getWriter().
-				final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
-				folderForCurrentPerformanceResult.mkdirs();
-				fsWriter.setFolder(folderForCurrentPerformanceResult);
-				
-				kiekerController.enableMonitoring();
-				LOG.debug("Kieker-Monitoring successfully enabled");
-			} else {
-//				if (kiekerController.isMonitoringEnabled()) {
-//					kiekerController.disableMonitoring();
-//				}
-			}
-		}
-	}
+   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
+      // MonitoringController.createInstance(configuration)
+
+      if (useIt) {
+         final IMonitoringController kiekerController = MonitoringController.getInstance();
+         final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance();
+         if (fsWriter == null) {
+            System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
+            String tempdir = System.getProperty("java.io.tmpdir");
+            File tempDirFile = new File(tempdir);
+            if (!tempDirFile.exists()) {
+               System.err.println("Hint: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+            }
+         } else {
+            final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
+            folderForCurrentPerformanceResult.mkdirs();
+            fsWriter.setFolder(folderForCurrentPerformanceResult);
+            kiekerController.enableMonitoring();
+            LOG.debug("Kieker-Monitoring successfully enabled");
+         }
+      }
+   }
+
+   public void waitForEnd() {
+      LOG.debug("Disabling Monitoring..");
+      MonitoringController.getInstance().disableMonitoring();
+      try {
+         Field field = MonitoringController.class.getDeclaredField("writerController");
+         field.setAccessible(true);
+         WriterController writer = (WriterController) field.get(MonitoringController.getInstance());
+         
+         Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
+         cleanup.setAccessible(true);
+         cleanup.invoke(writer);
+         
+         WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
+         field.set(MonitoringController.getInstance(), newController);
+         
+         Method init = WriterController.class.getDeclaredMethod("init");
+         init.setAccessible(true);
+         init.invoke(newController);
+      } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
+         e1.printStackTrace();
+      }
+   }
 
 }

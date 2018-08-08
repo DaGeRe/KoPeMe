@@ -164,10 +164,23 @@ public abstract class KoPeMeTestcase extends TestCase {
       waitForTestEnd(timeoutTime, thread);
       // No matter how the test gets finished, saving should be done here
       LOG.trace("End-Testcase-Saving begins");
-      PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
 
-      LOG.debug("KoPeMe-Test {} finished", getName());
+      LOG.debug("KoPeMe-Test {} finished, Deactivating Kieker: {}", getName(), useKieker());
+      
+      if (useKieker()) {
+         KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+      }
+      
+      if (!wasStoppedHard || !useKieker()) {
+         PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
+      } else {
+         PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
+         LOG.error("Thread was above timeout and did not respond to interrupt - was killed hard, so no further use of VM possible.");
+         System.exit(1);
+      }
    }
+
+   private boolean wasStoppedHard = false;
 
    private void waitForTestEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.start();
@@ -183,10 +196,11 @@ public abstract class KoPeMeTestcase extends TestCase {
             count++;
          }
          if (count == INTERRUPT_TRIES) {
-            LOG.debug("Thread does not respond, so it is killed hard now.");
+            LOG.debug("Thread does not respond, so it is killed hard now: " + thread.getName());
             count = 0;
             while (thread.isAlive() && count < 5) {
                thread.stop();
+               wasStoppedHard = true;
                Thread.sleep(10);
                count++;
             }
@@ -246,6 +260,9 @@ public abstract class KoPeMeTestcase extends TestCase {
             setUp();
             KoPeMeTestcase.super.runTest();
             tearDown();
+            if (Thread.currentThread().isInterrupted()) {
+               break;
+            }
          }
 
          tr.stopCollection();

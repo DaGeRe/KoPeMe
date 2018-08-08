@@ -12,6 +12,7 @@ import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.misc.KiekerMetadataRecord;
 import kieker.common.record.misc.RegistryRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
+import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 /**
@@ -34,24 +35,16 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 	public static final String CONFIG_FLUSH = PREFIX + "flush";
 	public static final String CONFIG_BUFFER = PREFIX + "bufferSize";
 
-//	private static final Map<IMonitoringController, ChangeableFolderWriter> instanceMapping = new HashMap<>();
 	private static ChangeableFolderWriter instance;
 	
-	public static synchronized ChangeableFolderWriter getInstance(final IMonitoringController controler) {
-//		System.out.println("Instances: " + instanceMapping.size());
-//		for (final IMonitoringController controller : instanceMapping.keySet()){
-//			System.out.println("Get: " + System.identityHashCode(controller) + " " + controller.hashCode());
-//		}
-//		final ChangeableFolderWriter firstController = instanceMapping.values().iterator().next();
-//		System.out.println(firstController.equals(controler));
-//		final ChangeableFolderWriter writer = instanceMapping.get(controler);
-//		System.out.println("Return: " + writer + " " + controler.hashCode());
+	public static synchronized ChangeableFolderWriter getInstance() {
 		return instance;
 	}
 
+	private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
+	
 	private final List<KiekerMetadataRecord> mappingRecords = new LinkedList<>();
 	private final Configuration configuration;
-	private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
 	private AbstractMonitoringWriter currentWriter = null; // no writer is needed, until data is saved to where it belongs
 
 	public ChangeableFolderWriter(final Configuration configuration) {
@@ -105,6 +98,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 //		System.out.println("Writing: " + record);
 //		System.out.println(record.getClass());
 		if (currentWriter != null) {
+		   LOG.info("Record: " + record);
 			currentWriter.writeMonitoringRecord(record);
 		}
 	}
@@ -131,49 +125,4 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
 		}
 		currentWriter = writer;
 	}
-
-	// @Override
-	// public synchronized boolean newMonitoringRecord(final IMonitoringRecord record) {
-	// if (record instanceof RegistryRecord) {
-	// mappingRecords.add((RegistryRecord) record);
-	// }
-	// if (currentWriter == null) {
-	// return true;
-	// } else {
-	// return currentWriter.newMonitoringRecordNonBlocking(record);
-	// }
-	// }
-
-	// @Override
-	// public synchronized void terminate() {
-	// if (currentWriter != null) {
-	// currentWriter.terminate();
-	// }
-	// }
-
-	// @Override
-	// protected void init() throws Exception {
-	// System.out.println("Initializing " + getClass());
-	// currentWriter.setController(monitoringController);
-	// instanceMapping.put(monitoringController, this);
-	// }
-
-	// public synchronized void setFolder(final File writingFolder) throws Exception {
-	// if (currentWriter != null) {
-	// currentWriter.terminate();
-	// }
-	// writingFolder.mkdirs();
-	// final String absolutePath = writingFolder.getAbsolutePath();
-	// configuration.setProperty(CONFIG_PATH, absolutePath);
-	// currentWriter = createWriter(configuration);
-	// currentWriter.setController(monitoringController);
-	// for (final RegistryRecord record : mappingRecords) {
-	// LOG.info("Adding registry record: " + record);
-	// currentWriter.newMonitoringRecord(record);
-	// }
-	// }
-	//
-	// public IMonitoringController getController() {
-	// return monitoringController;
-	// }
 }

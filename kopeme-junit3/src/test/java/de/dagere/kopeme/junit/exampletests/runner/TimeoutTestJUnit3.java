@@ -6,41 +6,60 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
 public class TimeoutTestJUnit3 extends KoPeMeTestcase {
-	private final static Logger log = LogManager.getLogger(TimeoutTestJUnit3.class);
+   private final static Logger LOG = LogManager.getLogger(TimeoutTestJUnit3.class);
 
-	public void testAddition() {
-		try {
-			Thread.sleep(300);
-		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+   public void testFirst() {
+      LOG.info("First");
+      forceWaiting(200000);
+      LOG.info("First End");
+   }
 
-	@Override
-	protected int getWarmupExecutions() {
-		return 2;
-	}
+   private void forceWaiting(int duration) {
+      long start = System.currentTimeMillis();
+      while (System.currentTimeMillis() < start + duration) {
+         try {
+            Thread.sleep(100);
+         } catch (InterruptedException e) {
 
-	@Override
-	protected int getExecutionTimes() {
-		return 10;
-	}
+         }
+      }
+   }
 
-	@Override
-	protected boolean logFullData() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
-	protected boolean useKieker() {
-		return false;
-	}
+   public void testSecond() {
+      LOG.info("Second");
+      forceWaiting(20000);
+      LOG.info("Second End");
+   }
 
-	@Override
-	protected long getMaximalTime() {
-		return 1000;
-	}
+   public void testThird() {
+      LOG.info("Third");
+      forceWaiting(20000);
+      LOG.info("Third End");
+   }
+
+   @Override
+   protected int getWarmupExecutions() {
+      return 0;
+   }
+
+   @Override
+   protected int getExecutionTimes() {
+      return 1;
+   }
+
+   @Override
+   protected boolean logFullData() {
+      return false;
+   }
+
+   @Override
+   protected boolean useKieker() {
+      return true;
+   }
+
+   @Override
+   protected long getMaximalTime() {
+      return 50000;
+   }
 
 }

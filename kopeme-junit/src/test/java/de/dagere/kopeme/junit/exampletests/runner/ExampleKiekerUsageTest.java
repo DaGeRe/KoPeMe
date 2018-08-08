@@ -36,6 +36,12 @@ public class ExampleKiekerUsageTest {
 			System.out.println(callMe(a));
 		}
 	}
+	
+	@Test
+   @PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 2, warmupExecutions = 2, useKieker = true)
+   public void testSecondStuffAddition() throws FileNotFoundException {
+      System.out.println("Just run a second method, in order to asure, that kieker.map is written twice");
+   }
 
 	public int callMe(int value) {
 		return callMe2(value) * 4;

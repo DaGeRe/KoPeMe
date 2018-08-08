@@ -134,5 +134,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		}
 		LOG.debug("Executions: " + (execution - 1));
 		tr.setRealExecutions(execution - 1);
+		try {
+         KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+      } catch (final Exception e) {
+         e.printStackTrace();
+      }
 	}
 }
