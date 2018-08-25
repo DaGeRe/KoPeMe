@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>kopeme-junit3</artifactId>
 	<packaging>jar</packaging>
@@ -67,11 +69,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				        <configuration>
-          <forkCount>1</forkCount>
-          <reuseForks>false</reuseForks>
-          <argLine>-javaagent:/home/reichelt/.m2/repository/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar -Djava.io.tmpdir=/tmp/kiekerTemp2888961991412335914</argLine>
-        </configuration>
+				<configuration>
+					<forkCount>1</forkCount>
+					<reuseForks>false</reuseForks>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

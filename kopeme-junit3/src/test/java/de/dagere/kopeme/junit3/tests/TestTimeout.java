@@ -27,7 +27,7 @@ public class TestTimeout extends TestCase {
 
 		long duration = (long) ((stop - start) / 10E5);
 		LOG.info("Zeit: " + duration);
-		Assert.assertTrue(duration < 1500);
+		Assert.assertTrue(duration < 3500);
 	}
 
 	public void testSetupTimeout() {

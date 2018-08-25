@@ -47,8 +47,13 @@ public class TimeoutSetupJUnit3 extends KoPeMeTestcase {
 	}
 
 	@Override
+	protected boolean useKieker() {
+	   return false;
+	}
+	
+	@Override
 	protected long getMaximalTime() {
-		return 1000;
+		return 900;
 	}
 
 }
