@@ -13,6 +13,7 @@ import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.controller.WriterController;
+import kieker.monitoring.writer.MonitoringWriterThread;
 import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
@@ -60,11 +61,22 @@ public enum KoPeMeKiekerSupport {
       try {
          Field field = MonitoringController.class.getDeclaredField("writerController");
          field.setAccessible(true);
-         WriterController writer = (WriterController) field.get(MonitoringController.getInstance());
+         WriterController writerController = (WriterController) field.get(MonitoringController.getInstance());
          
          Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
          cleanup.setAccessible(true);
-         cleanup.invoke(writer);
+         cleanup.invoke(writerController);
+         
+         Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
+         monitoringWriterThreadField.setAccessible(true);
+         MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
+         try {
+            LOG.debug("Waiting for Thread-End");
+            thread.join(5000);
+            LOG.debug("Writing finished.");
+         } catch (InterruptedException e1) {
+            e1.printStackTrace();
+         }
          
          WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
          field.set(MonitoringController.getInstance(), newController);

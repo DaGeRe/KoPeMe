@@ -41,6 +41,7 @@ public class TestChangeableFolderSyncFsWriter {
 		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME2);
 		DEFAULT_FOLDER.mkdirs();
 		NEW_FOLDER_AT_RUNTIME.mkdirs();
+		NEW_FOLDER_AT_RUNTIME2.mkdirs();
 		final Configuration config = ConfigurationFactory.createSingletonConfiguration();
 		final String absolutePath = DEFAULT_FOLDER.getAbsolutePath();
 		config.setProperty("kieker.monitoring.writer", ChangeableFolderWriter.class.getName());
@@ -108,8 +109,8 @@ public class TestChangeableFolderSyncFsWriter {
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME2);
 		runFixture(rounds);
 		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 2); // TODO due to the meta data entry, which are written to every folder
-		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines + 2);
-		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines + 2);
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines + 1);
+		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines + 1);
 	}
 
 	private void runFixture(int rounds) throws InterruptedException,
