@@ -55,6 +55,12 @@ public enum KoPeMeKiekerSupport {
       }
    }
 
+   /**
+    * Waits for the old Kieker-MonitoringWriterThread to end its writing and starts a new Kieker-MonitoringWriterThread.
+    * 
+    * Since kieker is designed to have exactly one MonitoringController, which has one WriterControler which has a MontioringWriterThread, we need to 
+    * get those by Reflections.
+    */
    public void waitForEnd() {
       LOG.debug("Disabling Monitoring..");
       MonitoringController.getInstance().disableMonitoring();
@@ -62,35 +68,35 @@ public enum KoPeMeKiekerSupport {
          Field field = MonitoringController.class.getDeclaredField("writerController");
          field.setAccessible(true);
          WriterController writerController = (WriterController) field.get(MonitoringController.getInstance());
-         
+
          Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
          cleanup.setAccessible(true);
          cleanup.invoke(writerController);
-         
+
          Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
          monitoringWriterThreadField.setAccessible(true);
          MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
          try {
             LOG.debug("Waiting for Thread-End");
             thread.join(5000);
-            LOG.debug("Writing finished.");
+            LOG.debug("Writing finished, Thread: " + thread.isAlive());
          } catch (InterruptedException e1) {
             e1.printStackTrace();
          }
-         
+
          WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
          field.set(MonitoringController.getInstance(), newController);
-         
+
          Method init = WriterController.class.getDeclaredMethod("init");
          init.setAccessible(true);
          init.invoke(newController);
-         
-         try {
-            Thread.sleep(10);
-         } catch (InterruptedException e) {
-            e.printStackTrace();
-         }
-         
+
+//         try {
+//            Thread.sleep(10);
+//         } catch (InterruptedException e) {
+//            e.printStackTrace();
+//         }
+
       } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
          e1.printStackTrace();
       }

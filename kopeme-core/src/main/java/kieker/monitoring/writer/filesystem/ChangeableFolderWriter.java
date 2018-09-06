@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -41,7 +39,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       return instance;
    }
 
-   private static final Logger LOG = LogManager.getLogger(ChangeableFolderWriter.class.getName());
+   private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
 
    private final static List<KiekerMetadataRecord> mappingRecords = new LinkedList<>();
    private static boolean full = false;
@@ -100,7 +98,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       // System.out.println("Writing: " + record);
       // System.out.println(record.getClass());
       if (currentWriter != null) {
-         LOG.trace("Record: " + record);
+         LOG.info("Record: " + record);
          currentWriter.writeMonitoringRecord(record);
       }
    }
@@ -116,7 +114,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       if (currentWriter != null) {
          currentWriter.onTerminating();
       }
-      LOG.debug("Writing to: " + writingFolder);
+      LOG.info("Writing to: " + writingFolder);
       final String absolutePath = writingFolder.getAbsolutePath();
       configuration.setProperty(CONFIG_PATH, absolutePath);
       final AbstractMonitoringWriter writer = createWriter(configuration);

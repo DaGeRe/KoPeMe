@@ -130,7 +130,8 @@ public abstract class KoPeMeTestcase extends TestCase {
          e.printStackTrace();
       }
 
-      final Thread thread = new Thread(new Runnable() {
+      ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
+      final Thread experimentThread = new Thread(experimentThreadGroup, new Runnable() {
 
          @Override
          public void run() {
@@ -146,8 +147,7 @@ public abstract class KoPeMeTestcase extends TestCase {
          }
       });
 
-      thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-
+      experimentThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
          @Override
          public void uncaughtException(final Thread t, final Throwable e) {
             if (e instanceof OutOfMemoryError) {
@@ -161,11 +161,24 @@ public abstract class KoPeMeTestcase extends TestCase {
       });
 
       LOG.debug("Waiting for test-completion for {}", timeoutTime);
-      waitForTestEnd(timeoutTime, thread);
-      // No matter how the test gets finished, saving should be done here
-      LOG.trace("End-Testcase-Saving begins");
-
-      LOG.debug("KoPeMe-Test {} finished, Deactivating Kieker: {}", getName(), useKieker());
+      experimentThread.start();
+      waitForThreadEnd(timeoutTime, experimentThread);
+      LOG.debug("KoPeMe-Test {}.{} finished, Deactivating Kieker: {}, Threads: {}", testClassName, getName(), useKieker(), experimentThreadGroup.activeCount());
+      
+      if (experimentThreadGroup.activeCount() != 0) {
+         Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
+         experimentThreadGroup.enumerate(stillActiveThreads);
+         LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
+         for (Thread thread : stillActiveThreads) {
+            waitForThreadEnd(100, thread);
+         }
+         LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
+         if (experimentThreadGroup.activeCount() != 0) {
+            LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
+            wasStoppedHard = true;
+         }
+      }
+      
       
       if (useKieker()) {
          KoPeMeKiekerSupport.INSTANCE.waitForEnd();
@@ -182,9 +195,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
    private boolean wasStoppedHard = false;
 
-   private void waitForTestEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
-      thread.start();
-
+   private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.join(timeoutTime);
       LOG.trace("Test should be finished...");
       if (thread.isAlive()) {
@@ -200,6 +211,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             count = 0;
             while (thread.isAlive() && count < 5) {
                thread.stop();
+               LOG.debug("Stop finished");
                wasStoppedHard = true;
                Thread.sleep(10);
                count++;
