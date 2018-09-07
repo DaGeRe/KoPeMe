@@ -12,7 +12,7 @@ public class PerformanceDataMeasure {
 	public final long value;
 	public final double deviation;
 	public final int executions, warmup, repetitions;
-	public final long min, max;
+   public final long min, max;
 	public final double first10percentile;
 	public final boolean failure, error;
 
@@ -84,6 +84,18 @@ public class PerformanceDataMeasure {
 		this.failure = failure;
 		this.error = error;
 	}
+	
+	public int getExecutions() {
+      return executions;
+   }
+
+   public int getWarmup() {
+      return warmup;
+   }
+
+   public int getRepetitions() {
+      return repetitions;
+   }
 
 	/**
 	 * @return the testcase
@@ -111,17 +123,6 @@ public class PerformanceDataMeasure {
 	 */
 	public double getDeviation() {
 		return deviation;
-	}
-
-	/**
-	 * @return the executionTimes
-	 */
-	public int getExecutionTimes() {
-		return executions;
-	}
-
-	public int getWarmupExecutions() {
-		return warmup;
 	}
 
 	/**
