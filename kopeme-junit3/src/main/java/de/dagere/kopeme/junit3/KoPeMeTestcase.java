@@ -142,6 +142,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             } catch (final Throwable e) {
                e.printStackTrace();
             }
+            LOG.debug("Finalizing..");
             tr.finalizeCollection();
             LOG.debug("Test-call finished");
          }
@@ -175,7 +176,7 @@ public abstract class KoPeMeTestcase extends TestCase {
          LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
          if (experimentThreadGroup.activeCount() != 0) {
             LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
-            wasStoppedHard = true;
+            needToStopHart = true;
          }
       }
       
@@ -184,16 +185,16 @@ public abstract class KoPeMeTestcase extends TestCase {
          KoPeMeKiekerSupport.INSTANCE.waitForEnd();
       }
       
-      if (!wasStoppedHard || !useKieker()) {
+      if (!needToStopHart) {
          PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
       } else {
          PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
-         LOG.error("Thread was above timeout and did not respond to interrupt - was killed hard, so no further use of VM possible.");
+         LOG.error("Thread was above timeout and did not respond to interrupt. Therefore, it is still running - no further use of VM possible.");
          System.exit(1);
       }
    }
 
-   private boolean wasStoppedHard = false;
+   private boolean needToStopHart = false;
 
    private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.join(timeoutTime);
@@ -207,15 +208,16 @@ public abstract class KoPeMeTestcase extends TestCase {
             count++;
          }
          if (count == INTERRUPT_TRIES) {
-            LOG.debug("Thread does not respond, so it is killed hard now: " + thread.getName());
-            count = 0;
-            while (thread.isAlive() && count < 5) {
-               thread.stop();
-               LOG.debug("Stop finished");
-               wasStoppedHard = true;
-               Thread.sleep(10);
-               count++;
-            }
+            LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
+            needToStopHart = true;
+//            count = 0;
+//            while (thread.isAlive() && count < 5) {
+//               thread.stop();
+//               LOG.debug("Stop finished");
+//               wasStoppedHard = true;
+//               Thread.sleep(10);
+//               count++;
+//            }
          }
       }
    }
@@ -239,11 +241,13 @@ public abstract class KoPeMeTestcase extends TestCase {
          runMainExecution("main", fullName, tr, executionTimes);
       } catch (final AssertionFailedError t) {
          t.printStackTrace();
+         LOG.error("An error occurred; saving data and finishing");
          tr.finalizeCollection();
          // PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
          throw t;
       } catch (final Throwable t) {
          t.printStackTrace();
+         LOG.error("An error occurred; saving data and finishing");
          tr.finalizeCollection();
          // PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
          throw t;

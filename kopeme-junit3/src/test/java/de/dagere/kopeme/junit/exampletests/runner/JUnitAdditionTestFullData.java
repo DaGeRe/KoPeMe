@@ -29,6 +29,12 @@ public class JUnitAdditionTestFullData extends KoPeMeTestcase {
 	protected int getExecutionTimes() {
 		return 10;
 	}
+	
+	@Override
+	protected int getRepetitions() {
+	   // TODO Auto-generated method stub
+	   return 2;
+	}
 
 	@Override
 	protected boolean logFullData() {

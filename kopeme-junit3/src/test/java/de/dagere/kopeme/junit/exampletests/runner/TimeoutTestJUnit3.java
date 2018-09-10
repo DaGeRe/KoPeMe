@@ -15,11 +15,15 @@ import de.dagere.kopeme.junit3.KoPeMeTestcase;
 public class TimeoutTestJUnit3 extends KoPeMeTestcase {
    private final static Logger LOG = LogManager.getLogger(TimeoutTestJUnit3.class);
 
-   public void testFirst() {
-      LOG.info("First");
-      forceWaiting(20000);
-      LOG.info("First End");
-   }
+   /**
+    * Thread.stop is removed and instead the VM is exitted if the Thread does not run anymore. Therefore, this test can't be executed as unit test anymore.
+    */
+   
+//   public void testFirst() {
+//      LOG.info("First");
+//      forceWaiting(20000);
+//      LOG.info("First End");
+//   }
 
    private void forceWaiting(int duration) {
       long start = System.currentTimeMillis();
@@ -32,17 +36,17 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
       }
    }
 
-   public void testSecond() {
-      LOG.info("Second");
-      forceWaiting(10000);
-      LOG.info("Second End");
-   }
-
-   public void testThird() {
-      LOG.info("Third");
-      forceWaiting(10000);
-      LOG.info("Third End");
-   }
+//   public void testSecond() {
+//      LOG.info("Second");
+//      forceWaiting(10000);
+//      LOG.info("Second End");
+//   }
+//
+//   public void testThird() {
+//      LOG.info("Third");
+//      forceWaiting(10000);
+//      LOG.info("Third End");
+//   }
 
    @Override
    protected int getWarmupExecutions() {

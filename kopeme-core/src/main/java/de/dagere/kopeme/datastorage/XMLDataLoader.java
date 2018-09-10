@@ -42,6 +42,17 @@ public final class XMLDataLoader implements DataLoader {
 		this.file = file;
 		loadData();
 	}
+	
+	static Unmarshaller unmarshaller;
+	static {
+      try {
+         JAXBContext jc = JAXBContext.newInstance(Kopemedata.class);
+         unmarshaller = jc.createUnmarshaller();
+      } catch (JAXBException e) {
+         e.printStackTrace();
+      }
+     
+	}
 
 	
 	/**
@@ -51,18 +62,15 @@ public final class XMLDataLoader implements DataLoader {
 	 */
 	private void loadData() throws JAXBException {
 		if (file.exists()) {
-			final JAXBContext jc = JAXBContext.newInstance(Kopemedata.class);
-			final Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(file);
-			LOG.trace("Daten geladen, Daten: " + data);
+			LOG.trace("Daten geladen, Daten: {}", data);
 		} else {
 			LOG.info("Datei {} existiert nicht", file.getAbsolutePath());
 			data = new Kopemedata();
 			data.setTestcases(new Testcases());
 			final Testcases tc = data.getTestcases();
-			LOG.trace("TC: " + tc);
+			LOG.trace("TC: {}", tc);
 			tc.setClazz(file.getName());
-
 		}
 	}
 
