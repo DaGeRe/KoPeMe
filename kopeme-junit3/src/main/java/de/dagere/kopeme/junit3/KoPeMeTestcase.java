@@ -180,12 +180,10 @@ public abstract class KoPeMeTestcase extends TestCase {
          }
       }
       
-      
-      if (useKieker()) {
-         KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-      }
-      
       if (!needToStopHart) {
+         if (useKieker()) {
+            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+         }
          PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
       } else {
          PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
