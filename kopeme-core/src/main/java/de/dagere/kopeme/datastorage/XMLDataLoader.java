@@ -43,11 +43,12 @@ public final class XMLDataLoader implements DataLoader {
 		loadData();
 	}
 	
-	static Unmarshaller unmarshaller;
+//	static Unmarshaller unmarshaller;
+	static JAXBContext jc;
 	static {
       try {
-         JAXBContext jc = JAXBContext.newInstance(Kopemedata.class);
-         unmarshaller = jc.createUnmarshaller();
+         jc = JAXBContext.newInstance(Kopemedata.class);
+         
       } catch (JAXBException e) {
          e.printStackTrace();
       }
@@ -62,6 +63,7 @@ public final class XMLDataLoader implements DataLoader {
 	 */
 	private void loadData() throws JAXBException {
 		if (file.exists()) {
+		   Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(file);
 			LOG.trace("Daten geladen, Daten: {}", data);
 		} else {
