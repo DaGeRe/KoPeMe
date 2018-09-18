@@ -88,13 +88,13 @@ public final class PerformanceTestUtils {
 	 */
 	public static void saveData(final SaveableTestData data) {
 		try {
-			final File f = data.getFolder();
+			final File file = data.getFolder();
 			final String testcasename = data.getTestcasename();
-			if (!f.exists())
+			if (!file.exists())
 			{
-				f.mkdirs();
+				file.mkdirs();
 			}
-			final DataStorer xds = new XMLDataStorer(f, data.getFilename(), testcasename);
+			final DataStorer xds = new XMLDataStorer(file, data.getFilename(), testcasename);
 			final TestResult tr = data.getTr();
 			final long timeValue = tr.getValue(TimeDataCollector.class.getName());
 			if (timeValue != 0){
@@ -126,7 +126,6 @@ public final class PerformanceTestUtils {
 		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**

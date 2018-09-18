@@ -14,6 +14,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.datastorage.SaveableTestData.TestErrorTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -186,7 +187,18 @@ public abstract class KoPeMeTestcase extends TestCase {
          }
          PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
       } else {
-         PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
+         LOG.debug("Saving data before finishing VM - waiting 5 seconds");
+         Runnable saveRunnable = () -> {
+            TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
+            LOG.debug("Data created");
+            PerformanceTestUtils.saveData(errorTestData);
+         };
+         Thread saveThread = new Thread(saveRunnable);
+         saveThread.start();
+         saveThread.join(5000);
+         if (saveThread.isAlive()) {
+            LOG.error("Saving was not possible - seems like resource usage of load prevents VM from opening new file");
+         }
          LOG.error("Thread was above timeout and did not respond to interrupt. Therefore, it is still running - no further use of VM possible.");
          System.exit(1);
       }
