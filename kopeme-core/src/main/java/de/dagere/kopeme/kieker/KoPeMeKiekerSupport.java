@@ -91,12 +91,6 @@ public enum KoPeMeKiekerSupport {
          init.setAccessible(true);
          init.invoke(newController);
 
-//         try {
-//            Thread.sleep(10);
-//         } catch (InterruptedException e) {
-//            e.printStackTrace();
-//         }
-
       } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
          e1.printStackTrace();
       }
