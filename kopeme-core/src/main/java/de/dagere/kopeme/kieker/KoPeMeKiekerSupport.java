@@ -32,9 +32,7 @@ public enum KoPeMeKiekerSupport {
       fp = FolderProvider.getInstance();
    }
 
-   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws Exception {
-      // MonitoringController.createInstance(configuration)
-
+   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) {
       if (useIt) {
          final IMonitoringController kiekerController = MonitoringController.getInstance();
          final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance();
@@ -45,6 +43,7 @@ public enum KoPeMeKiekerSupport {
             if (!tempDirFile.exists()) {
                System.err.println("Hint: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
             }
+            throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
          } else {
             final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
             folderForCurrentPerformanceResult.mkdirs();
@@ -58,8 +57,7 @@ public enum KoPeMeKiekerSupport {
    /**
     * Waits for the old Kieker-MonitoringWriterThread to end its writing and starts a new Kieker-MonitoringWriterThread.
     * 
-    * Since kieker is designed to have exactly one MonitoringController, which has one WriterControler which has a MontioringWriterThread, we need to 
-    * get those by Reflections.
+    * Since kieker is designed to have exactly one MonitoringController, which has one WriterControler which has a MontioringWriterThread, we need to get those by Reflections.
     */
    public void waitForEnd() {
       LOG.debug("Disabling Monitoring..");
@@ -77,7 +75,7 @@ public enum KoPeMeKiekerSupport {
          monitoringWriterThreadField.setAccessible(true);
          MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
          try {
-            LOG.debug("Waiting for Thread-End");
+            LOG.debug("Waiting for Thread-End: {}", thread);
             thread.join(5000);
             LOG.debug("Writing finished, Thread: " + thread.isAlive());
          } catch (InterruptedException e1) {

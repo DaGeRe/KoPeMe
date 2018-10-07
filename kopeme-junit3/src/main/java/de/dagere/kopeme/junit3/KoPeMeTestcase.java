@@ -124,12 +124,7 @@ public abstract class KoPeMeTestcase extends TestCase {
       final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.STANDARD);
       tr.setCollectors(getDataCollectors());
 
-      try {
-         KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
-      } catch (final Exception e) {
-         System.err.println("Kieker has failed!");
-         e.printStackTrace();
-      }
+      KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 
       ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
       final Thread experimentThread = new Thread(experimentThreadGroup, new Runnable() {
@@ -166,7 +161,7 @@ public abstract class KoPeMeTestcase extends TestCase {
       experimentThread.start();
       waitForThreadEnd(timeoutTime, experimentThread);
       LOG.debug("KoPeMe-Test {}.{} finished, Deactivating Kieker: {}, Threads: {}", testClassName, getName(), useKieker(), experimentThreadGroup.activeCount());
-      
+
       if (experimentThreadGroup.activeCount() != 0) {
          Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
          experimentThreadGroup.enumerate(stillActiveThreads);
@@ -180,7 +175,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             needToStopHart = true;
          }
       }
-      
+
       if (!needToStopHart) {
          if (useKieker()) {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
@@ -220,14 +215,14 @@ public abstract class KoPeMeTestcase extends TestCase {
          if (count == INTERRUPT_TRIES) {
             LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
             needToStopHart = true;
-//            count = 0;
-//            while (thread.isAlive() && count < 5) {
-//               thread.stop();
-//               LOG.debug("Stop finished");
-//               wasStoppedHard = true;
-//               Thread.sleep(10);
-//               count++;
-//            }
+            // count = 0;
+            // while (thread.isAlive() && count < 5) {
+            // thread.stop();
+            // LOG.debug("Stop finished");
+            // wasStoppedHard = true;
+            // Thread.sleep(10);
+            // count++;
+            // }
          }
       }
    }
