@@ -12,6 +12,7 @@ import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
@@ -68,6 +69,12 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
                if (t instanceof Error)
                   throw (Error) t;
                LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
+            } finally {
+               try {
+                  KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+               } catch (final Exception e) {
+                  e.printStackTrace();
+               }
             }
          }
 
