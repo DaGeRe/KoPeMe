@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.time.TimeBasedTestRunner;
 
 @RunWith(TimeBasedTestRunner.class)

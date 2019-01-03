@@ -90,7 +90,7 @@ public class BuildtoolProjectNameReader {
             String name = null;
             List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
             for (String line : lines) {
-               if (line.contains("group")) {
+               if (line.contains("group") && line.contains("=")) {
                   group = readGradleProperty(line);
                }
             }

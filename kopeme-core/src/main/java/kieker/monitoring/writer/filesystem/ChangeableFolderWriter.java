@@ -9,10 +9,8 @@ import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
-import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.common.record.misc.KiekerMetadataRecord;
 import kieker.common.record.misc.RegistryRecord;
-import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 
 /**

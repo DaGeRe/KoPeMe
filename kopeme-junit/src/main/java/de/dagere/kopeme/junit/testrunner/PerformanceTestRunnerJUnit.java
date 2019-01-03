@@ -3,10 +3,7 @@ package de.dagere.kopeme.junit.testrunner;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import java.util.concurrent.TimeoutException;
 
 import junit.framework.AssertionFailedError;
@@ -27,12 +24,9 @@ import org.junit.runners.model.Statement;
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
-import de.dagere.kopeme.annotations.Assertion;
-import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An alternative
