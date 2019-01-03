@@ -52,8 +52,13 @@ public class BuildtoolProjectNameReader {
             }
          });
          if (pomFiles.length == 1) {
-            pathToConfigFile = pomFiles[0];
-            return true;
+            try {
+               pathToConfigFile = pomFiles[0].getCanonicalFile();
+               return true;
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+            return false;
          } else {
             return foundPomXml(directory.getParentFile(), depth - 1);
          }
