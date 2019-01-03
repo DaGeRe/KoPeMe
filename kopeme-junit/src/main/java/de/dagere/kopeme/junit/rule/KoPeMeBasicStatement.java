@@ -57,13 +57,13 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
 		annotation = method.getAnnotation(PerformanceTest.class);
 
-		if (annotation.dataCollectors().equals("EXTENDED")) {
+		if ("EXTENDED".equals(annotation.dataCollectors())) {
 			datacollectors = DataCollectorList.EXTENDED;
-		} else if (annotation.dataCollectors().equals("STANDARD")) {
+		} else if ("STANDARD".equals(annotation.dataCollectors()) || annotation == null) {
 			datacollectors = DataCollectorList.STANDARD;
-		} else if (annotation.dataCollectors().equals("ONLYTIME")) {
+		} else if ("ONLYTIME".equals(annotation.dataCollectors())) {
 			datacollectors = DataCollectorList.ONLYTIME;
-		} else if (annotation.dataCollectors().equals("NONE")) {
+		} else if ("NONE".equals(annotation.dataCollectors())) {
 			datacollectors = DataCollectorList.NONE;
 		} else {
 			datacollectors = DataCollectorList.ONLYTIME;

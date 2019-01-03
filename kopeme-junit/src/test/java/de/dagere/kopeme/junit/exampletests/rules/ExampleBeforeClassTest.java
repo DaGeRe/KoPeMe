@@ -3,8 +3,8 @@ package de.dagere.kopeme.junit.exampletests.rules;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 
+import org.junit.rules.TestRule;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 

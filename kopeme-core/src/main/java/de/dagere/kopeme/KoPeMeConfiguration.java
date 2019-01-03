@@ -59,7 +59,7 @@ public class KoPeMeConfiguration {
 		File workingDir = new File(getWorkingDirAsString());
 		int searchDepth = getIntSystemProperty(KOPEME_SEARCHDEPTH_PROPNAME, 10);
 		if(projectName == null){
-			PomProjectNameReader reader = new PomProjectNameReader();
+			BuildtoolProjectNameReader reader = new BuildtoolProjectNameReader();
 			if(reader.foundPomXml(workingDir, searchDepth)){
 				projectName = reader.getProjectName();
 			} else {
