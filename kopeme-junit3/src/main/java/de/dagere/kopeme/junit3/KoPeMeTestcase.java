@@ -163,6 +163,9 @@ public abstract class KoPeMeTestcase extends TestCase {
       LOG.debug("KoPeMe-Test {}.{} finished, Deactivating Kieker: {}, Threads: {}", testClassName, getName(), useKieker(), experimentThreadGroup.activeCount());
 
       if (experimentThreadGroup.activeCount() != 0) {
+         if (experimentThread.isAlive() && useKieker()) {
+            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+         }
          Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
          experimentThreadGroup.enumerate(stillActiveThreads);
          LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
