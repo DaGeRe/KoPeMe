@@ -170,6 +170,7 @@ public final class XMLDataStorer implements DataStorer {
 		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
+		LOG.debug("Storing finished.");
 	}
 
 }
