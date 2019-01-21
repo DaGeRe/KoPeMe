@@ -12,10 +12,10 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 
 	public void testAddition() {
 		int a = 0;
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 1000; i++) {
 			a += i;
 		}
-		Assert.assertEquals(10000 * 9999 / 2, a);
+		Assert.assertEquals(1000 * 999 / 2, a);
 		LOG.debug("Addition beendet");
 		giveMeOutput();
 	}
@@ -31,7 +31,7 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 
 	@Override
 	protected int getExecutionTimes() {
-		return 100;
+		return 10;
 	}
 
 	@Override

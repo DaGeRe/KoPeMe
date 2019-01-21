@@ -1,6 +1,5 @@
 package de.dagere.kopeme.junit3;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TimeBoundExecution;
+import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
@@ -34,8 +35,8 @@ public abstract class KoPeMeTestcase extends TestCase {
 
    private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
    private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
-   
-   private boolean needToStopHart = false;
+
+   private final boolean needToStopHart = false;
    private boolean isFinished;
 
    /**
@@ -129,10 +130,9 @@ public abstract class KoPeMeTestcase extends TestCase {
       tr.setCollectors(getDataCollectors());
 
       KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
-      
-      final ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
-      final Thread experimentThread = new Thread(experimentThreadGroup, new Finishable() {
-         
+
+      final Finishable finishable = new Finishable() {
+
          @Override
          public void run() {
             try {
@@ -146,91 +146,36 @@ public abstract class KoPeMeTestcase extends TestCase {
             tr.finalizeCollection();
             LOG.debug("Test-call finished");
          }
-         
+
          @Override
          public void setFinished(final boolean isFinished) {
             KoPeMeTestcase.this.isFinished = isFinished;
          }
-         
+
          @Override
          public boolean isFinished() {
             return isFinished;
          }
-      });
-
-      experimentThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-         @Override
-         public void uncaughtException(final Thread t, final Throwable e) {
-            if (e instanceof OutOfMemoryError) {
-               t.interrupt();
-            }
-            e.printStackTrace();
-            LOG.debug("Out of memory - can not reuse VM for measurement");
-            System.exit(1);
-         }
-      });
-
-      LOG.debug("Waiting for test-completion for {}", timeoutTime);
-      experimentThread.start();
-      waitForThreadEnd(timeoutTime, experimentThread);
-      LOG.debug("KoPeMe-Test {}.{} finished, Deactivating Kieker: {}, Threads: {}", testClassName, getName(), useKieker(), experimentThreadGroup.activeCount());
-
-      if (experimentThreadGroup.activeCount() != 0) {
-         if (experimentThread.isAlive() && useKieker()) {
-            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-         }
-         final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
-         experimentThreadGroup.enumerate(stillActiveThreads);
-         LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
-         for (final Thread thread : stillActiveThreads) {
-            waitForThreadEnd(100, thread);
-         }
-         LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
-         if (experimentThreadGroup.activeCount() != 0) {
-            LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
-            needToStopHart = true;
-         }
-      }
-
-      if (!needToStopHart) {
-         if (useKieker()) {
-            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-         }
-         PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
-      } else {
-         LOG.debug("Saving data before finishing VM - waiting 5 seconds");
-         final Runnable saveRunnable = () -> {
+      };
+      final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
+      try {
+         final boolean finished = tbe.execute();
+         if (!finished) {
             final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
             LOG.debug("Data created");
-            PerformanceTestUtils.saveData(errorTestData);
-         };
-         final Thread saveThread = new Thread(saveRunnable);
-         saveThread.start();
-         saveThread.join(5000);
-         if (saveThread.isAlive()) {
-            LOG.error("Saving was not possible - seems like resource usage of load prevents VM from opening new file");
+             PerformanceTestUtils.saveData(errorTestData);
+            fail("Test took too long.");
+         } else {
+            if (useKieker()) {
+               KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+            }
+            PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
          }
-         LOG.error("Thread was above timeout and did not respond to interrupt. Therefore, it is still running - no further use of VM possible.");
-         System.exit(1);
+      } catch (final Exception e) {
+         e.printStackTrace();
+         fail(e.getLocalizedMessage());
       }
-   }
 
-   private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
-      thread.join(timeoutTime);
-      LOG.trace("Test should be finished...");
-      if (thread.isAlive()) {
-         int count = 0;
-         while (thread.isAlive() && count < INTERRUPT_TRIES) {
-            LOG.debug("Thread not finished, is kill now..");
-            thread.interrupt();
-            Thread.sleep(10);
-            count++;
-         }
-         if (count == INTERRUPT_TRIES) {
-            LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
-            needToStopHart = true;
-         }
-      }
    }
 
    /**

@@ -28,12 +28,12 @@ public class TimeBoundExecution {
    ThreadGroup experimentThreadGroup;
    private final FinishableThread experimentThread;
    private final Type type;
-   private final int timeout;
+   private final long timeout;
    private boolean needToStopHart = false;
    private final boolean useKieker;
    private Throwable testError;
 
-   public TimeBoundExecution(final Finishable finishable, final int timeout, final Type type, final boolean useKieker) {
+   public TimeBoundExecution(final Finishable finishable, final long timeout, final Type type, final boolean useKieker) {
       String threadName;
       synchronized (LOG) {
          threadName = "timebound-" + (id++);
