@@ -34,6 +34,7 @@ public class PerformanceTestRunner {
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
+	private boolean isFinished = false;
 
 	/**
 	 * Initializes the PerformanceTestRunner.
@@ -77,7 +78,7 @@ public class PerformanceTestRunner {
 	 * @throws Throwable Any error that occurs during the test
 	 */
 	public void evaluate() throws Throwable {
-		final Runnable runnable = new Runnable() {
+		final Finishable finishable = new Finishable() {
 			@Override
 			public void run() {
 				TestResult tr = null;
@@ -91,14 +92,23 @@ public class PerformanceTestRunner {
 						tr.checkValues(assertationvalues);
 					}
 				} catch (IllegalAccessException | InvocationTargetException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
+			@Override
+         public boolean isFinished() {
+            return PerformanceTestRunner.this.isFinished;
+         }
+
+         @Override
+         public void setFinished(final boolean isFinished) {
+            PerformanceTestRunner.this.isFinished = isFinished;
+         }
+
 		};
 
-		final TimeBoundExecution tbe = new TimeBoundExecution(runnable, timeout, "method");
+		final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeout, "method");
 		tbe.execute();
 
 		LOG.trace("Test {} beendet", filename);

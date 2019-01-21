@@ -17,60 +17,19 @@ public class TimeBoundExecution {
 
 	private static final Logger LOG = LogManager.getLogger(TimeBoundExecution.class);
 
-	private final FinishableThread mainThread;
+	ThreadGroup experimentThreadGroup;
+	private final FinishableThread experimentThread;
 	private final String type;
 	private final int timeout;
 	private Throwable testError;
-
-	/**
-	 * Initializes the execution.
-	 * 
-	 * @param thread
-	 *            The executed Thread
-	 * @param timeout
-	 *            The timeout for canceling the execution
-	 */
-	public TimeBoundExecution(final FinishableThread thread, final int timeout, final String type) {
-		this.mainThread = thread;
-		this.timeout = timeout;
-		this.type = type;
-	}
 
 	public TimeBoundExecution(final Finishable finishable, final int timeout, final String type) {
 		String threadName;
 		synchronized (LOG) {
 			threadName = "timebound-" + (id++);
 		}
-		this.mainThread = new FinishableThread(finishable, threadName);
-		this.timeout = timeout;
-		this.type = type;
-	}
-
-	/**
-	 * Initializes a timebounded execution where the object is not set to finish. This indicates that whenever an interrupt state is caught, the process will run even if the time bounded execution
-	 * should finish.
-	 * 
-	 * @param finishable
-	 * @param timeout
-	 */
-	public TimeBoundExecution(final Runnable finishable, final int timeout, final String type) {
-		this.mainThread = new FinishableThread(new Finishable() {
-
-			@Override
-			public void run() {
-				finishable.run();
-			}
-
-			@Override
-			public void setFinished(final boolean isFinished) {
-				LOG.debug("Warning: Thread can not be finished");
-			}
-
-			@Override
-			public boolean isFinished() {
-				return false;
-			}
-		});
+		experimentThreadGroup = new ThreadGroup("kopeme-experiment");
+		this.experimentThread = new FinishableThread(experimentThreadGroup, finishable, threadName);
 		this.timeout = timeout;
 		this.type = type;
 	}
@@ -83,21 +42,26 @@ public class TimeBoundExecution {
 	 */
 	public final boolean execute() throws Exception {
 		boolean finished = false;
-		mainThread.start();
-		mainThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(final Thread arg0, final Throwable arg1) {
-				LOG.error("Uncaught exception in {}: {}", arg0.getName(), arg1.getClass());
-				testError = arg1;
-			}
-		});
+		experimentThread.start();
+		experimentThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+         @Override
+         public void uncaughtException(final Thread t, final Throwable e) {
+            if (e instanceof OutOfMemoryError) {
+               t.interrupt();
+            }
+            e.printStackTrace();
+            LOG.debug("Out of memory - can not reuse VM for measurement");
+            System.exit(1);
+         }
+      });
 		LOG.debug("Warte: " + timeout);
-		mainThread.join(timeout);
-		if (mainThread.isAlive()) {
-			mainThread.setFinished(true);
-			LOG.error("Test " + type + " " + mainThread.getName() + " timed out!");
+		experimentThread.join(timeout);
+		if (experimentThread.isAlive()) {
+		   experimentThread.setFinished(true);
+			LOG.error("Test " + type + " " + experimentThread.getName() + " timed out!");
+			Thread.sleep(5);
 			for (int i = 0; i < 5; i++) {
-				mainThread.interrupt();
+			   experimentThread.interrupt();
 				// asure, that the test does not catch the interrupt state itself
 				Thread.sleep(5);
 			}
@@ -105,10 +69,10 @@ public class TimeBoundExecution {
 		else {
 			finished = true;
 		}
-		mainThread.join(1000); // TODO If this time is shortened, test
-		if (mainThread.isAlive()) {
+		experimentThread.join(1000); // TODO If this time is shortened, test
+		if (experimentThread.isAlive()) {
 			LOG.error("Test timed out and was not able to save his data after 10 seconds - is killed hard now.");
-			mainThread.stop();
+			experimentThread.stop();
 		}
 		if (testError != null) {
 			LOG.trace("Test error != null");

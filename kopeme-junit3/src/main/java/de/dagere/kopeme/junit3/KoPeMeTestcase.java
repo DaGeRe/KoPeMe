@@ -126,7 +126,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
       KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 
-      ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
+      final ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
       final Thread experimentThread = new Thread(experimentThreadGroup, new Runnable() {
 
          @Override
@@ -148,12 +148,11 @@ public abstract class KoPeMeTestcase extends TestCase {
          @Override
          public void uncaughtException(final Thread t, final Throwable e) {
             if (e instanceof OutOfMemoryError) {
-               while (t.isAlive()) {
-                  t.interrupt();
-               }
+               t.interrupt();
             }
             e.printStackTrace();
-            fail();
+            LOG.debug("Out of memory - can not reuse VM for measurement");
+            System.exit(1);
          }
       });
 
@@ -166,10 +165,10 @@ public abstract class KoPeMeTestcase extends TestCase {
          if (experimentThread.isAlive() && useKieker()) {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
          }
-         Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
+         final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
          experimentThreadGroup.enumerate(stillActiveThreads);
          LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
-         for (Thread thread : stillActiveThreads) {
+         for (final Thread thread : stillActiveThreads) {
             waitForThreadEnd(100, thread);
          }
          LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
@@ -186,12 +185,12 @@ public abstract class KoPeMeTestcase extends TestCase {
          PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
       } else {
          LOG.debug("Saving data before finishing VM - waiting 5 seconds");
-         Runnable saveRunnable = () -> {
-            TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
+         final Runnable saveRunnable = () -> {
+            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
             LOG.debug("Data created");
             PerformanceTestUtils.saveData(errorTestData);
          };
-         Thread saveThread = new Thread(saveRunnable);
+         final Thread saveThread = new Thread(saveRunnable);
          saveThread.start();
          saveThread.join(5000);
          if (saveThread.isAlive()) {
