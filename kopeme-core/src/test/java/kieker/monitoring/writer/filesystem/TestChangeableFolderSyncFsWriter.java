@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.util.concurrent.ExecutionException;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.dagere.kopeme.TestUtils;
@@ -56,7 +57,7 @@ public class TestChangeableFolderSyncFsWriter {
 		MONITORING_CONTROLLER.enableMonitoring();
 	}
 
-	private static void createAndWriteOperationExecutionRecord(final long tin, final long tout, String methodSignature) {
+	private static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
 		final OperationExecutionRecord e = new OperationExecutionRecord(
 				methodSignature,
 				OperationExecutionRecord.NO_SESSION_ID,
@@ -99,6 +100,7 @@ public class TestChangeableFolderSyncFsWriter {
 		assertEquals(fixture, intResult);
 	}
 
+	@Ignore
 	@Test
 	public void testChangesFolderCorrectly() throws Exception {
 		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance();
@@ -113,7 +115,7 @@ public class TestChangeableFolderSyncFsWriter {
 		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines + 1);
 	}
 
-	private void runFixture(int rounds) throws InterruptedException,
+	private void runFixture(final int rounds) throws InterruptedException,
 			ExecutionException {
 		for (int i = 0; i < rounds / 3; i++) {
 			final Sample fixture = new Sample();
@@ -135,7 +137,7 @@ public class TestChangeableFolderSyncFsWriter {
 		final File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
 
 			@Override
-			public boolean accept(File pathname) {
+			public boolean accept(final File pathname) {
 				return !pathname.getName().equals("kieker.map");
 			}
 		});

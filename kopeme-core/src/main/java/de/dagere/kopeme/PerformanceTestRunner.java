@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -34,6 +35,7 @@ public class PerformanceTestRunner {
 	protected Map<String, Double> maximalRelativeStandardDeviation;
 	protected Map<String, Long> assertationvalues;
 	protected String filename;
+	private final boolean useKieker;
 	private boolean isFinished = false;
 
 	/**
@@ -51,6 +53,7 @@ public class PerformanceTestRunner {
 		final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
 		if (annotation != null) {
+		   useKieker = annotation.useKieker();
 			executionTimes = annotation.executionTimes();
 			warmupExecutions = annotation.warmupExecutions();
 			repetitions = annotation.repetitions();
@@ -66,6 +69,8 @@ public class PerformanceTestRunner {
 			for (final Assertion a : annotation.assertions()) {
 				assertationvalues.put(a.collectorname(), a.maxvalue());
 			}
+		}else {
+		   useKieker = false;
 		}
 
 		filename = klasse.getName();
@@ -108,7 +113,7 @@ public class PerformanceTestRunner {
 
 		};
 
-		final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeout, "method");
+		final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeout, Type.METHOD, useKieker);
 		tbe.execute();
 
 		LOG.trace("Test {} beendet", filename);

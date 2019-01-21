@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.TimeBoundExecution;
+import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import junit.framework.AssertionFailedError;
@@ -62,7 +63,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          }
       };
 
-      final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), "method");
+      final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), Type.METHOD, annotation.useKieker());
       tbe.execute();
       LOG.info("Test {} beendet", filename);
    }
@@ -74,7 +75,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       try {
          // Run warmup
          if (annotation.warmupExecutions() > 0) {
-            TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
+            final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
             runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions());
          }
          runMainExecution(tr, "execution ", annotation.executionTimes());

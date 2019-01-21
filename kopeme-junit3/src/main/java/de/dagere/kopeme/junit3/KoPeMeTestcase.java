@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -33,6 +34,9 @@ public abstract class KoPeMeTestcase extends TestCase {
 
    private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
    private final PerformanceTestingClass annoTestClass = AnnotationDefaults.of(PerformanceTestingClass.class);
+   
+   private boolean needToStopHart = false;
+   private boolean isFinished;
 
    /**
     * Initializes the testcase.
@@ -125,10 +129,10 @@ public abstract class KoPeMeTestcase extends TestCase {
       tr.setCollectors(getDataCollectors());
 
       KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
-
+      
       final ThreadGroup experimentThreadGroup = new ThreadGroup("kopeme-experiment");
-      final Thread experimentThread = new Thread(experimentThreadGroup, new Runnable() {
-
+      final Thread experimentThread = new Thread(experimentThreadGroup, new Finishable() {
+         
          @Override
          public void run() {
             try {
@@ -141,6 +145,16 @@ public abstract class KoPeMeTestcase extends TestCase {
             LOG.debug("Finalizing..");
             tr.finalizeCollection();
             LOG.debug("Test-call finished");
+         }
+         
+         @Override
+         public void setFinished(final boolean isFinished) {
+            KoPeMeTestcase.this.isFinished = isFinished;
+         }
+         
+         @Override
+         public boolean isFinished() {
+            return isFinished;
          }
       });
 
@@ -201,8 +215,6 @@ public abstract class KoPeMeTestcase extends TestCase {
       }
    }
 
-   private boolean needToStopHart = false;
-
    private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.join(timeoutTime);
       LOG.trace("Test should be finished...");
@@ -217,14 +229,6 @@ public abstract class KoPeMeTestcase extends TestCase {
          if (count == INTERRUPT_TRIES) {
             LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
             needToStopHart = true;
-            // count = 0;
-            // while (thread.isAlive() && count < 5) {
-            // thread.stop();
-            // LOG.debug("Stop finished");
-            // wasStoppedHard = true;
-            // Thread.sleep(10);
-            // count++;
-            // }
          }
       }
    }
@@ -292,7 +296,7 @@ public abstract class KoPeMeTestcase extends TestCase {
          tr.getValue(TimeDataCollector.class.getName());
          tr.setRealExecutions(executions);
          LOG.debug(firstPartStop + executions + endPart);
-         if (Thread.interrupted()) {
+         if (Thread.interrupted() || isFinished) {
             return;
          } else {
             LOG.trace("Not interrupted");

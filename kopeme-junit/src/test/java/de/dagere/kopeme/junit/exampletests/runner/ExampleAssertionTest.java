@@ -25,12 +25,12 @@ class TestXYZ {
 @PerformanceTestingClass(overallTimeout = Integer.MAX_VALUE)
 public class ExampleAssertionTest {
 
-   public final int MAX_VALUE = 1000;
+   public final int MAX_VALUE = 100;
    
    @Test
    @PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 10, warmupExecutions = 10, deviations = {
          @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.01) }, assertions = {
-               @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 150) })
+               @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15) })
    public void testAssertionAddition() throws FileNotFoundException {
       int a = 0;
       System.setOut(new PrintStream(new File("target/test.txt")));

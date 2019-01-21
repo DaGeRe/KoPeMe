@@ -9,6 +9,7 @@ import org.junit.runners.model.FrameworkMethod;
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
+import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
@@ -63,17 +64,19 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
                if (e instanceof InterruptedException) {
                   throw new RuntimeException(e);
                }
-               LOG.error("Catched Exception: {}", e.getLocalizedMessage());
+               LOG.error("Caught Exception: {}", e.getLocalizedMessage());
                e.printStackTrace();
             } catch (final Throwable t) {
                if (t instanceof Error)
                   throw (Error) t;
                LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
             } finally {
-               try {
-                  KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-               } catch (final Exception e) {
-                  e.printStackTrace();
+               if (annotation.useKieker()) {
+                  try {
+                     KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+                  } catch (final Exception e) {
+                     e.printStackTrace();
+                  }
                }
             }
          }
@@ -89,7 +92,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          }
       };
       if (!isFinished) {
-         final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, "method");
+         final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, Type.METHOD, annotation.useKieker());
          tbe.execute();
       }
       LOG.debug("Timebounded execution finished");
@@ -102,7 +105,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     * @return The result of the test
     * @throws Throwable Any exception that occurs during the test
     */
-   protected TestResult executeSimpleTest(final PerformanceJUnitStatement callee, int executions) throws Throwable {
+   protected TestResult executeSimpleTest(final PerformanceJUnitStatement callee, final int executions) throws Throwable {
       final TestResult tr = new TestResult(methodName, executions, datacollectors);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
@@ -188,7 +191,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
    }
 
    public void setFinished(final boolean isFinished) {
-      LOG.debug("Setze finished: " + isFinished + " " + mainRunnable);
+      LOG.debug("Setting finished: " + isFinished + " " + mainRunnable);
       if (mainRunnable != null) {
          mainRunnable.setFinished(isFinished);
       }

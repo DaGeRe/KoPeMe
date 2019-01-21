@@ -10,6 +10,7 @@ import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.TimeBoundExecution;
+import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
@@ -75,7 +76,8 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 			}
 		};
 		if (!isFinished){
-			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, "method");
+		   
+			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, Type.METHOD, annotation.useKieker());
 			tbe.execute();
 		}
 		LOG.debug("Timebounded execution finished");
