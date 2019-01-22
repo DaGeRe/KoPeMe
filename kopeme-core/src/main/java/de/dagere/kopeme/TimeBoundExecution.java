@@ -14,8 +14,8 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
  *
  */
 public class TimeBoundExecution {
-   
-   public static enum Type{
+
+   public static enum Type {
       CLASS, METHOD;
    }
 
@@ -92,8 +92,14 @@ public class TimeBoundExecution {
       if (needToStopHart == true && type != Type.CLASS) {
          LOG.error("Stopping " + type + " hard.");
          System.exit(1);
+      } else if (useKieker) {
+         try {
+            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+         } catch (final Exception e) {
+            e.printStackTrace();
+         }
       }
-      
+
       if (testError != null) {
          LOG.trace("Test error != null");
          if (testError instanceof Exception) {
