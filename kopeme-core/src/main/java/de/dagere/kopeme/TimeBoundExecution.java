@@ -68,7 +68,11 @@ public class TimeBoundExecution {
       });
 
       experimentThread.start();
-      waitForThreadEnd(timeout, experimentThread);
+      
+      experimentThread.join(timeout);
+      experimentThread.setFinished(true);
+      LOG.trace("Waiting for 100 ms, whether test stops alone");
+      Thread.sleep(100); 
       LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
 
       if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
@@ -121,12 +125,12 @@ public class TimeBoundExecution {
 
    private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.join(timeoutTime);
-      experimentThread.setFinished(true);
+      Thread.sleep(10);
       LOG.trace("Test should be finished...");
       if (thread.isAlive()) {
          int count = 0;
          while (thread.isAlive() && count < INTERRUPT_TRIES) {
-            LOG.debug("Thread " + type + " not finished, is kill now..");
+            LOG.debug("Thread " + type + " (" + thread.getName() + ") not finished, is kill now..");
             thread.interrupt();
             Thread.sleep(10);
             count++;

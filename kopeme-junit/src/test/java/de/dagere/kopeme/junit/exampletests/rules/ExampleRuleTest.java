@@ -23,9 +23,8 @@ public class ExampleRuleTest {
 	public void setUp() {
 		System.out.println("Führe aus");
 		try {
-			Thread.sleep(200);
+			Thread.sleep(50);
 		} catch (final InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -33,7 +32,7 @@ public class ExampleRuleTest {
 	
 
 	@Test
-	@PerformanceTest(executionTimes = 5, timeout = 1000)
+	@PerformanceTest(executionTimes = 20, timeout = 500)
 	public void testNormal() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {

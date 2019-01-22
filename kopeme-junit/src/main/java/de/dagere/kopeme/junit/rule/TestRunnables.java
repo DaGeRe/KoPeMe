@@ -19,95 +19,89 @@ import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
  */
 public class TestRunnables {
 
-	private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
+   public static interface ThrowingRunnable {
+      void run() throws Throwable;
+   }
 
-	private final Runnable testRunnable, beforeRunnable, afterRunnable;
+   private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 
-	/**
-	 * Initializes the TestRunnables
-	 * 
-	 * @param testRunnable Runnable for the test itself
-	 * @param testClass Class that should be tested
-	 * @param testObject Object that should be tested
-	 */
-	public TestRunnables(final Runnable testRunnable, final Class testClass, final Object testObject) {
-		super();
-		this.testRunnable = testRunnable;
-		final List<Method> beforeMethods = new LinkedList<>();
-		final List<Method> afterMethods = new LinkedList<>();
-		LOG.debug("Klasse: {}", testClass);
-		for (Method classMethod : testClass.getMethods()) {
-			LOG.trace("Prüfe: {}", classMethod);
-			if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
-				if (classMethod.getParameterTypes().length > 0) {
-					throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
-				}
-				beforeMethods.add(classMethod);
-			}
-			if (classMethod.getAnnotation(AfterNoMeasurement.class) != null) {
-				if (classMethod.getParameterTypes().length > 0) {
-					throw new RuntimeException("AfterNoMeasurement-methods must not have arguments");
-				}
-				afterMethods.add(classMethod);
-			}
-		}
+   private final ThrowingRunnable testRunnable, beforeRunnable, afterRunnable;
 
-		beforeRunnable = new Runnable() {
+   /**
+    * Initializes the TestRunnables
+    * 
+    * @param testRunnable Runnable for the test itself
+    * @param testClass Class that should be tested
+    * @param testObject Object that should be tested
+    */
+   public TestRunnables(final ThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
+      super();
+      this.testRunnable = testRunnable;
+      final List<Method> beforeMethods = new LinkedList<>();
+      final List<Method> afterMethods = new LinkedList<>();
+      LOG.debug("Klasse: {}", testClass);
+      for (final Method classMethod : testClass.getMethods()) {
+         LOG.trace("Prüfe: {}", classMethod);
+         if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
+            if (classMethod.getParameterTypes().length > 0) {
+               throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
+            }
+            beforeMethods.add(classMethod);
+         }
+         if (classMethod.getAnnotation(AfterNoMeasurement.class) != null) {
+            if (classMethod.getParameterTypes().length > 0) {
+               throw new RuntimeException("AfterNoMeasurement-methods must not have arguments");
+            }
+            afterMethods.add(classMethod);
+         }
+      }
 
-			@Override
-			public void run() {
-				for (Method method : beforeMethods) {
-					try {
-						method.invoke(testObject);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+      beforeRunnable = new ThrowingRunnable() {
 
-			}
-		};
+         @Override
+         public void run() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            for (final Method method : beforeMethods) {
+               method.invoke(testObject);
+            }
 
-		afterRunnable = new Runnable() {
+         }
+      };
 
-			@Override
-			public void run() {
-				for (Method method : afterMethods) {
-					try {
-						method.invoke(testObject);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
-					}
-				}
+      afterRunnable = new ThrowingRunnable() {
 
-			}
-		};
-	}
+         @Override
+         public void run() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            for (final Method method : afterMethods) {
+               method.invoke(testObject);
+            }
+         }
+      };
+   }
 
-	/**
-	 * Returns the test Runnable
-	 * 
-	 * @return Test-Runnable
-	 */
-	public Runnable getTestRunnable() {
-		return testRunnable;
-	}
+   /**
+    * Returns the test Runnable
+    * 
+    * @return Test-Runnable
+    */
+   public ThrowingRunnable getTestRunnable() {
+      return testRunnable;
+   }
 
-	/**
-	 * Returns the runnable, that should be run before the test
-	 * 
-	 * @return Before-Runnable
-	 */
-	public Runnable getBeforeRunnable() {
-		return beforeRunnable;
-	}
+   /**
+    * Returns the runnable, that should be run before the test
+    * 
+    * @return Before-Runnable
+    */
+   public ThrowingRunnable getBeforeRunnable() {
+      return beforeRunnable;
+   }
 
-	/**
-	 * Returns the runnable, that should be run after the test
-	 * 
-	 * @return After-Runnable
-	 */
-	public Runnable getAfterRunnable() {
-		return afterRunnable;
-	}
+   /**
+    * Returns the runnable, that should be run after the test
+    * 
+    * @return After-Runnable
+    */
+   public ThrowingRunnable getAfterRunnable() {
+      return afterRunnable;
+   }
 }

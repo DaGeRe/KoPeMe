@@ -39,7 +39,6 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       final Finishable finishable = new Finishable() {
          @Override
          public void run() {
-
             try {
                executeSimpleTest(tr);
                if (!assertationvalues.isEmpty()) {
@@ -78,7 +77,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
             final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
             runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions());
          }
-         runMainExecution(tr, "execution ", annotation.executionTimes());
+         if (!isFinished) {
+            runMainExecution(tr, "execution ", annotation.executionTimes());
+         }
       } catch (final AssertionFailedError t) {
          tr.finalizeCollection();
          saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));

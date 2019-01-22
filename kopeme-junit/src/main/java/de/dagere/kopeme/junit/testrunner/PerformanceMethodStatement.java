@@ -23,7 +23,6 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
    protected int warmupExecutions;
    protected final String className, methodName;
    protected final boolean saveFullData;
-   protected boolean isFinished = false;
    protected Finishable mainRunnable;
    protected final int repetitions;
 

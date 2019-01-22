@@ -9,6 +9,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit.rule.TestRunnables.ThrowingRunnable;
 
 /**
  * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution
@@ -42,18 +43,13 @@ public class KoPeMeRule implements TestRule {
          } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
          }
-         PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
+         final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
          if (annotation != null) {
-            final TestRunnables runnables = new TestRunnables(new Runnable() {
+            final TestRunnables runnables = new TestRunnables(new ThrowingRunnable() {
 
                @Override
-               public void run() {
-                  try {
-                     stmt.evaluate();
-                  } catch (final Throwable e) {
-                     // TODO Auto-generated catch block
-                     e.printStackTrace();
-                  }
+               public void run() throws Throwable {
+                  stmt.evaluate();
                }
             }, testClass, testObject);
 

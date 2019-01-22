@@ -1,6 +1,5 @@
 package de.dagere.kopeme.junit.rule;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +33,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 	protected final String filename;
 	protected Method method;
 	protected TestRunnables runnables;
-	protected boolean isFinished;
+	protected boolean isFinished = false;
 	protected DataCollectorList datacollectors;
 
 	protected PerformanceTest annotation;
@@ -102,7 +101,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 		return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
 	}
 
-	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions) throws IllegalAccessException, InvocationTargetException, InterruptedException {
+	protected void runMainExecution(final TestResult tr, final String warmupString, final int executions) throws Throwable {
 		int execution;
 		for (execution = 1; execution <= executions; execution++) {
 
@@ -117,14 +116,14 @@ public abstract class KoPeMeBasicStatement extends Statement {
 			for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
 				LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
 			}
-			if (isFinished) {
-				LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
-				throw new InterruptedException("Test timed out.");
-			}
 			if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 					&& tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
 				break;
 			}
+			if (isFinished) {
+            LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+            throw new InterruptedException("Test timed out.");
+         }
 			final boolean interrupted = Thread.interrupted();
 			LOG.debug("Interrupt state: {}", interrupted);
 			if (interrupted) {
