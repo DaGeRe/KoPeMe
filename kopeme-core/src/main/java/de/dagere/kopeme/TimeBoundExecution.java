@@ -1,6 +1,7 @@
 package de.dagere.kopeme;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
- * Realizes the interruption of a given thread after a given timeout.
+ * Finishes a Finishable after a certain time and finishes Kieker monitoring if enabled.
  * 
  * @author reichelt
  *
@@ -70,7 +71,7 @@ public class TimeBoundExecution {
       waitForThreadEnd(timeout, experimentThread);
       LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
 
-      if (experimentThreadGroup.activeCount() != 0) {
+      if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
          if (experimentThread.isAlive() && useKieker) {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
          }
@@ -85,6 +86,9 @@ public class TimeBoundExecution {
             LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
             needToStopHart = true;
          }
+      } else if (type == Type.CLASS && experimentThread.isAlive()) {
+         LOG.info("Class timed out.");
+         testError = new TimeoutException("Test timed out because of class timeout");
       } else {
          finished = true;
       }

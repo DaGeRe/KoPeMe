@@ -26,7 +26,6 @@ import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
-import junit.framework.AssertionFailedError;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An
@@ -213,7 +212,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
             return new Statement() {
                @Override
                public void evaluate() throws Throwable {
-                  throw new AssertionFailedError("Test class has already timed out.");
+                  throw new TimeoutException("Test timed out because of class timeout.");
                }
             };
          }

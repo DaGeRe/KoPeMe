@@ -166,9 +166,6 @@ public abstract class KoPeMeTestcase extends TestCase {
              PerformanceTestUtils.saveData(errorTestData);
             fail("Test took too long.");
          } else {
-            if (useKieker()) {
-               KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-            }
             PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
          }
       } catch (final Exception e) {
