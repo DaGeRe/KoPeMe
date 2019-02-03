@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -54,6 +55,7 @@ public class TestJUnitTimeoutExecutions {
 		Assert.assertEquals(0, r.getFailureCount());
 	}
 
+	@Ignore
 	@Test
 	public void testMultipleClassTimeout() throws InterruptedException {
 		final JUnitCore jc = new JUnitCore();

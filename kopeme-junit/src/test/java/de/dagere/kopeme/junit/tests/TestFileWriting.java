@@ -93,8 +93,8 @@ public class TestFileWriting {
 
          for (final Result r : timeCollector.getResult()) {
             final int val = (int) r.getValue();
-            final int min = (int) r.getMin();
-            final int max = (int) r.getMax();
+            final int min = r.getMin().intValue();
+            final int max = r.getMax().intValue();
             Assert.assertThat(val, Matchers.greaterThan(0));
             Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
             Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));

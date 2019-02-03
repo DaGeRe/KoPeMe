@@ -91,17 +91,12 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
       logFullData = ptc.logFullData();
       // This is usually a class-wide call, therefore kieker can be set to false, because its activated per-method
       final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), Type.CLASS, false);
-      try {
-         final boolean finished = tbe.execute();
-         LOG.debug("Time: " + (System.nanoTime() - start) / 10E6 + " milliseconds");
-         if (!finished) {
-            classFinished = true;
-            LOG.debug("Not finished.");
-            setTestsToFail(notifier);
-         }
-      } catch (final Exception e) {
-         LOG.debug("Time: " + (System.nanoTime() - start) / 10E6 + " milliseconds");
-         e.printStackTrace();
+      final boolean finished = tbe.execute();
+      LOG.debug("Time: " + (System.nanoTime() - start) / 10E6 + " milliseconds");
+      if (!finished) {
+         classFinished = true;
+         LOG.debug("Not finished.");
+         setTestsToFail(notifier);
       }
    }
 

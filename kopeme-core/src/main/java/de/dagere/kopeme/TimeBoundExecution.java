@@ -51,7 +51,7 @@ public class TimeBoundExecution {
     * 
     * @throws Exception Thrown if an error occurs
     */
-   public final boolean execute() throws Exception {
+   public final boolean execute() {
       boolean finished = false;
 
       experimentThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -67,34 +67,38 @@ public class TimeBoundExecution {
          }
       });
 
-      experimentThread.start();
-      
-      experimentThread.join(timeout);
-      experimentThread.setFinished(true);
-      LOG.trace("Waiting for 100 ms, whether test stops alone");
-      Thread.sleep(100); 
-      LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
+      try {
+         experimentThread.start();
+         experimentThread.join(timeout);
+         experimentThread.setFinished(true);
+         LOG.trace("Waiting for 100 ms, whether test stops alone");
+         Thread.sleep(100);
+         LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
 
-      if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
-         if (experimentThread.isAlive() && useKieker) {
-            KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+         if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
+            if (experimentThread.isAlive() && useKieker) {
+               KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+            }
+            final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
+            experimentThreadGroup.enumerate(stillActiveThreads);
+            LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
+            for (final Thread thread : stillActiveThreads) {
+               waitForThreadEnd(100, thread);
+            }
+            LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
+            if (experimentThreadGroup.activeCount() != 0) {
+               LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
+               needToStopHart = true;
+            }
+         } else if (type == Type.CLASS && experimentThread.isAlive()) {
+            LOG.info("Class timed out.");
+            testError = new TimeoutException("Test timed out because of class timeout");
+         } else {
+            finished = true;
          }
-         final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
-         experimentThreadGroup.enumerate(stillActiveThreads);
-         LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
-         for (final Thread thread : stillActiveThreads) {
-            waitForThreadEnd(100, thread);
-         }
-         LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
-         if (experimentThreadGroup.activeCount() != 0) {
-            LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
-            needToStopHart = true;
-         }
-      } else if (type == Type.CLASS && experimentThread.isAlive()) {
-         LOG.info("Class timed out.");
-         testError = new TimeoutException("Test timed out because of class timeout");
-      } else {
-         finished = true;
+      } catch (final InterruptedException e1) {
+         e1.printStackTrace();
+         testError = e1;
       }
 
       if (needToStopHart == true && type != Type.CLASS) {
@@ -105,13 +109,16 @@ public class TimeBoundExecution {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
          } catch (final Exception e) {
             e.printStackTrace();
+            testError = e;
          }
       }
 
       if (testError != null) {
-         LOG.trace("Test error != null");
-         if (testError instanceof Exception) {
-            throw (Exception) testError;
+         LOG.debug("Test error != null");
+         if (testError instanceof TimeoutException) {
+            throw new RuntimeException(testError);
+         } else if (testError instanceof RuntimeException) {
+            throw (RuntimeException) testError;
          } else if (testError instanceof Error) {
             throw (Error) testError;
          } else {
