@@ -64,9 +64,9 @@
 			<xs:element name="executionTimes" type="xs:long" />
 			<xs:element name="repetitions" type="xs:long" />
 			<xs:element name="version" type="versioninfo" />
-			<xs:element name="min" type="xs:long" />
-			<xs:element name="max" type="xs:long" />
-			<xs:element name="first10percentile" type="xs:double" />
+			<xs:element name="min" type="xs:long" minOccurs="0"/>
+			<xs:element name="max" type="xs:long" minOccurs="0"/>
+			<xs:element name="first10percentile" type="xs:double" minOccurs="0"/>
 			<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence minOccurs="1" maxOccurs="unbounded">

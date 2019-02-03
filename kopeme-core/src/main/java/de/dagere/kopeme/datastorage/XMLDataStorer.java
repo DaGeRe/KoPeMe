@@ -164,6 +164,7 @@ public final class XMLDataStorer implements DataStorer {
 			LOG.info("Storing data to: {}", file.getAbsoluteFile());
 			jaxbContext = JAXBContext.newInstance(Kopemedata.class);
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 			jaxbMarshaller.marshal(currentdata, file);
