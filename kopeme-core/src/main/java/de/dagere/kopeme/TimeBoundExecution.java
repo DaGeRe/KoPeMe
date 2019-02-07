@@ -89,6 +89,7 @@ public class TimeBoundExecution {
             if (experimentThreadGroup.activeCount() != 0) {
                LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
                needToStopHart = true;
+               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
             }
          } else if (type == Type.CLASS && experimentThread.isAlive()) {
             LOG.info("Class timed out.");
@@ -102,9 +103,10 @@ public class TimeBoundExecution {
       }
 
       if (needToStopHart == true && type != Type.CLASS) {
-         LOG.error("Stopping " + type + " hard.");
-         System.exit(1);
-      } else if (useKieker) {
+         LOG.error("Would normally stop " + type + " hard; omitted.");
+////         System.exit(1);
+      } 
+      if (useKieker) {
          try {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
          } catch (final Exception e) {
