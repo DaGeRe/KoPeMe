@@ -89,11 +89,11 @@ public class TimeBoundExecution {
             if (experimentThreadGroup.activeCount() != 0) {
                LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
                needToStopHart = true;
-               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
+//               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
             }
          } else if (type == Type.CLASS && experimentThread.isAlive()) {
             LOG.info("Class timed out.");
-            testError = new TimeoutException("Test timed out because of class timeout");
+//            testError = new TimeoutException("Test timed out because of class timeout");
          } else {
             finished = true;
          }
