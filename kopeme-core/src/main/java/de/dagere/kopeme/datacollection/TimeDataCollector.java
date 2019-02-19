@@ -1,7 +1,7 @@
 package de.dagere.kopeme.datacollection;
 
 /**
- * Saves Time in milliseconds.
+ * Saves time in mikroseconds.
  * 
  * @author dagere
  *
@@ -37,7 +37,7 @@ public final class TimeDataCollector extends DataCollector {
 		stop = System.nanoTime();
 		try {
 			Thread.sleep(1);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			Thread.currentThread().interrupt();
 			// It is ok, if the collection is interrupted
 			// The interrupt status should stay the same

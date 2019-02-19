@@ -98,7 +98,7 @@ public final class PerformanceTestUtils {
 			final TestResult tr = data.getTr();
 			final long timeValue = tr.getValue(TimeDataCollector.class.getName());
 			if (timeValue != 0){
-				LOG.info("Execution Time: {} milliseconds", timeValue / 10E3);
+				LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
 			}
 			for (final String key : tr.getKeys()) {
 				LOG.trace("Collector Key: {}", key);
