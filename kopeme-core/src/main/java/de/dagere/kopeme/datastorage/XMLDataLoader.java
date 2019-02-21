@@ -49,7 +49,7 @@ public final class XMLDataLoader implements DataLoader {
       try {
          jc = JAXBContext.newInstance(Kopemedata.class);
          
-      } catch (JAXBException e) {
+      } catch (final JAXBException e) {
          e.printStackTrace();
       }
      
@@ -63,7 +63,7 @@ public final class XMLDataLoader implements DataLoader {
 	 */
 	private void loadData() throws JAXBException {
 		if (file.exists()) {
-		   Unmarshaller unmarshaller = jc.createUnmarshaller();
+		   final Unmarshaller unmarshaller = jc.createUnmarshaller();
 			data = (Kopemedata) unmarshaller.unmarshal(file);
 			LOG.trace("Daten geladen, Daten: {}", data);
 		} else {
@@ -143,6 +143,12 @@ public final class XMLDataLoader implements DataLoader {
 	 */
 	public Kopemedata getFullData() {
 		return data;
+	}
+	
+	public static Kopemedata loadData(final File dataFile) throws JAXBException {
+	   final Unmarshaller unmarshaller = jc.createUnmarshaller();
+	   final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
+	   return data;
 	}
 
 }
