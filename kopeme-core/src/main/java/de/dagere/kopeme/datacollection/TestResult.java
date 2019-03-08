@@ -31,10 +31,10 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 public class TestResult {
 	private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-	protected Map<String, Long> values = new HashMap<>();
+	protected final Map<String, Long> values = new HashMap<>();
 	protected Map<String, DataCollector> dataCollectors;
 	protected List<Map<String, Long>> realValues;
-	protected List<Long> executionStartTimes = new LinkedList<>();
+	protected final List<Long> executionStartTimes = new LinkedList<>();
 	protected int index = 0;
 	protected Checker checker;
 	private int realExecutions;

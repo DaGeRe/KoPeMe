@@ -124,8 +124,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		final int timeoutTime = getMaximalTime();
 
 		final String testClassName = this.getClass().getName();
-		final TestResult tr = new TestResult(testClassName, executionTimes, DataCollectorList.STANDARD);
-		tr.setCollectors(getDataCollectors());
+		final DataCollectorList datacollectors = getDataCollectors();
+		final TestResult tr = new TestResult(testClassName, executionTimes, datacollectors);
 
 		try {
 			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
