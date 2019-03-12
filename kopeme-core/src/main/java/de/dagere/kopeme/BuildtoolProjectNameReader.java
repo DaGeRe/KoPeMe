@@ -3,7 +3,6 @@ package de.dagere.kopeme;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -29,6 +28,7 @@ public class BuildtoolProjectNameReader {
    private static final Logger LOG = LogManager.getLogger(BuildtoolProjectNameReader.class);
 
    private File pathToConfigFile;
+   ProjectInfo projectInfo;
 
    public BuildtoolProjectNameReader() {
    }
@@ -45,7 +45,7 @@ public class BuildtoolProjectNameReader {
       if (depth == -1 || directory == null || !directory.isDirectory()) {
          return false;
       } else {
-         File[] pomFiles = directory.listFiles(new FileFilter() {
+         final File[] pomFiles = directory.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File pathname) {
                return "pom.xml".equals(pathname.getName()) || "build.gradle".equals(pathname.getName());
@@ -54,8 +54,9 @@ public class BuildtoolProjectNameReader {
          if (pomFiles.length == 1) {
             try {
                pathToConfigFile = pomFiles[0].getCanonicalFile();
+               projectInfo = getProjectInfo(pathToConfigFile);
                return true;
-            } catch (IOException e) {
+            } catch (final IOException e) {
                e.printStackTrace();
             }
             return false;
@@ -69,76 +70,24 @@ public class BuildtoolProjectNameReader {
     * @return the projectname extract by the pom.xml as groupid/artifactid
     */
    public String getProjectName() {
-      return getProjectName(pathToConfigFile);
-   }
-
-   public String getProjectName(final File pomXmlFile) {
-      if (pomXmlFile.getName().equals("pom.xml")) {
-         MavenXpp3Reader reader = new MavenXpp3Reader();
-         try {
-            Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
-            final String groupId = getGroupid(model);
-            return groupId + File.separator + model.getArtifactId();
-         } catch (IOException | XmlPullParserException e) {
-            System.err.println("There was a problem while reading the pom.xml file!");
-            e.printStackTrace();
-            return KoPeMeConfiguration.DEFAULT_PROJECTNAME;
-         }
-      } else if (pomXmlFile.getName().equals("build.gradle")) {
-         try {
-            String group = null;
-            String name = null;
-            List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
-            for (String line : lines) {
-               if (line.contains("group") && line.contains("=")) {
-                  group = readGradleProperty(line);
-               }
-            }
-            File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
-            if (settingsFile.exists()) {
-               List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
-               for (String line : linesSettings) {
-                  if (line.contains("rootProject.name")) {
-                     name = readGradleProperty(line);
-                  }
-               }
-            }
-            File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
-            if (propertyFile.exists()) {
-               List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
-               for (String line : linesProperties) {
-                  if (line.contains("theGroup")) {
-                     group = readGradleProperty(line);
-                  }
-                  if (line.contains("theName")) {
-                     name = readGradleProperty(line);
-                  }
-               }
-            }
-            
-            if (name == null) {
-               name = pomXmlFile.getParentFile().getName();
-            }
-            if (group != null) {
-               return group + File.separator + name;
-            } else {
-               return name;
-            }
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
-         
-      }
-      return KoPeMeConfiguration.DEFAULT_PROJECTNAME;
+      return !projectInfo.getGroupId().equals("") ? projectInfo.getGroupId() + "/" + projectInfo.getArtifactId() : projectInfo.getArtifactId();
    }
    
-   public String readGradleProperty(String line) {
-      String shortString = line.substring(line.indexOf("'") + 1, line.lastIndexOf('\''));
-      String shortened = shortString.trim();
+   public String getArtifactId() {
+      return projectInfo.getArtifactId();
+   }
+
+   public String getGroupId() {
+      return projectInfo.getGroupId();
+   }
+
+   private String readGradleProperty(final String line) {
+      final String shortString = line.substring(line.indexOf("'") + 1, line.lastIndexOf('\''));
+      final String shortened = shortString.trim();
       return shortened;
    }
 
-   public String getGroupid(final Model model) {
+   private String getGroupid(final Model model) {
       if (model.getGroupId() != null) {
          return model.getGroupId();
       } else {
@@ -146,12 +95,65 @@ public class BuildtoolProjectNameReader {
       }
    }
 
-   public ProjectInfo getProjectInfo(final File pomXmlFile) throws FileNotFoundException, IOException, XmlPullParserException {
-      MavenXpp3Reader reader = new MavenXpp3Reader();
-      Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
-      final String groupId = getGroupid(model);
-      ProjectInfo projectInfo = new ProjectInfo(model.getArtifactId(), groupId);
-      return projectInfo;
+   public ProjectInfo getProjectInfo(final File pomXmlFile) {
+      ProjectInfo result = new ProjectInfo(KoPeMeConfiguration.DEFAULT_PROJECTNAME, "");
+      if (pomXmlFile.getName().equals("pom.xml")) {
+         final MavenXpp3Reader reader = new MavenXpp3Reader();
+         try {
+            final Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
+            final String groupId = getGroupid(model);
+            result = new ProjectInfo(model.getArtifactId(), groupId);
+            // return groupId + File.separator + model.getArtifactId();
+         } catch (IOException | XmlPullParserException e) {
+            System.err.println("There was a problem while reading the pom.xml file!");
+            e.printStackTrace();
+         }
+      } else if (pomXmlFile.getName().equals("build.gradle")) {
+         try {
+            String groupId = null;
+            String name = null;
+            final List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
+            for (final String line : lines) {
+               if (line.contains("group") && line.contains("=")) {
+                  groupId = readGradleProperty(line);
+               }
+            }
+            final File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
+            if (settingsFile.exists()) {
+               final List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
+               for (final String line : linesSettings) {
+                  if (line.contains("rootProject.name")) {
+                     name = readGradleProperty(line);
+                  }
+               }
+            }
+            final File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
+            if (propertyFile.exists()) {
+               final List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
+               for (final String line : linesProperties) {
+                  if (line.contains("theGroup")) {
+                     groupId = readGradleProperty(line);
+                  }
+                  if (line.contains("theName")) {
+                     name = readGradleProperty(line);
+                  }
+               }
+            }
+
+            if (name == null) {
+               name = pomXmlFile.getParentFile().getName();
+            }
+            if (groupId != null) {
+               result = new ProjectInfo(name, groupId);
+            } else {
+               result = new ProjectInfo(name, "");
+            }
+         } catch (final IOException e) {
+            e.printStackTrace();
+         }
+
+      }
+      return result;
    }
 
    public static class ProjectInfo {
