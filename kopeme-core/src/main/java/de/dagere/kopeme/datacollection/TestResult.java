@@ -236,6 +236,29 @@ public class TestResult {
 			values.put(collectorName, result);
 		}
 	}
+	
+	public void finalizeCollection(final Throwable thrownException) {
+      if (executionStartTimes.size() != realValues.size()) {
+         throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), thrownException);
+      }
+      final AverageSummerizer as = new AverageSummerizer();
+      for (final String collectorName : getKeys()) {
+         LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+         final List<Long> localValues = new LinkedList<>();
+         for (int i = 0; i < realValues.size() - 1; i++) {
+            // log.debug("I: " + i+ " Value: " +
+            // realValues.get(i).get(collectorName));
+            localValues.add(realValues.get(i).get(collectorName));
+         }
+         Long result;
+         if (collectorSummarizerMap.containsKey(collectorName)) {
+            result = collectorSummarizerMap.get(collectorName).getValue(localValues);
+         } else {
+            result = as.getValue(localValues);
+         }
+         values.put(collectorName, result);
+      }
+   }
 
 	/**
 	 * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a certain time) and this value should be
