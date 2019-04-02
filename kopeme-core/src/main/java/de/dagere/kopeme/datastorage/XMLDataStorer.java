@@ -98,7 +98,9 @@ public final class XMLDataStorer implements DataStorer {
          final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
          Chunk current = null;
          for (final Chunk chunk : dc.getChunk()) {
-            current = chunk;
+        	 if (chunk.getChunkStartTime() == start){
+        		 current = chunk;
+        	 }
          }
          if (current == null) {
             current = new Chunk();
