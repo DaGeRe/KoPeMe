@@ -20,14 +20,14 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
  */
 public class JUnitParseUtil {
    
-   private final static ThreadLocal<JavaParser> javaParser = new ThreadLocal<JavaParser>() {
+   private final static ThreadLocal<JavaParser> JAVA_PARSER = new ThreadLocal<JavaParser>() {
       protected JavaParser initialValue() {
          return new JavaParser();
       };
    };
    
    public synchronized static CompilationUnit parse(final File file) throws FileNotFoundException {
-      final JavaParser parser = javaParser.get();
+      final JavaParser parser = JAVA_PARSER.get();
       final Optional<CompilationUnit> result = parser.parse(file).getResult();
       return result.get();
    }
