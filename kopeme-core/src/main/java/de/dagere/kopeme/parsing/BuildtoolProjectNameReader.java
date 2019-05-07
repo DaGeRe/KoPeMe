@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.parsing;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import de.dagere.kopeme.KoPeMeConfiguration;
 
 /**
  * This class is used to extract a project name string from the pom xml. First you need to class foundPomXml to locate the pom.xml. Second, you can get the project name by calling

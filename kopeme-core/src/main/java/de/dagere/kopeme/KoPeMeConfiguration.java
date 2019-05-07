@@ -2,6 +2,8 @@ package de.dagere.kopeme;
 
 import java.io.File;
 
+import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
+
 /**
  * Configuration Singleton class which can return the projectname of the current project, 
  * set by VM parameter or project model files (e.g. pom.xml) 

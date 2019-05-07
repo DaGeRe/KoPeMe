@@ -6,6 +6,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
+
 public class TestPomProjectNameReader {
 
    public static final String PATH_TO_TESTPOM_SUBFOLDER = "src/test/resources/pomreader/test";
