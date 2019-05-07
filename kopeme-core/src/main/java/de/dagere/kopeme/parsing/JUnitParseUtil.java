@@ -15,40 +15,41 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 
 /**
  * Helps parsing JUnit classes for test execution
+ * 
  * @author reichelt
  *
  */
 public class JUnitParseUtil {
-   
+
    private final static ThreadLocal<JavaParser> JAVA_PARSER = new ThreadLocal<JavaParser>() {
       protected JavaParser initialValue() {
          return new JavaParser();
       };
    };
-   
+
    public synchronized static CompilationUnit parse(final File file) throws FileNotFoundException {
       final JavaParser parser = JAVA_PARSER.get();
       final Optional<CompilationUnit> result = parser.parse(file).getResult();
       return result.get();
    }
-   
-   public List<String> getAnnotatedMethods(File clazzFile, final String fqnAnnotationName, String annotationName) throws FileNotFoundException{
+
+   public List<String> getAnnotatedMethods(File clazzFile, final String fqnAnnotationName, String annotationName) throws FileNotFoundException {
       CompilationUnit unit = parse(clazzFile);
       TypeDeclaration<?> typeDeclaration = unit.getPrimaryType().get();
       if (typeDeclaration instanceof ClassOrInterfaceDeclaration) {
-         return getAnnotatedMethods((ClassOrInterfaceDeclaration)typeDeclaration, fqnAnnotationName, annotationName);
-      }else {
+         return getAnnotatedMethods((ClassOrInterfaceDeclaration) typeDeclaration, fqnAnnotationName, annotationName);
+      } else {
          throw new RuntimeException("Classfile must contain class!");
       }
-      
    }
-   
+
    /**
     * Identifies all methods which are tests
-    * @param clazz   Class which should be analyzed
+    * 
+    * @param clazz Class which should be analyzed
     * @param fqnAnnotationName Full qualified name of the annotation, e.g. de.dagere.kopeme.annotations.PerformanceTest
     * @param annotationName Simple name, e.g. PerformanceTest
-    * @return  List of annotated methods
+    * @return List of annotated methods
     */
    public static List<String> getAnnotatedMethods(final ClassOrInterfaceDeclaration clazz, final String fqnAnnotationName, String annotationName) {
       List<String> methods = new LinkedList<>();
@@ -56,7 +57,7 @@ public class JUnitParseUtil {
          boolean found = false;
          for (final AnnotationExpr annotation : method.getAnnotations()) {
             final String currentName = annotation.getNameAsString();
-            
+
             if (currentName.equals(fqnAnnotationName) || currentName.equals(annotationName)) {
                found = true;
             }
