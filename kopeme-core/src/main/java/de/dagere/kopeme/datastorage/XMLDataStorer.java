@@ -56,7 +56,7 @@ public final class XMLDataStorer implements DataStorer {
     * 
     * @param classname Name of the testclass
     */
-   public void createXMLData(final String classname) {
+   private void createXMLData(final String classname) {
       data = new Kopemedata();
       data.setTestcases(new Testcases());
       final Testcases tc = data.getTestcases();
