@@ -82,15 +82,18 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          }
       } catch (final AssertionFailedError t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+               annotation.repetitions(), annotation.logFullData()));
          throw t;
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+               annotation.repetitions(), annotation.logFullData()));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+            annotation.repetitions(), annotation.logFullData()));
    }
 
    public void setMethodName(final String methodName) {
