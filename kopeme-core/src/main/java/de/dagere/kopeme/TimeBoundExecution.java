@@ -69,6 +69,7 @@ public class TimeBoundExecution {
 
       try {
          experimentThread.start();
+         LOG.debug("Waiting: {}", timeout);
          experimentThread.join(timeout);
          experimentThread.setFinished(true);
          LOG.trace("Waiting for 100 ms, whether test stops alone");
