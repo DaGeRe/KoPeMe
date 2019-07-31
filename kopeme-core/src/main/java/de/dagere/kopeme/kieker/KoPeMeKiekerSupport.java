@@ -76,8 +76,11 @@ public enum KoPeMeKiekerSupport {
          MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
          try {
             LOG.debug("Waiting for Thread-End: {}", thread);
-            thread.join(5000);
-            LOG.debug("Writing finished, Thread: " + thread.isAlive());
+            for (int i = 0; i < 10; i++) {
+               thread.join(6000);
+               LOG.debug("Waiting for Thread-End: {}, Thread alive: {}" + thread.isAlive());
+            }
+            LOG.debug("Writing finished, Thread alive: " + thread.isAlive());
          } catch (InterruptedException e1) {
             e1.printStackTrace();
          }
