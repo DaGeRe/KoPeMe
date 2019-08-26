@@ -100,60 +100,71 @@ public class BuildtoolProjectNameReader {
    public ProjectInfo getProjectInfo(final File pomXmlFile) {
       ProjectInfo result = new ProjectInfo(KoPeMeConfiguration.DEFAULT_PROJECTNAME, "");
       if (pomXmlFile.getName().equals("pom.xml")) {
-         final MavenXpp3Reader reader = new MavenXpp3Reader();
-         try {
-            final Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
-            final String groupId = getGroupid(model);
-            result = new ProjectInfo(model.getArtifactId(), groupId);
-            // return groupId + File.separator + model.getArtifactId();
-         } catch (IOException | XmlPullParserException e) {
-            System.err.println("There was a problem while reading the pom.xml file!");
-            e.printStackTrace();
-         }
+         result = readMaven(pomXmlFile, result);
       } else if (pomXmlFile.getName().equals("build.gradle")) {
-         try {
-            String groupId = null;
-            String name = null;
-            final List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
-            for (final String line : lines) {
-               if (line.contains("group") && line.contains("=")) {
+         result = readGradle(pomXmlFile, result);
+      } else if (pomXmlFile.getName().equals("build.xml")) {
+         LOG.error("Ant is currently not supported");
+      }
+      return result;
+   }
+
+   private ProjectInfo readGradle(final File pomXmlFile, ProjectInfo result) {
+      try {
+         String groupId = null;
+         String name = null;
+         final List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
+         for (final String line : lines) {
+            if (line.contains("group") && line.contains("=")) {
+               groupId = readGradleProperty(line);
+            }
+         }
+         final File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
+         if (settingsFile.exists()) {
+            final List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
+            for (final String line : linesSettings) {
+               if (line.contains("rootProject.name")) {
+                  name = readGradleProperty(line);
+               }
+            }
+         }
+         final File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
+         if (propertyFile.exists()) {
+            final List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
+            for (final String line : linesProperties) {
+               if (line.contains("theGroup")) {
                   groupId = readGradleProperty(line);
                }
-            }
-            final File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
-            if (settingsFile.exists()) {
-               final List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
-               for (final String line : linesSettings) {
-                  if (line.contains("rootProject.name")) {
-                     name = readGradleProperty(line);
-                  }
+               if (line.contains("theName")) {
+                  name = readGradleProperty(line);
                }
             }
-            final File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
-            if (propertyFile.exists()) {
-               final List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
-               for (final String line : linesProperties) {
-                  if (line.contains("theGroup")) {
-                     groupId = readGradleProperty(line);
-                  }
-                  if (line.contains("theName")) {
-                     name = readGradleProperty(line);
-                  }
-               }
-            }
-
-            if (name == null) {
-               name = pomXmlFile.getParentFile().getName();
-            }
-            if (groupId != null) {
-               result = new ProjectInfo(name, groupId);
-            } else {
-               result = new ProjectInfo(name, "");
-            }
-         } catch (final IOException e) {
-            e.printStackTrace();
          }
 
+         if (name == null) {
+            name = pomXmlFile.getParentFile().getName();
+         }
+         if (groupId != null) {
+            result = new ProjectInfo(name, groupId);
+         } else {
+            result = new ProjectInfo(name, "");
+         }
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+      return result;
+   }
+
+   private ProjectInfo readMaven(final File pomXmlFile, ProjectInfo result) {
+      final MavenXpp3Reader reader = new MavenXpp3Reader();
+      try {
+         final Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
+         final String groupId = getGroupid(model);
+         result = new ProjectInfo(model.getArtifactId(), groupId);
+         // return groupId + File.separator + model.getArtifactId();
+      } catch (IOException | XmlPullParserException e) {
+         System.err.println("There was a problem while reading the pom.xml file!");
+         e.printStackTrace();
       }
       return result;
    }
