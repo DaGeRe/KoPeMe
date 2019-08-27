@@ -75,10 +75,10 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          // Run warmup
          if (annotation.warmupExecutions() > 0) {
             final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
-            runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions());
+            runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions(), annotation.repetitions());
          }
          if (!isFinished) {
-            runMainExecution(tr, "execution ", annotation.executionTimes());
+            runMainExecution(tr, "execution ", annotation.executionTimes(), annotation.repetitions());
          }
       } catch (final AssertionFailedError t) {
          tr.finalizeCollection(t);
