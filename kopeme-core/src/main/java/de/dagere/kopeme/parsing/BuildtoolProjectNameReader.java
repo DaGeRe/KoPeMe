@@ -10,11 +10,19 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import de.dagere.kopeme.KoPeMeConfiguration;
 
@@ -22,8 +30,6 @@ import de.dagere.kopeme.KoPeMeConfiguration;
  * This class is used to extract a project name string from the pom xml. First you need to class foundPomXml to locate the pom.xml. Second, you can get the project name by calling
  * getProjectName
  * 
- * 
- * @author dhaeb
  *
  */
 public class BuildtoolProjectNameReader {
@@ -47,15 +53,16 @@ public class BuildtoolProjectNameReader {
       if (depth == -1 || directory == null || !directory.isDirectory()) {
          return false;
       } else {
-         final File[] pomFiles = directory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File pathname) {
-               return "pom.xml".equals(pathname.getName()) || "build.gradle".equals(pathname.getName());
-            }
-         });
-         if (pomFiles.length == 1) {
+         File[] buildFile = findBuildfile(directory, "pom.xml");
+         if (buildFile.length != 1) {
+            buildFile = findBuildfile(directory, "build.gradle");
+         }
+         if (buildFile.length != 1) {
+            buildFile = findBuildfile(directory, "build.xml");
+         }
+         if (buildFile.length == 1) {
             try {
-               pathToConfigFile = pomFiles[0].getCanonicalFile();
+               pathToConfigFile = buildFile[0].getCanonicalFile();
                projectInfo = getProjectInfo(pathToConfigFile);
                return true;
             } catch (final IOException e) {
@@ -66,6 +73,16 @@ public class BuildtoolProjectNameReader {
             return foundPomXml(directory.getParentFile(), depth - 1);
          }
       }
+   }
+
+   private File[] findBuildfile(final File directory, final String filename) {
+      final File[] pomFiles = directory.listFiles(new FileFilter() {
+         @Override
+         public boolean accept(final File pathname) {
+            return filename.equals(pathname.getName()) ;
+         }
+      });
+      return pomFiles;
    }
 
    /**
@@ -97,14 +114,26 @@ public class BuildtoolProjectNameReader {
       }
    }
 
-   public ProjectInfo getProjectInfo(final File pomXmlFile) {
+   public ProjectInfo getProjectInfo(final File buildFile) {
       ProjectInfo result = new ProjectInfo(KoPeMeConfiguration.DEFAULT_PROJECTNAME, "");
-      if (pomXmlFile.getName().equals("pom.xml")) {
-         result = readMaven(pomXmlFile, result);
-      } else if (pomXmlFile.getName().equals("build.gradle")) {
-         result = readGradle(pomXmlFile, result);
-      } else if (pomXmlFile.getName().equals("build.xml")) {
-         LOG.error("Ant is currently not supported");
+      if (buildFile.getName().equals("pom.xml")) {
+         result = readMaven(buildFile, result);
+      } else if (buildFile.getName().equals("build.gradle")) {
+         result = readGradle(buildFile, result);
+      } else if (buildFile.getName().equals("build.xml")) {
+         try {
+            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder builder = factory.newDocumentBuilder();
+            final Document doc = builder.parse(buildFile);
+            final NodeList projectNodes = doc.getElementsByTagName("project");
+            final Node projectNode = projectNodes.item(0);
+            final Node nameAttribute = projectNode.getAttributes().getNamedItem("name");
+            if (nameAttribute != null) {
+               result = new ProjectInfo(nameAttribute.getNodeValue(), "");
+            }
+         } catch (SAXException | IOException | ParserConfigurationException e) {
+            e.printStackTrace();
+         }
       }
       return result;
    }
@@ -119,15 +148,7 @@ public class BuildtoolProjectNameReader {
                groupId = readGradleProperty(line);
             }
          }
-         final File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
-         if (settingsFile.exists()) {
-            final List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
-            for (final String line : linesSettings) {
-               if (line.contains("rootProject.name")) {
-                  name = readGradleProperty(line);
-               }
-            }
-         }
+         name = readSettingsfile(pomXmlFile, name);
          final File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
          if (propertyFile.exists()) {
             final List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
@@ -153,6 +174,19 @@ public class BuildtoolProjectNameReader {
          e.printStackTrace();
       }
       return result;
+   }
+
+   private String readSettingsfile(final File pomXmlFile, String name) throws IOException {
+      final File settingsFile = new File(pomXmlFile.getParentFile(), "settings.gradle");
+      if (settingsFile.exists()) {
+         final List<String> linesSettings = Files.readAllLines(Paths.get(settingsFile.toURI()));
+         for (final String line : linesSettings) {
+            if (line.contains("rootProject.name")) {
+               name = readGradleProperty(line);
+            }
+         }
+      }
+      return name;
    }
 
    private ProjectInfo readMaven(final File pomXmlFile, ProjectInfo result) {

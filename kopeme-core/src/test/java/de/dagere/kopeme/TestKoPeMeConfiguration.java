@@ -22,9 +22,9 @@ public class TestKoPeMeConfiguration {
 	@Test
 	public void testFindProjectNameUsingPom() throws Exception {
 		try {
-			System.setProperty(KoPeMeConfiguration.KOPEME_WORKINGDIR_PROPNAME, TestPomProjectNameReader.PATH_TO_TESTPOM_SUBFOLDER);
+			System.setProperty(KoPeMeConfiguration.KOPEME_WORKINGDIR_PROPNAME, TestBuildtoolProjectNameReader.PATH_TO_TESTPOM_SUBFOLDER);
 			System.setProperty(KoPeMeConfiguration.KOPEME_SEARCHDEPTH_PROPNAME, "1");
-			assertEquals(TestPomProjectNameReader.TESTPOM_EXPECTED_PROJECT_NAME, new KoPeMeConfiguration().getProjectName());
+			assertEquals(TestBuildtoolProjectNameReader.TESTPOM_EXPECTED_PROJECT_NAME, new KoPeMeConfiguration().getProjectName());
 		} finally {
 			System.clearProperty(KoPeMeConfiguration.KOPEME_WORKINGDIR_PROPNAME);
 			System.clearProperty(KoPeMeConfiguration.KOPEME_SEARCHDEPTH_PROPNAME);
