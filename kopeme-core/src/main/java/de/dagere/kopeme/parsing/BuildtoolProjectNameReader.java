@@ -121,19 +121,24 @@ public class BuildtoolProjectNameReader {
       } else if (buildFile.getName().equals("build.gradle")) {
          result = readGradle(buildFile, result);
       } else if (buildFile.getName().equals("build.xml")) {
-         try {
-            final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            final DocumentBuilder builder = factory.newDocumentBuilder();
-            final Document doc = builder.parse(buildFile);
-            final NodeList projectNodes = doc.getElementsByTagName("project");
-            final Node projectNode = projectNodes.item(0);
-            final Node nameAttribute = projectNode.getAttributes().getNamedItem("name");
-            if (nameAttribute != null) {
-               result = new ProjectInfo(nameAttribute.getNodeValue(), "");
-            }
-         } catch (SAXException | IOException | ParserConfigurationException e) {
-            e.printStackTrace();
+         result = readAnt(buildFile, result);
+      }
+      return result;
+   }
+
+   private ProjectInfo readAnt(final File buildFile, ProjectInfo result) {
+      try {
+         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+         final DocumentBuilder builder = factory.newDocumentBuilder();
+         final Document doc = builder.parse(buildFile);
+         final NodeList projectNodes = doc.getElementsByTagName("project");
+         final Node projectNode = projectNodes.item(0);
+         final Node nameAttribute = projectNode.getAttributes().getNamedItem("name");
+         if (nameAttribute != null) {
+            result = new ProjectInfo(nameAttribute.getNodeValue(), "");
          }
+      } catch (SAXException | IOException | ParserConfigurationException e) {
+         e.printStackTrace();
       }
       return result;
    }
