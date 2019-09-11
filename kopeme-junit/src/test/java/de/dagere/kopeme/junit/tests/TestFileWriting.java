@@ -46,9 +46,9 @@ public class TestFileWriting {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTest.class);
       final String testClass = JUnitAdditionTest.class.getName();
-      final File f = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
-      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-      f.delete();
+      final File file = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
+      Assert.assertTrue("Datei " + file + " sollte existieren", file.exists());
+      file.delete();
    }
 
    @Test
@@ -56,9 +56,9 @@ public class TestFileWriting {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTest.class);
       jc.run(JUnitAdditionTest.class);
-      final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
-      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-      f.delete();
+      final File file = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
+      Assert.assertTrue("Datei " + file + " sollte existieren", file.exists());
+      file.delete();
    }
 
    @Test
@@ -98,6 +98,7 @@ public class TestFileWriting {
             Assert.assertThat(val, Matchers.greaterThan(0));
             Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
             Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
+            Assert.assertEquals(r.getExecutionTimes(), 6);
          }
 
       } catch (final JAXBException e1) {
