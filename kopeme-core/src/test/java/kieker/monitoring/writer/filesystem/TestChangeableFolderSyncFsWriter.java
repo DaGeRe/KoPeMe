@@ -1,14 +1,12 @@
 package kieker.monitoring.writer.filesystem;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.concurrent.ExecutionException;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -16,7 +14,6 @@ import org.junit.Test;
 
 import de.dagere.kopeme.TestUtils;
 import kieker.common.configuration.Configuration;
-import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
 
@@ -54,18 +51,6 @@ public class TestChangeableFolderSyncFsWriter {
 		Sample.MONITORING_CONTROLLER.enableMonitoring();
 	}
 
-	private static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
-		final OperationExecutionRecord e = new OperationExecutionRecord(
-				methodSignature,
-				OperationExecutionRecord.NO_SESSION_ID,
-				OperationExecutionRecord.NO_TRACE_ID,
-				tin, tout, "myHost",
-				OperationExecutionRecord.NO_EOI_ESS,
-				OperationExecutionRecord.NO_EOI_ESS);
-		Sample.MONITORING_CONTROLLER.newMonitoringRecord(e);
-	}
-
-
 	@Test
 	public void testConfigConvertion() throws Exception {
 		final Configuration c = new Configuration();
@@ -82,35 +67,18 @@ public class TestChangeableFolderSyncFsWriter {
 	public void testChangesFolderCorrectly() throws Exception {
 		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance();
 		final int rounds = 15, lines = 15;
-		runFixture(rounds);
+		KiekerTestHelper.runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME);
-		runFixture(rounds);
+		KiekerTestHelper.runFixture(rounds);
 		testable.setFolder(NEW_FOLDER_AT_RUNTIME2);
-		runFixture(rounds);
+		KiekerTestHelper.runFixture(rounds);
 		assertKiekerFileConstainsLines(DEFAULT_FOLDER, lines + 2); // TODO due to the meta data entry, which are written to every folder
 		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME, lines + 1);
 		assertKiekerFileConstainsLines(NEW_FOLDER_AT_RUNTIME2, lines + 1);
 	}
 
-	private void runFixture(final int rounds) throws InterruptedException,
-			ExecutionException {
-		for (int i = 0; i < rounds / 3; i++) {
-			final Sample fixture = new Sample();
-			final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-			fixture.a();
-			final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".a()");
-		}
-		Thread.sleep(5);//TODO: Remove dirty workaround..
-	}
-
 	private void assertKiekerFileConstainsLines(final File kiekerFolder, final int lines) throws IOException {
-		final File[] listFiles = kiekerFolder.listFiles();
-		assertEquals(1, listFiles.length); // only the kieker root dir
-		final File kiekerRootDir = listFiles[0];
-		assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
-		final File[] kiekerFiles = kiekerRootDir.listFiles();
-		assertEquals("There should be 2 kieker files!", 2, kiekerFiles.length);
+		final File kiekerRootDir = KiekerTestHelper.assertKiekerDir(kiekerFolder);
 		final File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
 
 			@Override

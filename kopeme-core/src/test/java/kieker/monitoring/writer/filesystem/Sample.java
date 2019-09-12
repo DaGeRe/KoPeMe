@@ -12,7 +12,7 @@ public class Sample {
 		final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
 		b();
 		final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
-		TestAggregatedTreeWriter.createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".b()");
+		KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".b()");
 		Thread.sleep(2L);
 	}
 
@@ -20,7 +20,7 @@ public class Sample {
 		final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
 		c();
 		final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
-		TestAggregatedTreeWriter.createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".c()");
+		KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".c()");
 	}
 
 	protected void c() throws InterruptedException {

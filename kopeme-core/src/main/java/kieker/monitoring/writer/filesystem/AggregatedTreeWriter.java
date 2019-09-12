@@ -28,6 +28,8 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
    public static final String PREFIX = AggregatedTreeWriter.class.getName() + ".";
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
    public static final String CONFIG_WRITEINTERVAL = PREFIX + "writeInterval";
+   public static final String CONFIG_WARMUP = PREFIX + "warmup";
+   public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
 
    private static AggregatedTreeWriter instance;
 
