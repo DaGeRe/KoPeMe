@@ -2,6 +2,7 @@ package kieker.monitoring.writer.filesystem;
 
 import java.io.File;
 
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -21,10 +22,10 @@ class AggregatedData {
 
    @JsonSerialize(using = SummaryStatisticsSerializer.class)
    @JsonDeserialize(using = SummaryStatisticsDeserializer.class)
-   private final SummaryStatistics statistic;
+   private final StatisticalSummary statistic;
 
    @JsonCreator
-   public AggregatedData(final @JsonProperty(value = "warmup") int warmup, final @JsonProperty(value = "statistic") SummaryStatistics statistic) {
+   public AggregatedData(final @JsonProperty(value = "warmup") int warmup, final @JsonProperty(value = "statistic") StatisticalSummary statistic) {
       this.containedFile = null;
       this.warmup = warmup;
       this.maxWarmup = -1;
@@ -41,7 +42,9 @@ class AggregatedData {
       if (warmup < maxWarmup) {
          warmup++;
       } else {
-         statistic.addValue(value);
+         if (statistic instanceof SummaryStatistics) {
+            ((SummaryStatistics) statistic).addValue(value);
+         }
       }
    }
 
@@ -53,7 +56,7 @@ class AggregatedData {
       return warmup;
    }
 
-   public SummaryStatistics getStatistic() {
+   public StatisticalSummary getStatistic() {
       return statistic;
    }
 }
