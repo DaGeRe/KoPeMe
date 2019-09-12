@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -35,8 +33,10 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
 
    private final File destination;
    private final int writeInterval;
+   private final int warmup;
+   private final int entriesPerFile;
    private final FinishableWriter writer = new FinishableWriter();
-   private final Map<CallTreeNode, SummaryStatistics> nodeMap = new ConcurrentHashMap<>();
+   private final Map<CallTreeNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
 
    private static final ObjectMapper MAPPER = new ObjectMapper();
    static {
@@ -70,7 +70,8 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       }
 
       writeInterval = configuration.getIntProperty(CONFIG_WRITEINTERVAL, 5000);
-
+      warmup = configuration.getIntProperty(CONFIG_WARMUP, 0);
+      entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
    }
 
    class FinishableWriter implements Runnable {
@@ -86,7 +87,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
             try {
                Thread.sleep(writeInterval);
             } catch (final InterruptedException e) {
-               e.printStackTrace();
+               System.out.println("Writing is finished...");
             }
             if (running) {
                try {
@@ -114,12 +115,12 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
          final CallTreeNode node = new CallTreeNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
-         SummaryStatistics statistics = nodeMap.get(node);
-         if (statistics == null) {
-            statistics = new SummaryStatistics();
-            nodeMap.put(node, statistics);
+         AggregatedData data = nodeMap.get(node);
+         if (data == null) {
+            data = new AggregatedData(destination, warmup);
+            nodeMap.put(node, data);
          }
-         statistics.addValue(operation.getTin() - operation.getTout());
+         data.addValue(operation.getTin() - operation.getTout());
       }
 
    }

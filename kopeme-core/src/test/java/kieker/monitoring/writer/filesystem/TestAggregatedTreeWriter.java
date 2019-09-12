@@ -5,13 +5,16 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.junit.BeforeClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
@@ -29,8 +32,8 @@ public class TestAggregatedTreeWriter {
 
    private static final File DEFAULT_FOLDER = new File("target/test-classes/kieker_testresults");
 
-   @BeforeClass
-   public static void setupClass() {
+   @Before
+   public void setupClass() {
       emptyFolder(DEFAULT_FOLDER);
 
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
@@ -38,6 +41,7 @@ public class TestAggregatedTreeWriter {
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
       config.setProperty(AggregatedTreeWriter.CONFIG_WRITEINTERVAL, "5");
+      config.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, "1");
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
    }
@@ -55,24 +59,51 @@ public class TestAggregatedTreeWriter {
    }
 
    @Test
-   public void testBigWriting() throws Exception {
-      KiekerTestHelper.runFixture(1);
-      for (int j = 0; j < 10000; j++) {
-         final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-         KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method" + j + "()");
+   public void testWarmup() throws Exception {
+      final int methods = 250;
+      for (int i = 0; i < 3; i++) {
+         for (int j = 0; j < methods; j++) {
+            final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
+            final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
+            KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method" + j + "()");
+         }
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      assertJSONFileContainsMethods(DEFAULT_FOLDER, 3); // TODO due to the meta data entry, which are written to every folder
+      assertJSONFileContainsMethods(DEFAULT_FOLDER, methods); // TODO due to the meta data entry, which are written to every folder
    }
 
-   private void assertJSONFileContainsMethods(final File kiekerFolder, final int methods) throws IOException {
+   @Test
+   public void testBigWriting() throws Exception {
+      final int methods = 250;
+      for (int i = 0; i < 3; i++) {
+         for (int j = 0; j < methods; j++) {
+            final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
+            final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
+            KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method" + j + "()");
+         }
+      }
+      KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
+      final Map<CallTreeNode, AggregatedData> data = assertJSONFileContainsMethods(DEFAULT_FOLDER, methods); // TODO due to the meta data entry, which are written to every folder
+      
+      final CallTreeNode expectedNode = new CallTreeNode(-1, -1, "public void NonExistant.method1()");
+      final AggregatedData summaryStatistics = data.get(expectedNode);
+      Assert.assertNotNull(summaryStatistics);
+      Assert.assertEquals(Double.NaN, summaryStatistics.getStatistic().getMean());
+   }
+
+   private Map<CallTreeNode, AggregatedData> assertJSONFileContainsMethods(final File kiekerFolder, final int methods) throws IOException {
       final File currentMeasureFile = assertOneMeasureFile(kiekerFolder);
       System.out.println("File: " + currentMeasureFile.getAbsolutePath());
 
-      final Map<CallTreeNode, SummaryStatistics> data = new ObjectMapper().readValue(currentMeasureFile, Map.class);
-
-      assertEquals(3, data.keySet().size());
+      final ObjectMapper MAPPER = new ObjectMapper();
+      final SimpleModule keyDeserializer = new SimpleModule();
+      keyDeserializer.addKeyDeserializer(CallTreeNode.class, new CallTreeNodeDeserializer());
+      MAPPER.registerModule(keyDeserializer);
+      final Map<CallTreeNode, AggregatedData> data = MAPPER.readValue(currentMeasureFile, 
+            new TypeReference<HashMap<CallTreeNode, AggregatedData>>() { });
+      assertEquals(methods, data.keySet().size());
+      
+      return data;
    }
 
    private File assertOneMeasureFile(final File kiekerFolder) {
