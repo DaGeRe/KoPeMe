@@ -10,6 +10,11 @@ class CallTreeNode {
       this.ess = ess;
       this.call = call;
    }
+   
+   @Override
+   public int hashCode() {
+      return eoi + ess + call.hashCode();
+   }
 
    @Override
    public boolean equals(final Object other) {
@@ -18,5 +23,10 @@ class CallTreeNode {
          return eoi == node.eoi && ess == node.ess && call.equals(node.call);
       }
       return false;
+   }
+   
+   @Override
+   public String toString() {
+      return eoi + "_" + ess +"_" + call;
    }
 }

@@ -22,8 +22,8 @@ import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
  * @author dhaeb
  *
  */
-public enum KoPeMeKiekerSupport {
-   INSTANCE;
+public class KoPeMeKiekerSupport {
+   public static final KoPeMeKiekerSupport INSTANCE = new KoPeMeKiekerSupport();
    private static final Logger LOG = LogManager.getLogger(KoPeMeKiekerSupport.class);
 
    private final FolderProvider fp;
@@ -63,27 +63,7 @@ public enum KoPeMeKiekerSupport {
       LOG.debug("Disabling Monitoring..");
       MonitoringController.getInstance().disableMonitoring();
       try {
-         final Field field = MonitoringController.class.getDeclaredField("writerController");
-         field.setAccessible(true);
-         final WriterController writerController = (WriterController) field.get(MonitoringController.getInstance());
-
-         final Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
-         cleanup.setAccessible(true);
-         cleanup.invoke(writerController);
-
-         final Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
-         monitoringWriterThreadField.setAccessible(true);
-         final MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
-         try {
-            LOG.debug("Waiting for Thread-End: {}", thread);
-            for (int i = 0; i < 100; i++) {
-               thread.join(6000);
-               LOG.debug("Waiting for Thread-End: {}, Thread alive: {}", thread, thread.isAlive());
-            }
-            LOG.debug("Writing finished, Thread alive: " + thread.isAlive());
-         } catch (final InterruptedException e1) {
-            e1.printStackTrace();
-         }
+         final Field field = finishMonitoring(MonitoringController.getInstance());
 
          final WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
          field.set(MonitoringController.getInstance(), newController);
@@ -95,6 +75,31 @@ public enum KoPeMeKiekerSupport {
       } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
          e1.printStackTrace();
       }
+   }
+
+   public static Field finishMonitoring(final IMonitoringController monitoringController) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+      final Field field = MonitoringController.class.getDeclaredField("writerController");
+      field.setAccessible(true);
+      final WriterController writerController = (WriterController) field.get(monitoringController);
+
+      final Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
+      cleanup.setAccessible(true);
+      cleanup.invoke(writerController);
+
+      final Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
+      monitoringWriterThreadField.setAccessible(true);
+      final MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
+      try {
+         LOG.debug("Waiting for Thread-End: {}", thread);
+         for (int i = 0; i < 100 && thread.isAlive(); i++) {
+            thread.join(6000);
+            LOG.debug("Waiting for Thread-End: {}, Thread alive: {}", thread, thread.isAlive());
+         }
+         LOG.debug("Writing finished, Thread alive: " + thread.isAlive());
+      } catch (final InterruptedException e1) {
+         e1.printStackTrace();
+      }
+      return field;
    }
 
 }

@@ -18,7 +18,6 @@ import de.dagere.kopeme.TestUtils;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
-import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 
 /**
@@ -28,8 +27,6 @@ import kieker.monitoring.core.controller.MonitoringController;
  *
  */
 public class TestChangeableFolderSyncFsWriter {
-
-	private static IMonitoringController MONITORING_CONTROLLER;
 
 	private static final File DEFAULT_FOLDER = new File("target/test-classes/kieker_testresults");
 	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/test-classes/kieker_testresults_changed_folder");
@@ -53,8 +50,8 @@ public class TestChangeableFolderSyncFsWriter {
 		config.setProperty(ChangeableFolderWriter.CONFIG_FLUSH, "true");
 		config.setProperty(ChangeableFolderWriter.CONFIG_BUFFER, "8192");
 		config.setProperty(ChangeableFolderWriter.REAL_WRITER, "AsciiFileWriter");
-		MONITORING_CONTROLLER = MonitoringController.createInstance(config);
-		MONITORING_CONTROLLER.enableMonitoring();
+		Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
+		Sample.MONITORING_CONTROLLER.enableMonitoring();
 	}
 
 	private static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
@@ -65,29 +62,9 @@ public class TestChangeableFolderSyncFsWriter {
 				tin, tout, "myHost",
 				OperationExecutionRecord.NO_EOI_ESS,
 				OperationExecutionRecord.NO_EOI_ESS);
-		MONITORING_CONTROLLER.newMonitoringRecord(e);
+		Sample.MONITORING_CONTROLLER.newMonitoringRecord(e);
 	}
 
-	public static class Sample {
-		public void a() throws InterruptedException, ExecutionException {
-			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
-			b();
-			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
-			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".b()");
-			Thread.sleep(2L);
-		}
-
-		private void b() throws InterruptedException {
-			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
-			c();
-			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
-			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".c()");
-		}
-
-		protected void c() throws InterruptedException {
-			Thread.sleep(2L);
-		}
-	}
 
 	@Test
 	public void testConfigConvertion() throws Exception {
@@ -119,9 +96,9 @@ public class TestChangeableFolderSyncFsWriter {
 			ExecutionException {
 		for (int i = 0; i < rounds / 3; i++) {
 			final Sample fixture = new Sample();
-			final long tin = MONITORING_CONTROLLER.getTimeSource().getTime();
+			final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
 			fixture.a();
-			final long tout = MONITORING_CONTROLLER.getTimeSource().getTime();
+			final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
 			createAndWriteOperationExecutionRecord(tin, tout, "public void " + Sample.class.getName() + ".a()");
 		}
 		Thread.sleep(5);//TODO: Remove dirty workaround..
