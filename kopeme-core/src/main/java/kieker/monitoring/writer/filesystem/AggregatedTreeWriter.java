@@ -72,7 +72,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
          final CallTreeNode node = new CallTreeNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
          writer.write(node, operation.getTin() - operation.getTout());
       }
-
    }
 
    @Override

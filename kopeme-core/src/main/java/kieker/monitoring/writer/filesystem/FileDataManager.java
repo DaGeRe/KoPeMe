@@ -20,11 +20,12 @@ class FileDataManager implements Runnable {
    static {
       MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
    }
-
+   
    private final AggregatedTreeWriter aggregatedTreeWriter;
-   private File destination;
+   
+   private File currentDestination;
    private Map<CallTreeNode, File> fileMapping = new HashMap<>();
-   private Map<File, Map<CallTreeNode, AggregatedData>> fileData = new HashMap<>();
+   private Map<File, Map<CallTreeNode, AggregatedData>> fileData = new ConcurrentHashMap<>();
    private Set<File> changedFiles = new HashSet<>();
    private final Map<CallTreeNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
 
@@ -36,8 +37,8 @@ class FileDataManager implements Runnable {
     */
    FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
-      destination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
-      fileData.put(destination, new HashMap<>());
+      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
+      fileData.put(currentDestination, new HashMap<>());
 
    }
 
@@ -71,7 +72,6 @@ class FileDataManager implements Runnable {
                   changedFiles = new HashSet<>();
                   for (final File file : oldFiles) {
                      final Map<CallTreeNode, AggregatedData> partialData = fileData.get(file);
-                     System.out.println("Writing: " + file + " " + partialData);
                      MAPPER.writeValue(file, partialData);
                   }
                }
@@ -80,14 +80,12 @@ class FileDataManager implements Runnable {
             }
          }
       }
-
    }
 
    public void write(final CallTreeNode node, final long duration) {
       final AggregatedData data = getData(node);
       data.addValue(duration);
       final File changedNode = fileMapping.get(node);
-      System.out.println("Need to write to: " + changedNode + " " + node);
       changedFiles.add(changedNode);
    }
 
@@ -97,14 +95,14 @@ class FileDataManager implements Runnable {
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
             currentEntries = 0;
             fileIndex++;
-            destination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".json");
-            fileData.put(destination, new HashMap<>());
+            currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".json");
+            fileData.put(currentDestination, new HashMap<>());
          } 
-         data = new AggregatedData(destination, aggregatedTreeWriter.getWarmup());
+         data = new AggregatedData(currentDestination, aggregatedTreeWriter.getWarmup());
          nodeMap.put(node, data);
-         fileMapping.put(node, destination);
+         fileMapping.put(node, currentDestination);
          
-         final Map<CallTreeNode, AggregatedData> partialData = fileData.get(destination);
+         final Map<CallTreeNode, AggregatedData> partialData = fileData.get(currentDestination);
          partialData.put(node, data);
          currentEntries++;
          

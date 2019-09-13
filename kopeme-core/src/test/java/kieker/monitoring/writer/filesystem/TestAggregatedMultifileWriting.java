@@ -32,12 +32,6 @@ public class TestAggregatedMultifileWriting {
             KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method" + j + "()");
          }
       }
-      try {
-         Thread.sleep(1500);
-      } catch (final InterruptedException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
       final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestAggregatedTreeWriter.DEFAULT_FOLDER);
