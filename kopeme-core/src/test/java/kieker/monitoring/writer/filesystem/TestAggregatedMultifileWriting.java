@@ -58,13 +58,5 @@ public class TestAggregatedMultifileWriting {
 
       final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestAggregatedTreeWriter.DEFAULT_FOLDER);
       Assert.assertEquals(2, measureFile.length);
-
-//      final Map<CallTreeNode, AggregatedData> data = assertJSONFileContainsMethods(TestAggregatedTreeWriter.DEFAULT_FOLDER, methods); // TODO due to the meta data entry, which are written to every folder
-
-//      final CallTreeNode expectedNode = new CallTreeNode(-1, -1, "public void NonExistant.method1()");
-//      data.keySet().forEach(value -> System.out.println(value.getCall() + " " + value.getClass() + " " + value.hashCode()));
-//      final AggregatedData summaryStatistics = data.get(expectedNode);
-//      System.out.println("Keys: " + data.keySet().size());
-//      Assert.assertNotNull(summaryStatistics);
    }
 }

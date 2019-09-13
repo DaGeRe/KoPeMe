@@ -77,6 +77,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
    @Override
    public void onTerminating() {
       try {
+         System.out.println("Finishing AggregatedTreeWriter");
          writer.finish();
          writerThread.interrupt();
          writer.finalWriting();

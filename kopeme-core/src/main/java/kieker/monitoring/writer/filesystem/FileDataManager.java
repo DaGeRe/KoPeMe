@@ -113,6 +113,7 @@ class FileDataManager implements Runnable {
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
       synchronized (nodeMap) {
          for (final Entry<File, Map<CallTreeNode, AggregatedData>> entry : fileData.entrySet()) {
+            System.out.println("Final writing to " + entry.getKey());
             MAPPER.writeValue(entry.getKey(), entry.getValue());
          }
       }
