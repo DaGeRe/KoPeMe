@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -61,10 +62,9 @@ public class KiekerTestHelper {
 
    public static File assertKiekerDir(final File kiekerFolder) {
       final File[] listFiles = kiekerFolder.listFiles();
-      assertEquals(1, listFiles.length); // only the kieker root dir
+      assertEquals("Found not exactly one folder: " + Arrays.toString(listFiles), 1, listFiles.length); // only the kieker root dir
       final File kiekerRootDir = listFiles[0];
       assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
-      final File[] kiekerFiles = kiekerRootDir.listFiles();
       return kiekerRootDir;
    }
 
