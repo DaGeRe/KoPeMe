@@ -3,12 +3,7 @@ package kieker.monitoring.writer.filesystem;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -31,17 +26,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
 
    private static AggregatedTreeWriter instance;
 
-   private final File destination;
+   private final File resultFolder;
    private final int writeInterval;
    private final int warmup;
    private final int entriesPerFile;
-   private final FinishableWriter writer = new FinishableWriter();
-   private final Map<CallTreeNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
-
-   private static final ObjectMapper MAPPER = new ObjectMapper();
-   static {
-      MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-   }
+   private final FileDataManager writer;
 
    private Thread writerThread;
 
@@ -58,49 +47,15 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       LOG.info("Init..");
       // this.configuration = configuration;
       instance = this;
-      final String pathname = configuration.getStringProperty(CONFIG_PATH).equals("") ? "default.json" : configuration.getStringProperty(CONFIG_PATH);
-      if (pathname.endsWith(".json")) {
-         destination = new File(pathname);
-         destination.getParentFile().mkdirs();
-      } else {
-         final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
-         final File parentFolder = kiekerPath.toFile();
-         parentFolder.mkdirs();
-         destination = new File(kiekerPath.toFile(), "measurements.json");
-      }
+      final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
+      resultFolder = kiekerPath.toFile();
+      resultFolder.mkdirs();
 
       writeInterval = configuration.getIntProperty(CONFIG_WRITEINTERVAL, 5000);
       warmup = configuration.getIntProperty(CONFIG_WARMUP, 0);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
-   }
-
-   class FinishableWriter implements Runnable {
-      private boolean running = true;
-
-      private void finish() {
-         running = false;
-      }
-
-      @Override
-      public void run() {
-         while (running) {
-            try {
-               Thread.sleep(writeInterval);
-            } catch (final InterruptedException e) {
-               System.out.println("Writing is finished...");
-            }
-            if (running) {
-               try {
-                  synchronized (nodeMap) {
-                     MAPPER.writeValue(destination, nodeMap);
-                  }
-               } catch (final IOException e) {
-                  e.printStackTrace();
-               }
-            }
-         }
-
-      }
+      
+      writer = new FileDataManager(this);
    }
 
    @Override
@@ -115,12 +70,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
          final CallTreeNode node = new CallTreeNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
-         AggregatedData data = nodeMap.get(node);
-         if (data == null) {
-            data = new AggregatedData(destination, warmup);
-            nodeMap.put(node, data);
-         }
-         data.addValue(operation.getTin() - operation.getTout());
+         writer.write(node, operation.getTin() - operation.getTout());
       }
 
    }
@@ -130,12 +80,34 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       try {
          writer.finish();
          writerThread.interrupt();
-         synchronized (nodeMap) {
-            MAPPER.writeValue(destination, nodeMap);
-         }
+         writer.finalWriting();
       } catch (final IOException e) {
          e.printStackTrace();
       }
+   }
+
+   public Thread getWriterThread() {
+      return writerThread;
+   }
+
+   public void setWriterThread(final Thread writerThread) {
+      this.writerThread = writerThread;
+   }
+
+   public int getWriteInterval() {
+      return writeInterval;
+   }
+
+   public int getWarmup() {
+      return warmup;
+   }
+
+   public int getEntriesPerFile() {
+      return entriesPerFile;
+   }
+   
+   public File getResultFolder() {
+      return resultFolder;
    }
 
 }

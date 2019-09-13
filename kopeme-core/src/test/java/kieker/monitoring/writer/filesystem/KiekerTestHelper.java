@@ -4,11 +4,38 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 
 public class KiekerTestHelper {
+
+   static final ObjectMapper MAPPER = new ObjectMapper();
+
+   static {
+      final SimpleModule keyDeserializer = new SimpleModule();
+      keyDeserializer.addKeyDeserializer(CallTreeNode.class, new CallTreeNodeDeserializer());
+      MAPPER.registerModule(keyDeserializer);
+   }
+   
+   public static Map<CallTreeNode, AggregatedData> readAggregatedDataFile(final File currentMeasureFile) throws JsonParseException, JsonMappingException, IOException {
+      final Map<CallTreeNode, AggregatedData> data = KiekerTestHelper.MAPPER.readValue(currentMeasureFile,
+            new TypeReference<HashMap<CallTreeNode, AggregatedData>>() {
+            });
+      return data;
+   }
+
    public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
       final OperationExecutionRecord e = new OperationExecutionRecord(
             methodSignature,
@@ -34,11 +61,27 @@ public class KiekerTestHelper {
 
    public static File assertKiekerDir(final File kiekerFolder) {
       final File[] listFiles = kiekerFolder.listFiles();
-   	assertEquals(1, listFiles.length); // only the kieker root dir
-   	final File kiekerRootDir = listFiles[0];
-   	assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
-   	final File[] kiekerFiles = kiekerRootDir.listFiles();
-   	assertEquals("There should be one kieker file!", 1, kiekerFiles.length);
+      assertEquals(1, listFiles.length); // only the kieker root dir
+      final File kiekerRootDir = listFiles[0];
+      assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
+      final File[] kiekerFiles = kiekerRootDir.listFiles();
       return kiekerRootDir;
+   }
+
+   public static File[] getMeasurementFiles(final File kiekerFolder) {
+      final File kiekerRootDir = KiekerTestHelper.assertKiekerDir(kiekerFolder);
+      final File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
+
+         @Override
+         public boolean accept(final File pathname) {
+            return !pathname.getName().equals("kieker.map");
+         }
+      });
+      return measureFile;
+   }
+
+   public static void emptyFolder(final File folder) {
+      TestUtils.deleteRecursively(folder);
+      folder.mkdirs();
    }
 }

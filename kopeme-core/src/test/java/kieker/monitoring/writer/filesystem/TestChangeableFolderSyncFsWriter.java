@@ -3,7 +3,6 @@ package kieker.monitoring.writer.filesystem;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.dagere.kopeme.TestUtils;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
@@ -31,12 +29,9 @@ public class TestChangeableFolderSyncFsWriter {
 
 	@BeforeClass
 	public static void setupClass() {
-		TestUtils.deleteRecursively(DEFAULT_FOLDER);
-		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME);
-		TestUtils.deleteRecursively(NEW_FOLDER_AT_RUNTIME2);
-		DEFAULT_FOLDER.mkdirs();
-		NEW_FOLDER_AT_RUNTIME.mkdirs();
-		NEW_FOLDER_AT_RUNTIME2.mkdirs();
+	   KiekerTestHelper.emptyFolder(DEFAULT_FOLDER);
+	   KiekerTestHelper.emptyFolder(NEW_FOLDER_AT_RUNTIME);
+	   KiekerTestHelper.emptyFolder(NEW_FOLDER_AT_RUNTIME2);
 		final Configuration config = ConfigurationFactory.createSingletonConfiguration();
 		final String absolutePath = DEFAULT_FOLDER.getAbsolutePath();
 		config.setProperty("kieker.monitoring.writer", ChangeableFolderWriter.class.getName());
@@ -78,14 +73,7 @@ public class TestChangeableFolderSyncFsWriter {
 	}
 
 	private void assertKiekerFileConstainsLines(final File kiekerFolder, final int lines) throws IOException {
-		final File kiekerRootDir = KiekerTestHelper.assertKiekerDir(kiekerFolder);
-		final File[] measureFile = kiekerRootDir.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(final File pathname) {
-				return !pathname.getName().equals("kieker.map");
-			}
-		});
+		final File[] measureFile = KiekerTestHelper.getMeasurementFiles(kiekerFolder);
 		assertEquals(1, measureFile.length);
 		final File currentMeasureFile = measureFile[0];
 		assertEquals(lines, Files.readAllLines(currentMeasureFile.toPath(), StandardCharsets.UTF_8).size());
