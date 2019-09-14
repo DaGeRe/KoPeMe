@@ -72,9 +72,8 @@ public class TestAggregatedTreeWriter {
    private Map<CallTreeNode, AggregatedData> assertJSONFileContainsMethods(final File kiekerFolder, final int methods) throws IOException {
       final File currentMeasureFile = assertOneMeasureFile(kiekerFolder);
       System.out.println("File: " + currentMeasureFile.getAbsolutePath());
-
       
-      final Map<CallTreeNode, AggregatedData> data = KiekerTestHelper.readAggregatedDataFile(currentMeasureFile);
+      final Map<CallTreeNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(currentMeasureFile);
       assertEquals(methods, data.keySet().size());
 
       return data;

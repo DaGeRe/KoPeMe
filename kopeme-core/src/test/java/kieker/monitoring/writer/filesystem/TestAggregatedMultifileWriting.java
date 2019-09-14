@@ -40,7 +40,7 @@ public class TestAggregatedMultifileWriting {
       Assert.assertEquals(10, measureFile.length);
        
       for (final File file : measureFile) {
-         final Map<CallTreeNode, AggregatedData> data = KiekerTestHelper.readAggregatedDataFile(file);
+         final Map<CallTreeNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(file);
          Assert.assertEquals(3, data.size());
       }
    }

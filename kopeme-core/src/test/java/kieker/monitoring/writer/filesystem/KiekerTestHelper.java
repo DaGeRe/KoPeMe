@@ -5,45 +5,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
-import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNodeDeserializer;
 
 public class KiekerTestHelper {
    
    private static Logger LOG = LogManager.getLogger(KiekerTestHelper.class);
-
-   static final ObjectMapper MAPPER = new ObjectMapper();
-
-   static {
-      final SimpleModule keyDeserializer = new SimpleModule();
-      keyDeserializer.addKeyDeserializer(CallTreeNode.class, new CallTreeNodeDeserializer());
-      MAPPER.registerModule(keyDeserializer);
-   }
-   
-   public static Map<CallTreeNode, AggregatedData> readAggregatedDataFile(final File currentMeasureFile) throws JsonParseException, JsonMappingException, IOException {
-      final Map<CallTreeNode, AggregatedData> data = KiekerTestHelper.MAPPER.readValue(currentMeasureFile,
-            new TypeReference<HashMap<CallTreeNode, AggregatedData>>() {
-            });
-      return data;
-   }
 
    public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
       final OperationExecutionRecord e = new OperationExecutionRecord(

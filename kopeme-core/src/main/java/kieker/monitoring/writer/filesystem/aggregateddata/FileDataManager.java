@@ -13,14 +13,18 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
 
 public class FileDataManager implements Runnable {
 
-   static final ObjectMapper MAPPER = new ObjectMapper();
+   public static final ObjectMapper MAPPER = new ObjectMapper();
    static {
+      final SimpleModule keyDeserializer = new SimpleModule();
+      keyDeserializer.addKeyDeserializer(CallTreeNode.class, new CallTreeNodeDeserializer());
       MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+      MAPPER.registerModule(keyDeserializer);
    }
    
    private final AggregatedTreeWriter aggregatedTreeWriter;
