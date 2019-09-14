@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package kieker.monitoring.writer.filesystem.aggregateddata;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-class FileDataManager implements Runnable {
+import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
+
+public class FileDataManager implements Runnable {
 
    static final ObjectMapper MAPPER = new ObjectMapper();
    static {
@@ -35,7 +37,7 @@ class FileDataManager implements Runnable {
    /**
     * @param aggregatedTreeWriter
     */
-   FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) {
+   public FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
       currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
       fileData.put(currentDestination, new HashMap<>());
@@ -49,7 +51,7 @@ class FileDataManager implements Runnable {
 
    private boolean running = true;
 
-   void finish() {
+   public void finish() {
       running = false;
    }
 

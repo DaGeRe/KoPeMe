@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package kieker.monitoring.writer.filesystem.aggregateddata;
 
 import java.io.IOException;
 

@@ -13,6 +13,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
+import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
+import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
 
 public class TestAggregatedMultifileWriting {
    

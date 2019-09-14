@@ -15,6 +15,8 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
+import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
+import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
 
 /**
  * Writes Kieker example results for the {@link AggregatedTreeWriter}

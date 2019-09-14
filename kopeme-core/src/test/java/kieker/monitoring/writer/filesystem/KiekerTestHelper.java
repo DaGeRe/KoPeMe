@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
+import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
+import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
+import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNodeDeserializer;
 
 public class KiekerTestHelper {
    
