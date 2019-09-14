@@ -14,6 +14,8 @@ import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.controller.WriterController;
 import kieker.monitoring.writer.MonitoringWriterThread;
+import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
+import kieker.monitoring.writer.filesystem.ChangeableFolder;
 import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
@@ -34,24 +36,32 @@ public class KoPeMeKiekerSupport {
 
    public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) {
       if (useIt) {
-         final IMonitoringController kiekerController = MonitoringController.getInstance();
-         final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance();
+//         final IMonitoringController kiekerController = MonitoringController.getInstance();
+         final ChangeableFolder fsWriter = getWriter();
+         final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
+         folderForCurrentPerformanceResult.mkdirs();
+         fsWriter.setFolder(folderForCurrentPerformanceResult);
+//         kiekerController.enableMonitoring();
+         LOG.debug("Kieker-Monitoring successfully enabled");
+      }
+   }
+
+   private ChangeableFolder getWriter() {
+      ChangeableFolder fsWriter = ChangeableFolderWriter.getInstance();
+      if (fsWriter == null) {
+         fsWriter = AggregatedTreeWriter.getInstance();
          if (fsWriter == null) {
-            System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
+            System.err.println("Kieker is not used, although specified. The " +
+                  ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName() + " have to be used!");
             final String tempdir = System.getProperty("java.io.tmpdir");
             final File tempDirFile = new File(tempdir);
             if (!tempDirFile.exists()) {
-               System.err.println("Hint: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+               System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
             }
             throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
-         } else {
-            final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
-            folderForCurrentPerformanceResult.mkdirs();
-            fsWriter.setFolder(folderForCurrentPerformanceResult);
-            kiekerController.enableMonitoring();
-            LOG.debug("Kieker-Monitoring successfully enabled");
          }
       }
+      return fsWriter;
    }
 
    /**
@@ -77,7 +87,8 @@ public class KoPeMeKiekerSupport {
       }
    }
 
-   public static Field finishMonitoring(final IMonitoringController monitoringController) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+   public static Field finishMonitoring(final IMonitoringController monitoringController)
+         throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
       final Field field = MonitoringController.class.getDeclaredField("writerController");
       field.setAccessible(true);
       final WriterController writerController = (WriterController) field.get(monitoringController);

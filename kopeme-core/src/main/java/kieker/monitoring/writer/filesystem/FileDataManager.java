@@ -39,7 +39,6 @@ class FileDataManager implements Runnable {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
       currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
       fileData.put(currentDestination, new HashMap<>());
-
    }
 
    public void reportChange(final CallTreeNode node) {
@@ -47,9 +46,6 @@ class FileDataManager implements Runnable {
       changedFiles.add(changedFile);
    }
 
-   public void write() {
-      // TODO Auto-generated method stub
-   }
 
    private boolean running = true;
 

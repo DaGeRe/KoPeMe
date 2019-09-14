@@ -16,7 +16,7 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
  * @author reichelt
  *
  */
-public class AggregatedTreeWriter extends AbstractMonitoringWriter {
+public class AggregatedTreeWriter extends AbstractMonitoringWriter implements ChangeableFolder {
 
    public static final String PREFIX = AggregatedTreeWriter.class.getName() + ".";
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
@@ -26,11 +26,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
 
    private static AggregatedTreeWriter instance;
 
-   private final File resultFolder;
+   private File resultFolder;
    private final int writeInterval;
    private final int warmup;
    private final int entriesPerFile;
-   private final FileDataManager writer;
+   private FileDataManager writer;
 
    private Thread writerThread;
 
@@ -45,7 +45,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
    public AggregatedTreeWriter(final Configuration configuration) {
       super(configuration);
       LOG.info("Init..");
-      // this.configuration = configuration;
       instance = this;
       final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
       resultFolder = kiekerPath.toFile();
@@ -62,6 +61,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
    public void onStarting() {
       System.out.println("Initializing " + getClass());
       writerThread = new Thread(writer);
+      writerThread.setPriority(Thread.MIN_PRIORITY);
       writerThread.start();
    }
 
@@ -70,7 +70,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
          final CallTreeNode node = new CallTreeNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
-         writer.write(node, operation.getTin() - operation.getTout());
+         writer.write(node, operation.getTout() - operation.getTin());
       }
    }
 
@@ -84,6 +84,14 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter {
       } catch (final IOException e) {
          e.printStackTrace();
       }
+   }
+   
+   public void setFolder(final File writingFolder) {
+      LOG.info("Writing to: " + writingFolder);
+      final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
+      resultFolder = kiekerPath.toFile();
+      resultFolder.mkdirs();
+      writer = new FileDataManager(this);
    }
 
    public Thread getWriterThread() {
