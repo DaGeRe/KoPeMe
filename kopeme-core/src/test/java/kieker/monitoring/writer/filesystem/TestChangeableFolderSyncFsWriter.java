@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
@@ -23,7 +24,7 @@ import kieker.monitoring.core.controller.MonitoringController;
  */
 public class TestChangeableFolderSyncFsWriter {
    
-	private static final File DEFAULT_FOLDER = new File("target/kieker_testresults");
+	public static final File DEFAULT_FOLDER = new File("target/kieker_testresults");
 	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/kieker_testresults_changed_folder");
 	private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target/kieker_testresults_changed_folder2");
 
@@ -55,6 +56,7 @@ public class TestChangeableFolderSyncFsWriter {
 		final Configuration result = testable.toWriterConfiguration(c, BinaryFileWriter.class);
 		final int intResult = result.getIntProperty(BinaryFileWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
+		KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 	}
 
 	@Ignore

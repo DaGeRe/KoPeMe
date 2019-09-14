@@ -18,7 +18,7 @@ public class TestAggregatedMultifileWriting {
    
    @Before
    public void setupClass() {
-      KiekerTestHelper.emptyFolder(TestAggregatedTreeWriter.TEST_FOLDER);
+      KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
    }
    
    @Test
@@ -34,7 +34,7 @@ public class TestAggregatedMultifileWriting {
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
-      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestAggregatedTreeWriter.TEST_FOLDER);
+      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
       Assert.assertEquals(10, measureFile.length);
        
       for (final File file : measureFile) {
@@ -56,7 +56,7 @@ public class TestAggregatedMultifileWriting {
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
-      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestAggregatedTreeWriter.TEST_FOLDER);
+      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
       Assert.assertEquals(2, measureFile.length);
    }
 }

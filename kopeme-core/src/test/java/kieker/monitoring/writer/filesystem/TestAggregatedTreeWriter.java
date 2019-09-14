@@ -24,16 +24,15 @@ import kieker.monitoring.core.controller.MonitoringController;
  */
 public class TestAggregatedTreeWriter {
 
-   static final File TEST_FOLDER = new File("target/test-classes/kieker_testresults");
 
    @Before
    public void setupClass() {
-      KiekerTestHelper.emptyFolder(TEST_FOLDER);
+      KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
    }
 
    public static void initWriter(final int warmup, final int entriesPerFile) {
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
-      final String absolutePath = TEST_FOLDER.getAbsolutePath();
+      final String absolutePath = TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER.getAbsolutePath();
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
       config.setProperty(AggregatedTreeWriter.CONFIG_WRITEINTERVAL, 5);
@@ -48,7 +47,7 @@ public class TestAggregatedTreeWriter {
       initWriter(0, 100);
       KiekerTestHelper.runFixture(15);
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      assertJSONFileContainsMethods(TEST_FOLDER, 3); // TODO due to the meta data entry, which are written to every folder
+      assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); // TODO due to the meta data entry, which are written to every folder
    }
 
    @Test
@@ -60,7 +59,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<CallTreeNode, AggregatedData> data = assertJSONFileContainsMethods(TEST_FOLDER, 1); // TODO due to the meta data entry, which are written to every folder
+      final Map<CallTreeNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); // TODO due to the meta data entry, which are written to every folder
 
       final CallTreeNode expectedNode = new CallTreeNode(-1, -1, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
