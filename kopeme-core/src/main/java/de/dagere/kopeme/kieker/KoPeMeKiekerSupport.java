@@ -36,12 +36,12 @@ public class KoPeMeKiekerSupport {
 
    public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) {
       if (useIt) {
-//         final IMonitoringController kiekerController = MonitoringController.getInstance();
+         final IMonitoringController kiekerController = MonitoringController.getInstance();
          final ChangeableFolder fsWriter = getWriter();
          final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
          folderForCurrentPerformanceResult.mkdirs();
          fsWriter.setFolder(folderForCurrentPerformanceResult);
-//         kiekerController.enableMonitoring();
+         kiekerController.enableMonitoring();
          LOG.debug("Kieker-Monitoring successfully enabled");
       }
    }
