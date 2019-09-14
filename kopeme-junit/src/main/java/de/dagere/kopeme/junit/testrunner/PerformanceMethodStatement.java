@@ -68,7 +68,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
                if (t instanceof Error)
                   throw (Error) t;
                LOG.error("Unknown Type: " + t.getClass() + " " + t.getLocalizedMessage());
-            } 
+            }
          }
 
          @Override
@@ -176,8 +176,8 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          }
          Thread.sleep(1); // To let other threads "breath"
       }
-      LOG.debug("Executions: " + execution);
-      tr.setRealExecutions(execution);
+      LOG.debug("Executions: " + (execution - 1));
+      tr.setRealExecutions(execution - 1);
    }
 
    public void setFinished(final boolean isFinished) {

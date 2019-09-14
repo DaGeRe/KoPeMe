@@ -98,7 +98,7 @@ public class TestFileWriting {
             Assert.assertThat(val, Matchers.greaterThan(0));
             Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
             Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
-            Assert.assertEquals(r.getExecutionTimes(), 6);
+            Assert.assertEquals(r.getExecutionTimes(), 5);
          }
 
       } catch (final JAXBException e1) {

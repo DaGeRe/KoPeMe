@@ -22,7 +22,7 @@ public class JUnitAdditionTest {
 
 	@Before
 	public void setup() {
-		log.debug("Before wird aufgerufen");
+		log.debug("Before is called");
 	}
 
 	@Test
@@ -33,6 +33,6 @@ public class JUnitAdditionTest {
 			a += i;
 		}
 		Assert.assertEquals(10000 * 9999 / 2, a);
-		log.debug("Addition beendet");
+		log.debug("Addition finished");
 	}
 }
