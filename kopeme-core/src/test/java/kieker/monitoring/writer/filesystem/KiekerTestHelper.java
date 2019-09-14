@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -21,6 +24,8 @@ import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 
 public class KiekerTestHelper {
+   
+   private static Logger LOG = LogManager.getLogger(KiekerTestHelper.class);
 
    static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -62,6 +67,7 @@ public class KiekerTestHelper {
 
    public static File assertKiekerDir(final File kiekerFolder) {
       final File[] listFiles = kiekerFolder.listFiles();
+      LOG.info("Kieker-files: ", Arrays.toString(listFiles));
       assertEquals("Found not exactly one folder: " + Arrays.toString(listFiles), 1, listFiles.length); // only the kieker root dir
       final File kiekerRootDir = listFiles[0];
       assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());

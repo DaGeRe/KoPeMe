@@ -22,7 +22,7 @@ import kieker.monitoring.core.controller.MonitoringController;
  *
  */
 public class TestChangeableFolderSyncFsWriter {
-
+   
 	private static final File DEFAULT_FOLDER = new File("target/test-classes/kieker_testresults");
 	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/test-classes/kieker_testresults_changed_folder");
 	private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target/test-classes/kieker_testresults_changed_folder2");
@@ -73,9 +73,7 @@ public class TestChangeableFolderSyncFsWriter {
 	}
 
 	private void assertKiekerFileConstainsLines(final File kiekerFolder, final int lines) throws IOException {
-		final File[] measureFile = KiekerTestHelper.getMeasurementFiles(kiekerFolder);
-		assertEquals(1, measureFile.length);
-		final File currentMeasureFile = measureFile[0];
+		final File currentMeasureFile = KiekerTestHelper.assertKiekerDir(kiekerFolder);
 		assertEquals(lines, Files.readAllLines(currentMeasureFile.toPath(), StandardCharsets.UTF_8).size());
 	}
 
