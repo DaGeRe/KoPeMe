@@ -23,9 +23,9 @@ import kieker.monitoring.core.controller.MonitoringController;
  */
 public class TestChangeableFolderSyncFsWriter {
    
-	private static final File DEFAULT_FOLDER = new File("target/test-classes/kieker_testresults");
-	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/test-classes/kieker_testresults_changed_folder");
-	private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target/test-classes/kieker_testresults_changed_folder2");
+	private static final File DEFAULT_FOLDER = new File("target/kieker_testresults");
+	private static final File NEW_FOLDER_AT_RUNTIME = new File("target/kieker_testresults_changed_folder");
+	private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target/kieker_testresults_changed_folder2");
 
 	@BeforeClass
 	public static void setupClass() {
