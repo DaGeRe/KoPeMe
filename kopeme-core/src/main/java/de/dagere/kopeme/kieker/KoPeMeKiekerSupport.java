@@ -14,6 +14,8 @@ import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.controller.WriterController;
 import kieker.monitoring.writer.MonitoringWriterThread;
+import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
+import kieker.monitoring.writer.filesystem.ChangeableFolder;
 import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
@@ -22,8 +24,8 @@ import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
  * @author dhaeb
  *
  */
-public enum KoPeMeKiekerSupport {
-   INSTANCE;
+public class KoPeMeKiekerSupport {
+   public static final KoPeMeKiekerSupport INSTANCE = new KoPeMeKiekerSupport();
    private static final Logger LOG = LogManager.getLogger(KoPeMeKiekerSupport.class);
 
    private final FolderProvider fp;
@@ -35,23 +37,31 @@ public enum KoPeMeKiekerSupport {
    public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) {
       if (useIt) {
          final IMonitoringController kiekerController = MonitoringController.getInstance();
-         final ChangeableFolderWriter fsWriter = ChangeableFolderWriter.getInstance();
+         final ChangeableFolder fsWriter = getWriter();
+         final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
+         folderForCurrentPerformanceResult.mkdirs();
+         fsWriter.setFolder(folderForCurrentPerformanceResult);
+         kiekerController.enableMonitoring();
+         LOG.debug("Kieker-Monitoring successfully enabled");
+      }
+   }
+
+   private ChangeableFolder getWriter() {
+      ChangeableFolder fsWriter = ChangeableFolderWriter.getInstance();
+      if (fsWriter == null) {
+         fsWriter = AggregatedTreeWriter.getInstance();
          if (fsWriter == null) {
-            System.err.println("Kieker is not used, although specified. The " + ChangeableFolderWriter.class.getCanonicalName() + " has to be used!");
-            String tempdir = System.getProperty("java.io.tmpdir");
-            File tempDirFile = new File(tempdir);
+            System.err.println("Kieker is not used, although specified. The " +
+                  ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName() + " have to be used!");
+            final String tempdir = System.getProperty("java.io.tmpdir");
+            final File tempDirFile = new File(tempdir);
             if (!tempDirFile.exists()) {
-               System.err.println("Hint: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+               System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
             }
             throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
-         } else {
-            final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
-            folderForCurrentPerformanceResult.mkdirs();
-            fsWriter.setFolder(folderForCurrentPerformanceResult);
-            kiekerController.enableMonitoring();
-            LOG.debug("Kieker-Monitoring successfully enabled");
          }
       }
+      return fsWriter;
    }
 
    /**
@@ -63,35 +73,44 @@ public enum KoPeMeKiekerSupport {
       LOG.debug("Disabling Monitoring..");
       MonitoringController.getInstance().disableMonitoring();
       try {
-         Field field = MonitoringController.class.getDeclaredField("writerController");
-         field.setAccessible(true);
-         WriterController writerController = (WriterController) field.get(MonitoringController.getInstance());
+         final Field field = finishMonitoring(MonitoringController.getInstance());
 
-         Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
-         cleanup.setAccessible(true);
-         cleanup.invoke(writerController);
-
-         Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
-         monitoringWriterThreadField.setAccessible(true);
-         MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
-         try {
-            LOG.debug("Waiting for Thread-End: {}", thread);
-            thread.join(5000);
-            LOG.debug("Writing finished, Thread: " + thread.isAlive());
-         } catch (InterruptedException e1) {
-            e1.printStackTrace();
-         }
-
-         WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
+         final WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
          field.set(MonitoringController.getInstance(), newController);
 
-         Method init = WriterController.class.getDeclaredMethod("init");
+         final Method init = WriterController.class.getDeclaredMethod("init");
          init.setAccessible(true);
          init.invoke(newController);
 
       } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
          e1.printStackTrace();
       }
+   }
+
+   public static Field finishMonitoring(final IMonitoringController monitoringController)
+         throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+      final Field field = MonitoringController.class.getDeclaredField("writerController");
+      field.setAccessible(true);
+      final WriterController writerController = (WriterController) field.get(monitoringController);
+
+      final Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
+      cleanup.setAccessible(true);
+      cleanup.invoke(writerController);
+
+      final Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
+      monitoringWriterThreadField.setAccessible(true);
+      final MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
+      try {
+         LOG.debug("Waiting for Thread-End: {}", thread);
+         for (int i = 0; i < 100 && thread.isAlive(); i++) {
+            thread.join(6000);
+            LOG.debug("Waiting for Thread-End: {}, Thread alive: {}", thread, thread.isAlive());
+         }
+         LOG.debug("Writing finished, Thread alive: " + thread.isAlive());
+      } catch (final InterruptedException e1) {
+         e1.printStackTrace();
+      }
+      return field;
    }
 
 }

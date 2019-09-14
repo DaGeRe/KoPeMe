@@ -75,22 +75,25 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          // Run warmup
          if (annotation.warmupExecutions() > 0) {
             final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
-            runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions());
+            runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions(), annotation.repetitions());
          }
          if (!isFinished) {
-            runMainExecution(tr, "execution ", annotation.executionTimes());
+            runMainExecution(tr, "execution ", annotation.executionTimes(), annotation.repetitions());
          }
       } catch (final AssertionFailedError t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+               annotation.repetitions(), annotation.logFullData()));
          throw t;
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+               annotation.repetitions(), annotation.logFullData()));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(), annotation.repetitions(), true));
+      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
+            annotation.repetitions(), annotation.logFullData()));
    }
 
    public void setMethodName(final String methodName) {

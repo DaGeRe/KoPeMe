@@ -46,7 +46,6 @@ public class KoPeMeRule implements TestRule {
          final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
          if (annotation != null) {
             final TestRunnables runnables = new TestRunnables(new ThrowingRunnable() {
-
                @Override
                public void run() throws Throwable {
                   stmt.evaluate();

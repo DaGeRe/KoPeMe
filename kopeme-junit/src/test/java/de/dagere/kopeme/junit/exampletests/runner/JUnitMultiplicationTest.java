@@ -27,6 +27,6 @@ public class JUnitMultiplicationTest {
 			a += i * 2;
 		}
 		Assert.assertEquals(10000 * 9999, a);
-		log.debug("Addition finished");
+		log.debug("Multiplication finished");
 	}
 }

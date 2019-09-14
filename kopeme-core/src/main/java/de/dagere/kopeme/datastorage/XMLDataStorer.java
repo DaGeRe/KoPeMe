@@ -56,7 +56,7 @@ public final class XMLDataStorer implements DataStorer {
     * 
     * @param classname Name of the testclass
     */
-   public void createXMLData(final String classname) {
+   private void createXMLData(final String classname) {
       data = new Kopemedata();
       data.setTestcases(new Testcases());
       final Testcases tc = data.getTestcases();
@@ -71,6 +71,34 @@ public final class XMLDataStorer implements DataStorer {
       }
       final TestcaseType test = getOrCreateTestcase(performanceDataMeasure);
 
+      final Result r = buildResult(performanceDataMeasure);
+      if (values != null) {
+         buildFulldata(values, r);
+      }
+
+      final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure.getCollectorname(), test);
+
+      if (System.getenv("KOPEME_CHUNKSTARTTIME") != null) {
+         final Chunk current = findChunk(dc);
+         current.getResult().add(r);
+      } else {
+         dc.getResult().add(r);
+      }
+
+   }
+
+   private void buildFulldata(final Map<Long, Long> values, final Result r) {
+      final Fulldata fd = new Fulldata();
+      for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
+         final Value v = new Value();
+         v.setStart(valueEntry.getKey());
+         v.setValue("" + valueEntry.getValue());
+         fd.getValue().add(v);
+      }
+      r.setFulldata(fd);
+   }
+
+   private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
       final Result r = new Result();
       r.setDate(new Date().getTime());
       r.setValue(performanceDataMeasure.value);
@@ -81,37 +109,23 @@ public final class XMLDataStorer implements DataStorer {
       r.setMax(performanceDataMeasure.max);
       r.setMin(performanceDataMeasure.min);
       r.setFirst10Percentile(performanceDataMeasure.first10percentile);
-      if (values != null) {
-         final Fulldata fd = new Fulldata();
-         for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
-            final Value v = new Value();
-            v.setStart(valueEntry.getKey());
-            v.setValue("" + valueEntry.getValue());
-            fd.getValue().add(v);
-         }
-         r.setFulldata(fd);
+      return r;
+   }
+
+   private Chunk findChunk(final Datacollector dc) {
+      final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
+      Chunk current = null;
+      for (final Chunk chunk : dc.getChunk()) {
+       if (chunk.getChunkStartTime() == start){
+      	 current = chunk;
+       }
       }
-
-      final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure.getCollectorname(), test);
-
-      if (System.getenv("KOPEME_CHUNKSTARTTIME") != null) {
-         final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
-         Chunk current = null;
-         for (final Chunk chunk : dc.getChunk()) {
-        	 if (chunk.getChunkStartTime() == start){
-        		 current = chunk;
-        	 }
-         }
-         if (current == null) {
-            current = new Chunk();
-            current.setChunkStartTime(start);
-            dc.getChunk().add(current);
-         }
-         current.getResult().add(r);
-      } else {
-         dc.getResult().add(r);
+      if (current == null) {
+         current = new Chunk();
+         current.setChunkStartTime(start);
+         dc.getChunk().add(current);
       }
-
+      return current;
    }
 
    private Datacollector getOrCreateDatacollector(final String collector, final TestcaseType test) {

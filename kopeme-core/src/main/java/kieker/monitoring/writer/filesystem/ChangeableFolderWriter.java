@@ -21,7 +21,7 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
  * @author reichelt
  *
  */
-public class ChangeableFolderWriter extends AbstractMonitoringWriter {
+public class ChangeableFolderWriter extends AbstractMonitoringWriter implements ChangeableFolder{
 
    public static final String PREFIX = ChangeableFolderWriter.class.getName() + ".";
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
@@ -72,7 +72,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       }
    }
 
-   Configuration toWriterConfiguration(final Configuration c, Class<?> writerClass) {
+   Configuration toWriterConfiguration(final Configuration c, final Class<?> writerClass) {
       final Configuration returnable = new Configuration();
       for (final Iterator<Entry<Object, Object>> iterator = c.entrySet().iterator(); iterator.hasNext();) {
          final Entry<Object, Object> entry = iterator.next();
@@ -90,21 +90,14 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
    }
 
    @Override
-   public void writeMonitoringRecord(IMonitoringRecord record) {
+   public void writeMonitoringRecord(final IMonitoringRecord record) {
       if (record instanceof KiekerMetadataRecord && !full) {
-         KiekerMetadataRecord mappingRecord = (KiekerMetadataRecord) record;
+         final KiekerMetadataRecord mappingRecord = (KiekerMetadataRecord) record;
          mappingRecords.add(mappingRecord);
       }
-      // System.out.println("Writing: " + record);
-      // System.out.println(record.getClass());
       if (currentWriter != null) {
          LOG.info("Record: " + record);
          currentWriter.writeMonitoringRecord(record);
-//         if (record instanceof OperationExecutionRecord) {
-//            OperationExecutionRecord oer = (OperationExecutionRecord) record;
-//            String signature = oer.getOperationSignature();
-//            MonitoringController.getInstance().deactivateProbe(signature);
-//         }
       }
    }
 
@@ -115,7 +108,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       }
    }
 
-   public void setFolder(File writingFolder) {
+   public void setFolder(final File writingFolder) {
       if (currentWriter != null) {
          currentWriter.onTerminating();
       }
@@ -123,7 +116,6 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter {
       final String absolutePath = writingFolder.getAbsolutePath();
       configuration.setProperty(CONFIG_PATH, absolutePath);
       final AbstractMonitoringWriter writer = createWriter(configuration);
-      // currentWriter.setController(monitoringController);
       for (final KiekerMetadataRecord record : mappingRecords) {
          LOG.info("Adding registry record: " + record);
          writer.writeMonitoringRecord(record);
