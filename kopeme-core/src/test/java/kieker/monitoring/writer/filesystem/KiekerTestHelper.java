@@ -67,7 +67,7 @@ public class KiekerTestHelper {
 
    public static File assertKiekerDir(final File kiekerFolder) {
       final File[] listFiles = kiekerFolder.listFiles();
-      LOG.info("Kieker-files: ", Arrays.toString(listFiles));
+      LOG.info("Kieker-files: {}", Arrays.toString(listFiles));
       assertEquals("Found not exactly one folder: " + Arrays.toString(listFiles), 1, listFiles.length); // only the kieker root dir
       final File kiekerRootDir = listFiles[0];
       assertTrue("Kieker root dir should be a directory!", kiekerRootDir.isDirectory());
