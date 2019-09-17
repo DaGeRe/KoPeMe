@@ -22,7 +22,7 @@ public class FileDataManager implements Runnable {
    public static final ObjectMapper MAPPER = new ObjectMapper();
    static {
       final SimpleModule keyDeserializer = new SimpleModule();
-      keyDeserializer.addKeyDeserializer(CallTreeNode.class, new CallTreeNodeDeserializer());
+      keyDeserializer.addKeyDeserializer(AggregatedDataNode.class, new CallTreeNodeDeserializer());
       MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
       MAPPER.registerModule(keyDeserializer);
    }
@@ -30,10 +30,10 @@ public class FileDataManager implements Runnable {
    private final AggregatedTreeWriter aggregatedTreeWriter;
    
    private File currentDestination;
-   private Map<CallTreeNode, File> fileMapping = new HashMap<>();
-   private Map<File, Map<CallTreeNode, AggregatedData>> fileData = new ConcurrentHashMap<>();
+   private Map<AggregatedDataNode, File> fileMapping = new HashMap<>();
+   private Map<File, Map<AggregatedDataNode, AggregatedData>> fileData = new ConcurrentHashMap<>();
    private Set<File> changedFiles = new HashSet<>();
-   private final Map<CallTreeNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
+   private final Map<AggregatedDataNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
 
    private int currentEntries = 0;
    private int fileIndex = 0;
@@ -47,7 +47,7 @@ public class FileDataManager implements Runnable {
       fileData.put(currentDestination, new HashMap<>());
    }
 
-   public void reportChange(final CallTreeNode node) {
+   public void reportChange(final AggregatedDataNode node) {
       final File changedFile = fileMapping.get(node);
       changedFiles.add(changedFile);
    }
@@ -73,7 +73,7 @@ public class FileDataManager implements Runnable {
                   final Set<File> oldFiles = changedFiles;
                   changedFiles = new HashSet<>();
                   for (final File file : oldFiles) {
-                     final Map<CallTreeNode, AggregatedData> partialData = fileData.get(file);
+                     final Map<AggregatedDataNode, AggregatedData> partialData = fileData.get(file);
                      MAPPER.writeValue(file, partialData);
                   }
                }
@@ -84,14 +84,14 @@ public class FileDataManager implements Runnable {
       }
    }
 
-   public void write(final CallTreeNode node, final long duration) {
+   public void write(final AggregatedDataNode node, final long duration) {
       final AggregatedData data = getData(node);
       data.addValue(duration);
       final File changedNode = fileMapping.get(node);
       changedFiles.add(changedNode);
    }
 
-   private AggregatedData getData(final CallTreeNode node) {
+   private AggregatedData getData(final AggregatedDataNode node) {
       AggregatedData data = nodeMap.get(node);
       if (data == null) {
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
@@ -104,7 +104,7 @@ public class FileDataManager implements Runnable {
          nodeMap.put(node, data);
          fileMapping.put(node, currentDestination);
          
-         final Map<CallTreeNode, AggregatedData> partialData = fileData.get(currentDestination);
+         final Map<AggregatedDataNode, AggregatedData> partialData = fileData.get(currentDestination);
          partialData.put(node, data);
          currentEntries++;
          
@@ -114,7 +114,7 @@ public class FileDataManager implements Runnable {
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
       synchronized (nodeMap) {
-         for (final Entry<File, Map<CallTreeNode, AggregatedData>> entry : fileData.entrySet()) {
+         for (final Entry<File, Map<AggregatedDataNode, AggregatedData>> entry : fileData.entrySet()) {
             System.out.println("Final writing to " + entry.getKey());
             MAPPER.writeValue(entry.getKey(), entry.getValue());
          }

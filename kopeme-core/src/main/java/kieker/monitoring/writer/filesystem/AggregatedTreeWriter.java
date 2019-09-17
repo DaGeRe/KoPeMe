@@ -9,7 +9,7 @@ import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
-import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
+import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 import kieker.monitoring.writer.filesystem.aggregateddata.FileDataManager;
 
 /**
@@ -69,7 +69,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public void writeMonitoringRecord(final IMonitoringRecord record) {
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
-         final CallTreeNode node = new CallTreeNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
+         final AggregatedDataNode node = new AggregatedDataNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
          dataManager.write(node, operation.getTout() - operation.getTin());
       }
    }

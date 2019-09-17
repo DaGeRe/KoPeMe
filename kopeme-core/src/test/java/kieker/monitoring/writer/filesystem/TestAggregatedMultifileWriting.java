@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.CallTreeNode;
+import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 
 public class TestAggregatedMultifileWriting {
    
@@ -40,7 +40,7 @@ public class TestAggregatedMultifileWriting {
       Assert.assertEquals(10, measureFile.length);
        
       for (final File file : measureFile) {
-         final Map<CallTreeNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(file);
+         final Map<AggregatedDataNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(file);
          Assert.assertEquals(3, data.size());
       }
    }
