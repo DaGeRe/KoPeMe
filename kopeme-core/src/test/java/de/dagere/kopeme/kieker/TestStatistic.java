@@ -42,4 +42,9 @@ public class TestStatistic {
       addMeasurements(10, 100);
       Assert.assertEquals(10, data.getStatistic().getMean(), 0.01);
    }
+
+   @Test(expected = RuntimeException.class)
+   public void testName() throws Exception {
+      final StatisticConfig config = new StatisticConfig(10, 0.9);
+   }
 }

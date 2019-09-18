@@ -44,6 +44,14 @@ public class TestAggregatedTreeWriter {
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
    }
+   
+   @Test(expected = RuntimeException.class)
+   public void wrongOutlierFactor() throws Exception {
+      final Configuration config = ConfigurationFactory.createSingletonConfiguration();
+      config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
+      config.setProperty(AggregatedTreeWriter.CONFIG_OUTLIER, 0.9);
+      new AggregatedTreeWriter(config);
+   }
 
    @Test
    public void testSimpleWriting() throws Exception {
