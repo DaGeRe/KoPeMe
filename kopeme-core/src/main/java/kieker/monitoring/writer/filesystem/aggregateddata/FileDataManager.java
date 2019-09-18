@@ -31,9 +31,9 @@ public class FileDataManager implements Runnable {
    
    private File currentDestination;
    private Map<AggregatedDataNode, File> fileMapping = new HashMap<>();
-   private Map<File, Map<AggregatedDataNode, AggregatedData>> fileData = new ConcurrentHashMap<>();
+   private Map<File, Map<AggregatedDataNode, WritingData>> fileData = new ConcurrentHashMap<>();
    private Set<File> changedFiles = new HashSet<>();
-   private final Map<AggregatedDataNode, AggregatedData> nodeMap = new ConcurrentHashMap<>();
+   private final Map<AggregatedDataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
 
    private int currentEntries = 0;
    private int fileIndex = 0;
@@ -73,7 +73,7 @@ public class FileDataManager implements Runnable {
                   final Set<File> oldFiles = changedFiles;
                   changedFiles = new HashSet<>();
                   for (final File file : oldFiles) {
-                     final Map<AggregatedDataNode, AggregatedData> partialData = fileData.get(file);
+                     final Map<AggregatedDataNode, WritingData> partialData = fileData.get(file);
                      MAPPER.writeValue(file, partialData);
                   }
                }
@@ -85,14 +85,14 @@ public class FileDataManager implements Runnable {
    }
 
    public void write(final AggregatedDataNode node, final long duration) {
-      final AggregatedData data = getData(node);
+      final WritingData data = getData(node);
       data.addValue(duration);
       final File changedNode = fileMapping.get(node);
       changedFiles.add(changedNode);
    }
 
-   private AggregatedData getData(final AggregatedDataNode node) {
-      AggregatedData data = nodeMap.get(node);
+   private WritingData getData(final AggregatedDataNode node) {
+      WritingData data = nodeMap.get(node);
       if (data == null) {
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
             currentEntries = 0;
@@ -100,11 +100,11 @@ public class FileDataManager implements Runnable {
             currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".json");
             fileData.put(currentDestination, new HashMap<>());
          } 
-         data = new AggregatedData(currentDestination, aggregatedTreeWriter.getWarmup());
+         data = new WritingData(currentDestination, aggregatedTreeWriter.getStatisticConfig());
          nodeMap.put(node, data);
          fileMapping.put(node, currentDestination);
          
-         final Map<AggregatedDataNode, AggregatedData> partialData = fileData.get(currentDestination);
+         final Map<AggregatedDataNode, WritingData> partialData = fileData.get(currentDestination);
          partialData.put(node, data);
          currentEntries++;
          
@@ -114,7 +114,7 @@ public class FileDataManager implements Runnable {
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
       synchronized (nodeMap) {
-         for (final Entry<File, Map<AggregatedDataNode, AggregatedData>> entry : fileData.entrySet()) {
+         for (final Entry<File, Map<AggregatedDataNode, WritingData>> entry : fileData.entrySet()) {
             System.out.println("Final writing to " + entry.getKey());
             MAPPER.writeValue(entry.getKey(), entry.getValue());
          }

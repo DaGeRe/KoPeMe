@@ -24,13 +24,14 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
    public static final String CONFIG_WRITEINTERVAL = PREFIX + "writeInterval";
    public static final String CONFIG_WARMUP = PREFIX + "warmup";
+   public static final String CONFIG_OUTLIER = PREFIX + "outlier";
    public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
 
    private static AggregatedTreeWriter instance;
 
    private File resultFolder;
    private final int writeInterval;
-   private final int warmup;
+   private final StatisticConfig statisticConfig;
    private final int entriesPerFile;
    private FileDataManager dataManager;
 
@@ -51,9 +52,10 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       resultFolder.mkdirs();
 
       writeInterval = configuration.getIntProperty(CONFIG_WRITEINTERVAL, 5000);
-      warmup = configuration.getIntProperty(CONFIG_WARMUP, 0);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
       
+      statisticConfig = new StatisticConfig(configuration.getIntProperty(CONFIG_WARMUP, 0), configuration.getDoubleProperty(CONFIG_OUTLIER, 0));
+
       dataManager = new FileDataManager(this);
    }
 
@@ -85,7 +87,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
          e.printStackTrace();
       }
    }
-   
+
    public void setFolder(final File writingFolder) {
       LOG.info("Writing to: " + writingFolder);
       final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
@@ -106,16 +108,16 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       return writeInterval;
    }
 
-   public int getWarmup() {
-      return warmup;
-   }
-
    public int getEntriesPerFile() {
       return entriesPerFile;
    }
-   
+
    public File getResultFolder() {
       return resultFolder;
+   }
+
+   public StatisticConfig getStatisticConfig() {
+      return statisticConfig;
    }
 
 }

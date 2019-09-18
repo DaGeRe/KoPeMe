@@ -11,41 +11,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import kieker.monitoring.writer.filesystem.StatisticConfig;
+
 public class AggregatedData {
 
    @JsonIgnore
-   final File containedFile;
-   private int warmup = 0;
+   protected final File containedFile;
+   protected int warmup = 0;
 
    @JsonIgnore
-   private final int maxWarmup;
+   protected final StatisticConfig statisticConfig;
 
-   @JsonSerialize(using = SummaryStatisticsSerializer.class)
-   @JsonDeserialize(using = SummaryStatisticsDeserializer.class)
-   private final StatisticalSummary statistic;
+   protected StatisticalSummary statistic;
 
    @JsonCreator
    public AggregatedData(final @JsonProperty(value = "warmup") int warmup, final @JsonProperty(value = "statistic") StatisticalSummary statistic) {
       this.containedFile = null;
-      this.warmup = warmup;
-      this.maxWarmup = -1;
+      this.warmup = 0;
       this.statistic = statistic;
+      statisticConfig = null;
    }
 
-   public AggregatedData(final File containedFile, final int maxWarmup) {
+   protected AggregatedData(final File containedFile, final StatisticConfig statisticConfig) {
       this.containedFile = containedFile;
-      this.maxWarmup = maxWarmup;
+      this.statisticConfig = statisticConfig;
       this.statistic = new SummaryStatistics();
-   }
-
-   public void addValue(final long value) {
-      if (warmup < maxWarmup) {
-         warmup++;
-      } else {
-         if (statistic instanceof SummaryStatistics) {
-            ((SummaryStatistics) statistic).addValue(value);
-         }
-      }
    }
 
    public File getContainedFile() {
@@ -56,6 +46,8 @@ public class AggregatedData {
       return warmup;
    }
 
+   @JsonSerialize(using = SummaryStatisticsSerializer.class)
+   @JsonDeserialize(using = SummaryStatisticsDeserializer.class)
    public StatisticalSummary getStatistic() {
       return statistic;
    }

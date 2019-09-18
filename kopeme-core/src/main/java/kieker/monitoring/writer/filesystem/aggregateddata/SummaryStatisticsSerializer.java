@@ -26,6 +26,10 @@ public class SummaryStatisticsSerializer extends StdSerializer<StatisticalSummar
          gen.writeNumber(value.getStandardDeviation());
          gen.writeFieldName("N");
          gen.writeNumber(value.getN());
+         gen.writeFieldName("min");
+         gen.writeNumber(value.getMin());
+         gen.writeFieldName("max");
+         gen.writeNumber(value.getMax());
          gen.writeEndObject();
       } else {
          gen.writeString("NO_STATISTICS");

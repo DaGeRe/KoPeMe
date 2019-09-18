@@ -27,7 +27,9 @@ public class SummaryStatisticsDeserializer extends StdDeserializer<StatisticalSu
          final double mean = node.get("mean").numberValue().doubleValue();
          final double deviation = node.get("standardDeviation").numberValue().doubleValue();
          final int n = node.get("N").numberValue().intValue();
-         return new StatisticalSummaryValues(mean, deviation * deviation, n, Double.MAX_VALUE, 0, mean * n);
+         final double min = node.get("min").isNull() ? 0 : node.get("min").doubleValue();
+         final double max = node.get("max").isNull() ? 0 : node.get("max").doubleValue();
+         return new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, mean * n);
       }
    }
 }
