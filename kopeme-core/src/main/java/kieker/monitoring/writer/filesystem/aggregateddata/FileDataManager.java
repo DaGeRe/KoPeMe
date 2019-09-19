@@ -22,7 +22,7 @@ public class FileDataManager implements Runnable {
    public static final ObjectMapper MAPPER = new ObjectMapper();
    static {
       final SimpleModule keyDeserializer = new SimpleModule();
-      keyDeserializer.addKeyDeserializer(AggregatedDataNode.class, new CallTreeNodeDeserializer());
+      keyDeserializer.addKeyDeserializer(AggregatedDataNode.class, new AggregatedDataNodeDeserializer());
       MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
       MAPPER.registerModule(keyDeserializer);
    }

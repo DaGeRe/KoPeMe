@@ -5,7 +5,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 
-public class CallTreeNodeDeserializer extends KeyDeserializer {
+public class AggregatedDataNodeDeserializer extends KeyDeserializer {
    // @Override
    // public CallTreeNode deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
    // final String value = p.getText();
