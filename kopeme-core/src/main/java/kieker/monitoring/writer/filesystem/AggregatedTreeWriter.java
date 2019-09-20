@@ -72,7 +72,8 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
          final AggregatedDataNode node = new AggregatedDataNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
-         dataManager.write(node, operation.getTout() - operation.getTin());
+         final long timeInMikroseconds = (operation.getTout() - operation.getTin())/1000;
+         dataManager.write(node, timeInMikroseconds);
       }
    }
 
