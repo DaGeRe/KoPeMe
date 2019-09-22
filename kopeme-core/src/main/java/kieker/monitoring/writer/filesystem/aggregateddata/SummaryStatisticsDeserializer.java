@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 public class SummaryStatisticsDeserializer extends StdDeserializer<StatisticalSummary> {
 
    public SummaryStatisticsDeserializer() {
-      super(SummaryStatisticsDeserializer.class);
+      super(StatisticalSummary.class);
    }
 
    @Override

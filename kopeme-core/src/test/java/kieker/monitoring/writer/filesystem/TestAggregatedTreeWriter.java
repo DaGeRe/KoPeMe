@@ -27,24 +27,28 @@ import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
  */
 public class TestAggregatedTreeWriter {
 
-
    @Before
    public void setupClass() {
       KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
    }
 
    public static void initWriter(final int warmup, final int entriesPerFile) {
+      initWriter(warmup, entriesPerFile, 5, false);
+   }
+   
+   public static void initWriter(final int warmup, final int entriesPerFile, final int interval, final boolean aggregatePartially) {
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
       final String absolutePath = TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER.getAbsolutePath();
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
-      config.setProperty(AggregatedTreeWriter.CONFIG_WRITEINTERVAL, 5);
+      config.setProperty(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL, 100);
       config.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, warmup);
+      config.setProperty(AggregatedTreeWriter.CONFIG_AGGREGATE_SPLITTED, aggregatePartially);
       config.setProperty(AggregatedTreeWriter.CONFIG_ENTRIESPERFILE, entriesPerFile);
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
    }
-   
+
    @Test(expected = RuntimeException.class)
    public void wrongOutlierFactor() throws Exception {
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
@@ -58,7 +62,7 @@ public class TestAggregatedTreeWriter {
       initWriter(0, 100);
       KiekerTestHelper.runFixture(15);
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); // TODO due to the meta data entry, which are written to every folder
+      assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); 
    }
 
    @Test
@@ -70,16 +74,20 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); // TODO due to the meta data entry, which are written to every folder
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); 
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, -1, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
       Assert.assertNotNull(summaryStatistics);
-      Assert.assertThat(summaryStatistics.getStatistic().getMean(), IsNaN.notANumber());
+      summaryStatistics.getStatistic().forEach((time, statistic) -> {
+         Assert.assertThat(statistic.getMean(), IsNaN.notANumber());
+      });
+
    }
-   
+
    /**
     * Attention: While kieker operations do not contain new (e.g. public NonExistant.<init>), Kieker patterns do (e.g. public new NonExistant.<init>)
+    * 
     * @throws Exception
     */
    @Test
@@ -91,25 +99,27 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public new NonExistant.<init>()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); // TODO due to the meta data entry, which are written to every folder
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); 
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, -1, "public new NonExistant.<init>()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
       Assert.assertNotNull(summaryStatistics);
-      Assert.assertThat(summaryStatistics.getStatistic().getMean(), Matchers.not(IsNaN.notANumber()));
+      summaryStatistics.getStatistic().forEach((time, statistic) -> {
+         Assert.assertThat(statistic.getMean(), Matchers.not(IsNaN.notANumber()));
+      });
    }
 
-   private Map<AggregatedDataNode, AggregatedData> assertJSONFileContainsMethods(final File kiekerFolder, final int methods) throws IOException {
+   static Map<AggregatedDataNode, AggregatedData> assertJSONFileContainsMethods(final File kiekerFolder, final int methods) throws IOException {
       final File currentMeasureFile = assertOneMeasureFile(kiekerFolder);
       System.out.println("File: " + currentMeasureFile.getAbsolutePath());
-      
+
       final Map<AggregatedDataNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(currentMeasureFile);
       assertEquals(methods, data.keySet().size());
 
       return data;
    }
 
-   private File assertOneMeasureFile(final File kiekerFolder) {
+   private static File assertOneMeasureFile(final File kiekerFolder) {
       final File[] measureFile = KiekerTestHelper.getMeasurementFiles(kiekerFolder);
       assertEquals(1, measureFile.length);
       final File currentMeasureFile = measureFile[0];

@@ -26,9 +26,9 @@ public class FileDataManager implements Runnable {
       MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
       MAPPER.registerModule(keyDeserializer);
    }
-   
+
    private final AggregatedTreeWriter aggregatedTreeWriter;
-   
+
    private File currentDestination;
    private Map<AggregatedDataNode, File> fileMapping = new HashMap<>();
    private Map<File, Map<AggregatedDataNode, WritingData>> fileData = new ConcurrentHashMap<>();
@@ -52,7 +52,6 @@ public class FileDataManager implements Runnable {
       changedFiles.add(changedFile);
    }
 
-
    private boolean running = true;
 
    public void finish() {
@@ -63,6 +62,7 @@ public class FileDataManager implements Runnable {
    public void run() {
       while (running) {
          try {
+            System.out.println("Sleeping: " + aggregatedTreeWriter.getWriteInterval());
             Thread.sleep(aggregatedTreeWriter.getWriteInterval());
          } catch (final InterruptedException e) {
             System.out.println("Writing is finished...");
@@ -72,9 +72,15 @@ public class FileDataManager implements Runnable {
                synchronized (nodeMap) {
                   final Set<File> oldFiles = changedFiles;
                   changedFiles = new HashSet<>();
+                  System.out.println("Write to: " + oldFiles.size());
                   for (final File file : oldFiles) {
                      final Map<AggregatedDataNode, WritingData> partialData = fileData.get(file);
                      MAPPER.writeValue(file, partialData);
+                     if (aggregatedTreeWriter.isAggregateSplitted()) {
+                        for (final WritingData nodeData : partialData.values()) {
+                           nodeData.persistStatistic();
+                        }
+                     }
                   }
                }
             } catch (final IOException e) {
@@ -99,15 +105,15 @@ public class FileDataManager implements Runnable {
             fileIndex++;
             currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".json");
             fileData.put(currentDestination, new HashMap<>());
-         } 
+         }
          data = new WritingData(currentDestination, aggregatedTreeWriter.getStatisticConfig());
          nodeMap.put(node, data);
          fileMapping.put(node, currentDestination);
-         
+
          final Map<AggregatedDataNode, WritingData> partialData = fileData.get(currentDestination);
          partialData.put(node, data);
          currentEntries++;
-         
+
       }
       return data;
    }

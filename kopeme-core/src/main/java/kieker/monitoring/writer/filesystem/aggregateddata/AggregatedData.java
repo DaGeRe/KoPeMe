@@ -1,9 +1,10 @@
 package kieker.monitoring.writer.filesystem.aggregateddata;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -22,10 +23,11 @@ public class AggregatedData {
    @JsonIgnore
    protected final StatisticConfig statisticConfig;
 
-   protected StatisticalSummary statistic;
+   protected Map<Long, StatisticalSummary> statistic;
 
    @JsonCreator
-   public AggregatedData(final @JsonProperty(value = "warmup") int warmup, final @JsonProperty(value = "statistic") StatisticalSummary statistic) {
+   public AggregatedData(final @JsonProperty(value = "warmup") int warmup, 
+         final @JsonProperty(value = "statistic") Map<Long, StatisticalSummary> statistic) {
       this.containedFile = null;
       this.warmup = 0;
       this.statistic = statistic;
@@ -35,7 +37,7 @@ public class AggregatedData {
    protected AggregatedData(final File containedFile, final StatisticConfig statisticConfig) {
       this.containedFile = containedFile;
       this.statisticConfig = statisticConfig;
-      this.statistic = new SummaryStatistics();
+      this.statistic = new LinkedHashMap<>();
    }
 
    public File getContainedFile() {
@@ -46,9 +48,9 @@ public class AggregatedData {
       return warmup;
    }
 
-   @JsonSerialize(using = SummaryStatisticsSerializer.class)
-   @JsonDeserialize(using = SummaryStatisticsDeserializer.class)
-   public StatisticalSummary getStatistic() {
+   @JsonSerialize(contentUsing =  SummaryStatisticsSerializer.class)
+   @JsonDeserialize(contentUsing = SummaryStatisticsDeserializer.class)
+   public Map<Long, StatisticalSummary> getStatistic() {
       return statistic;
    }
 }
