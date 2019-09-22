@@ -70,7 +70,7 @@ public class WritingData extends AggregatedData {
    }
 
    @JsonIgnore
-   public SummaryStatistics getOverallStatistics() {
+   public SummaryStatistics getOverallStatistic() {
       return overallStatistics;
    }
 
