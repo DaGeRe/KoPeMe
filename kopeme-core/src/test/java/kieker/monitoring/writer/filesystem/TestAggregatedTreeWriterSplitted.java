@@ -2,6 +2,7 @@ package kieker.monitoring.writer.filesystem;
 
 import java.util.Map;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class TestAggregatedTreeWriterSplitted {
       for (final Map.Entry<AggregatedDataNode, AggregatedData> method : data.entrySet()) {
          final long measurements = method.getValue().getStatistic().values().stream().mapToLong(statistic -> statistic.getN()).sum();
          Assert.assertEquals(30, measurements);
-         Assert.assertEquals(2, method.getValue().getStatistic().size());
+         Assert.assertThat(method.getValue().getStatistic().size(), Matchers.greaterThanOrEqualTo(2));
       }
    }
 }
