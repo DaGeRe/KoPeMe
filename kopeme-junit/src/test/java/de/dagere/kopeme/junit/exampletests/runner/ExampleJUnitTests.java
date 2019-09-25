@@ -22,6 +22,7 @@ public class ExampleJUnitTests {
 	public void testCallWithParameter(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
 		tr.setMeasureSummarizer("de.dagere.kopeme.datacollection.TimeDataCollector", new MaximumSummarizer());
+		tr.beforeRun();
 		tr.startCollection();
 		final int anzahl = 1000 + (int) (Math.random() * 10);
 		for (int i = 0; i < anzahl; i++) {

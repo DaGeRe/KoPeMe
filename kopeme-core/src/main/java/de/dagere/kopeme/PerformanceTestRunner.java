@@ -137,6 +137,7 @@ public class PerformanceTestRunner {
 			}
 			newResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 			params[0] = newResult;
+			tr.beforeRun();
 			final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
 			runMainExecution(pts, newResult);
 		} catch (final Throwable t) {
@@ -167,6 +168,7 @@ public class PerformanceTestRunner {
 		}
 		final long start = System.currentTimeMillis();
 		try {
+		   tr.beforeRun();
 			final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
 			runMainExecution(pts, tr);
 		} catch (final Throwable t) {

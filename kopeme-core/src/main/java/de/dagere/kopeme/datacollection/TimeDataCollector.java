@@ -35,14 +35,14 @@ public final class TimeDataCollector extends DataCollector {
 	@Override
 	public void stopCollection() {
 		stop = System.nanoTime();
-		try {
-			Thread.sleep(1);
-		} catch (final InterruptedException e) {
-			Thread.currentThread().interrupt();
-			// It is ok, if the collection is interrupted
-			// The interrupt status should stay the same
-			// throw new RuntimeException(e);
-		}
+//		try {
+//			Thread.sleep(1);
+//		} catch (final InterruptedException e) {
+//			Thread.currentThread().interrupt();
+//			// It is ok, if the collection is interrupted
+//			// The interrupt status should stay the same
+//			// throw new RuntimeException(e);
+//		}
 	}
 
 	@Override

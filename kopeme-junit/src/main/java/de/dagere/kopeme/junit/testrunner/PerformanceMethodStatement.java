@@ -147,8 +147,11 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          throws Throwable {
       final String methodString = className + "." + tr.getTestcase();
       int execution;
+      final String fullWarmupStart = "--- Starting " + warmupString + methodString + " {} / {} ---";
+      final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
+      tr.beforeRun();
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug("--- Starting " + warmupString + methodString + " " + execution + "/" + executions + " ---");
+         LOG.debug(fullWarmupStart, execution, executions);
          tr.startCollection();
          for (int i = 0; i < repetitions; i++) {
             callee.preEvaluate();
@@ -156,7 +159,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
             callee.postEvaluate();
          }
          tr.stopCollection();
-         LOG.debug("--- Stopping " + warmupString + execution + "/" + executions + " ---");
+         LOG.debug(fullWarmupStop, execution);
 
          tr.setRealExecutions(execution);
          if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
@@ -169,7 +172,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
             throw new InterruptedException("Test timed out.");
          }
          final boolean interrupted = Thread.interrupted();
-         LOG.debug("Interrupt state: {}", interrupted);
+         LOG.trace("Interrupt state: {}", interrupted);
          if (interrupted) {
             LOG.debug("Exiting thread.");
             throw new InterruptedException("Test was interrupted and eventually timed out.");

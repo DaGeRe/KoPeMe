@@ -143,23 +143,28 @@ public class TestResult {
 		}
 		LOG.debug("All measurements fine.");
 	}
+	
+	private DataCollector[] sortedCollectors;
+	
+   public void beforeRun() {
+      final Collection<DataCollector> dcCollection = dataCollectors.values();
+      sortedCollectors = dcCollection.toArray(new DataCollector[0]);
+      final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
+         @Override
+         public int compare(final DataCollector arg0, final DataCollector arg1) {
+            return arg0.getPriority() - arg1.getPriority();
+         }
+      };
+      Arrays.sort(sortedCollectors, comparator);
+   }
 
 	/**
 	 * Starts the collection of Data for all Datacollectors.
 	 */
 	public void startCollection() {
 		executionStartTimes.add(System.currentTimeMillis());
-		final Collection<DataCollector> dcCollection = dataCollectors.values();
-		final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
-		final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
-			@Override
-			public int compare(final DataCollector arg0, final DataCollector arg1) {
-				return arg0.getPriority() - arg1.getPriority();
-			}
-		};
-		Arrays.sort(sortedCollectors, comparator);
 		for (final DataCollector dc : sortedCollectors) {
-			LOG.trace("Starte: {}", dc.getName());
+			LOG.trace("Starting: {}", dc.getName());
 			dc.startCollection();
 		}
 	}
