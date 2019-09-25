@@ -104,8 +104,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
       int execution;
       tr.beforeRun();
+      final String fullWarmupStart = "--- Starting " + warmupString + " {} / {} ---";
+      final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug("--- Starting " + warmupString + execution + "/" + executions + " ---");
+         LOG.debug(fullWarmupStart, execution, executions);
          runnables.getBeforeRunnable().run();
          tr.startCollection();
          for (int repetition = 0; repetition < repetitions; repetition++) {
@@ -114,7 +116,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
          tr.stopCollection();
          runnables.getAfterRunnable().run();
          tr.setRealExecutions(execution - 1);
-         LOG.debug("--- Stopping execution " + execution + "/" + executions + " ---");
+         LOG.debug(fullWarmupStop, execution);
          for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
             LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
          }
