@@ -28,7 +28,7 @@ public final class TimeDataCollector extends DataCollector {
 
 	@Override
 	public void startCollection() {
-		System.gc();
+//		System.gc();
 		start = System.nanoTime();
 	}
 

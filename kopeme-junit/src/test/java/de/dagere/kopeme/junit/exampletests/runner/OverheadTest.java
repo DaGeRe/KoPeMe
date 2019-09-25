@@ -11,7 +11,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class OverheadTest {
 
-   @PerformanceTest(executionTimes = 100, warmupExecutions = 0, repetitions = 1, dataCollectors = "ONLYTIME")
+   @PerformanceTest(executionTimes = 10000, warmupExecutions = 0, repetitions = 1, dataCollectors = "ONLYTIME")
    @Test
    public void testIterationOverhead() throws Exception {
 
