@@ -222,6 +222,7 @@ public abstract class KoPeMeTestcase extends TestCase {
       final String firstPartStop = "--- Stopping " + executionTypName + " execution ";
       final String endPart = "/" + executionTimes + " ---";
       final int repetitions = getRepetitions();
+      tr.beforeRun();
       for (executions = 1; executions <= executionTimes; executions++) {
          LOG.debug(firstPart + executions + endPart);
          tr.startCollection();
