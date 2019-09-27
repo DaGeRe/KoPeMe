@@ -37,6 +37,7 @@ public class FileDataManager implements Runnable {
 
    private int currentEntries = 0;
    private int fileIndex = 0;
+   private boolean running = true;
 
    /**
     * @param aggregatedTreeWriter
@@ -46,13 +47,7 @@ public class FileDataManager implements Runnable {
       currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
       fileData.put(currentDestination, new HashMap<>());
    }
-
-   public void reportChange(final AggregatedDataNode node) {
-      final File changedFile = fileMapping.get(node);
-      changedFiles.add(changedFile);
-   }
-
-   private boolean running = true;
+   
 
    public void finish() {
       running = false;

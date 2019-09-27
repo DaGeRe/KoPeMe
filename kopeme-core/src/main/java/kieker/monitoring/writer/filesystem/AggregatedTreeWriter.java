@@ -97,7 +97,9 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
+      onTerminating();
       dataManager = new FileDataManager(this);
+      onStarting();
    }
 
    public Thread getWriterThread() {
