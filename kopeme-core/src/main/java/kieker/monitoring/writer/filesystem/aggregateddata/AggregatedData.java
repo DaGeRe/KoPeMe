@@ -53,31 +53,7 @@ public class AggregatedData {
    public StatisticalSummary getOverallStatistic() {
       final SummaryStatistics result = new SummaryStatistics();
       for (final StatisticalSummary splittedStatistic : getStatistic().values()) {
-         final long n = splittedStatistic.getN();
-         final long k = n / 2;
-         final double s = splittedStatistic.getStandardDeviation() * Math.sqrt(((double) n - 1) / n);
-         if (n % 2 == 0) {
-            final double x_a = splittedStatistic.getMean() - s;
-            final double x_b = splittedStatistic.getMean() + s;
-            for (int i = 0; i < k; i++) {
-               result.addValue(x_a);
-            }
-            for (long i = k; i < n; i++) {
-               result.addValue(x_b);
-            }
-         } else {
-            final double x_a = splittedStatistic.getMean() + Math.sqrt(((double) n) / (n - 1)) * s;
-            final double x_b = splittedStatistic.getMean() - Math.sqrt(((double) n) / (n - 1)) * s;
-            for (int i = 0; i < k; i++) {
-               result.addValue(x_a);
-            }
-            for (long i = k; i < k * 2; i++) {
-
-               result.addValue(x_b);
-            }
-            result.addValue(splittedStatistic.getMean());
-         }
-
+         StatisticUtil.mergePartStatistic(result, splittedStatistic);
       }
       return result;
    }
