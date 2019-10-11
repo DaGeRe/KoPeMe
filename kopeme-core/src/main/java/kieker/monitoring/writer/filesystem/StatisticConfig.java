@@ -5,7 +5,7 @@ public class StatisticConfig {
    private final double outlierFactor;
 
    public StatisticConfig(final int warmup, final double outlierFactor) {
-      if (outlierFactor < 1.0) {
+      if (outlierFactor < 1.0 && outlierFactor != -1.0) {
          throw new RuntimeException("Outlier factors needs to be above 1.0");
       }
       this.warmup = warmup;

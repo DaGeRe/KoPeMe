@@ -60,7 +60,7 @@ public class WritingData extends AggregatedData {
    private boolean decideAdding(final long value) {
       boolean add = false;
       if (overallStatistics.getN() > statisticConfig.getWarmup() && overallStatistics.getN() > 30) {
-         if (value < overallStatistics.getMean() * statisticConfig.getOutlierFactor()) {
+         if (statisticConfig.getOutlierFactor() == -1 || value < overallStatistics.getMean() * statisticConfig.getOutlierFactor()) {
             add = true;
          }
       } else {

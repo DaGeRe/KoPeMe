@@ -54,10 +54,10 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       resultFolder.mkdirs();
 
       writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
-      aggregateSplitted = configuration.getBooleanProperty(CONFIG_AGGREGATE_SPLITTED);
+      aggregateSplitted = configuration.getBooleanProperty(CONFIG_AGGREGATE_SPLITTED, true);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
 
-      statisticConfig = new StatisticConfig(configuration.getIntProperty(CONFIG_WARMUP, 10), configuration.getDoubleProperty(CONFIG_OUTLIER, 5.0));
+      statisticConfig = new StatisticConfig(configuration.getIntProperty(CONFIG_WARMUP, 10), configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
 
       dataManager = new FileDataManager(this);
    }
