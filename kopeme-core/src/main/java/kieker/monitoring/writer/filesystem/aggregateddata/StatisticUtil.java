@@ -1,7 +1,6 @@
 package kieker.monitoring.writer.filesystem.aggregateddata;
 
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -16,6 +15,14 @@ public class StatisticUtil {
       } else {
          buildStatisticUneven(result, splittedStatistic, n, k, s);
       }
+   }
+   
+   public static double getMean(final List<StatisticalSummary> statistics) {
+      final SummaryStatistics result = new SummaryStatistics();
+      for (final StatisticalSummary splittedStatistic : statistics) {
+         mergePartStatistic(result, splittedStatistic);
+      }
+      return result.getMean();
    }
 
    private static void buildStatisticUneven(final SummaryStatistics result, final StatisticalSummary splittedStatistic, final long n, final long k, final double s) {
