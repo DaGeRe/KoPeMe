@@ -22,11 +22,12 @@ public class WritingData extends AggregatedData {
 
    public WritingData(final File containedFile, final StatisticConfig statisticConfig) {
       super(containedFile, statisticConfig);
+      nextLine();
    }
 
    public void persistStatistic() {
       synchronized (writeStatistic) {
-         newestStatistic = null;
+         nextLine();
       }
    }
 
@@ -37,16 +38,17 @@ public class WritingData extends AggregatedData {
          final boolean add = decideAdding(value);
          if (add) {
             synchronized (writeStatistic) {
-               if (newestStatistic == null) {
-                  newestStatistic = new SummaryStatistics();
-                  getAvailableTimeslot();
-                  writeStatistic.put(newestTime, newestStatistic);
-               }
                overallStatistics.addValue(value);
                newestStatistic.addValue(value);
             }
          }
       }
+   }
+
+   private void nextLine() {
+      newestStatistic = new SummaryStatistics();
+      getAvailableTimeslot();
+      writeStatistic.put(newestTime, newestStatistic);
    }
 
    private void getAvailableTimeslot() {

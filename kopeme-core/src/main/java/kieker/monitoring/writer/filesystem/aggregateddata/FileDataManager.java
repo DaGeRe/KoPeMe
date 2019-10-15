@@ -49,9 +49,7 @@ public class FileDataManager implements Runnable {
          }
          if (running) {
             try {
-               synchronized (nodeMap) {
-                  writeAll();
-               }
+               writeAll();
             } catch (final IOException e) {
                e.printStackTrace();
             }
@@ -59,7 +57,7 @@ public class FileDataManager implements Runnable {
       }
    }
 
-   private void writeAll() throws IOException {
+   private synchronized void writeAll() throws IOException {
       for (final Map.Entry<AggregatedDataNode, WritingData> value : nodeMap.entrySet()) {
          writeLine(value);
 
@@ -105,11 +103,9 @@ public class FileDataManager implements Runnable {
 
    }
 
-   public void write(final AggregatedDataNode node, final long duration) {
-      synchronized (nodeMap) {
-         final WritingData data = getData(node);
-         data.addValue(duration);
-      }
+   public synchronized void write(final AggregatedDataNode node, final long duration) {
+      final WritingData data = getData(node);
+      data.addValue(duration);
    }
 
    private WritingData getData(final AggregatedDataNode node) {
@@ -123,8 +119,6 @@ public class FileDataManager implements Runnable {
    }
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
-      synchronized (nodeMap) {
-         writeAll();
-      }
+      writeAll();
    }
 }
