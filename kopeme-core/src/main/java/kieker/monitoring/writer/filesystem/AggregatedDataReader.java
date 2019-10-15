@@ -21,7 +21,7 @@ import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 public class AggregatedDataReader {
    public static Map<AggregatedDataNode, AggregatedData> getFullDataMap(final File folder) throws JsonParseException, JsonMappingException, IOException {
       if (!folder.isDirectory()) {
-         throw new RuntimeException("Expecting folder with JSON-files!");
+         throw new RuntimeException("Expecting folder with CSV-files!");
       }
       final Map<AggregatedDataNode, AggregatedData> resultMap = new HashMap<>();
       for (final File partialDataFile : getFiles(folder)) {
@@ -35,7 +35,7 @@ public class AggregatedDataReader {
       return folder.listFiles(new FileFilter() {
          @Override
          public boolean accept(final File pathname) {
-            return pathname.getName().endsWith(".json");
+            return pathname.getName().endsWith(".csv");
          }
       });
    }

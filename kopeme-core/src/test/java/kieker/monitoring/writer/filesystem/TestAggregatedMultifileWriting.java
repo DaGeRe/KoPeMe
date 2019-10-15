@@ -46,6 +46,9 @@ public class TestAggregatedMultifileWriting {
             Assert.assertEquals(3, data.size());
          }
       }
+
+      final Map<AggregatedDataNode, AggregatedData> fullDataMap = AggregatedDataReader.getFullDataMap(measureFile[0].getParentFile());
+      Assert.assertEquals(30, fullDataMap.size());
    }
 
    @Test
