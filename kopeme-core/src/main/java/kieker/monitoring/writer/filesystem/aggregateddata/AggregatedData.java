@@ -10,8 +10,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import kieker.monitoring.writer.filesystem.StatisticConfig;
 
@@ -58,8 +56,6 @@ public class AggregatedData {
       return result;
    }
 
-   @JsonSerialize(contentUsing = SummaryStatisticsSerializer.class)
-   @JsonDeserialize(contentUsing = SummaryStatisticsDeserializer.class)
    public Map<Long, StatisticalSummary> getStatistic() {
       return statistic;
    }

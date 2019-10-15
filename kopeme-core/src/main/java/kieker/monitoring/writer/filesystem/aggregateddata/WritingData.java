@@ -8,8 +8,6 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import kieker.monitoring.writer.filesystem.StatisticConfig;
 
@@ -17,6 +15,7 @@ public class WritingData extends AggregatedData {
 
    @JsonIgnore
    protected Map<Long, StatisticalSummary> writeStatistic = new LinkedHashMap<>();
+   
    private SummaryStatistics newestStatistic;
    private long newestTime;
    private SummaryStatistics overallStatistics = new SummaryStatistics();
@@ -74,9 +73,15 @@ public class WritingData extends AggregatedData {
       return overallStatistics;
    }
 
-   @JsonSerialize(contentUsing = SummaryStatisticsSerializer.class)
-   @JsonDeserialize(contentUsing = SummaryStatisticsDeserializer.class)
    public Map<Long, StatisticalSummary> getStatistic() {
       return writeStatistic;
+   }
+
+   public StatisticalSummary getCurrentStatistic() {
+      return newestStatistic;
+   }
+
+   public long getCurrentStart() {
+      return newestTime;
    }
 }

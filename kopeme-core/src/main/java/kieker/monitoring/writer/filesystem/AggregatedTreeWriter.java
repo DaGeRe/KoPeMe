@@ -45,7 +45,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    private static final Logger LOG = Logger.getLogger(AggregatedTreeWriter.class.getName());
 
-   public AggregatedTreeWriter(final Configuration configuration) {
+   public AggregatedTreeWriter(final Configuration configuration) throws IOException {
       super(configuration);
       LOG.info("Init..");
       instance = this;
@@ -92,7 +92,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       }
    }
 
-   public void setFolder(final File writingFolder) {
+   public void setFolder(final File writingFolder) throws IOException {
       LOG.info("Writing to: " + writingFolder);
       final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();

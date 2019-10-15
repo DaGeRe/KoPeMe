@@ -1,6 +1,7 @@
 package de.dagere.kopeme.kieker;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,7 +35,7 @@ public class KoPeMeKiekerSupport {
       fp = FolderProvider.getInstance();
    }
 
-   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) {
+   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws IOException {
       if (useIt) {
          final IMonitoringController kiekerController = MonitoringController.getInstance();
          final ChangeableFolder fsWriter = getWriter();

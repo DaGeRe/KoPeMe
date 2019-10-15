@@ -17,14 +17,15 @@ import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
 import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 
 public class TestAggregatedMultifileWriting {
-   
+
    @Before
    public void setupClass() {
       KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
    }
-   
+
    @Test
-   public void testTenFilesWriting() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, JsonParseException, JsonMappingException, IOException {
+   public void testTenFilesWriting()
+         throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, JsonParseException, JsonMappingException, IOException {
       TestAggregatedTreeWriter.initWriter(0, 3);
       final int methods = 30;
       for (int i = 0; i < 3; i++) {
@@ -37,14 +38,16 @@ public class TestAggregatedMultifileWriting {
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
       final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
-      Assert.assertEquals(10, measureFile.length);
-       
+      Assert.assertEquals(11, measureFile.length); // newest is empty file
+
       for (final File file : measureFile) {
          final Map<AggregatedDataNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(file);
-         Assert.assertEquals(3, data.size());
+         if (!file.getName().equals("measurement-10.csv")) {
+            Assert.assertEquals(3, data.size());
+         }
       }
    }
-   
+
    @Test
    public void testTwoFileWriting() throws Exception {
       TestAggregatedTreeWriter.initWriter(0, 10);

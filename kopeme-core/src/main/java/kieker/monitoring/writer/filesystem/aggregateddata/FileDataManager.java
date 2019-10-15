@@ -1,38 +1,23 @@
 package kieker.monitoring.writer.filesystem.aggregateddata;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
 
 public class FileDataManager implements Runnable {
 
-   public static final ObjectMapper MAPPER = new ObjectMapper();
-   static {
-      final SimpleModule keyDeserializer = new SimpleModule();
-      keyDeserializer.addKeyDeserializer(AggregatedDataNode.class, new AggregatedDataNodeDeserializer());
-      MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-      MAPPER.registerModule(keyDeserializer);
-   }
-
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
    private File currentDestination;
-   private Map<AggregatedDataNode, File> fileMapping = new HashMap<>();
-   private Map<File, Map<AggregatedDataNode, WritingData>> fileData = new ConcurrentHashMap<>();
-   private Set<File> changedFiles = new HashSet<>();
+   private BufferedWriter currentWriter;
    private final Map<AggregatedDataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
 
    private int currentEntries = 0;
@@ -41,13 +26,13 @@ public class FileDataManager implements Runnable {
 
    /**
     * @param aggregatedTreeWriter
+    * @throws IOException
     */
-   public FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) {
+   public FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
-      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.json");
-      fileData.put(currentDestination, new HashMap<>());
+      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.csv");
+      currentWriter = new BufferedWriter(new FileWriter(currentDestination));
    }
-   
 
    public void finish() {
       running = false;
@@ -65,18 +50,7 @@ public class FileDataManager implements Runnable {
          if (running) {
             try {
                synchronized (nodeMap) {
-                  final Set<File> oldFiles = changedFiles;
-                  changedFiles = new HashSet<>();
-                  System.out.println("Write to: " + oldFiles.size());
-                  for (final File file : oldFiles) {
-                     final Map<AggregatedDataNode, WritingData> partialData = fileData.get(file);
-                     MAPPER.writeValue(file, partialData);
-                     if (aggregatedTreeWriter.isAggregateSplitted()) {
-                        for (final WritingData nodeData : partialData.values()) {
-                           nodeData.persistStatistic();
-                        }
-                     }
-                  }
+                  writeAll();
                }
             } catch (final IOException e) {
                e.printStackTrace();
@@ -85,40 +59,69 @@ public class FileDataManager implements Runnable {
       }
    }
 
+   private void writeAll() throws IOException {
+      for (final Map.Entry<AggregatedDataNode, WritingData> value : nodeMap.entrySet()) {
+         writeLine(value);
+         
+         currentEntries++;
+         
+         if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
+            startNextFile();
+         }
+      }
+      currentWriter.flush();
+   }
+
+   private void writeLine(final Map.Entry<AggregatedDataNode, WritingData> value) throws IOException {
+      writeHeader(value.getKey());
+      writeStatistics(value.getValue());
+      currentWriter.write("\n");
+      value.getValue().persistStatistic();
+   }
+
+   private void startNextFile() throws IOException {
+      currentEntries = 0;
+      fileIndex++;
+      currentWriter.close();
+      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".csv");
+      currentWriter = new BufferedWriter(new FileWriter(currentDestination));
+   }
+
+   private void writeHeader(final AggregatedDataNode node) throws IOException {
+      currentWriter.write(node.getCall() + ";" + node.getEoi() + ";" + node.getEss() + ";");
+   }
+
+   private void writeStatistics(final WritingData value) throws IOException {
+      currentWriter.write(value.getCurrentStart() + ";");
+      if (value.getCurrentStatistic() != null) {
+         currentWriter.write(value.getCurrentStatistic().getMean() + ";");
+         currentWriter.write(value.getCurrentStatistic().getStandardDeviation() + ";");
+         currentWriter.write(value.getCurrentStatistic().getN() + ";");
+         currentWriter.write(value.getCurrentStatistic().getMin() + ";");
+         currentWriter.write(value.getCurrentStatistic().getMax() + "");
+      } else {
+         currentWriter.write("NaN;NaN;0;NaN;NaN");
+      }
+
+   }
+
    public void write(final AggregatedDataNode node, final long duration) {
       final WritingData data = getData(node);
       data.addValue(duration);
-      final File changedNode = fileMapping.get(node);
-      changedFiles.add(changedNode);
    }
 
    private WritingData getData(final AggregatedDataNode node) {
       WritingData data = nodeMap.get(node);
       if (data == null) {
-         if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
-            currentEntries = 0;
-            fileIndex++;
-            currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".json");
-            fileData.put(currentDestination, new HashMap<>());
-         }
          data = new WritingData(currentDestination, aggregatedTreeWriter.getStatisticConfig());
          nodeMap.put(node, data);
-         fileMapping.put(node, currentDestination);
-
-         final Map<AggregatedDataNode, WritingData> partialData = fileData.get(currentDestination);
-         partialData.put(node, data);
-         currentEntries++;
-
       }
       return data;
    }
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
       synchronized (nodeMap) {
-         for (final Entry<File, Map<AggregatedDataNode, WritingData>> entry : fileData.entrySet()) {
-            System.out.println("Final writing to " + entry.getKey());
-            MAPPER.writeValue(entry.getKey(), entry.getValue());
-         }
+         writeAll();
       }
    }
 }

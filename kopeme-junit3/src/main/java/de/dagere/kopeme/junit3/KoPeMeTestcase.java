@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit3;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.logging.log4j.LogManager;
@@ -118,7 +119,7 @@ public abstract class KoPeMeTestcase extends TestCase {
    }
 
    @Override
-   public void runBare() throws InterruptedException {
+   public void runBare() throws InterruptedException, IOException {
       LOG.trace("Initialize JUnit-3-KoPeMe-Testcase");
 
       final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();

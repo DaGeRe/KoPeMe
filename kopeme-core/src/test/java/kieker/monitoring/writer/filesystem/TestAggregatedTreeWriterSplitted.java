@@ -35,6 +35,7 @@ public class TestAggregatedTreeWriterSplitted {
       final Map<AggregatedDataNode, AggregatedData> data = TestAggregatedTreeWriter.assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); 
       
       for (final Map.Entry<AggregatedDataNode, AggregatedData> method : data.entrySet()) {
+         System.out.println(method.getKey() + " " + method.getValue().getStatistic());
          final long measurements = method.getValue().getStatistic().values().stream().mapToLong(statistic -> statistic.getN()).sum();
          Assert.assertEquals(30, measurements);
          Assert.assertThat(method.getValue().getStatistic().size(), Matchers.greaterThanOrEqualTo(2));
