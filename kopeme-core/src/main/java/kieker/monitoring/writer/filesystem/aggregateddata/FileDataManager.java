@@ -62,9 +62,9 @@ public class FileDataManager implements Runnable {
    private void writeAll() throws IOException {
       for (final Map.Entry<AggregatedDataNode, WritingData> value : nodeMap.entrySet()) {
          writeLine(value);
-         
+
          currentEntries++;
-         
+
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
             startNextFile();
          }
@@ -106,8 +106,10 @@ public class FileDataManager implements Runnable {
    }
 
    public void write(final AggregatedDataNode node, final long duration) {
-      final WritingData data = getData(node);
-      data.addValue(duration);
+      synchronized (nodeMap) {
+         final WritingData data = getData(node);
+         data.addValue(duration);
+      }
    }
 
    private WritingData getData(final AggregatedDataNode node) {
@@ -117,6 +119,7 @@ public class FileDataManager implements Runnable {
          nodeMap.put(node, data);
       }
       return data;
+
    }
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
