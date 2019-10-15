@@ -24,7 +24,7 @@ public class SummaryStatisticsSerializer extends StdSerializer<StatisticalSummar
          gen.writeNumber(value.getMean());
          gen.writeFieldName("standardDeviation");
          gen.writeNumber(value.getStandardDeviation());
-         gen.writeFieldName("N");
+         gen.writeFieldName("n");
          gen.writeNumber(value.getN());
          gen.writeFieldName("min");
          gen.writeNumber(value.getMin());
