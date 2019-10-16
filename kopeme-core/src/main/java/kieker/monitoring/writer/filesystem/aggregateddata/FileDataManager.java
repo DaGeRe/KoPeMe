@@ -71,10 +71,12 @@ public class FileDataManager implements Runnable {
    }
 
    private void writeLine(final Map.Entry<AggregatedDataNode, WritingData> value) throws IOException {
-      writeHeader(value.getKey());
-      writeStatistics(value.getValue());
-      currentWriter.write("\n");
-      value.getValue().persistStatistic();
+      if (value.getValue().getCurrentStatistic() != null && !Double.isNaN(value.getValue().getCurrentStatistic().getMean())) {
+         writeHeader(value.getKey());
+         writeStatistics(value.getValue());
+         currentWriter.write("\n");
+         value.getValue().persistStatistic();
+      }
    }
 
    private void startNextFile() throws IOException {
@@ -91,16 +93,11 @@ public class FileDataManager implements Runnable {
 
    private void writeStatistics(final WritingData value) throws IOException {
       currentWriter.write(value.getCurrentStart() + ";");
-      if (value.getCurrentStatistic() != null) {
-         currentWriter.write(value.getCurrentStatistic().getMean() + ";");
-         currentWriter.write(value.getCurrentStatistic().getStandardDeviation() + ";");
-         currentWriter.write(value.getCurrentStatistic().getN() + ";");
-         currentWriter.write(value.getCurrentStatistic().getMin() + ";");
-         currentWriter.write(value.getCurrentStatistic().getMax() + "");
-      } else {
-         currentWriter.write("NaN;NaN;0;NaN;NaN");
-      }
-
+      currentWriter.write(value.getCurrentStatistic().getMean() + ";");
+      currentWriter.write(value.getCurrentStatistic().getStandardDeviation() + ";");
+      currentWriter.write(value.getCurrentStatistic().getN() + ";");
+      currentWriter.write(value.getCurrentStatistic().getMin() + ";");
+      currentWriter.write(value.getCurrentStatistic().getMax() + "");
    }
 
    public synchronized void write(final AggregatedDataNode node, final long duration) {
