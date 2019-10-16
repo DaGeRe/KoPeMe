@@ -74,15 +74,9 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 0); 
 
-      final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, -1, "public void NonExistant.method0()");
-      final AggregatedData summaryStatistics = data.get(expectedNode);
-      Assert.assertNotNull(summaryStatistics);
-      summaryStatistics.getStatistic().forEach((time, statistic) -> {
-         Assert.assertThat(statistic.getMean(), IsNaN.notANumber());
-      });
-
+      Assert.assertEquals(0, data.size());
    }
 
    /**
