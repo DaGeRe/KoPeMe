@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -49,10 +49,7 @@ public class AggregatedData {
 
    @JsonIgnore
    public StatisticalSummary getOverallStatistic() {
-      final SummaryStatistics result = new SummaryStatistics();
-      for (final StatisticalSummary splittedStatistic : getStatistic().values()) {
-         StatisticUtil.mergePartStatistic(result, splittedStatistic);
-      }
+      final StatisticalSummary result = AggregateSummaryStatistics.aggregate(getStatistic().values());
       return result;
    }
 
