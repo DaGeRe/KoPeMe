@@ -1,10 +1,12 @@
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.dagere.kopeme</groupId>
 	<artifactId>kopeme-parent</artifactId>
 	<version>0.10-SNAPSHOT</version>
-        <packaging>pom</packaging>
+	<packaging>pom</packaging>
 	<name>KoPeMe - Parent</name>
 	<description>KoPeMe is a framework for enabling performance tests in Java. This makes it possible to live a software development process where performance measures are taken continously and therefore react continously to changes in performance. With continous performance testing, one avoids refactorings after performance problems occured in a big testing phase before releasing the software.</description>
 
@@ -21,7 +23,7 @@
 		<core.version>0.11-SNAPSHOT</core.version>
 		<java.version>1.8</java.version>
 		<kieker.version>1.13</kieker.version>
-		<checkstyle.version>8.25</checkstyle.version>
+		<checkstyle.version>8.27</checkstyle.version>
 	</properties>
 
 	<modules>
@@ -29,8 +31,7 @@
 		<module>kopeme-core</module>
 		<module>kopeme-junit</module>
 		<module>kopeme-junit3</module>
-		<!--<module>kopeme-visualizer-core</module>
-		<module>kopeme-analysis</module>-->
+		<!--<module>kopeme-visualizer-core</module> <module>kopeme-analysis</module> -->
 		<!-- <module>kopeme-mojo</module> -->
 		<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
 		<!-- <module>kopeme-visualizer</module> -->
@@ -70,6 +71,21 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<configuration>
+						<source>8</source>
+					</configuration>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.21.0</version>
 					<configuration>
@@ -95,7 +111,7 @@
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>	
+					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.1.1</version>
 					<configuration>
 						<quiet>true</quiet>
@@ -205,18 +221,18 @@
 		</repository>
 	</distributionManagement>
 
-	  <reporting>
-	    <plugins>
-	      <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-checkstyle-plugin</artifactId>
-		<version>2.15</version>
-		<configuration>
-			<configLocation>checkstyle/checkstyle.xml</configLocation>
-		        <suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
-		</configuration>
-	      </plugin>
-	    </plugins>
-	  </reporting>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>2.15</version>
+				<configuration>
+					<configLocation>checkstyle/checkstyle.xml</configLocation>
+					<suppressionsLocation>checkstyle/suppressions.xml</suppressionsLocation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>

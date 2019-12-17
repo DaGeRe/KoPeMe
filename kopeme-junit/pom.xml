@@ -25,7 +25,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-<!--  				<version>2.21.0-SNAPSHOT</version>  -->
 			</plugin>
 
 			<plugin>
@@ -36,15 +35,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
-					<failOnError>false</failOnError>
-					<charset>UTF-8</charset>
-					<docencoding>UTF-8</docencoding>
-					<quiet>true</quiet>
-					<nonavbar>true</nonavbar>
-					<notree>true</notree>
-					<nocomment>true</nocomment>
-					<nohelp>true</nohelp>
+					<source>8</source>
 				</configuration>
 				<executions>
 					<execution>
@@ -61,7 +52,6 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
