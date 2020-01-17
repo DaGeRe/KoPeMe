@@ -54,7 +54,7 @@ public class DataCollectorList {
 		ONLYTIME.addDataCollector(TimeDataCollector.class);
 		
 		ONLYTIME_NOGC = new DataCollectorList();
-		ONLYTIME.addDataCollector(TimeDataCollectorNoGC.class);
+		ONLYTIME_NOGC.addDataCollector(TimeDataCollectorNoGC.class);
 
 		NONE = new DataCollectorList();
 	}
