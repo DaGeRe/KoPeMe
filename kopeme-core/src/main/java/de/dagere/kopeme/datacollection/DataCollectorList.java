@@ -24,9 +24,13 @@ public class DataCollectorList {
 	 */
 	public static final DataCollectorList STANDARD;
 	/**
-	 * The list, containing only a collector for time usage.
+	 * The list, containing only a collector for time usage include GC before time measurement start.
 	 */
 	public static final DataCollectorList ONLYTIME;
+	/**
+    * The list containing only a collector for time usage without GC.
+    */
+   public static final DataCollectorList ONLYTIME_NOGC;
 	/**
 	 * The list, containing no collector; one could use this if one wants only to use self-defined collectors.
 	 */
@@ -48,6 +52,9 @@ public class DataCollectorList {
 
 		ONLYTIME = new DataCollectorList();
 		ONLYTIME.addDataCollector(TimeDataCollector.class);
+		
+		ONLYTIME_NOGC = new DataCollectorList();
+		ONLYTIME.addDataCollector(TimeDataCollectorNoGC.class);
 
 		NONE = new DataCollectorList();
 	}
