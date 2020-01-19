@@ -62,11 +62,13 @@ public abstract class KoPeMeBasicStatement extends Statement {
          datacollectors = DataCollectorList.STANDARD;
       } else if ("ONLYTIME".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.ONLYTIME;
+      } else if ("ONLYTIME_NOGC".equals(annotation.dataCollectors())) {
+         datacollectors = DataCollectorList.ONLYTIME_NOGC;
       } else if ("NONE".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.NONE;
       } else {
          datacollectors = DataCollectorList.ONLYTIME;
-         LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE are allowed");
+         LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME, ONLYTIME_NOGC and NONE are allowed");
       }
 
       if (annotation != null) {

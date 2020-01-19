@@ -13,6 +13,7 @@ public final class TimeDataCollectorNoGC extends DataCollector {
     * Initializes the TimeDataCollector.
     */
    public TimeDataCollectorNoGC() {
+      System.out.println("No GC Collector");
       start = 0;
       stop = 0;
    }
