@@ -171,7 +171,7 @@ public class TestResult {
    }
 
    /**
-    * Starts or restarts the collection for all Datacollectors, e.g. if a TimeDataCollector was started and stoped before, the Time measured now is added to the original time.
+    * Starts or restarts the collection for all DataCollectors, e.g. if a TimeDataCollector was started and stopped before, the time measured now is added to the original time.
     */
    public void startOrRestartCollection() {
       executionStartTimes.add(System.currentTimeMillis());
