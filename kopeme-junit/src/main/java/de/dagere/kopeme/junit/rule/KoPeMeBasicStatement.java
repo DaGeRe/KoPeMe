@@ -41,12 +41,9 @@ public abstract class KoPeMeBasicStatement extends Statement {
    /**
     * Initializes the KoPemeBasicStatement.
     * 
-    * @param runnables
-    *           Runnables that should be run
-    * @param method
-    *           Method that should be executed
-    * @param filename
-    *           Name of the
+    * @param runnables Runnables that should be run
+    * @param method Method that should be executed
+    * @param filename Name of the
     */
    public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
       super();
@@ -95,8 +92,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
    /**
     * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
     * 
-    * @param tr
-    *           Test Result that should be checked
+    * @param tr Test Result that should be checked
     * @return Weather the result is valid
     */
    protected boolean checkCollectorValidity(final TestResult tr) {
@@ -106,10 +102,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
       int execution;
       tr.beforeRun();
-      final String fullWarmupStart = "--- Starting " + warmupString + " {} / {} ---";
-      final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
+      final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
+      final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution, executions);
+         LOG.debug(fullWarmupStart, execution);
          runnables.getBeforeRunnable().run();
          tr.startCollection();
          for (int repetition = 0; repetition < repetitions; repetition++) {
