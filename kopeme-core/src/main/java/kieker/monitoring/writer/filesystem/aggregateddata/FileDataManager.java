@@ -61,8 +61,6 @@ public class FileDataManager implements Runnable {
       for (final Map.Entry<AggregatedDataNode, WritingData> value : nodeMap.entrySet()) {
          writeLine(value);
 
-         currentEntries++;
-
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
             startNextFile();
          }
@@ -75,6 +73,7 @@ public class FileDataManager implements Runnable {
          writeHeader(value.getKey());
          writeStatistics(value.getValue());
          currentWriter.write("\n");
+         currentEntries++;
          value.getValue().persistStatistic();
       }
    }
