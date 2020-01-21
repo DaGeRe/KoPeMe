@@ -115,6 +115,7 @@ public class FileDataManager implements Runnable {
    }
 
    public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
+      System.out.println("Writing finally...");
       writeAll();
    }
 }

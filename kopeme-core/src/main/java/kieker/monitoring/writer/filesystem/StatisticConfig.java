@@ -1,7 +1,7 @@
 package kieker.monitoring.writer.filesystem;
 
 public class StatisticConfig {
-   private final int warmup;
+   private int warmup;
    private final double outlierFactor;
 
    public StatisticConfig(final int warmup, final double outlierFactor) {
@@ -19,5 +19,9 @@ public class StatisticConfig {
 
    public double getOutlierFactor() {
       return outlierFactor;
+   }
+
+   public void setWarmup(int warmup) {
+      this.warmup = warmup;
    }
 }

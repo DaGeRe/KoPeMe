@@ -11,7 +11,7 @@ public class TestKoPeMeKiekerSupport {
 	@Test
 	public void testThatTheworldisnotSinkingIntoABlockHole() throws Exception {
 		MonitoringController.getInstance();
-		KoPeMeKiekerSupport.INSTANCE.useKieker(true, "myClass", "myTestCaseName");
+		KoPeMeKiekerSupport.INSTANCE.useKieker(true, 1, "myClass", "myTestCaseName");
 		
 		final ChangeableFolderWriter writer = ChangeableFolderWriter.getInstance();
 		Assert.assertNotNull(writer);
