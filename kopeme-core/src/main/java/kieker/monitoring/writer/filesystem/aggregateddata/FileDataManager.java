@@ -69,7 +69,9 @@ public class FileDataManager implements Runnable {
    }
 
    private void writeLine(final Map.Entry<AggregatedDataNode, WritingData> value) throws IOException {
-      if (value.getValue().getCurrentStatistic() != null && !Double.isNaN(value.getValue().getCurrentStatistic().getMean())) {
+      if (value.getValue().getCurrentStatistic() != null && 
+            !Double.isNaN(value.getValue().getCurrentStatistic().getMean())
+            && value.getValue().getCurrentStatistic().getN() != 0) {
          writeHeader(value.getKey());
          writeStatistics(value.getValue());
          currentWriter.write("\n");

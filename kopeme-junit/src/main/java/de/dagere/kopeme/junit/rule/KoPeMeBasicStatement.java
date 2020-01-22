@@ -70,7 +70,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
       if (annotation != null) {
          try {
-            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), annotation.warmupExecutions(), filename, method.getName());
+            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), annotation.warmupExecutions() * annotation.repetitions(), filename, method.getName());
          } catch (final Exception e) {
             System.err.println("kieker has failed!");
             e.printStackTrace();
