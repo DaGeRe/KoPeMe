@@ -47,6 +47,9 @@ public class TestAggregatedTreeWriter {
       config.setProperty(AggregatedTreeWriter.CONFIG_ENTRIESPERFILE, entriesPerFile);
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
+      
+      AggregatedTreeWriter fsWriter = AggregatedTreeWriter.getInstance();
+      fsWriter.getStatisticConfig().setWarmup(warmup);
    }
 
    @Test(expected = RuntimeException.class)

@@ -56,7 +56,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
       aggregateSplitted = configuration.getBooleanProperty(CONFIG_AGGREGATE_SPLITTED, true);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
-
       statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
 
       dataManager = new FileDataManager(this);
