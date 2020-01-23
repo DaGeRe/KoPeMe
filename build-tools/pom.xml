@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.dagere.kopeme</groupId>
   <artifactId>build-tools</artifactId>
-  <version>0.10.1-SNAPSHOT</version>
+  <version>0.10.1</version>
   <name>Build Tools</name>
 
   <parent>
 		<artifactId>kopeme-parent</artifactId>
 		<relativePath>../pom.xml</relativePath>
-		<version>0.10-SNAPSHOT</version>
+		<version>0.10</version>
 		<groupId>de.dagere.kopeme</groupId>
   </parent>
 
