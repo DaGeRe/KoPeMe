@@ -128,7 +128,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		final TestResult tr = new TestResult(testClassName, executionTimes, datacollectors);
 
 		try {
-			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
+		   
+			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), warmupExecutions, testClassName, getName());
 		} catch (final Exception e) {
 			System.err.println("Kieker has failed!");
 			e.printStackTrace();

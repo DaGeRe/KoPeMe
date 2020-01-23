@@ -41,12 +41,9 @@ public abstract class KoPeMeBasicStatement extends Statement {
    /**
     * Initializes the KoPemeBasicStatement.
     * 
-    * @param runnables
-    *           Runnables that should be run
-    * @param method
-    *           Method that should be executed
-    * @param filename
-    *           Name of the
+    * @param runnables Runnables that should be run
+    * @param method Method that should be executed
+    * @param filename Name of the
     */
    public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
       super();
@@ -62,16 +59,18 @@ public abstract class KoPeMeBasicStatement extends Statement {
          datacollectors = DataCollectorList.STANDARD;
       } else if ("ONLYTIME".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.ONLYTIME;
+      } else if ("ONLYTIME_NOGC".equals(annotation.dataCollectors())) {
+         datacollectors = DataCollectorList.ONLYTIME_NOGC;
       } else if ("NONE".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.NONE;
       } else {
          datacollectors = DataCollectorList.ONLYTIME;
-         LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME AND NONE are allowed");
+         LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME, ONLYTIME_NOGC and NONE are allowed");
       }
 
       if (annotation != null) {
          try {
-            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), annotation.warmupExecutions() * annotation.repetitions(), filename, method.getName());
          } catch (final Exception e) {
             System.err.println("kieker has failed!");
             e.printStackTrace();
@@ -93,8 +92,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
    /**
     * Tests weather the collectors given in the assertions and the maximale relative standard deviations are correct
     * 
-    * @param tr
-    *           Test Result that should be checked
+    * @param tr Test Result that should be checked
     * @return Weather the result is valid
     */
    protected boolean checkCollectorValidity(final TestResult tr) {
@@ -104,10 +102,10 @@ public abstract class KoPeMeBasicStatement extends Statement {
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
       int execution;
       tr.beforeRun();
-      final String fullWarmupStart = "--- Starting " + warmupString + " {} / {} ---";
-      final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
+      final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
+      final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution, executions);
+         LOG.debug(fullWarmupStart, execution);
          runnables.getBeforeRunnable().run();
          tr.startCollection();
          for (int repetition = 0; repetition < repetitions; repetition++) {

@@ -27,11 +27,25 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
 				<executions>
 					<execution>
-						<phase>test</phase>
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
@@ -50,12 +64,12 @@
 					<dependency>
 						<groupId>org.glassfish.jaxb</groupId>
 						<artifactId>jaxb-xjc</artifactId>
-						<version>2.3.2</version>
+						<version>2.4.0-b180830.0438</version>
 					</dependency>
 					<dependency>
 						<groupId>org.glassfish.jaxb</groupId>
 						<artifactId>jaxb-runtime</artifactId>
-						<version>2.3.2</version>
+						<version>2.4.0-b180830.0438</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -69,29 +83,6 @@
 				<configuration>
 					<packageName>de.dagere.kopeme.generated</packageName> <!-- The name of your generated source package -->
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
-					<failOnError>false</failOnError>
-					<charset>UTF-8</charset>
-					<docencoding>UTF-8</docencoding>
-					<quiet>true</quiet>
-					<nonavbar>true</nonavbar>
-					<notree>true</notree>
-					<nocomment>true</nocomment>
-					<nohelp>true</nohelp>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -113,7 +104,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
@@ -128,12 +119,12 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.5</version>
+			<version>2.13.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.5</version>
+			<version>2.13.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
@@ -159,7 +150,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.10.1</version>
+			<version>2.10.2</version>
 		</dependency>
 
 
@@ -167,12 +158,12 @@
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-xjc</artifactId>
-			<version>2.3.2</version>
+			<version>2.4.0-b180830.0438</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.2</version>
+			<version>2.4.0-b180830.0438</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
@@ -183,7 +174,7 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-			<version>3.15.6</version>
+			<version>3.15.9</version>
 		</dependency>
 	</dependencies>
 

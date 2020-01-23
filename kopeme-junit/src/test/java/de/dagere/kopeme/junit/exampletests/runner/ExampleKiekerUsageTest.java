@@ -1,6 +1,8 @@
 package de.dagere.kopeme.junit.exampletests.runner;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.apache.logging.log4j.core.util.NullOutputStream;
@@ -30,7 +32,13 @@ public class ExampleKiekerUsageTest {
 		System.out.println(impl.execute(2));
 		
 		int a = 0;
-		System.setOut(new PrintStream(new NullOutputStream()));
+		OutputStream nullStream = new OutputStream() {
+			@Override
+			public void write(int arg0) throws IOException {
+				
+			}
+		};
+		System.setOut(new PrintStream(nullStream));
 		for (int i = 0; i < 100; i++) {
 			a += i;
 			System.out.println(callMe(a));

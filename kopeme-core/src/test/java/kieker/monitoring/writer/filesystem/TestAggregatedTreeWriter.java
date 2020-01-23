@@ -42,11 +42,14 @@ public class TestAggregatedTreeWriter {
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
       config.setProperty(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL, 100);
-      config.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, warmup);
+//      config.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, warmup);
       config.setProperty(AggregatedTreeWriter.CONFIG_AGGREGATE_SPLITTED, aggregatePartially);
       config.setProperty(AggregatedTreeWriter.CONFIG_ENTRIESPERFILE, entriesPerFile);
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
+      
+      AggregatedTreeWriter fsWriter = AggregatedTreeWriter.getInstance();
+      fsWriter.getStatisticConfig().setWarmup(warmup);
    }
 
    @Test(expected = RuntimeException.class)

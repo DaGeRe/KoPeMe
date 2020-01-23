@@ -24,7 +24,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
    public static final String CONFIG_WRITE_INTERVAL = PREFIX + "writeInterval";
    public static final String CONFIG_AGGREGATE_SPLITTED = PREFIX + "aggregateSplitted";
-   public static final String CONFIG_WARMUP = PREFIX + "warmup";
+   // public static final String CONFIG_WARMUP = PREFIX + "warmup";
    public static final String CONFIG_OUTLIER = PREFIX + "outlier";
    public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
 
@@ -56,8 +56,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
       aggregateSplitted = configuration.getBooleanProperty(CONFIG_AGGREGATE_SPLITTED, true);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
-
-      statisticConfig = new StatisticConfig(configuration.getIntProperty(CONFIG_WARMUP, 10), configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
+      statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
 
       dataManager = new FileDataManager(this);
    }
@@ -74,10 +73,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public void writeMonitoringRecord(final IMonitoringRecord record) {
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
+
          final AggregatedDataNode node = new AggregatedDataNode(operation.getEoi(), operation.getEss(), operation.getOperationSignature());
          final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
          dataManager.write(node, timeInMikroseconds);
-      } 
+      }
    }
 
    @Override
@@ -129,5 +129,5 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public boolean isAggregateSplitted() {
       return aggregateSplitted;
    }
-   
+
 }

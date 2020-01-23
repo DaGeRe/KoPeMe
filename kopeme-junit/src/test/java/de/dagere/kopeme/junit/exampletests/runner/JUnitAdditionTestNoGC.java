@@ -17,8 +17,8 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
  *
  */
 @RunWith(PerformanceTestRunnerJUnit.class)
-public class JUnitAdditionTest {
-	private final static Logger log = LogManager.getLogger(JUnitAdditionTest.class);
+public class JUnitAdditionTestNoGC {
+	private final static Logger log = LogManager.getLogger(JUnitAdditionTestNoGC.class);
 
 	@Before
 	public void setup() {
@@ -26,7 +26,7 @@ public class JUnitAdditionTest {
 	}
 
 	@Test
-	@PerformanceTest(executionTimes = 5, repetitions = 100, dataCollectors = "ONLYTIME")
+	@PerformanceTest(executionTimes = 5, repetitions = 100, dataCollectors = "ONLYTIME_NOGC")
 	public void testAddition() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {
