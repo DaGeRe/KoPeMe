@@ -108,6 +108,38 @@ public class TestAggregatedTreeWriter {
       Assert.assertNotNull(summaryStatistics0_2);
       Assert.assertEquals(3, summaryStatistics0_2.getOverallStatistic().getN());
    }
+   
+   @Test
+   public void testUseEOI() throws Exception {
+      initWriter(0, 100, 5, false);
+      for (int i = 0; i < 3; i++) {
+         final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
+         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime()+1;
+         KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 0);
+         KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 1, 0);
+         KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 1);
+         KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method1()", 0, 1);
+      }
+      KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 4); 
+
+      final AggregatedDataNode expectedNode = new AggregatedDataNode(0, 0, "public void NonExistant.method0()");
+      final AggregatedData summaryStatistics = data.get(expectedNode);
+      Assert.assertNotNull(summaryStatistics);
+      Assert.assertEquals(3, summaryStatistics.getOverallStatistic().getN());
+      final AggregatedDataNode expectedNode1_0 = new AggregatedDataNode(1, 0, "public void NonExistant.method0()");
+      final AggregatedData summaryStatistics1_0 = data.get(expectedNode1_0);
+      Assert.assertNotNull(summaryStatistics1_0);
+      Assert.assertEquals(3, summaryStatistics1_0.getOverallStatistic().getN());
+      final AggregatedDataNode expectedNode1 = new AggregatedDataNode(0, 1, "public void NonExistant.method1()");
+      final AggregatedData summaryStatistics1 = data.get(expectedNode1);
+      Assert.assertNotNull(summaryStatistics1);
+      Assert.assertEquals(3, summaryStatistics1.getOverallStatistic().getN());
+      final AggregatedDataNode expectedNode0_2 = new AggregatedDataNode(0, 1, "public void NonExistant.method1()");
+      final AggregatedData summaryStatistics0_2 = data.get(expectedNode0_2);
+      Assert.assertNotNull(summaryStatistics0_2);
+      Assert.assertEquals(3, summaryStatistics0_2.getOverallStatistic().getN());
+   }
 
    /**
     * Attention: While kieker operations do not contain new (e.g. public NonExistant.<init>), Kieker patterns do (e.g. public new NonExistant.<init>)
