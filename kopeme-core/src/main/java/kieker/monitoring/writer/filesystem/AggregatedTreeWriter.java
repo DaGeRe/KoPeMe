@@ -25,7 +25,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String PREFIX = AggregatedTreeWriter.class.getName() + ".";
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
    public static final String CONFIG_WRITE_INTERVAL = PREFIX + "writeInterval";
-   public static final String CONFIG_IGNORE_EOI = PREFIX + "ignoreEOI";
+   public static final String CONFIG_IGNORE_EOIS = PREFIX + "ignoreEOIs";
    public static final String CONFIG_OUTLIER = PREFIX + "outlier";
    public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
 
@@ -34,7 +34,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    private final int writeInterval;
    private final StatisticConfig statisticConfig;
    private final int entriesPerFile;
-   private final boolean ignoreEOI;
+   private final boolean ignoreEOIs;
    private File resultFolder;
    private FileDataManager dataManager;
 
@@ -57,7 +57,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
       entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
       statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
-      ignoreEOI = configuration.getBooleanProperty(CONFIG_IGNORE_EOI, true);
+      ignoreEOIs = configuration.getBooleanProperty(CONFIG_IGNORE_EOIS, true);
 
       dataManager = new FileDataManager(this);
    }
@@ -75,7 +75,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       if (record instanceof OperationExecutionRecord) {
          final OperationExecutionRecord operation = (OperationExecutionRecord) record;
 
-         int eoi = ignoreEOI ? -1 : operation.getEoi();
+         int eoi = ignoreEOIs ? -1 : operation.getEoi();
          final AggregatedDataNode node = new AggregatedDataNode(eoi, operation.getEss(), operation.getOperationSignature());
          final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
          dataManager.write(node, timeInMikroseconds);
@@ -129,6 +129,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    }
    
    public boolean isIgnoreEOI() {
-      return ignoreEOI;
+      return ignoreEOIs;
    }
 }

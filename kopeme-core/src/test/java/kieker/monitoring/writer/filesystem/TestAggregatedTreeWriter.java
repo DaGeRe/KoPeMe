@@ -42,7 +42,7 @@ public class TestAggregatedTreeWriter {
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
       config.setProperty(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL, 100);
-      config.setProperty(AggregatedTreeWriter.CONFIG_IGNORE_EOI, ignoreEOI);
+      config.setProperty(AggregatedTreeWriter.CONFIG_IGNORE_EOIS, ignoreEOI);
       config.setProperty(AggregatedTreeWriter.CONFIG_ENTRIESPERFILE, entriesPerFile);
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
