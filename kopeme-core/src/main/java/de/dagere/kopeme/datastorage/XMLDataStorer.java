@@ -101,14 +101,14 @@ public final class XMLDataStorer implements DataStorer {
    private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
       final Result r = new Result();
       r.setDate(new Date().getTime());
-      r.setValue(performanceDataMeasure.value);
-      r.setDeviation(performanceDataMeasure.deviation);
+      r.setValue(performanceDataMeasure.getValue());
+      r.setDeviation(performanceDataMeasure.getDeviation());
       r.setExecutionTimes(performanceDataMeasure.getExecutions());
       r.setWarmupExecutions(performanceDataMeasure.getWarmup());
       r.setRepetitions(performanceDataMeasure.getRepetitions());
-      r.setMax(performanceDataMeasure.max);
-      r.setMin(performanceDataMeasure.min);
-      r.setFirst10Percentile(performanceDataMeasure.first10percentile);
+      r.setMax(performanceDataMeasure.getMax());
+      r.setMin(performanceDataMeasure.getMin());
+      r.setFirst10Percentile(performanceDataMeasure.getFirst10percentile());
       return r;
    }
 
@@ -150,14 +150,14 @@ public final class XMLDataStorer implements DataStorer {
    private TestcaseType getOrCreateTestcase(final PerformanceDataMeasure performanceDataMeasure) {
       TestcaseType test = null;
       for (final TestcaseType tc : data.getTestcases().getTestcase()) {
-         if (tc.getName().equals(performanceDataMeasure.testcase)) {
+         if (tc.getName().equals(performanceDataMeasure.getTestcase())) {
             test = tc;
          }
       }
       if (test == null) {
          LOG.trace("Test == null, füge hinzu");
          test = new TestcaseType();
-         test.setName(performanceDataMeasure.testcase);
+         test.setName(performanceDataMeasure.getTestcase());
          data.getTestcases().getTestcase().add(test);
       }
       return test;

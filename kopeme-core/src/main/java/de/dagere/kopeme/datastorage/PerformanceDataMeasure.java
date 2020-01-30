@@ -7,14 +7,14 @@ package de.dagere.kopeme.datastorage;
  *
  */
 public class PerformanceDataMeasure {
-	public final String testcase;
-	public final String collectorname;
-	public final long value;
-	public final double deviation;
-	public final int executions, warmup, repetitions;
-   public final long min, max;
-	public final double first10percentile;
-	public final boolean failure, error;
+	private final String testcase;
+	private final String collectorname;
+	private final long value;
+	private final double deviation;
+	private final int executions, warmup, repetitions;
+	private final long min, max;
+	private final double first10percentile;
+	private final boolean failure, error;
 
 	/**
 	 * Initializes the PerformanceDataMeasure.

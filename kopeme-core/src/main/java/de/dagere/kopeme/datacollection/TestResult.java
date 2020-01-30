@@ -247,23 +247,7 @@ public class TestResult {
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), thrownException);
       }
-      final AverageSummerizer as = new AverageSummerizer();
-      for (final String collectorName : getKeys()) {
-         LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-         final List<Long> localValues = new LinkedList<>();
-         for (int i = 0; i < realValues.size() - 1; i++) {
-            // log.debug("I: " + i+ " Value: " +
-            // realValues.get(i).get(collectorName));
-            localValues.add(realValues.get(i).get(collectorName));
-         }
-         Long result;
-         if (collectorSummarizerMap.containsKey(collectorName)) {
-            result = collectorSummarizerMap.get(collectorName).getValue(localValues);
-         } else {
-            result = as.getValue(localValues);
-         }
-         values.put(collectorName, result);
-      }
+      finalizeCollection();
    }
 
    /**
