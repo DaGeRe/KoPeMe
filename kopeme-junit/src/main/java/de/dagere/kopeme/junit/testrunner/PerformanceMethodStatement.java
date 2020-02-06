@@ -177,7 +177,6 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
             LOG.debug("Exiting thread.");
             throw new InterruptedException("Test was interrupted and eventually timed out.");
          }
-         Thread.sleep(1); // To let other threads "breath"
       }
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
