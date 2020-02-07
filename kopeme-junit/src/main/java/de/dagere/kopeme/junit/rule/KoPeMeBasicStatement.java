@@ -109,9 +109,11 @@ public abstract class KoPeMeBasicStatement extends Statement {
          if (annotation.showStart()) {
             LOG.debug(fullWarmupStart, execution);
          }
+         runnables.getBeforeRunnable().run();
          tr.startCollection();
          runAllRepetitions(repetitions);
          tr.stopCollection();
+         runnables.getAfterRunnable().run();
          tr.setRealExecutions(execution - 1);
          if (annotation.showStart()) {
             LOG.debug(fullWarmupStop, execution);
@@ -129,9 +131,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
    private void runAllRepetitions(final int repetitions) throws Throwable {
       for (int repetition = 0; repetition < repetitions; repetition++) {
-         runnables.getBeforeRunnable().run();
          runnables.getTestRunnable().run();
-         runnables.getAfterRunnable().run();
       }
    }
 
