@@ -316,7 +316,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		LOG.debug("Executions: " + (executions - 1));
 		tr.setRealExecutions(executions - 1);
 		for (final String collector : tr.getKeys()) {
-			final List<Long> values = new ArrayList<>(tr.getValues(collector).values());
+			final List<Long> values = tr.getValues(collector);
 			final EmpiricalDistribution distribution = getDistribution(values);
 			final Set<Long> outliers = new HashSet<>();
 			for (final long measurement : values) {

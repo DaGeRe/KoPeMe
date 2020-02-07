@@ -101,32 +101,39 @@ public final class PerformanceTestUtils {
 				LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
 			}
 			for (final String key : tr.getKeys()) {
-				LOG.trace("Collector Key: {}", key);
-				final double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
-				final long value = tr.getValue(key);
-				final long min = tr.getMinumumCurrentValue(key);
-				final long max = tr.getMaximumCurrentValue(key);
-				final double first10percentile = getPercentile(tr.getValues(key).values(), 10);
-				final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
-						tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
-				final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(key) : null;
-				xds.storeValue(performanceDataMeasure, values);
-				// xds.storeValue(s, getValue(s));
-				LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
+				buildKeyData(data, testcasename, xds, tr, key);
 			}
-			for (final String additionalKey : tr.getAdditionValueKeys()) {
-				if (!tr.getKeys().contains(additionalKey)) {
-					final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
-							tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
-					final Map<Long, Long> values = data.isSaveValues() ? tr.getValues(additionalKey) : null;
-					xds.storeValue(performanceDataMeasure, values);
-				}
-			}
+			buildAdditionalKeys(data, testcasename, xds, tr);
 			xds.storeData();
 		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
 	}
+
+   private static void buildKeyData(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr, final String key) {
+      LOG.trace("Collector Key: {}", key);
+      final double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
+      final long value = tr.getValue(key);
+      final long min = tr.getMinumumCurrentValue(key);
+      final long max = tr.getMaximumCurrentValue(key);
+      final double first10percentile = getPercentile(tr.getValues(key), 10);
+      final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
+      		tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
+      final Map<Long, Long> values = data.isSaveValues() ? tr.getTimeValueMap(key) : null;
+      LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
+      xds.storeValue(performanceDataMeasure, values);
+   }
+
+   private static void buildAdditionalKeys(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr) {
+      for (final String additionalKey : tr.getAdditionValueKeys()) {
+      	if (!tr.getKeys().contains(additionalKey)) {
+      		final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
+      				tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
+      		final Map<Long, Long> values = data.isSaveValues() ? tr.getTimeValueMap(additionalKey) : null;
+      		xds.storeValue(performanceDataMeasure, values);
+      	}
+      }
+   }
 
 	/**
 	 * Returns a given percentil for a given list of values. The n-percentil is the value for which n % of the values are less then the percentil.

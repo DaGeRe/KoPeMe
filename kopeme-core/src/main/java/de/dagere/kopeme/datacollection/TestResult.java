@@ -399,10 +399,18 @@ public class TestResult {
     * @param key Name of the measure
     * @return Values measured
     */
-   public Map<Long, Long> getValues(final String key) {
+   public Map<Long, Long> getTimeValueMap(final String key) {
       final Map<Long, Long> currentValues = new LinkedHashMap<>();
       for (int i = 0; i < realValues.size(); i++) {
          currentValues.put(executionStartTimes.get(i), realValues.get(i).get(key));
+      }
+      return currentValues;
+   }
+   
+   public List<Long> getValues(String key){
+      List<Long> currentValues = new ArrayList<>();
+      for (int i = 0; i < realValues.size(); i++) {
+         currentValues.add(realValues.get(i).get(key));
       }
       return currentValues;
    }

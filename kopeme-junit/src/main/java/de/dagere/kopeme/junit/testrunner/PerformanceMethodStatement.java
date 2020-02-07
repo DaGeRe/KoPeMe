@@ -169,6 +169,8 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          }
          checkFinished();
       }
+      System.gc();
+      Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
    }
