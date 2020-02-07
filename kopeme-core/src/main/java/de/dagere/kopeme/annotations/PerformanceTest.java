@@ -36,6 +36,11 @@ public @interface PerformanceTest {
 	 * @return
 	 */
 	int executionTimes() default 10;
+	
+	/**
+	 * Specify whether to show the start and the end of a test execution.
+	 */
+	boolean showStart() default false;;
 
 	/**
 	 * Optionally specify count of reptitions of same test.

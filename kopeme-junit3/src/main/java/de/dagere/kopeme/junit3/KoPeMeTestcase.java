@@ -109,6 +109,10 @@ public abstract class KoPeMeTestcase extends TestCase {
       return DataCollectorList.STANDARD;
    }
 
+   protected boolean showStart() {
+      return false;
+   }
+
    /**
     * Should kieker monitoring be used.
     * 
@@ -165,7 +169,7 @@ public abstract class KoPeMeTestcase extends TestCase {
          if (!finished) {
             final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
             LOG.debug("Data created");
-             PerformanceTestUtils.saveData(errorTestData);
+            PerformanceTestUtils.saveData(errorTestData);
             fail("Test took too long.");
          } else {
             PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
@@ -219,35 +223,52 @@ public abstract class KoPeMeTestcase extends TestCase {
     * @throws Throwable
     */
    protected void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
-      int executions;
+      System.gc();
       final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
       final String firstPartStop = "--- Stopping " + executionTypName + " execution ";
       final String endPart = "/" + executionTimes + " ---";
       final int repetitions = getRepetitions();
       tr.beforeRun();
-      for (executions = 1; executions <= executionTimes; executions++) {
-         LOG.debug(firstPart + executions + endPart);
-         tr.startCollection();
-         for (int repetion = 0; repetion < repetitions; repetion++) {
-            setUp();
-            KoPeMeTestcase.super.runTest();
-            tearDown();
-            if (Thread.currentThread().isInterrupted()) {
-               break;
-            }
+      int execution;
+      for (execution = 1; execution <= executionTimes; execution++) {
+         if (showStart()) {
+            LOG.debug(firstPart + execution + endPart);
          }
-
+         tr.startCollection();
+         runAllRepetitions(repetitions);
          tr.stopCollection();
          tr.getValue(TimeDataCollector.class.getName());
-         tr.setRealExecutions(executions);
-         LOG.debug(firstPartStop + executions + endPart);
-         if (Thread.interrupted() || isFinished) {
-            return;
-         } else {
-            LOG.trace("Not interrupted");
+         tr.setRealExecutions(execution);
+         if (showStart()) {
+            LOG.debug(firstPartStop + execution + endPart);
+         }
+         checkFinished();
+      }
+      LOG.debug("Executions: " + (execution - 1));
+      tr.setRealExecutions(execution - 1);
+   }
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
+   }
+
+   private void runAllRepetitions(final int repetitions) throws Exception, Throwable {
+      for (int repetion = 0; repetion < repetitions; repetion++) {
+         setUp();
+         KoPeMeTestcase.super.runTest();
+         tearDown();
+         if (Thread.currentThread().isInterrupted()) {
+            break;
          }
       }
-      LOG.debug("Executions: " + (executions - 1));
-      tr.setRealExecutions(executions - 1);
    }
 }

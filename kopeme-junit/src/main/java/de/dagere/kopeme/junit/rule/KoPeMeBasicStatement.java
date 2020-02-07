@@ -100,40 +100,51 @@ public abstract class KoPeMeBasicStatement extends Statement {
    }
 
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
-      int execution;
-      tr.beforeRun();
+      System.gc();
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
+      tr.beforeRun();
+      int execution;
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution);
-         runnables.getBeforeRunnable().run();
-         tr.startCollection();
-         for (int repetition = 0; repetition < repetitions; repetition++) {
-            runnables.getTestRunnable().run();
+         if (annotation.showStart()) {
+            LOG.debug(fullWarmupStart, execution);
          }
+         tr.startCollection();
+         runAllRepetitions(repetitions);
          tr.stopCollection();
-         runnables.getAfterRunnable().run();
          tr.setRealExecutions(execution - 1);
-         LOG.debug(fullWarmupStop, execution);
-         for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-            LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+         if (annotation.showStart()) {
+            LOG.debug(fullWarmupStop, execution);
          }
          if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
                && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+            LOG.info("Exiting because of deviation reached");
             break;
          }
-         if (isFinished) {
-            LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
-            throw new InterruptedException("Test timed out.");
-         }
-         final boolean interrupted = Thread.interrupted();
-         LOG.debug("Interrupt state: {}", interrupted);
-         if (interrupted) {
-            LOG.debug("Exiting thread.");
-            throw new InterruptedException("Test was interrupted and eventually timed out.");
-         }
+         checkFinished();
       }
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+
+   private void runAllRepetitions(final int repetitions) throws Throwable {
+      for (int repetition = 0; repetition < repetitions; repetition++) {
+         runnables.getBeforeRunnable().run();
+         runnables.getTestRunnable().run();
+         runnables.getAfterRunnable().run();
+      }
+   }
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
    }
 }

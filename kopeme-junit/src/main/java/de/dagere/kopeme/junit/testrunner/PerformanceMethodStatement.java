@@ -145,41 +145,53 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     */
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions)
          throws Throwable {
+      System.gc();
       final String methodString = className + "." + tr.getTestcase();
-      int execution;
       final String fullWarmupStart = "--- Starting " + warmupString + methodString + " {} / {} ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
       tr.beforeRun();
+      int execution;
       for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution, executions);
-         tr.startCollection();
-         for (int i = 0; i < repetitions; i++) {
-            callee.preEvaluate();
-            callee.evaluate();
-            callee.postEvaluate();
+         if (annotation.showStart()) {
+            LOG.debug(fullWarmupStart, execution, executions);
          }
+         tr.startCollection();
+         runAllRepetitions(callee, repetitions);
          tr.stopCollection();
-         LOG.debug(fullWarmupStop, execution);
-
+         if (annotation.showStart()) {
+            LOG.debug(fullWarmupStop, execution);
+         }
          tr.setRealExecutions(execution);
          if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
                && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
             LOG.info("Exiting because of deviation reached");
             break;
          }
-         if (isFinished) {
-            LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
-            throw new InterruptedException("Test timed out.");
-         }
-         final boolean interrupted = Thread.interrupted();
-         LOG.trace("Interrupt state: {}", interrupted);
-         if (interrupted) {
-            LOG.debug("Exiting thread.");
-            throw new InterruptedException("Test was interrupted and eventually timed out.");
-         }
+         checkFinished();
       }
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
+   }
+
+   private void runAllRepetitions(final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
+      for (int i = 0; i < repetitions; i++) {
+         callee.preEvaluate();
+         callee.evaluate();
+         callee.postEvaluate();
+      }
    }
 
    public void setFinished(final boolean isFinished) {
