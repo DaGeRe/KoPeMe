@@ -420,6 +420,12 @@ public class TestResult {
       }
       return fd;
    }
+   
+   public void clearFulldata(String key) {
+      for (int i = 0; i < realValues.size(); i++) {
+         realValues.get(i).remove(key);
+      }
+   }
 
    public List<Long> getValues(String key) {
       List<Long> currentValues = new ArrayList<>();
@@ -473,4 +479,5 @@ public class TestResult {
    public String getMethodName() {
       return methodName;
    }
+   
 }
