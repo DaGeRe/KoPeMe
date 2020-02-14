@@ -16,6 +16,7 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
+import de.dagere.kopeme.generated.Result.Fulldata;
 
 /**
  * Some utils for performance testing.
@@ -119,7 +120,7 @@ public final class PerformanceTestUtils {
       final double first10percentile = getPercentile(tr.getValues(key), 10);
       final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
       		tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
-      final Map<Long, Long> values = data.isSaveValues() ? tr.getTimeValueMap(key) : null;
+      final Fulldata values = data.isSaveValues() ? tr.getFulldata(key) : null;
       LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
       xds.storeValue(performanceDataMeasure, values);
    }
@@ -129,7 +130,7 @@ public final class PerformanceTestUtils {
       	if (!tr.getKeys().contains(additionalKey)) {
       		final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
       				tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
-      		final Map<Long, Long> values = data.isSaveValues() ? tr.getTimeValueMap(additionalKey) : null;
+      		final Fulldata values = data.isSaveValues() ? tr.getFulldata(additionalKey) : null;
       		xds.storeValue(performanceDataMeasure, values);
       	}
       }

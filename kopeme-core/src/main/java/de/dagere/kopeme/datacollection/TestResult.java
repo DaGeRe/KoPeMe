@@ -19,6 +19,9 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 
 import de.dagere.kopeme.Checker;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
 import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 
@@ -221,26 +224,25 @@ public class TestResult {
     * historical data are possible
     */
    public void finalizeCollection() {
+      LOG.debug("Count of executions: {}  Values: {}", executionStartTimes.size(), realValues.size());
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size());
       }
       final AverageSummerizer as = new AverageSummerizer();
       for (final String collectorName : getKeys()) {
          LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-         final List<Long> localValues = new LinkedList<>();
-         for (int i = 0; i < realValues.size() - 1; i++) {
-            // log.debug("I: " + i+ " Value: " +
-            // realValues.get(i).get(collectorName));
-            localValues.add(realValues.get(i).get(collectorName));
-         }
-         Long result;
-         if (collectorSummarizerMap.containsKey(collectorName)) {
-            result = collectorSummarizerMap.get(collectorName).getValue(localValues);
-         } else {
-            result = as.getValue(localValues);
-         }
+         final List<Long> localValues = getCollectorValues(collectorName);
+         final Long result = getSummarizedValue(as, collectorName, localValues);
          values.put(collectorName, result);
       }
+   }
+
+   private List<Long> getCollectorValues(final String collectorName) {
+      final List<Long> localValues = new LinkedList<>();
+      for (int i = 0; i < realValues.size() - 1; i++) {
+         localValues.add(realValues.get(i).get(collectorName));
+      }
+      return localValues;
    }
 
    public void finalizeCollection(final Throwable thrownException) {
@@ -249,21 +251,21 @@ public class TestResult {
       }
       final AverageSummerizer as = new AverageSummerizer();
       for (final String collectorName : getKeys()) {
-         LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-         final List<Long> localValues = new LinkedList<>();
-         for (int i = 0; i < realValues.size() - 1; i++) {
-            // log.debug("I: " + i+ " Value: " +
-            // realValues.get(i).get(collectorName));
-            localValues.add(realValues.get(i).get(collectorName));
-         }
-         Long result;
-         if (collectorSummarizerMap.containsKey(collectorName)) {
-            result = collectorSummarizerMap.get(collectorName).getValue(localValues);
-         } else {
-            result = as.getValue(localValues);
-         }
+         LOG.trace("Standard deviation {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+         final List<Long> localValues = getCollectorValues(collectorName);
+         final Long result = getSummarizedValue(as, collectorName, localValues);
          values.put(collectorName, result);
       }
+   }
+
+   private Long getSummarizedValue(final AverageSummerizer as, final String collectorName, final List<Long> localValues) {
+      Long result;
+      if (collectorSummarizerMap.containsKey(collectorName)) {
+         result = collectorSummarizerMap.get(collectorName).getValue(localValues);
+      } else {
+         result = as.getValue(localValues);
+      }
+      return result;
    }
 
    /**
@@ -395,10 +397,11 @@ public class TestResult {
 
    /**
     * Returns all measured value for a measure name.
-    * 
+    * Contains bug - no correct values if same key (= same start timestamp)
     * @param key Name of the measure
     * @return Values measured
     */
+   @Deprecated()
    public Map<Long, Long> getTimeValueMap(final String key) {
       final Map<Long, Long> currentValues = new LinkedHashMap<>();
       for (int i = 0; i < realValues.size(); i++) {
@@ -406,8 +409,19 @@ public class TestResult {
       }
       return currentValues;
    }
-   
-   public List<Long> getValues(String key){
+
+   public Fulldata getFulldata(String key) {
+      final Fulldata fd = new Fulldata();
+      for (int i = 0; i < realValues.size(); i++) {
+         final Value v = new Value();
+         v.setStart(executionStartTimes.get(i));
+         v.setValue("" + realValues.get(i).get(key));
+         fd.getValue().add(v);
+      }
+      return fd;
+   }
+
+   public List<Long> getValues(String key) {
       List<Long> currentValues = new ArrayList<>();
       for (int i = 0; i < realValues.size(); i++) {
          currentValues.add(realValues.get(i).get(key));

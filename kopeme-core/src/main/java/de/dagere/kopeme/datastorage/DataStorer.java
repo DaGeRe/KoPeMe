@@ -2,6 +2,8 @@ package de.dagere.kopeme.datastorage;
 
 import java.util.Map;
 
+import de.dagere.kopeme.generated.Result.Fulldata;
+
 /**
  * Interface for storing KoPeMe-data.
  * 
@@ -15,5 +17,5 @@ public interface DataStorer {
 	 */
 	void storeData();
 
-	void storeValue(PerformanceDataMeasure performanceDataMeasure, Map<Long, Long> values);
+   void storeValue(PerformanceDataMeasure performanceDataMeasure, Fulldata fulldata);
 }

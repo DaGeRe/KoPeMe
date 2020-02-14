@@ -65,16 +65,14 @@ public final class XMLDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final Map<Long, Long> values) {
+   public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final Fulldata fulldata) {
       if (data.getTestcases() == null) {
          data.setTestcases(new Testcases());
       }
       final TestcaseType test = getOrCreateTestcase(performanceDataMeasure);
 
       final Result r = buildResult(performanceDataMeasure);
-      if (values != null) {
-         buildFulldata(values, r);
-      }
+      r.setFulldata(fulldata);
 
       final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure.getCollectorname(), test);
 
@@ -87,16 +85,16 @@ public final class XMLDataStorer implements DataStorer {
 
    }
 
-   private void buildFulldata(final Map<Long, Long> values, final Result r) {
-      final Fulldata fd = new Fulldata();
-      for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
-         final Value v = new Value();
-         v.setStart(valueEntry.getKey());
-         v.setValue("" + valueEntry.getValue());
-         fd.getValue().add(v);
-      }
-      r.setFulldata(fd);
-   }
+//   private void buildFulldata(final Map<Long, Long> values, final Result r) {
+//      final Fulldata fd = new Fulldata();
+//      for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
+//         final Value v = new Value();
+//         v.setStart(valueEntry.getKey());
+//         v.setValue("" + valueEntry.getValue());
+//         fd.getValue().add(v);
+//      }
+//      r.setFulldata(fd);
+//   }
 
    private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
       final Result r = new Result();
