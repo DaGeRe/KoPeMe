@@ -37,7 +37,7 @@ public class TestResult {
 
    protected final Map<String, Number> values = new HashMap<>();
    protected Map<String, DataCollector> dataCollectors;
-   protected List<Map<String, Long>> realValues;
+   protected final List<Map<String, Long>> realValues;
    protected final List<Long> executionStartTimes = new LinkedList<>();
    protected int index = 0;
    protected Checker checker;
@@ -45,7 +45,7 @@ public class TestResult {
    private String methodName;
    private final HistoricalTestResults historicalResults;
 
-   private final Map<String, MeasureSummarizer> collectorSummarizerMap;
+   private final Map<String, MeasureSummarizer> collectorSummarizerMap = new HashMap<>();
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -57,8 +57,6 @@ public class TestResult {
       realValues = new ArrayList<>(executionTimes + 1);
       this.methodName = methodName;
       historicalResults = new HistoricalTestResults(methodName);
-
-      collectorSummarizerMap = new HashMap<>();
       dataCollectors = collectors.getDataCollectors();
    }
 
