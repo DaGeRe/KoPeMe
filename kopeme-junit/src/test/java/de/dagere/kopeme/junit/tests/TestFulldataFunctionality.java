@@ -64,15 +64,14 @@ public class TestFulldataFunctionality {
 		jc.run(JUnitAdditionTestFullData.class);
 		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		XMLDataLoader xdl;
 		try {
-			xdl = new XMLDataLoader(f);
+		   XMLDataLoader xdl = new XMLDataLoader(f);
 			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
 					final Fulldata fd = r.getFulldata();
 					Assert.assertNotNull(fd);
-					Assert.assertThat(fd.getValue().size(), Matchers.greaterThan(0));
+					Assert.assertEquals(1000, fd.getValue().size());
 				}
 			}
 		} catch (final JAXBException e) {

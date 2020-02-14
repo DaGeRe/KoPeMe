@@ -391,23 +391,7 @@ public class TestResult {
          if (realValues.get(i).get(key) > max)
             max = realValues.get(i).get(key);
       }
-      LOG.trace("Maximum ermittelt: " + max);
       return max;
-   }
-
-   /**
-    * Returns all measured value for a measure name.
-    * Contains bug - no correct values if same key (= same start timestamp)
-    * @param key Name of the measure
-    * @return Values measured
-    */
-   @Deprecated()
-   public Map<Long, Long> getTimeValueMap(final String key) {
-      final Map<Long, Long> currentValues = new LinkedHashMap<>();
-      for (int i = 0; i < realValues.size(); i++) {
-         currentValues.put(executionStartTimes.get(i), realValues.get(i).get(key));
-      }
-      return currentValues;
    }
 
    public Fulldata getFulldata(String key) {
