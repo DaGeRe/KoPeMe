@@ -97,7 +97,7 @@ public final class PerformanceTestUtils {
 			}
 			final DataStorer xds = new XMLDataStorer(file, data.getFilename(), testcasename);
 			final TestResult tr = data.getTr();
-			final long timeValue = tr.getValue(TimeDataCollector.class.getName());
+			final double timeValue = tr.getValue(TimeDataCollector.class.getName()).doubleValue();
 			if (timeValue != 0){
 				LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
 			}
@@ -113,29 +113,32 @@ public final class PerformanceTestUtils {
 
    private static void buildKeyData(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr, final String key) {
       LOG.trace("Collector Key: {}", key);
-      final double relativeStandardDeviation = tr.getRelativeStandardDeviation(key);
-      final long value = tr.getValue(key);
-      final long min = tr.getMinumumCurrentValue(key);
-      final long max = tr.getMaximumCurrentValue(key);
-      final double first10percentile = getPercentile(tr.getValues(key), 10);
-      final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, key, value, relativeStandardDeviation,
-      		tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
+      final PerformanceDataMeasure performanceDataMeasure = getMeasureFromTR(data, testcasename, tr, key);
       final Fulldata values = data.isSaveValues() ? tr.getFulldata(key) : null;
       tr.clearFulldata(key);
-      LOG.trace("{}: {}, (rel. Standardabweichung: {})", key, value, relativeStandardDeviation);
       xds.storeValue(performanceDataMeasure, values);
    }
 
    private static void buildAdditionalKeys(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr) {
       for (final String additionalKey : tr.getAdditionValueKeys()) {
       	if (!tr.getKeys().contains(additionalKey)) {
-      		final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, tr.getValue(additionalKey), 0.0,
-      				tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), tr.getValue(additionalKey), tr.getValue(additionalKey), tr.getValue(additionalKey));
+      	   final PerformanceDataMeasure performanceDataMeasure = getMeasureFromTR(data, testcasename, tr, additionalKey);
       		final Fulldata values = data.isSaveValues() ? tr.getFulldata(additionalKey) : null;
       		tr.clearFulldata(additionalKey);
       		xds.storeValue(performanceDataMeasure, values);
       	}
       }
+   }
+
+   private static PerformanceDataMeasure getMeasureFromTR(final SaveableTestData data, final String testcasename, final TestResult tr, final String additionalKey) {
+      final double relativeStandardDeviation = tr.getRelativeStandardDeviation(additionalKey);
+      final double value = tr.getValue(additionalKey).doubleValue();
+      final long min = tr.getMinumumCurrentValue(additionalKey);
+      final long max = tr.getMaximumCurrentValue(additionalKey);
+      final double first10percentile = getPercentile(tr.getValues(additionalKey), 10);
+      final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, value, relativeStandardDeviation,
+            tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
+      return performanceDataMeasure;
    }
 
 	/**

@@ -17,7 +17,7 @@ import de.dagere.kopeme.measuresummarizing.MaximumSummarizer;
 @PerformanceTestingClass(overallTimeout = Integer.MAX_VALUE)
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class ExampleJUnitTests {
-	@Test
+   @Test
 	@PerformanceTest(executionTimes = 5)
 	public void testCallWithParameter(final TestResult tr) {
 		tr.setCollectors(DataCollectorList.STANDARD);
@@ -39,10 +39,10 @@ public class ExampleJUnitTests {
 		tr.setChecker(new Checker() {
 			@Override
 			public void checkValues(final TestResult tr) {
-				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class
-						.getName()), Matchers.lessThan((long) (tr.getHistoricalResults()
+				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class.getName()).doubleValue(), 
+				      Matchers.lessThan(( (tr.getHistoricalResults()
 						.getLastRunsAverage(TimeDataCollector.class.getName(),
-								5) * 1.10)));
+								5) * 1.10))));
 			}
 		});
 	}

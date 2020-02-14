@@ -10,7 +10,7 @@ import java.util.List;
 public final class MaximumSummarizer implements MeasureSummarizer {
 
 	@Override
-	public long getValue(final List<Long> values) {
+	public Number getValue(final List<Long> values) {
 		long max = 0;
 		for (Long l : values) {
 			if (l > max) max = l;

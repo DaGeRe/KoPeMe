@@ -12,7 +12,7 @@ import java.util.List;
 public final class MedianSummarizer implements MeasureSummarizer {
 
 	@Override
-	public long getValue(final List<Long> values) {
+	public Number getValue(final List<Long> values) {
 		Long[] longarray = values.toArray(new Long[0]);
 		Arrays.sort(longarray);
 		int middle = ((longarray.length) / 2);

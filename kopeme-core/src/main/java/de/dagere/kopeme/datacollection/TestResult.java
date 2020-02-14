@@ -35,7 +35,7 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 public class TestResult {
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-   protected final Map<String, Long> values = new HashMap<>();
+   protected final Map<String, Number> values = new HashMap<>();
    protected Map<String, DataCollector> dataCollectors;
    protected List<Map<String, Long>> realValues;
    protected final List<Long> executionStartTimes = new LinkedList<>();
@@ -232,7 +232,7 @@ public class TestResult {
       for (final String collectorName : getKeys()) {
          LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
          final List<Long> localValues = getCollectorValues(collectorName);
-         final Long result = getSummarizedValue(as, collectorName, localValues);
+         final Number result = getSummarizedValue(as, collectorName, localValues);
          values.put(collectorName, result);
       }
    }
@@ -253,13 +253,13 @@ public class TestResult {
       for (final String collectorName : getKeys()) {
          LOG.trace("Standard deviation {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
          final List<Long> localValues = getCollectorValues(collectorName);
-         final Long result = getSummarizedValue(as, collectorName, localValues);
+         final Number result = getSummarizedValue(as, collectorName, localValues);
          values.put(collectorName, result);
       }
    }
 
-   private Long getSummarizedValue(final AverageSummerizer as, final String collectorName, final List<Long> localValues) {
-      Long result;
+   private Number getSummarizedValue(final AverageSummerizer as, final String collectorName, final List<Long> localValues) {
+      Number result;
       if (collectorSummarizerMap.containsKey(collectorName)) {
          result = collectorSummarizerMap.get(collectorName).getValue(localValues);
       } else {
@@ -298,7 +298,7 @@ public class TestResult {
     * @param name Name of the measure
     * @return Value of the measure
     */
-   public long getValue(final String key) {
+   public Number getValue(final String key) {
       if (values.get(key) != null) {
          return values.get(key);
       } else {
