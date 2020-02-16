@@ -156,18 +156,23 @@ public class TimeBoundExecution {
       Thread.sleep(10);
       LOG.trace("Test should be finished...");
       if (thread.isAlive()) {
-         int count = 0;
-         while (thread.isAlive() && count < INTERRUPT_TRIES) {
-            LOG.debug("Thread " + type + " (" + thread.getName() + ") not finished, is kill now..");
-            thread.interrupt();
-            Thread.sleep(10);
-            count++;
-         }
+         int count = tryNTimes(thread);
          if (count == INTERRUPT_TRIES) {
             LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
             needToStopHart = true;
          }
       }
+   }
+
+   private int tryNTimes(final Thread thread) throws InterruptedException {
+      int count = 0;
+      while (thread.isAlive() && count < INTERRUPT_TRIES) {
+         LOG.debug("Thread " + type + " (" + thread.getName() + ") not finished, is kill now..");
+         thread.interrupt();
+         Thread.sleep(10);
+         count++;
+      }
+      return count;
    }
 
 }
