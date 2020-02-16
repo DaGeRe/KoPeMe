@@ -59,11 +59,11 @@ public class TimeBoundExecution {
          public void uncaughtException(final Thread t, final Throwable e) {
             if (e instanceof OutOfMemoryError) {
                LOG.debug("Out of memory - can not reuse VM for measurement");
+               e.printStackTrace();
                t.interrupt();
                System.exit(1);
             }
             testError = e;
-            e.printStackTrace();
          }
       });
 
