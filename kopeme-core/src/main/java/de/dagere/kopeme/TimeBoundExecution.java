@@ -67,46 +67,22 @@ public class TimeBoundExecution {
          }
       });
 
-      try {
-         experimentThread.start();
-         LOG.debug("Waiting: {}", timeout);
-         experimentThread.join(timeout);
-         experimentThread.setFinished(true);
-         LOG.trace("Waiting for 100 ms, whether test stops alone");
-         Thread.sleep(100);
-         LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
-
-         if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
-            if (experimentThread.isAlive() && useKieker) {
-               KoPeMeKiekerSupport.INSTANCE.waitForEnd();
-            }
-            final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
-            experimentThreadGroup.enumerate(stillActiveThreads);
-            LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
-            for (final Thread thread : stillActiveThreads) {
-               waitForThreadEnd(100, thread);
-            }
-            LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
-            if (experimentThreadGroup.activeCount() != 0) {
-               LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
-               needToStopHart = true;
-//               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
-            }
-         } else if (type == Type.CLASS && experimentThread.isAlive()) {
-            LOG.info("Class timed out.");
-//            testError = new TimeoutException("Test timed out because of class timeout");
-         } else {
-            finished = true;
-         }
-      } catch (final InterruptedException e1) {
-         e1.printStackTrace();
-         testError = e1;
-      }
+      finished = tryExecution(finished);
 
       if (needToStopHart == true && type != Type.CLASS) {
          LOG.error("Would normally stop " + type + " hard; omitted.");
 ////         System.exit(1);
       } 
+      finishKieker();
+
+      if (testError != null) {
+         rethrowError();
+      }
+
+      return finished;
+   }
+
+   private void finishKieker() {
       if (useKieker) {
          try {
             KoPeMeKiekerSupport.INSTANCE.waitForEnd();
@@ -115,22 +91,64 @@ public class TimeBoundExecution {
             testError = e;
          }
       }
+   }
 
-      if (testError != null) {
-         LOG.debug("Test error != null");
-         if (testError instanceof TimeoutException) {
-            throw new RuntimeException(testError);
-         } else if (testError instanceof RuntimeException) {
-            throw (RuntimeException) testError;
-         } else if (testError instanceof Error) {
-            throw (Error) testError;
-         } else {
-            LOG.error("Unexpected behaviour");
-            testError.printStackTrace();
+   private boolean tryExecution(boolean finished) {
+      try {
+         experimentThread.start();
+         LOG.debug("Waiting: {}", timeout);
+         experimentThread.join(timeout);
+         experimentThread.setFinished(true);
+         if (experimentThread.isAlive()) {
+            LOG.trace("Waiting for 100 ms, whether test stops alone");
+            Thread.sleep(100);
          }
-      }
+         LOG.debug("KoPeMe-Test {}. Kieker: {} Threads: {}", type, useKieker, experimentThreadGroup.activeCount());
 
+         if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
+            handleChildThreads();
+         } else if (type == Type.CLASS && experimentThread.isAlive()) {
+            LOG.info("Class timed out.");
+         } else {
+            finished = true;
+         }
+      } catch (final InterruptedException e1) {
+         e1.printStackTrace();
+         testError = e1;
+      }
       return finished;
+   }
+
+   private void rethrowError() throws Error {
+      LOG.debug("Test error != null");
+      if (testError instanceof TimeoutException) {
+         throw new RuntimeException(testError);
+      } else if (testError instanceof RuntimeException) {
+         throw (RuntimeException) testError;
+      } else if (testError instanceof Error) {
+         throw (Error) testError;
+      } else {
+         LOG.error("Unexpected behaviour");
+         testError.printStackTrace();
+      }
+   }
+
+   private void handleChildThreads() throws InterruptedException {
+      if (experimentThread.isAlive() && useKieker) {
+         KoPeMeKiekerSupport.INSTANCE.waitForEnd();
+      }
+      final Thread[] stillActiveThreads = new Thread[experimentThreadGroup.activeCount()];
+      experimentThreadGroup.enumerate(stillActiveThreads);
+      LOG.debug("Finishing {} remaining thread(s)", stillActiveThreads.length);
+      for (final Thread thread : stillActiveThreads) {
+         waitForThreadEnd(100, thread);
+      }
+      LOG.debug("Threads still active: {}", experimentThreadGroup.activeCount());
+      if (experimentThreadGroup.activeCount() != 0) {
+         LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
+         needToStopHart = true;
+//               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
+      }
    }
 
    private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
