@@ -22,8 +22,6 @@ import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.measuresummarizing.AverageSummerizer;
-import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 
 /**
  * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are inserted into the
@@ -35,7 +33,7 @@ import de.dagere.kopeme.measuresummarizing.MeasureSummarizer;
 public class TestResult {
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-   protected final Map<String, Number> values = new HashMap<>();
+   protected final Map<String, Number> finalValues = new HashMap<>();
    protected Map<String, DataCollector> dataCollectors;
    protected final List<Map<String, Long>> realValues;
    protected final List<Long> executionStartTimes = new LinkedList<>();
@@ -44,8 +42,6 @@ public class TestResult {
    private int realExecutions;
    private String methodName;
    private final HistoricalTestResults historicalResults;
-
-   private final Map<String, MeasureSummarizer> collectorSummarizerMap = new HashMap<>();
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -208,16 +204,6 @@ public class TestResult {
    }
 
    /**
-    * Sets the method how the different measures of different runs should be summarized, e.g. as average, median, maximum, ... .
-    * 
-    * @param datacollector The collector for whom the Summarizer should be set
-    * @param ms The summarizer to set
-    */
-   public void setMeasureSummarizer(final String datacollector, final MeasureSummarizer ms) {
-      this.collectorSummarizerMap.put(datacollector, ms);
-   }
-
-   /**
     * Called when the collection of data is finally finished, i.e. also the collection of self-defined values is finished. By this time, writing into the file and Assertations over
     * historical data are possible
     */
@@ -226,44 +212,31 @@ public class TestResult {
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size());
       }
-      final AverageSummerizer as = new AverageSummerizer();
+      calculateAverages();
+   }
+
+   private void calculateAverages() {
       for (final String collectorName : getKeys()) {
-         LOG.trace("Standardabweichung {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-         final List<Long> localValues = getCollectorValues(collectorName);
-         final Number result = getSummarizedValue(as, collectorName, localValues);
-         values.put(collectorName, result);
+         LOG.trace("Standard deviation {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
+         final Number result = getCollectorSummary(collectorName).getMean();
+         finalValues.put(collectorName, result);
       }
    }
 
-   private List<Long> getCollectorValues(final String collectorName) {
-      final List<Long> localValues = new LinkedList<>();
+   private SummaryStatistics getCollectorSummary(final String collectorName) {
+      SummaryStatistics stat = new SummaryStatistics();
       for (int i = 0; i < realValues.size() - 1; i++) {
-         localValues.add(realValues.get(i).get(collectorName));
+         stat.addValue(realValues.get(i).get(collectorName));
       }
-      return localValues;
+      return stat;
    }
 
    public void finalizeCollection(final Throwable thrownException) {
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), thrownException);
       }
-      final AverageSummerizer as = new AverageSummerizer();
-      for (final String collectorName : getKeys()) {
-         LOG.trace("Standard deviation {}: {}", collectorName, getRelativeStandardDeviation(collectorName));
-         final List<Long> localValues = getCollectorValues(collectorName);
-         final Number result = getSummarizedValue(as, collectorName, localValues);
-         values.put(collectorName, result);
-      }
-   }
-
-   private Number getSummarizedValue(final AverageSummerizer as, final String collectorName, final List<Long> localValues) {
-      Number result;
-      if (collectorSummarizerMap.containsKey(collectorName)) {
-         result = collectorSummarizerMap.get(collectorName).getValue(localValues);
-      } else {
-         result = as.getValue(localValues);
-      }
-      return result;
+      calculateAverages();
+      
    }
 
    /**
@@ -277,7 +250,7 @@ public class TestResult {
       if (dataCollectors.get(name) != null) {
          throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
       }
-      values.put(name, value);
+      finalValues.put(name, value);
    }
 
    /**
@@ -287,7 +260,7 @@ public class TestResult {
     * @return Additional Values
     */
    public Set<String> getAdditionValueKeys() {
-      return values.keySet();
+      return finalValues.keySet();
    }
 
    /**
@@ -297,8 +270,8 @@ public class TestResult {
     * @return Value of the measure
     */
    public Number getValue(final String key) {
-      if (values.get(key) != null) {
-         return values.get(key);
+      if (finalValues.get(key) != null) {
+         return finalValues.get(key);
       } else {
          long avg = 0;
          for (int i = 0; i < realValues.size(); i++) {
@@ -318,21 +291,10 @@ public class TestResult {
     * @param datacollector Name of the DataCollector
     * @return Relative standard deviation
     */
-   public double getRelativeStandardDeviation(final String datacollector) {
-      final long[] currentValues = new long[realValues.size()];
-      for (int i = 0; i < realValues.size(); i++) {
-         final Map<String, Long> map = realValues.get(i);
-         currentValues[i] = map.get(datacollector);
-      }
-      if (datacollector.equals("de.kopeme.datacollection.CPUUsageCollector") || datacollector.equals("de.kopeme.datacollection.TimeDataCollector")) {
-         LOG.trace(Arrays.toString(currentValues));
-      }
-      final SummaryStatistics st = new SummaryStatistics();
-      for (final Long l : currentValues) {
-         st.addValue(l);
-      }
+   public double getRelativeStandardDeviation(final String collectorName) {
+      final SummaryStatistics st = getCollectorSummary(collectorName);
 
-      LOG.trace("Mittel: {} Standardabweichung: {}", st.getMean(), st.getStandardDeviation());
+      LOG.trace("Mean: {} Deviation: {}", st.getMean(), st.getStandardDeviation());
       return st.getStandardDeviation() / st.getMean();
    }
 
