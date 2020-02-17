@@ -79,7 +79,7 @@ public final class XMLDataStorer implements DataStorer {
       } else {
          dc.getResult().add(result);
       }
-
+      storeData();
    }
 
    private Chunk findChunk(final Datacollector dc) {
