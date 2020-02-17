@@ -40,7 +40,7 @@ public class TestDataSaving {
       XMLDataStorer.storeData(file, data);
       
       Result result2 = createResult(16.5);
-      XMLDataStorerStreaming.storeData(file, result2);
+      XMLDataStorerStreaming.storeData(file, result2, "Test", "CollectorA" );
       
       testLoadedResults();
    }

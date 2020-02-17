@@ -65,38 +65,21 @@ public final class XMLDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final Fulldata fulldata) {
+   public void storeValue(final Result result, String testcase, String collectorName) {
       if (data.getTestcases() == null) {
          data.setTestcases(new Testcases());
       }
-      final TestcaseType test = getOrCreateTestcase(performanceDataMeasure);
+      final TestcaseType test = getOrCreateTestcase(result, testcase);
 
-      final Result r = buildResult(performanceDataMeasure);
-      r.setFulldata(fulldata);
-
-      final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure.getCollectorname(), test);
+      final Datacollector dc = getOrCreateDatacollector(collectorName, test);
 
       if (System.getenv("KOPEME_CHUNKSTARTTIME") != null) {
          final Chunk current = findChunk(dc);
-         current.getResult().add(r);
+         current.getResult().add(result);
       } else {
-         dc.getResult().add(r);
+         dc.getResult().add(result);
       }
 
-   }
-
-   private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
-      final Result r = new Result();
-      r.setDate(new Date().getTime());
-      r.setValue(performanceDataMeasure.value);
-      r.setDeviation(performanceDataMeasure.deviation);
-      r.setExecutionTimes(performanceDataMeasure.getExecutions());
-      r.setWarmupExecutions(performanceDataMeasure.getWarmup());
-      r.setRepetitions(performanceDataMeasure.getRepetitions());
-      r.setMax(performanceDataMeasure.max);
-      r.setMin(performanceDataMeasure.min);
-      r.setFirst10Percentile(performanceDataMeasure.first10percentile);
-      return r;
    }
 
    private Chunk findChunk(final Datacollector dc) {
@@ -134,24 +117,23 @@ public final class XMLDataStorer implements DataStorer {
       return dc;
    }
 
-   private TestcaseType getOrCreateTestcase(final PerformanceDataMeasure performanceDataMeasure) {
+   private TestcaseType getOrCreateTestcase(final Result performanceDataMeasure, String testcase) {
       TestcaseType test = null;
       for (final TestcaseType tc : data.getTestcases().getTestcase()) {
-         if (tc.getName().equals(performanceDataMeasure.testcase)) {
+         if (tc.getName().equals(testcase)) {
             test = tc;
          }
       }
       if (test == null) {
          LOG.trace("Test == null, füge hinzu");
          test = new TestcaseType();
-         test.setName(performanceDataMeasure.testcase);
+         test.setName(testcase);
          data.getTestcases().getTestcase().add(test);
       }
       return test;
    }
 
-   @Override
-   public void storeData() {
+   private void storeData() {
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
          final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();

@@ -2,6 +2,7 @@ package de.dagere.kopeme;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -16,6 +17,7 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 
 /**
@@ -105,7 +107,6 @@ public final class PerformanceTestUtils {
 				buildKeyData(data, testcasename, xds, tr, key);
 			}
 			buildAdditionalKeys(data, testcasename, xds, tr);
-			xds.storeData();
 		} catch (final JAXBException e) {
 			e.printStackTrace();
 		}
@@ -113,32 +114,46 @@ public final class PerformanceTestUtils {
 
    private static void buildKeyData(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr, final String key) {
       LOG.trace("Collector Key: {}", key);
-      final PerformanceDataMeasure performanceDataMeasure = getMeasureFromTR(data, testcasename, tr, key);
-      final Fulldata values = data.isSaveValues() ? tr.getFulldata(key) : null;
+      final Result result = getMeasureFromTR(data, testcasename, tr, key);
+      final Fulldata fulldata = data.isSaveValues() ? tr.getFulldata(key) : null;
       tr.clearFulldata(key);
-      xds.storeValue(performanceDataMeasure, values);
+      result.setFulldata(fulldata);
+      xds.storeValue(result, testcasename, key);
    }
 
    private static void buildAdditionalKeys(final SaveableTestData data, final String testcasename, final DataStorer xds, final TestResult tr) {
       for (final String additionalKey : tr.getAdditionValueKeys()) {
       	if (!tr.getKeys().contains(additionalKey)) {
-      	   final PerformanceDataMeasure performanceDataMeasure = getMeasureFromTR(data, testcasename, tr, additionalKey);
-      		final Fulldata values = data.isSaveValues() ? tr.getFulldata(additionalKey) : null;
+      	   final Result result = getMeasureFromTR(data, testcasename, tr, additionalKey);
+      		final Fulldata fulldata = data.isSaveValues() ? tr.getFulldata(additionalKey) : null;
+      		result.setFulldata(fulldata);
       		tr.clearFulldata(additionalKey);
-      		xds.storeValue(performanceDataMeasure, values);
+      		xds.storeValue(result, testcasename, additionalKey);
       	}
       }
    }
 
-   private static PerformanceDataMeasure getMeasureFromTR(final SaveableTestData data, final String testcasename, final TestResult tr, final String additionalKey) {
+   private static Result getMeasureFromTR(final SaveableTestData data, final String testcasename, final TestResult tr, final String additionalKey) {
       final double relativeStandardDeviation = tr.getRelativeStandardDeviation(additionalKey);
       final double value = tr.getValue(additionalKey).doubleValue();
       final long min = tr.getMinumumCurrentValue(additionalKey);
       final long max = tr.getMaximumCurrentValue(additionalKey);
       final double first10percentile = getPercentile(tr.getValues(additionalKey), 10);
-      final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, value, relativeStandardDeviation,
-            tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
-      return performanceDataMeasure;
+      Result result = new Result();
+      result.setValue(value);
+      result.setDeviation(relativeStandardDeviation);
+      result.setMin(min);
+      result.setMax(max);
+      result.setFirst10Percentile(first10percentile);
+      result.setWarmupExecutions(data.getWarmupExecutions());
+      result.setExecutionTimes(tr.getRealExecutions());
+      result.setRepetitions(data.getRepetitions());
+      result.setDate(new Date().getTime());
+      
+//      final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey, 
+//            value, relativeStandardDeviation,
+//            tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
+      return result;
    }
 
 	/**

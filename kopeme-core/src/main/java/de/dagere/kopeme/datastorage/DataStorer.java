@@ -2,6 +2,7 @@ package de.dagere.kopeme.datastorage;
 
 import java.util.Map;
 
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 
 /**
@@ -12,10 +13,6 @@ import de.dagere.kopeme.generated.Result.Fulldata;
  */
 public interface DataStorer {
 
-	/**
-	 * Stores all already given data to the hard disk.
-	 */
-	void storeData();
 
-   void storeValue(PerformanceDataMeasure performanceDataMeasure, Fulldata fulldata);
+   void storeValue(Result performanceDataMeasure, String testcase, String collectorName);
 }

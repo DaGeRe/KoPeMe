@@ -40,40 +40,33 @@ public class XMLDataStorerStreaming implements DataStorer {
    }
 
    @Override
-   public void storeData() {
-      // TODO Auto-generated method stub
+   public void storeValue(Result performanceDataMeasure, String testcase, String collectorName) {
+      try {
+         SAXReader reader = new SAXReader();
+         Document document = reader.read(file);
 
-   }
+         final XPath xpath = DocumentHelper.createXPath("/kopemedata/testcases/testcase/datacollector");
+         List<Node> nodes = xpath.selectNodes(document);
 
-   @Override
-   public void storeValue(PerformanceDataMeasure performanceDataMeasure, Fulldata fulldata) {
+         DefaultElement node = (DefaultElement) nodes.get(0);
+         final DefaultElement result = new DefaultElement("result");
 
-   }
+         addField(result, "value", "" + performanceDataMeasure.getValue());
+         addField(result, "deviation", "" + performanceDataMeasure.getDeviation());
+         addField(result, "min", "" + performanceDataMeasure.getMin());
+         addField(result, "max", "" + performanceDataMeasure.getMax());
+         addField(result, "warmupExecutions", "" + performanceDataMeasure.getWarmupExecutions());
+         addField(result, "repetitions", "" + performanceDataMeasure.getRepetitions());
+         addField(result, "executionTimes", "" + performanceDataMeasure.getExecutionTimes());
 
-   public void storeValue(Result additionalResult) throws DocumentException {
-      System.out.println("Store: " + file.getAbsolutePath());
-      SAXReader reader = new SAXReader();
-      Document document = reader.read(file);
+         buildFulldata(performanceDataMeasure.getFulldata(), result);
 
-      final XPath xpath = DocumentHelper.createXPath("/kopemedata/testcases/testcase/datacollector");
-      List<Node> nodes = xpath.selectNodes(document);
+         node.add(result);
 
-      DefaultElement node = (DefaultElement) nodes.get(0);
-      final DefaultElement result = new DefaultElement("result");
-
-      addField(result, "value", "" + additionalResult.getValue());
-      addField(result, "deviation", "" + additionalResult.getDeviation());
-      addField(result, "min", "" + additionalResult.getMin());
-      addField(result, "max", "" + additionalResult.getMax());
-      addField(result, "warmupExecutions", "" + additionalResult.getWarmupExecutions());
-      addField(result, "repetitions", "" + additionalResult.getRepetitions());
-      addField(result, "executionTimes", "" + additionalResult.getExecutionTimes());
-      
-      buildFulldata(additionalResult, result);
-
-      node.add(result);
-
-      writeChangedXML(document);
+         writeChangedXML(document);
+      } catch (DocumentException e) {
+         e.printStackTrace();
+      }
    }
 
    private void addField(final DefaultElement result, String name, String value) {
@@ -94,25 +87,21 @@ public class XMLDataStorerStreaming implements DataStorer {
       }
    }
 
-   private void buildFulldata(Result additionalResult, final DefaultElement result) {
-      if (additionalResult.getFulldata() != null) {
-         final DefaultElement fulldata = new DefaultElement("fulldata");
-         for (Value value : additionalResult.getFulldata().getValue()) {
-            final Element xmlValue = fulldata.addElement("value");
+   private void buildFulldata(Fulldata fulldata, final DefaultElement result) {
+      if (fulldata != null) {
+         final DefaultElement xmlFulldata = new DefaultElement("fulldata");
+         for (Value value : fulldata.getValue()) {
+            final Element xmlValue = xmlFulldata.addElement("value");
             xmlValue.addAttribute("start", "" + value.getStart());
             xmlValue.setText(value.getValue());
          }
-         result.add(fulldata);
+         result.add(xmlFulldata);
       }
    }
 
-   public static void storeData(final File file, final Result additionalResult) {
+   public static void storeData(final File file, final Result additionalResult, String testcase, String collectorName) {
       final XMLDataStorerStreaming xmlDataStorerStreaming = new XMLDataStorerStreaming(file);
-      try {
-         xmlDataStorerStreaming.storeValue(additionalResult);
-      } catch (DocumentException e) {
-         e.printStackTrace();
-      }
+      xmlDataStorerStreaming.storeValue(additionalResult, testcase, collectorName);
    }
 
 }
