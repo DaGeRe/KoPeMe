@@ -20,7 +20,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 
 public class TestDataSaving {
    
-   final File file = new File("test.xml");
+   final File file = new File("target/test.xml");
    
    @Test
    public void testSavingJAXB() throws Exception {

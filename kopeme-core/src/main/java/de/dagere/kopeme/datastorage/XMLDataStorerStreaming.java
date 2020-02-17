@@ -20,6 +20,7 @@ import org.dom4j.InvalidXPathException;
 import org.dom4j.Node;
 import org.dom4j.Visitor;
 import org.dom4j.XPath;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.SAXWriter;
 import org.dom4j.io.XMLWriter;
@@ -37,11 +38,13 @@ public class XMLDataStorerStreaming implements DataStorer {
 
    public XMLDataStorerStreaming(File file) {
       this.file = file;
+
    }
 
    @Override
    public void storeValue(Result performanceDataMeasure, String testcase, String collectorName) {
       try {
+         // TODO Test correctness testcase + collectorName
          SAXReader reader = new SAXReader();
          Document document = reader.read(file);
 
@@ -77,11 +80,14 @@ public class XMLDataStorerStreaming implements DataStorer {
 
    private void writeChangedXML(Document document) {
       try {
-         final XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(file));
+         OutputFormat outformat = OutputFormat.createPrettyPrint();
+         outformat.setEncoding("UTF-8");
+         outformat.setIndentSize(1);
+         final XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(file), outformat);
          xmlWriter.write(document);
          xmlWriter.flush();
 
-         new XMLWriter(System.out).write(document);
+//         new XMLWriter(System.out, outformat).write(document);
       } catch (IOException e) {
          e.printStackTrace();
       }
