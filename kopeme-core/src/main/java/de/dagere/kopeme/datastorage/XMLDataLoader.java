@@ -48,7 +48,6 @@ public final class XMLDataLoader implements DataLoader {
 	static {
       try {
          jc = JAXBContext.newInstance(Kopemedata.class);
-         
       } catch (final JAXBException e) {
          e.printStackTrace();
       }

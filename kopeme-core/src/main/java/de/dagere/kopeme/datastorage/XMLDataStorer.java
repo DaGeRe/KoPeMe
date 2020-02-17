@@ -85,17 +85,6 @@ public final class XMLDataStorer implements DataStorer {
 
    }
 
-//   private void buildFulldata(final Map<Long, Long> values, final Result r) {
-//      final Fulldata fd = new Fulldata();
-//      for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
-//         final Value v = new Value();
-//         v.setStart(valueEntry.getKey());
-//         v.setValue("" + valueEntry.getValue());
-//         fd.getValue().add(v);
-//      }
-//      r.setFulldata(fd);
-//   }
-
    private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
       final Result r = new Result();
       r.setDate(new Date().getTime());
@@ -163,13 +152,10 @@ public final class XMLDataStorer implements DataStorer {
 
    @Override
    public void storeData() {
-      JAXBContext jaxbContext;
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
-         jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-         final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+         final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
          jaxbMarshaller.marshal(data, file);
       } catch (final JAXBException e) {
          e.printStackTrace();
@@ -183,11 +169,9 @@ public final class XMLDataStorer implements DataStorer {
     * @param currentdata Data to save
     */
    public static void storeData(final File file, final Kopemedata currentdata) {
-      JAXBContext jaxbContext;
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
-         jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-         final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+         final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
          jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
