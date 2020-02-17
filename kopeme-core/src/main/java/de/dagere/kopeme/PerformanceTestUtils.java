@@ -100,16 +100,16 @@ public final class PerformanceTestUtils {
    }
 
    private static DataStorer getDataStorer(final SaveableTestData data) throws JAXBException {
-      final File file = data.getFolder();
-      if (!file.exists()) {
-         file.mkdirs();
+      final File folder = data.getFolder();
+      if (!folder.exists()) {
+         folder.mkdirs();
       }
-      File potentialFile = new File(file, data.getFilename());
+      File potentialFile = new File(folder, data.getTestcasename() + ".xml");
       final DataStorer xds;
       if (potentialFile.exists()) {
-         xds = new XMLDataStorerStreaming(file);
+         xds = new XMLDataStorerStreaming(potentialFile);
       } else {
-         xds = new XMLDataStorer(file, data.getFilename(), data.getTestcasename());
+         xds = new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
       }
       return xds;
    }
