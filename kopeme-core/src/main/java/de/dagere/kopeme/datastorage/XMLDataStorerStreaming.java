@@ -96,7 +96,7 @@ public class XMLDataStorerStreaming implements DataStorer {
                newline();
                for (Value value : result.getFulldata().getValue()) {
                   AttributesImpl attributes = new AttributesImpl();
-                  attributes.addAttribute("", "start", "start", "CDATA", value.getValue());
+                  attributes.addAttribute("", "start", "start", "CDATA", "" + value.getStart());
                   indent5();
                   super.startElement("", "value", "value", attributes);
                   super.characters(value.getValue().toCharArray(), 0, value.getValue().length());
