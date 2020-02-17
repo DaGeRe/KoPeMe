@@ -159,66 +159,6 @@ public class XMLDataStorerStreaming implements DataStorer {
       } catch (IOException e) {
          e.printStackTrace();
       }
-
-      // try {
-      // SAXReader reader = new SAXReader();
-      // Document document = reader.read(file);
-      //
-      // final XPath xpath = DocumentHelper.createXPath("/kopemedata/testcases/testcase/datacollector");
-      // List<Node> nodes = xpath.selectNodes(document);
-      //
-      // DefaultElement node = (DefaultElement) nodes.get(0);
-      // final DefaultElement result = new DefaultElement("result");
-      //
-      // addField(result, "value", "" + performanceDataMeasure.getValue());
-      // addField(result, "deviation", "" + performanceDataMeasure.getDeviation());
-      // addField(result, "min", "" + performanceDataMeasure.getMin());
-      // addField(result, "max", "" + performanceDataMeasure.getMax());
-      // addField(result, "warmupExecutions", "" + performanceDataMeasure.getWarmupExecutions());
-      // addField(result, "repetitions", "" + performanceDataMeasure.getRepetitions());
-      // addField(result, "executionTimes", "" + performanceDataMeasure.getExecutionTimes());
-      //
-      // buildFulldata(performanceDataMeasure.getFulldata(), result);
-      //
-      // node.add(result);
-      //
-      // writeChangedXML(document);
-      // } catch (DocumentException e) {
-      // e.printStackTrace();
-      // }
-   }
-
-   private void addField(final DefaultElement result, String name, String value) {
-      final DefaultElement valueMean = new DefaultElement(name);
-      valueMean.addText(value);
-      result.add(valueMean);
-   }
-
-   private void writeChangedXML(Document document) {
-      try {
-         OutputFormat outformat = OutputFormat.createPrettyPrint();
-         outformat.setEncoding("UTF-8");
-         outformat.setIndentSize(1);
-         final XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(file), outformat);
-         xmlWriter.write(document);
-         xmlWriter.flush();
-
-         // new XMLWriter(System.out, outformat).write(document);
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-   }
-
-   private void buildFulldata(Fulldata fulldata, final DefaultElement result) {
-      if (fulldata != null) {
-         final DefaultElement xmlFulldata = new DefaultElement("fulldata");
-         for (Value value : fulldata.getValue()) {
-            final Element xmlValue = xmlFulldata.addElement("value");
-            xmlValue.addAttribute("start", "" + value.getStart());
-            xmlValue.setText(value.getValue());
-         }
-         result.add(xmlFulldata);
-      }
    }
 
    public static void storeData(final File file, final Result additionalResult, String testcase, String collectorName) {
