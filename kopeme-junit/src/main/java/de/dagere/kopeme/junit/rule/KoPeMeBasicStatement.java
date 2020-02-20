@@ -1,6 +1,9 @@
 package de.dagere.kopeme.junit.rule;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,27 +107,41 @@ public abstract class KoPeMeBasicStatement extends Statement {
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
       tr.beforeRun();
-      int execution;
-      for (execution = 1; execution <= executions; execution++) {
-         if (annotation.showStart()) {
-            LOG.debug(fullWarmupStart, execution);
+      PrintStream oldOut = System.out;
+      PrintStream oldErr = System.err;
+      int execution = 1;
+      try {
+         if (annotation.redirectToTemp()) {
+            File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+            PrintStream stream = new PrintStream(tempFile);
+            System.setOut(stream);
+            System.setErr(stream);
          }
-         runnables.getBeforeRunnable().run();
-         tr.startCollection();
-         runAllRepetitions(repetitions);
-         tr.stopCollection();
-         runnables.getAfterRunnable().run();
-         tr.setRealExecutions(execution - 1);
-         if (annotation.showStart()) {
-            LOG.debug(fullWarmupStop, execution);
+         for (execution = 1; execution <= executions; execution++) {
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStart, execution);
+            }
+            runnables.getBeforeRunnable().run();
+            tr.startCollection();
+            runAllRepetitions(repetitions);
+            tr.stopCollection();
+            runnables.getAfterRunnable().run();
+            tr.setRealExecutions(execution - 1);
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStop, execution);
+            }
+            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+               LOG.info("Exiting because of deviation reached");
+               break;
+            }
+            checkFinished();
          }
-         if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-            LOG.info("Exiting because of deviation reached");
-            break;
-         }
-         checkFinished();
+      } finally {
+         System.setOut(oldOut);
+         System.setErr(oldErr);
       }
+
       System.gc();
       Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));

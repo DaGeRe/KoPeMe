@@ -1,7 +1,10 @@
 package de.dagere.kopeme.junit3;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,6 +92,10 @@ public abstract class KoPeMeTestcase extends TestCase {
     */
    protected boolean logFullData() {
       return annoTestcase.logFullData();
+   }
+   
+   protected boolean redirectToTemp() {
+      return false;
    }
 
    /**
@@ -229,20 +236,33 @@ public abstract class KoPeMeTestcase extends TestCase {
       final String endPart = "/" + executionTimes + " ---";
       final int repetitions = getRepetitions();
       tr.beforeRun();
-      int execution;
-      for (execution = 1; execution <= executionTimes; execution++) {
-         if (showStart()) {
-            LOG.debug(firstPart + execution + endPart);
+      PrintStream oldOut = System.out;
+      PrintStream oldErr = System.err;
+      int execution = 1;
+      try {
+         if (redirectToTemp()) {
+            File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+            PrintStream stream = new PrintStream(tempFile);
+            System.setOut(stream);
+            System.setErr(stream);
          }
-         tr.startCollection();
-         runAllRepetitions(repetitions);
-         tr.stopCollection();
-         tr.getValue(TimeDataCollector.class.getName());
-         tr.setRealExecutions(execution);
-         if (showStart()) {
-            LOG.debug(firstPartStop + execution + endPart);
+         for (execution = 1; execution <= executionTimes; execution++) {
+            if (showStart()) {
+               LOG.debug(firstPart + execution + endPart);
+            }
+            tr.startCollection();
+            runAllRepetitions(repetitions);
+            tr.stopCollection();
+            tr.getValue(TimeDataCollector.class.getName());
+            tr.setRealExecutions(execution);
+            if (showStart()) {
+               LOG.debug(firstPartStop + execution + endPart);
+            }
+            checkFinished();
          }
-         checkFinished();
+      } finally {
+         System.setOut(oldOut);
+         System.setErr(oldErr);
       }
       System.gc();
       Thread.sleep(1);

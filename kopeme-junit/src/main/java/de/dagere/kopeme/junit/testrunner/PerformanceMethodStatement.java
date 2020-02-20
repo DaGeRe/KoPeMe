@@ -2,6 +2,10 @@ package de.dagere.kopeme.junit.testrunner;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.nio.file.Files;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
@@ -150,24 +154,37 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       final String fullWarmupStart = "--- Starting " + warmupString + methodString + " {} / {} ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
       tr.beforeRun();
-      int execution;
-      for (execution = 1; execution <= executions; execution++) {
-         if (annotation.showStart()) {
-            LOG.debug(fullWarmupStart, execution, executions);
+      PrintStream oldOut = System.out;
+      PrintStream oldErr = System.err;
+      int execution = 1;
+      try {
+         if (annotation.redirectToTemp()) {
+            File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+            PrintStream stream = new PrintStream(tempFile);
+            System.setOut(stream);
+            System.setErr(stream);
          }
-         tr.startCollection();
-         runAllRepetitions(callee, repetitions);
-         tr.stopCollection();
-         if (annotation.showStart()) {
-            LOG.debug(fullWarmupStop, execution);
+         for (execution = 1; execution <= executions; execution++) {
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStart, execution, executions);
+            }
+            tr.startCollection();
+            runAllRepetitions(callee, repetitions);
+            tr.stopCollection();
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStop, execution);
+            }
+            tr.setRealExecutions(execution);
+            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+               LOG.info("Exiting because of deviation reached");
+               break;
+            }
+            checkFinished();
          }
-         tr.setRealExecutions(execution);
-         if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-            LOG.info("Exiting because of deviation reached");
-            break;
-         }
-         checkFinished();
+      } finally {
+         System.setOut(oldOut);
+         System.setErr(oldErr);
       }
       System.gc();
       Thread.sleep(1);
