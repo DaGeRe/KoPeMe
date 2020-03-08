@@ -10,6 +10,8 @@
 		<exclude within="java.util.logging..*" />
 		<exclude within="org.eclipse..*" />
 		<exclude within="org.junit..*" />
+		<exclude within="org.apache.logging.log4j..*" />
+		<exclude within="org.apache.commons.math3..*" />
 	</weaver>
 	<aspects>
 		<aspect
