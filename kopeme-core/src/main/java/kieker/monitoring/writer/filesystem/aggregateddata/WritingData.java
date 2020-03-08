@@ -15,8 +15,8 @@ public class WritingData extends AggregatedData {
 
    @JsonIgnore
    protected Map<Long, StatisticalSummary> writeStatistic = new LinkedHashMap<>();
-   
-   private SummaryStatistics newestStatistic;
+
+   private SummaryStatistics newestStatistic = new SummaryStatistics();
    private long newestTime;
    private SummaryStatistics overallStatistics = new SummaryStatistics();
 
@@ -46,7 +46,6 @@ public class WritingData extends AggregatedData {
    }
 
    private void nextLine() {
-      newestStatistic = new SummaryStatistics();
       getAvailableTimeslot();
       writeStatistic.put(newestTime, newestStatistic);
    }
