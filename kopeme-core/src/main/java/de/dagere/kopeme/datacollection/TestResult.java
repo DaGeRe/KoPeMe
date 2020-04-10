@@ -30,7 +30,7 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
  * @author dagere
  * 
  */
-public class TestResult {
+public final class TestResult {
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
    protected final Map<String, Number> finalValues = new HashMap<>();
