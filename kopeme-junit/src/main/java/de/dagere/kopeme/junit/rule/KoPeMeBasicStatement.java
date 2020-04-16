@@ -1,6 +1,9 @@
 package de.dagere.kopeme.junit.rule;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -112,10 +115,9 @@ public abstract class KoPeMeBasicStatement extends Statement {
       int execution = 1;
       try {
          if (annotation.redirectToTemp()) {
-            File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
-            PrintStream stream = new PrintStream(tempFile);
-            System.setOut(stream);
-            System.setErr(stream);
+            redirectToTempFile();
+         } else if (annotation.redirectToNull()) {
+            redirectToNullStream();
          }
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
@@ -146,6 +148,23 @@ public abstract class KoPeMeBasicStatement extends Statement {
       Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+   
+   private void redirectToTempFile() throws IOException, FileNotFoundException {
+      File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+      PrintStream stream = new PrintStream(tempFile);
+      System.setOut(stream);
+      System.setErr(stream);
+   }
+
+   private void redirectToNullStream() {
+      final PrintStream nullStream = new PrintStream(new OutputStream() {
+         @Override
+         public void write(int b) throws IOException {
+         }
+      });
+      System.setOut(nullStream);
+      System.setErr(nullStream);
    }
 
    private void runAllRepetitions(final int repetitions) throws Throwable {

@@ -1,7 +1,9 @@
 package de.dagere.kopeme.junit3;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -95,6 +97,10 @@ public abstract class KoPeMeTestcase extends TestCase {
    }
    
    protected boolean redirectToTemp() {
+      return false;
+   }
+   
+   protected boolean redirectToNull() {
       return false;
    }
 
@@ -241,10 +247,9 @@ public abstract class KoPeMeTestcase extends TestCase {
       int execution = 1;
       try {
          if (redirectToTemp()) {
-            File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
-            PrintStream stream = new PrintStream(tempFile);
-            System.setOut(stream);
-            System.setErr(stream);
+            redirectToTempFile();
+         } else if (redirectToNull()) {
+            redirectToNullStream();
          }
          for (execution = 1; execution <= executionTimes; execution++) {
             if (showStart()) {
@@ -268,6 +273,23 @@ public abstract class KoPeMeTestcase extends TestCase {
       Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+   
+   private void redirectToTempFile() throws IOException, FileNotFoundException {
+      File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+      PrintStream stream = new PrintStream(tempFile);
+      System.setOut(stream);
+      System.setErr(stream);
+   }
+
+   private void redirectToNullStream() {
+      final PrintStream nullStream = new PrintStream(new OutputStream() {
+         @Override
+         public void write(int b) throws IOException {
+         }
+      });
+      System.setOut(nullStream);
+      System.setErr(nullStream);
    }
 
    private void checkFinished() throws InterruptedException {

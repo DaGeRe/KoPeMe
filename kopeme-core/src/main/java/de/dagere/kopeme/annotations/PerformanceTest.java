@@ -43,6 +43,8 @@ public @interface PerformanceTest {
 	boolean showStart() default false;
 	
 	boolean redirectToTemp() default false;
+	
+	boolean redirectToNull() default false;
 
 	/**
 	 * Optionally specify count of reptitions of same test.
