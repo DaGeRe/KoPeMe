@@ -63,8 +63,8 @@ public class PureKoPeMeTest {
 		}
 		Assert.assertNotEquals(timeConsumption, 0.0);
 
-		final int milisecondTime = (int) ((timeConsumption * 40) / 1000);
+		final long milisecondTime = (long) ((timeConsumption * 40l) / (1000l * 1000l));
 
-		Assert.assertThat((long) milisecondTime, Matchers.lessThan(duration));
+		Assert.assertThat( milisecondTime, Matchers.lessThan(duration));
 	}
 }

@@ -4,7 +4,6 @@ import de.dagere.kopeme.datacollection.DataCollector;
 
 public final class TimeDataCollectorNoGC extends DataCollector {
 
-   private static final int MIKRO = 1000;
    private long start;
    private long stop;
    private long summarizedValue = 0;
@@ -35,13 +34,12 @@ public final class TimeDataCollectorNoGC extends DataCollector {
 
    @Override
    public long getValue() {
-      return summarizedValue != 0 ? summarizedValue : (stop - start) / MIKRO;
-      // Divisionen: 1 - Nano, 1E3 - Mikro, 1E6 - Milli
+      return summarizedValue != 0 ? summarizedValue : (stop - start);
    }
 
    @Override
    public void startOrRestartCollection() {
-      summarizedValue += (stop - start) / MIKRO;
+      summarizedValue += (stop - start);
       System.out.println("Measured: " + summarizedValue);
       startCollection();
    }
