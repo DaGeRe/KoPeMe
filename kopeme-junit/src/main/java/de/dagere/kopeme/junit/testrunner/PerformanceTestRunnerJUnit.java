@@ -43,7 +43,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
    private final static Logger LOG = LogManager.getLogger(PerformanceTestRunnerJUnit.class);
 
    protected final Class<?> klasse;
-   protected boolean logFullData;
+   protected boolean logFullDataClass;
    protected FrameworkMethod method;
    protected final String filename;
    protected boolean classFinished = false;
@@ -88,7 +88,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
          }
       };
-      logFullData = ptc.logFullData();
+      logFullDataClass = ptc.logFullData();
       // This is usually a class-wide call, therefore kieker can be set to false, because its activated per-method
       final TimeBoundExecution tbe = new TimeBoundExecution(testRunRunnable, ptc.overallTimeout(), Type.CLASS, false);
       final boolean finished = tbe.execute();
@@ -201,7 +201,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
          this.method = currentMethod;
 
          if (!classFinished) {
-            currentMethodStatement = new PerformanceMethodStatement(callee, filename, klasse, method, logFullData);
+            currentMethodStatement = new PerformanceMethodStatement(callee, filename, klasse, method, logFullDataClass);
             return currentMethodStatement;
          } else {
             return new Statement() {

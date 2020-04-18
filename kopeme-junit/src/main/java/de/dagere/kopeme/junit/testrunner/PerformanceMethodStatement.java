@@ -18,6 +18,7 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 
@@ -27,19 +28,19 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
    protected final PerformanceJUnitStatement callee;
    protected final int timeout;
-   protected int warmupExecutions;
    protected final String className, methodName;
-   protected final boolean saveFullData;
    protected Finishable mainRunnable;
-   protected final int repetitions;
+   protected final RunConfiguration configuration;
 
    public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method,
-         final boolean saveFullData) {
+         final boolean saveValuesClass) {
       super(null, method.getMethod(), filename);
       this.callee = callee;
-      this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
-      warmupExecutions = annotation.warmupExecutions();
-      repetitions = annotation.repetitions();
+//      this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
+      configuration = new RunConfiguration(annotation);
+      if (saveValuesClass) {
+         configuration.setSaveValues(saveValuesClass);
+      }
       timeout = annotation.timeout();
       this.methodName = method.getName();
       this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass
@@ -109,14 +110,14 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "execution ", executions, callee, repetitions);
+         runMainExecution(tr, "execution ", executions, callee, configuration.getRepetitions());
       } catch (final Throwable t) {
          tr.finalizeCollection();
-         saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
+         saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, configuration));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
+      saveData(SaveableTestData.createFineTestData(methodName, filename, tr, configuration));
       return tr;
    }
 
@@ -133,8 +134,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, repetitions);
-         warmupExecutions = tr.getRealExecutions();
+         runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, configuration.getRepetitions());
       } catch (final Throwable t) {
          tr.finalizeCollection();
          throw t;

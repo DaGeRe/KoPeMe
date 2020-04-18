@@ -118,7 +118,7 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 			this.method = currentMethod;
 
 			if (!classFinished){
-				currentMethodStatement = new TimeBasedStatement(callee, filename, klasse, method, logFullData);
+				currentMethodStatement = new TimeBasedStatement(callee, filename, klasse, method, logFullDataClass);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {

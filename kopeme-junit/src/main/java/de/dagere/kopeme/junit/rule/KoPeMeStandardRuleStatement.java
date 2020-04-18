@@ -12,6 +12,7 @@ import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import junit.framework.AssertionFailedError;
 
@@ -71,6 +72,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       if (!checkCollectorValidity(tr)) {
          LOG.warn("Not all Collectors are valid!");
       }
+      final RunConfiguration configuration = new RunConfiguration(annotation);
       try {
          // Run warmup
          if (annotation.warmupExecutions() > 0) {
@@ -82,18 +84,15 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          }
       } catch (final AssertionFailedError t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
-               annotation.repetitions(), annotation.logFullData()));
+         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, configuration));
          throw t;
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
-               annotation.repetitions(), annotation.logFullData()));
+         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, configuration));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, annotation.warmupExecutions(),
-            annotation.repetitions(), annotation.logFullData()));
+      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, configuration));
    }
 
    public void setMethodName(final String methodName) {

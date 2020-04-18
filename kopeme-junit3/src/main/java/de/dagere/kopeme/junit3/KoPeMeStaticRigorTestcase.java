@@ -1,5 +1,6 @@
 package de.dagere.kopeme.junit3;
 
+import java.lang.ProcessBuilder.Redirect;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import junit.framework.AssertionFailedError;
@@ -114,6 +116,18 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	protected boolean useKieker() {
 		return annoTestcase.useKieker();
 	}
+	
+	protected boolean showStart() {
+      return false;
+   }
+   
+   protected boolean redirectToTemp() {
+      return false;
+   }
+   
+   protected boolean redirectToNull() {
+      return false;
+   }
 
 	@Override
 	public void runBare() throws InterruptedException {
@@ -174,7 +188,8 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		waitForTestEnd(timeoutTime, thread);
 		// No matter how the test gets finished, saving should be done here
 		LOG.trace("End-Testcase-Saving begins");
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, 1, fullData));
+		RunConfiguration configuration = new RunConfiguration(getWarmupExecutions(), getExecutionTimes(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, configuration));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
 	}

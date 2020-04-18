@@ -117,7 +117,7 @@ public final class PerformanceTestUtils {
    private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String key) {
       LOG.trace("Collector Key: {}", key);
       final Result result = getMeasureFromTR(data, tr, key);
-      final Fulldata fulldata = data.isSaveValues() ? tr.getFulldata(key) : null;
+      final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(key) : null;
       tr.clearFulldata(key);
       result.setFulldata(fulldata);
       xds.storeValue(result, data.getTestcasename(), key);
@@ -127,7 +127,7 @@ public final class PerformanceTestUtils {
       for (final String additionalKey : tr.getAdditionValueKeys()) {
          if (!tr.getKeys().contains(additionalKey)) {
             final Result result = getMeasureFromTR(data, tr, additionalKey);
-            final Fulldata fulldata = data.isSaveValues() ? tr.getFulldata(additionalKey) : null;
+            final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(additionalKey) : null;
             result.setFulldata(fulldata);
             tr.clearFulldata(additionalKey);
             xds.storeValue(result, data.getTestcasename(), additionalKey);
@@ -147,10 +147,17 @@ public final class PerformanceTestUtils {
       result.setMin(min);
       result.setMax(max);
       result.setFirst10Percentile(first10percentile);
-      result.setWarmupExecutions(data.getWarmupExecutions());
+      result.setWarmupExecutions(data.getConfiguration().getWarmupExecutions());
       result.setExecutionTimes(tr.getRealExecutions());
-      result.setRepetitions(data.getRepetitions());
+      result.setRepetitions(data.getConfiguration().getRepetitions());
+      result.setRedirectToNull(data.getConfiguration().isRedirectToNull());
+      result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
+      result.setShowStart(data.getConfiguration().isShowStart());
       result.setDate(new Date().getTime());
+      
+//      result.setRedirectToNull();
+      result.setJavaVersion(System.getProperty("java.version"));
+      
 
       // final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey,
       // value, relativeStandardDeviation,
