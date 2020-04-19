@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
@@ -157,14 +158,12 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       final String fullWarmupStart = "--- Starting " + warmupString + methodString + " {} / {} ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
       tr.beforeRun();
-      PrintStream oldOut = System.out;
-      PrintStream oldErr = System.err;
       int execution = 1;
       try {
          if (annotation.redirectToTemp()) {
             redirectToTempFile();
          } else if (annotation.redirectToNull()) {
-            redirectToNullStream();
+            OutputStreamUtil.redirectToNullStream();
          }
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
@@ -185,8 +184,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
             checkFinished();
          }
       } finally {
-         System.setOut(oldOut);
-         System.setErr(oldErr);
+         OutputStreamUtil.resetStreams();
       }
       System.gc();
       Thread.sleep(1);
@@ -199,17 +197,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       PrintStream stream = new PrintStream(tempFile);
       System.setOut(stream);
       System.setErr(stream);
-   }
-
-   private void redirectToNullStream() {
-      final PrintStream nullStream = new PrintStream(new OutputStream() {
-         @Override
-         public void write(int b) throws IOException {
-         }
-      });
-      System.setOut(nullStream);
-      System.setErr(nullStream);
-   }
+   }  
 
    private void checkFinished() throws InterruptedException {
       if (isFinished) {

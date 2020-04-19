@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
@@ -110,14 +111,12 @@ public abstract class KoPeMeBasicStatement extends Statement {
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
       tr.beforeRun();
-      PrintStream oldOut = System.out;
-      PrintStream oldErr = System.err;
       int execution = 1;
       try {
          if (annotation.redirectToTemp()) {
             redirectToTempFile();
          } else if (annotation.redirectToNull()) {
-            redirectToNullStream();
+            OutputStreamUtil.redirectToNullStream();
          }
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
@@ -140,8 +139,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
             checkFinished();
          }
       } finally {
-         System.setOut(oldOut);
-         System.setErr(oldErr);
+         OutputStreamUtil.resetStreams();
       }
 
       System.gc();
@@ -155,16 +153,6 @@ public abstract class KoPeMeBasicStatement extends Statement {
       PrintStream stream = new PrintStream(tempFile);
       System.setOut(stream);
       System.setErr(stream);
-   }
-
-   private void redirectToNullStream() {
-      final PrintStream nullStream = new PrintStream(new OutputStream() {
-         @Override
-         public void write(int b) throws IOException {
-         }
-      });
-      System.setOut(nullStream);
-      System.setErr(nullStream);
    }
 
    private void runAllRepetitions(final int repetitions) throws Throwable {
