@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
@@ -244,14 +245,12 @@ public abstract class KoPeMeTestcase extends TestCase {
       final String endPart = "/" + executionTimes + " ---";
       final int repetitions = getRepetitions();
       tr.beforeRun();
-      PrintStream oldOut = System.out;
-      PrintStream oldErr = System.err;
       int execution = 1;
       try {
          if (redirectToTemp()) {
             redirectToTempFile();
          } else if (redirectToNull()) {
-            redirectToNullStream();
+            OutputStreamUtil.redirectToNullStream();
          }
          for (execution = 1; execution <= executionTimes; execution++) {
             if (showStart()) {
@@ -268,8 +267,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             checkFinished();
          }
       } finally {
-         System.setOut(oldOut);
-         System.setErr(oldErr);
+         OutputStreamUtil.resetStreams();
       }
       System.gc();
       Thread.sleep(1);
@@ -285,11 +283,17 @@ public abstract class KoPeMeTestcase extends TestCase {
    }
 
    private void redirectToNullStream() {
-      final PrintStream nullStream = new PrintStream(new OutputStream() {
+      final OutputStream nullOutputStream = new OutputStream() {
          @Override
          public void write(int b) throws IOException {
          }
-      });
+      };
+      final PrintStream nullStream = new PrintStream(nullOutputStream) {
+         @Override
+         public void println() {
+            // do nothing
+         }
+      };
       System.setOut(nullStream);
       System.setErr(nullStream);
    }
