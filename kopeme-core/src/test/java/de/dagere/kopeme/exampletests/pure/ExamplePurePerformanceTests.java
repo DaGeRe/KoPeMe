@@ -91,9 +91,9 @@ public class ExamplePurePerformanceTests {
          public void checkValues(final TestResult tr) {
             final String CPUUSage = CPUUsageCollector.class.getName();
             MatcherAssert.assertThat(tr.getValue(CPUUSage).doubleValue(), Matchers.greaterThan(10.0));
-            MatcherAssert.assertThat(tr.getValue(CPUUSage).doubleValue(), Matchers.greaterThan((tr.getHistoricalResults().getLastRunsAverage(CPUUSage, 5) * 0.80)));
-            MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class.getName()).doubleValue(),
-                  Matchers.lessThan((tr.getHistoricalResults().getLastRunsAverage(TimeDataCollector.class.getName(), 5) * 1.30)));
+//            MatcherAssert.assertThat(tr.getValue(CPUUSage).doubleValue(), Matchers.greaterThan((tr.getHistoricalResults().getLastRunsAverage(CPUUSage, 5) * 0.80)));
+//            MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class.getName()).doubleValue(),
+//                  Matchers.lessThan((tr.getHistoricalResults().getLastRunsAverage(TimeDataCollector.class.getName(), 5) * 1.30)));
          }
       });
    }

@@ -260,7 +260,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             tr.startCollection();
             runAllRepetitions(repetitions);
             tr.stopCollection();
-            tr.getValue(TimeDataCollector.class.getName());
+//            tr.getValue(TimeDataCollector.class.getName());
             tr.setRealExecutions(execution);
             if (showStart()) {
                LOG.debug(firstPartStop + execution + endPart);
