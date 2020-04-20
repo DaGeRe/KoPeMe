@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class WrittenResultReader {
    }
 
    private void readValues() {
-      realValues = new LinkedList<>();
+      realValues = new ArrayList<>();
       executionStartTimes = new LinkedList<>();
       finalValues = new HashMap<String, Number>();
 
@@ -75,6 +76,7 @@ public class WrittenResultReader {
       } catch (IOException e) {
          e.printStackTrace();
       }
+      file.delete();
    }
 
    private Map<String, Long> finishIteration(Map<String, Long> currentValues) {
@@ -93,9 +95,10 @@ public class WrittenResultReader {
    }
    
    SummaryStatistics getCollectorSummary(final String collectorName) {
-      SummaryStatistics stat = new SummaryStatistics();
+      final SummaryStatistics stat = new SummaryStatistics();
       for (int i = 0; i < realValues.size() - 1; i++) {
-         stat.addValue(realValues.get(i).get(collectorName));
+         final Long collectorValue = realValues.get(i).get(collectorName);
+         stat.addValue(collectorValue);
       }
       return stat;
    }
