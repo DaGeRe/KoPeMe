@@ -146,7 +146,7 @@ public class PerformanceTestRunner {
          final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
          runMainExecution(pts, newResult);
       } catch (final Throwable t) {
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, configuration));
          throw t;
       }
@@ -177,7 +177,7 @@ public class PerformanceTestRunner {
          final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, true, params, tr);
          runMainExecution(pts, tr);
       } catch (final Throwable t) {
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, configuration));
          throw t;
       }

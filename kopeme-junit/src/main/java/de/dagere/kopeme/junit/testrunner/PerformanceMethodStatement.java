@@ -113,7 +113,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       try {
          runMainExecution(tr, "execution ", executions, callee, configuration.getRepetitions());
       } catch (final Throwable t) {
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, configuration));
          throw t;
       }
@@ -137,7 +137,8 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       try {
          runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, configuration.getRepetitions());
       } catch (final Throwable t) {
-         tr.finalizeCollection();
+         t.printStackTrace();
+         tr.finalizeCollection(t);
          throw t;
       }
       tr.finalizeCollection();

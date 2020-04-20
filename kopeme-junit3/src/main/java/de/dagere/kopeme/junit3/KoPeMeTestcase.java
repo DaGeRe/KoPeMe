@@ -217,13 +217,13 @@ public abstract class KoPeMeTestcase extends TestCase {
       } catch (final AssertionFailedError t) {
          t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
          throw t;
       } catch (final Throwable t) {
          t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
          throw t;
       }
