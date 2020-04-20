@@ -291,10 +291,10 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		try {
 			runMainExecution(fullName, tr, executionTimes);
 		} catch (final AssertionFailedError t) {
-			tr.finalizeCollection();
+			tr.finalizeCollection(t);
 			throw t;
 		} catch (final Throwable t) {
-			tr.finalizeCollection();
+			tr.finalizeCollection(t);
 			throw t;
 		}
 	}
