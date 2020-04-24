@@ -67,6 +67,11 @@ public class TestDataSaving {
       result.setWarmupExecutions(15);
       result.setRepetitions(16);
       result.setExecutionTimes(17);
+      result.setJavaVersion("1.8");
+      result.setShowStart(false);
+      result.setRedirectToNull(true);
+      result.setRedirectToTemp(false);
+      result.setUseKieker(false);
       for (int i = 0; i < 5; i++) {
          final Value value = new Value();
          value.setStart(Long.valueOf(i));
@@ -83,6 +88,16 @@ public class TestDataSaving {
       assertCorrectResult(result2, 15.5);
       final Result result21 = loadedResults.get(1);
       assertCorrectResult(result21, 16.5);
+      
+      Assert.assertNotNull(result2.getJavaVersion());
+      Assert.assertNotNull(result2.isRedirectToNull());
+      Assert.assertNotNull(result2.isRedirectToTemp());
+      Assert.assertNotNull(result2.isShowStart());
+
+      Assert.assertEquals(result2.getJavaVersion(), result21.getJavaVersion());
+      Assert.assertEquals(result2.isRedirectToNull(), result21.isRedirectToNull());
+      Assert.assertEquals(result2.isRedirectToTemp(), result21.isRedirectToTemp());
+      Assert.assertEquals(result2.isShowStart(), result21.isShowStart());
    }
    
    private void assertCorrectResult(final Result result2, final double actual) {

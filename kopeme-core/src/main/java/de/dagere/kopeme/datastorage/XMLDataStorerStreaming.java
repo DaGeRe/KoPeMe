@@ -101,6 +101,11 @@ public class XMLDataStorerStreaming implements DataStorer {
                writeField("warmupExecutions", "" + result.getWarmupExecutions());
                writeField("repetitions", "" + result.getRepetitions());
                writeField("executionTimes", "" + result.getExecutionTimes());
+               writeField("javaVersion", result.getJavaVersion());
+               writeField("useKieker", Boolean.TRUE.equals(result.isUseKieker()) ? "true" : "false");
+               writeField("redirectToTemp", Boolean.TRUE.equals(result.isRedirectToTemp()) ? "true" : "false");
+               writeField("redirectToNull", Boolean.TRUE.equals(result.isRedirectToNull()) ? "true" : "false");
+               writeField("showStart", Boolean.TRUE.equals(result.isShowStart()) ? "true" : "false");
             }
 
             private void indent3() throws SAXException {
