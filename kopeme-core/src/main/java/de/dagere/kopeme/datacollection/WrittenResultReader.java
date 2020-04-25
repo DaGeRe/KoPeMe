@@ -28,21 +28,61 @@ public class WrittenResultReader {
    protected List<Map<String, Long>> realValues = null;
    protected List<Long> executionStartTimes = null;
    protected Map<String, Number> finalValues = null;
+   protected Map<String, SummaryStatistics> collectorSummaries = null;
 
    public WrittenResultReader(File file) {
       this.file = file;
    }
 
-   public void read(Throwable exception, Set<String> collectors) {
+   public void read(Throwable exception, Set<String> keys) {
+      initSummaries(keys);
       readValues();
       checkValues(exception);
-      calculateAverages(collectors);
    }
 
    private void checkValues(Throwable exception) {
       LOG.debug("Count of executions: {}  Values: {}", executionStartTimes.size(), realValues.size());
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), exception);
+      }
+   }
+   
+   public void readStreaming(Throwable thrownException, Set<String> keys) {
+      finalValues = new HashMap<>();
+      initSummaries(keys);
+      
+      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+         String line;
+         Map<String, Long> currentValues = new HashMap<>();
+         while ((line = reader.readLine()) != null) {
+            if (line.startsWith(EXECUTIONSTART)) {
+               // ignore
+            } else if (line.startsWith(COLLECTOR)) {
+               String collectorString = line.substring(COLLECTOR.length());
+               String[] values = collectorString.split("=");
+               System.out.println(values[0]);
+               collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
+            } else if (line.startsWith(FINAL_VALUE)) {
+               
+            } else {
+               throw new RuntimeException("Unexpected line: " + line);
+            }
+         }
+         finishIteration(currentValues);
+      } catch (FileNotFoundException e) {
+         e.printStackTrace();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      for (String key : keys) {
+         finalValues.put(key, collectorSummaries.get(key).getMean());
+      }
+   }
+
+   private void initSummaries(Set<String> keys) {
+      collectorSummaries = new HashMap<>();
+      for (String key : keys) {
+         collectorSummaries.put(key, new SummaryStatistics());
       }
    }
 
@@ -64,6 +104,7 @@ public class WrittenResultReader {
                String collectorString = line.substring(COLLECTOR.length());
                String[] values = collectorString.split("=");
                currentValues.put(values[0], Long.parseLong(values[1]));
+               collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
             } else if (line.startsWith(FINAL_VALUE)) {
                
             } else {
@@ -76,6 +117,9 @@ public class WrittenResultReader {
       } catch (IOException e) {
          e.printStackTrace();
       }
+      for (String key : realValues.get(0).keySet()) {
+         finalValues.put(key, collectorSummaries.get(key).getMean());
+      }
       file.delete();
    }
 
@@ -87,20 +131,9 @@ public class WrittenResultReader {
       return currentValues;
    }
 
-   private void calculateAverages(Set<String> collectors) {
-      for (final String collectorName : collectors) {
-         final Number result = getCollectorSummary(collectorName).getMean();
-         finalValues.put(collectorName, result);
-      }
-   }
    
    SummaryStatistics getCollectorSummary(final String collectorName) {
-      final SummaryStatistics stat = new SummaryStatistics();
-      for (int i = 0; i < realValues.size() - 1; i++) {
-         final Long collectorValue = realValues.get(i).get(collectorName);
-         stat.addValue(collectorValue);
-      }
-      return stat;
+      return collectorSummaries.get(collectorName);
    }
 
    public List<Map<String, Long>> getRealValues() {
@@ -113,5 +146,13 @@ public class WrittenResultReader {
 
    public Map<String, Number> getFinalValues() {
       return finalValues;
+   }
+
+   public void clear(String key) {
+      if (realValues != null) {
+         for (int i = 0; i < realValues.size(); i++) {
+            realValues.get(i).remove(key);
+         }
+      }
    }
 }

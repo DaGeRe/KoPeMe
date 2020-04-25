@@ -151,9 +151,9 @@ public class XMLDataStorerStreaming implements DataStorer {
       }
    }
 
-   public static void storeData(final File file, final Result additionalResult, String testcase, String collectorName) {
-      final XMLDataStorerStreaming xmlDataStorerStreaming = new XMLDataStorerStreaming(file);
-      xmlDataStorerStreaming.storeValue(additionalResult, testcase, collectorName);
-   }
+//   public static void storeData(final File file, final Result additionalResult, String testcase, String collectorName) {
+//      final XMLDataStorerStreaming xmlDataStorerStreaming = new XMLDataStorerStreaming(file);
+//      xmlDataStorerStreaming.storeValue(additionalResult, testcase, collectorName);
+//   }
 
 }

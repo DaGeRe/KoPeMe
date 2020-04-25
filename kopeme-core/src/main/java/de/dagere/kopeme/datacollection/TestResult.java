@@ -36,12 +36,11 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
  * 
  */
 public final class TestResult {
+   private static final int BOUNDARY_SAVE_FILE = 1000;
+
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-   // protected final Map<String, Number> finalValues = new HashMap<>();
    protected Map<String, DataCollector> dataCollectors;
-   // protected final List<Map<String, Long>> realValues;
-   // protected final List<Long> executionStartTimes = new LinkedList<>();
    private File tempFile;
    private BufferedWriter tempFileWriter;
    protected int index = 0;
@@ -49,7 +48,7 @@ public final class TestResult {
    private int realExecutions;
    private String methodName;
    private WrittenResultReader reader;
-   // private final HistoricalTestResults historicalResults;
+   private int executionTimes;
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -58,9 +57,8 @@ public final class TestResult {
     * @param executionTimes Count of the planned executions
     */
    public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
-      // realValues = new ArrayList<>(executionTimes + 1);
       this.methodName = methodName;
-      // historicalResults = new HistoricalTestResults(methodName);
+      this.executionTimes = executionTimes;
       dataCollectors = collectors.getDataCollectors();
 
       try {
@@ -181,7 +179,7 @@ public final class TestResult {
 
    private void writeStartTime() {
       try {
-         tempFileWriter.write(WrittenResultReader.EXECUTIONSTART + System.currentTimeMillis()+"\n");
+         tempFileWriter.write(WrittenResultReader.EXECUTIONSTART + System.currentTimeMillis() + "\n");
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -218,7 +216,7 @@ public final class TestResult {
       }
       for (final DataCollector dc : dataCollectors.values()) {
          try {
-            tempFileWriter.write(WrittenResultReader.COLLECTOR + dc.getName() + "=" + dc.getValue()+"\n");
+            tempFileWriter.write(WrittenResultReader.COLLECTOR + dc.getName() + "=" + dc.getValue() + "\n");
          } catch (IOException e) {
             e.printStackTrace();
          }
@@ -231,20 +229,21 @@ public final class TestResult {
     * historical data are possible
     */
    public void finalizeCollection() {
+      finalizeCollection(null);
+   }
+
+   public void finalizeCollection(final Throwable thrownException) {
       try {
          tempFileWriter.flush();
          tempFileWriter.close();
       } catch (IOException e) {
          e.printStackTrace();
       }
-     
-      reader.read(null, getKeys());
-   }
-
-
-   public void finalizeCollection(final Throwable thrownException) {
-      reader.read(thrownException, getKeys());
-
+      if (executionTimes < BOUNDARY_SAVE_FILE) {
+         reader.read(thrownException, getKeys());
+      } else {
+         reader.readStreaming(thrownException, getKeys());
+      }
    }
 
    /**
@@ -259,7 +258,7 @@ public final class TestResult {
          throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
       }
       try {
-         tempFileWriter.write(WrittenResultReader.FINAL_VALUE + name + "=" + value+"\n");
+         tempFileWriter.write(WrittenResultReader.FINAL_VALUE + name + "=" + value + "\n");
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -285,55 +284,9 @@ public final class TestResult {
       if (reader.getFinalValues().get(key) != null) {
          return reader.getFinalValues().get(key);
       } else {
-         long avg = 0;
-         for (int i = 0; i < reader.getRealValues().size(); i++) {
-            final Map<String, Long> valueMap = reader.getRealValues().get(i);
-            final Long value = valueMap.get(key);
-            if (value != null) {
-               avg += value;
-            }
-         }
-         return reader.getRealValues().size() > 0 ? avg / reader.getRealValues().size() : Long.MAX_VALUE;
+         return null;
       }
    }
-
-//   /**
-//    * Returns the relative standard deviation for the given DataCollector.
-//    * 
-//    * @param datacollector Name of the DataCollector
-//    * @return Relative standard deviation
-//    */
-//   public double getRelativeStandardDeviation(final String collectorName) {
-//      final SummaryStatistics st = reader.getCollectorSummary(collectorName);
-//
-//      LOG.trace("Mean: {} Deviation: {}", st.getMean(), st.getStandardDeviation());
-//      return st.getStandardDeviation() / st.getMean();
-//   }
-
-//   /**
-//    * Checks weather the given real deviations are below the maximale relative standard deviations that are given.
-//    * 
-//    * @param deviations maximale relative standard deviations
-//    * @return Weather the test can be stopped
-//    */
-//   public boolean isRelativeStandardDeviationBelow(final Map<String, Double> deviations) {
-//      boolean isRelativeDeviationBelowValue = true;
-//      for (final String collectorName : getKeys()) {
-//         final Double aimStdDeviation = deviations.get(collectorName);
-//         if (aimStdDeviation != null) {
-//            final double stdDeviation = getRelativeStandardDeviation(collectorName);
-//            LOG.debug("Standardabweichung {}: {} Ziel-Standardabweichung: {}", collectorName, stdDeviation, aimStdDeviation);
-//            if (stdDeviation > aimStdDeviation) {
-//               LOG.info("Standard deviation is too high");
-//               isRelativeDeviationBelowValue = false;
-//               break;
-//            }
-//         }
-//      }
-//      LOG.debug("Deviation below value: {}", isRelativeDeviationBelowValue);
-//
-//      return isRelativeDeviationBelowValue;
-//   }
 
    /**
     * Gets current minimum value for the measured values.
@@ -341,14 +294,8 @@ public final class TestResult {
     * @param key Name of the performance measure
     * @return Minimum of the currently measured values
     */
-   public long getMinumumCurrentValue(final String key) {
-      long min = Long.MAX_VALUE;
-      for (int i = 0; i < reader.getRealValues().size(); i++) {
-         if (reader.getRealValues().get(i).get(key) < min)
-            min = reader.getRealValues().get(i).get(key);
-      }
-      LOG.trace("Minimum ermittelt: " + min);
-      return min;
+   public double getMinumumCurrentValue(final String key) {
+      return reader.getCollectorSummary(key).getMin();
    }
 
    /**
@@ -357,30 +304,28 @@ public final class TestResult {
     * @param key Name of the performance measure
     * @return Maximum of the currently measured values
     */
-   public long getMaximumCurrentValue(final String key) {
-      long max = 0;
-      for (int i = 0; i < reader.getRealValues().size(); i++) {
-         if (reader.getRealValues().get(i).get(key) > max)
-            max = reader.getRealValues().get(i).get(key);
-      }
-      return max;
+   public double getMaximumCurrentValue(final String key) {
+      return reader.getCollectorSummary(key).getMax();
    }
 
    public Fulldata getFulldata(String key) {
       final Fulldata fd = new Fulldata();
-      for (int i = 0; i < reader.getRealValues().size(); i++) {
-         final Value v = new Value();
-         v.setStart(reader.getExecutionStartTimes().get(i));
-         v.setValue("" + reader.getRealValues().get(i).get(key));
-         fd.getValue().add(v);
+      if (executionTimes < BOUNDARY_SAVE_FILE) {
+         for (int i = 0; i < reader.getRealValues().size(); i++) {
+            final Value v = new Value();
+            v.setStart(reader.getExecutionStartTimes().get(i));
+            v.setValue("" + reader.getRealValues().get(i).get(key));
+            fd.getValue().add(v);
+         }
+      } else {
+         fd.setFileName(tempFile.getAbsolutePath());
       }
+
       return fd;
    }
 
    public void clearFulldata(String key) {
-      for (int i = 0; i < reader.getRealValues().size(); i++) {
-         reader.getRealValues().get(i).remove(key);
-      }
+      reader.clear(key);
    }
 
    public List<Long> getValues(String key) {
@@ -422,15 +367,6 @@ public final class TestResult {
    public void setRealExecutions(final int realExecutions) {
       this.realExecutions = realExecutions;
    }
-
-//   /**
-//    * Gets the historical test results, e.g. the results in past runs.
-//    * 
-//    * @return
-//    */
-//   public HistoricalTestResults getHistoricalResults() {
-//      return historicalResults;
-//   }
 
    public String getMethodName() {
       return methodName;

@@ -10,13 +10,13 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 
 @RunWith(PerformanceTestRunnerJUnit.class)
 @PerformanceTestingClass(overallTimeout = 100000, logFullData = true)
-public class JUnitAdditionTestFullData {
+public class JUnitAdditionTestFullDataBig {
 //   private final static Logger log = LogManager.getLogger(JUnitAdditionTestFullData.class);
 
    private static final int ADD_COUNT = 10;
    
    @Test
-   @PerformanceTest(executionTimes = 900, dataCollectors = "ONLYTIME_NOGC")
+   @PerformanceTest(executionTimes = 2000, dataCollectors = "ONLYTIME_NOGC")
    public void testAddition() {
       int a = 0;
       for (int i = 0; i < ADD_COUNT; i++) {

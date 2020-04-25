@@ -36,7 +36,6 @@ public class TestEmptySerialization {
       final Result result = new Result();
       chunk.getResult().add(result);
 
-      result.setFirst10Percentile(null);
       result.setMin(null);
 
       final File tempFile = Files.createTempFile("start", "end").toFile();
