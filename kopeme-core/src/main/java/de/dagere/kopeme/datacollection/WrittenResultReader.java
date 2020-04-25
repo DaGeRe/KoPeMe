@@ -46,11 +46,11 @@ public class WrittenResultReader {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), exception);
       }
    }
-   
+
    public void readStreaming(Throwable thrownException, Set<String> keys) {
       finalValues = new HashMap<>();
       initSummaries(keys);
-      
+
       try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
          String line;
          Map<String, Long> currentValues = new HashMap<>();
@@ -63,7 +63,7 @@ public class WrittenResultReader {
                System.out.println(values[0]);
                collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
             } else if (line.startsWith(FINAL_VALUE)) {
-               
+
             } else {
                throw new RuntimeException("Unexpected line: " + line);
             }
@@ -106,7 +106,7 @@ public class WrittenResultReader {
                currentValues.put(values[0], Long.parseLong(values[1]));
                collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
             } else if (line.startsWith(FINAL_VALUE)) {
-               
+
             } else {
                throw new RuntimeException("Unexpected line: " + line);
             }
@@ -117,8 +117,10 @@ public class WrittenResultReader {
       } catch (IOException e) {
          e.printStackTrace();
       }
-      for (String key : realValues.get(0).keySet()) {
-         finalValues.put(key, collectorSummaries.get(key).getMean());
+      if (finalValues.size() > 0) {
+         for (String key : realValues.get(0).keySet()) {
+            finalValues.put(key, collectorSummaries.get(key).getMean());
+         }
       }
       file.delete();
    }
@@ -131,7 +133,6 @@ public class WrittenResultReader {
       return currentValues;
    }
 
-   
    SummaryStatistics getCollectorSummary(final String collectorName) {
       return collectorSummaries.get(collectorName);
    }
