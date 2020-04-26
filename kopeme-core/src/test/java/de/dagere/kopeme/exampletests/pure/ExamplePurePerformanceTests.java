@@ -35,7 +35,7 @@ public class ExamplePurePerformanceTests {
    }
 
    @PerformanceTest(warmupExecutions = 3, executionTimes = 10, assertions = {
-         @Assertion(collectorname = "de.kopeme.datacollection.TimeDataCollector", maxvalue = 1750l) }, minEarlyStopExecutions = 15, deviations = {
+         @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 1750l) }, minEarlyStopExecutions = 15, deviations = {
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.1),
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.RAMUsageCollector", maxvalue = 0.1),
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.CPUUsageCollector", maxvalue = 0.4) })
@@ -83,7 +83,7 @@ public class ExamplePurePerformanceTests {
 
       tr.stopCollection();
 
-      tr.addValue("Anzahl", (int) (1000 + Math.random() * 100));
+      tr.addValue("Count", (int) (1000 + Math.random() * 100));
 
       tr.setChecker(new Checker() {
 

@@ -117,7 +117,7 @@ public class WrittenResultReader {
       } catch (IOException e) {
          e.printStackTrace();
       }
-      if (finalValues.size() > 0) {
+      if (realValues.size() > 0) {
          for (String key : realValues.get(0).keySet()) {
             finalValues.put(key, collectorSummaries.get(key).getMean());
          }
@@ -155,5 +155,9 @@ public class WrittenResultReader {
             realValues.get(i).remove(key);
          }
       }
+   }
+
+   public void deleteTempFile() {
+      file.delete();
    }
 }

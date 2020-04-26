@@ -166,6 +166,7 @@ public class PerformanceTestRunner {
       TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
       final Object[] params = {};
       runWarmup(params);
+      tr.clear();
       tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {

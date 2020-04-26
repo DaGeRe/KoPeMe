@@ -377,4 +377,8 @@ public final class TestResult {
       return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
    }
 
+   public void clear() {
+      reader.deleteTempFile();
+   }
+
 }
