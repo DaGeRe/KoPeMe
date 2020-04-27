@@ -113,7 +113,7 @@ public class TestFulldataFunctionality {
          e.printStackTrace();
       }
 
-//      f.delete();
+      expectedKoPemeXML.delete();
    }
 
 

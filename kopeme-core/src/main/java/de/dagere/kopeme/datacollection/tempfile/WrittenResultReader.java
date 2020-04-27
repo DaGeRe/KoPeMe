@@ -17,6 +17,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollector;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 
 public class WrittenResultReader {
 
@@ -139,7 +142,19 @@ public class WrittenResultReader {
             finalValues.put(key, collectorSummaries.get(key).getMean());
          }
       }
-      file.delete();
+   }
+   
+   public Fulldata createFulldata(int warmup, String currentDatacollector) {
+      Fulldata result = new Fulldata();  
+      for (int i = warmup; i < realValues.size(); i++) {
+            final Long executionStartTime = executionStartTimes.get(i);
+            final Long value = realValues.get(i).get(currentDatacollector);
+            final Value fulldataValue = new Value();
+            fulldataValue.setStart(executionStartTime);
+            fulldataValue.setValue(value.toString());
+            result.getValue().add(fulldataValue);
+      }
+      return result;
    }
 
    private Map<String, Long> finishIteration(Map<String, Long> currentValues) {

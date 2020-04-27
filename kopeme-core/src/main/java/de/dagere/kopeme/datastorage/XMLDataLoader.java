@@ -168,25 +168,18 @@ public final class XMLDataLoader implements DataLoader {
    }
 
    private static Fulldata readFulldata(File xmlFile, int warmup, TestcaseType testcase, Result r) {
-      File file = new File(r.getFulldata().getFileName());
+      final File file = new File(r.getFulldata().getFileName());
       final File dataFile = new File(xmlFile.getParentFile(), file.getName());
-      WrittenResultReader reader = new WrittenResultReader(dataFile);
+      final WrittenResultReader reader = new WrittenResultReader(dataFile);
 
-      Set<String> dataCollectors = new HashSet<>();
+      final Set<String> dataCollectors = new HashSet<>();
       final String currentDatacollector = testcase.getDatacollector().get(0).getName();
       dataCollectors.add(currentDatacollector);
       reader.read(null, dataCollectors);
 
-      Fulldata replacedFulldata = new Fulldata();
-      for (int i = warmup; i < r.getExecutionTimes(); i++) {
-         final Long executionStartTime = reader.getExecutionStartTimes().get(i);
-         final Long value = reader.getRealValues().get(i).get(currentDatacollector);
-         final Value fulldataValue = new Value();
-         fulldataValue.setStart(executionStartTime);
-         fulldataValue.setValue("" + value);
-         replacedFulldata.getValue().add(fulldataValue);
-      }
+      final Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
       return replacedFulldata;
    }
+
 
 }

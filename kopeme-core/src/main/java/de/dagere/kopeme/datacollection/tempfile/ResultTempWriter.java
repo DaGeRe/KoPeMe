@@ -28,7 +28,6 @@ public class ResultTempWriter {
          for (DataCollector collector : dataCollectors.values()) {
             tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + collectorIndex + "=" + collector.getName() + "\n");
             collectorIndexed.put(collector, collectorIndex++);
-
          }
       } catch (IOException e) {
          e.printStackTrace();

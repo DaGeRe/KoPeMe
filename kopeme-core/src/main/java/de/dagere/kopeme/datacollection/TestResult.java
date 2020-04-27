@@ -220,6 +220,7 @@ public final class TestResult {
       writer.finalizeCollection();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
          reader.read(thrownException, getKeys());
+         reader.deleteTempFile();
       } else {
          reader.readStreaming(thrownException, getKeys());
       }
