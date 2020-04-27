@@ -1,4 +1,4 @@
-package de.dagere.kopeme.datacollection;
+package de.dagere.kopeme.datacollection.tempfile;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -133,7 +133,7 @@ public class WrittenResultReader {
       return currentValues;
    }
 
-   SummaryStatistics getCollectorSummary(final String collectorName) {
+   public SummaryStatistics getCollectorSummary(final String collectorName) {
       return collectorSummaries.get(collectorName);
    }
 

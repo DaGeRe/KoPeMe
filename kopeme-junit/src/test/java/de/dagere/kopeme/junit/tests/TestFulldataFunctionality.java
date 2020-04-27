@@ -18,7 +18,7 @@ import org.junit.runner.JUnitCore;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
-import de.dagere.kopeme.datacollection.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;

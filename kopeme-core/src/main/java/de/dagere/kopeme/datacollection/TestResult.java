@@ -24,6 +24,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 
 import de.dagere.kopeme.Checker;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
@@ -41,13 +43,13 @@ public final class TestResult {
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
    protected Map<String, DataCollector> dataCollectors;
-   private File tempFile;
-   private BufferedWriter tempFileWriter;
+   
    protected int index = 0;
    protected Checker checker;
    private int realExecutions;
    private String methodName;
    private WrittenResultReader reader;
+   private ResultTempWriter writer;
    private int executionTimes;
 
    /**
@@ -62,9 +64,8 @@ public final class TestResult {
       dataCollectors = collectors.getDataCollectors();
 
       try {
-         tempFile = Files.createTempFile("kopeme", ".tmp").toFile();
-         tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
-         reader = new WrittenResultReader(tempFile);
+         writer = new ResultTempWriter();
+         reader = new WrittenResultReader(writer.getTempFile());
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -178,11 +179,7 @@ public final class TestResult {
    }
 
    private void writeStartTime() {
-      try {
-         tempFileWriter.write(WrittenResultReader.EXECUTIONSTART + System.currentTimeMillis() + "\n");
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
+      writer.executionStart(System.currentTimeMillis());
    }
 
    /**
@@ -214,13 +211,7 @@ public final class TestResult {
       for (final DataCollector dc : dataCollectors.values()) {
          dc.stopCollection();
       }
-      for (final DataCollector dc : dataCollectors.values()) {
-         try {
-            tempFileWriter.write(WrittenResultReader.COLLECTOR + dc.getName() + "=" + dc.getValue() + "\n");
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
-      }
+      writer.writeValues(dataCollectors);
       index++;
    }
 
@@ -233,12 +224,7 @@ public final class TestResult {
    }
 
    public void finalizeCollection(final Throwable thrownException) {
-      try {
-         tempFileWriter.flush();
-         tempFileWriter.close();
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
+      writer.finalizeCollection();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
          reader.read(thrownException, getKeys());
       } else {
@@ -257,11 +243,7 @@ public final class TestResult {
       if (dataCollectors.get(name) != null) {
          throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
       }
-      try {
-         tempFileWriter.write(WrittenResultReader.FINAL_VALUE + name + "=" + value + "\n");
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
+      writer.writeValue(name, value);
    }
 
    /**
@@ -318,7 +300,7 @@ public final class TestResult {
             fd.getValue().add(v);
          }
       } else {
-         fd.setFileName(tempFile.getAbsolutePath());
+         fd.setFileName(writer.getTempFile().getAbsolutePath());
       }
 
       return fd;
