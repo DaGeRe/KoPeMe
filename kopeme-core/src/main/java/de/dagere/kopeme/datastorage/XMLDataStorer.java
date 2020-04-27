@@ -83,16 +83,20 @@ public final class XMLDataStorer implements DataStorer {
          dc.getResult().add(result);
       }
       if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
-         File fulldataFile = new File(result.getFulldata().getFileName());
-         final File targetFile = new File(file.getParentFile(), fulldataFile.getName());
-         try {
-            Files.move(fulldataFile.toPath(), targetFile.toPath());
-            result.getFulldata().setFileName(targetFile.getAbsolutePath());
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
+         saveFulldata(result);
       }
       storeData();
+   }
+
+   private void saveFulldata(final Result result) {
+      File fulldataFile = new File(result.getFulldata().getFileName());
+      final File targetFile = new File(file.getParentFile(), fulldataFile.getName());
+      try {
+         Files.move(fulldataFile.toPath(), targetFile.toPath());
+         result.getFulldata().setFileName(targetFile.getName());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
    }
 
    private Chunk findChunk(final Datacollector dc) {
