@@ -91,16 +91,16 @@ public class TestFulldataFunctionality {
    public void testFullWritingSeparateFile() {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTestFullDataBig.class);
-      final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
-      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+      final File expectedKoPemeXML = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+      Assert.assertTrue("Datei " + expectedKoPemeXML + " sollte existieren", expectedKoPemeXML.exists());
       try {
-         XMLDataLoader xdl = new XMLDataLoader(f);
+         XMLDataLoader xdl = new XMLDataLoader(expectedKoPemeXML);
          final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
          for (final Datacollector dc : testcase.getDatacollector()) {
             for (final Result r : dc.getResult()) {
                final Fulldata fd = r.getFulldata();
                Assert.assertNotNull(fd);
-               final File fulldataFile = new File(fd.getFileName());
+               final File fulldataFile = new File(expectedKoPemeXML.getParentFile(), fd.getFileName());
                Assert.assertTrue(fulldataFile.exists());
                WrittenResultReader reader = new WrittenResultReader(fulldataFile);
                final Set<String> collectors = new HashSet<>();
