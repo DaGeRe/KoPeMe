@@ -33,7 +33,7 @@ public class ExampleJUnitTests {
 		}
 
 		tr.stopCollection();
-		tr.addValue("Anzahl", (int) (1000 + Math.random() * 100));
+//		tr.addValue("Anzahl", (int) (1000 + Math.random() * 100));
 
 //		tr.setChecker(new Checker() {
 //			@Override

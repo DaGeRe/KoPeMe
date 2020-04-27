@@ -83,7 +83,7 @@ public class ExamplePurePerformanceTests {
 
       tr.stopCollection();
 
-      tr.addValue("Count", (int) (1000 + Math.random() * 100));
+//      tr.addValue("Count", (int) (1000 + Math.random() * 100));
 
       tr.setChecker(new Checker() {
 

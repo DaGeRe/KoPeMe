@@ -65,6 +65,7 @@ public final class TestResult {
 
       try {
          writer = new ResultTempWriter();
+         writer.setDataCollectors(dataCollectors);
          reader = new WrittenResultReader(writer.getTempFile());
       } catch (IOException e) {
          e.printStackTrace();
@@ -92,15 +93,7 @@ public final class TestResult {
    public void setCollectors(final DataCollectorList dcl) {
       dataCollectors = new HashMap<>();
       dataCollectors = dcl.getDataCollectors();
-   }
-
-   /**
-    * Adds a DataCollector to the given collectors.
-    * 
-    * @param dc DataCollector that should be added
-    */
-   public void addDataCollector(final DataCollector dc) {
-      dataCollectors.put(dc.getName(), dc);
+      writer.setDataCollectors(dataCollectors);
    }
 
    /**
@@ -232,19 +225,19 @@ public final class TestResult {
       }
    }
 
-   /**
-    * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a certain time) and this
-    * value should be saved along with the performance measures which where measured by KoPeMe.
-    * 
-    * @param name Name of the measure that should be saved
-    * @param value Value of the measure
-    */
-   public void addValue(final String name, final long value) {
-      if (dataCollectors.get(name) != null) {
-         throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
-      }
-      writer.writeValue(name, value);
-   }
+//   /**
+//    * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a certain time) and this
+//    * value should be saved along with the performance measures which where measured by KoPeMe.
+//    * 
+//    * @param name Name of the measure that should be saved
+//    * @param value Value of the measure
+//    */
+//   public void addValue(final String name, final long value) {
+//      if (dataCollectors.get(name) != null) {
+//         throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
+//      }
+//      writer.writeValue(name, value);
+//   }
 
    /**
     * Returns the values of measures, that are not collected via DataCollectors. After the finalization, all values are contained in order to make assertion over these values as

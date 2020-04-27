@@ -16,6 +16,8 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datacollection.DataCollector;
+
 public class WrittenResultReader {
 
    private static final Logger LOG = LogManager.getLogger(WrittenResultReader.class);
@@ -23,12 +25,14 @@ public class WrittenResultReader {
    public static final String EXECUTIONSTART = "e:";
    public static final String COLLECTOR = "c:";
    public static final String FINAL_VALUE = "f:";
+   public static final String COLLECTOR_INDEX = "i:";
 
    private File file;
    protected List<Map<String, Long>> realValues = null;
    protected List<Long> executionStartTimes = null;
    protected Map<String, Number> finalValues = null;
    protected Map<String, SummaryStatistics> collectorSummaries = null;
+   private Map<Integer, String> collectorsIndexed;
 
    public WrittenResultReader(File file) {
       this.file = file;
@@ -49,6 +53,7 @@ public class WrittenResultReader {
 
    public void readStreaming(Throwable thrownException, Set<String> keys) {
       finalValues = new HashMap<>();
+      collectorsIndexed = new HashMap<>();
       initSummaries(keys);
 
       try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
@@ -57,11 +62,16 @@ public class WrittenResultReader {
          while ((line = reader.readLine()) != null) {
             if (line.startsWith(EXECUTIONSTART)) {
                // ignore
+            } else if (line.startsWith(COLLECTOR_INDEX)) {
+               String collectorString = line.substring(COLLECTOR_INDEX.length());
+               String[] values = collectorString.split("=");
+               collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
             } else if (line.startsWith(COLLECTOR)) {
                String collectorString = line.substring(COLLECTOR.length());
                String[] values = collectorString.split("=");
-               System.out.println(values[0]);
-               collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
+               int collectorIndex = Integer.parseInt(values[0]);
+               String collector = collectorsIndexed.get(collectorIndex);
+               collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
             } else if (line.startsWith(FINAL_VALUE)) {
 
             } else {
@@ -89,7 +99,8 @@ public class WrittenResultReader {
    private void readValues() {
       realValues = new ArrayList<>();
       executionStartTimes = new LinkedList<>();
-      finalValues = new HashMap<String, Number>();
+      finalValues = new HashMap<>();
+      collectorsIndexed = new HashMap<>();
 
       try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
          String line;
@@ -100,11 +111,17 @@ public class WrittenResultReader {
                String timeString = line.substring(EXECUTIONSTART.length());
                Long start = Long.parseLong(timeString);
                executionStartTimes.add(start);
+            } else if (line.startsWith(COLLECTOR_INDEX)) {
+               String collectorString = line.substring(COLLECTOR_INDEX.length());
+               String[] values = collectorString.split("=");
+               collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
             } else if (line.startsWith(COLLECTOR)) {
                String collectorString = line.substring(COLLECTOR.length());
                String[] values = collectorString.split("=");
-               currentValues.put(values[0], Long.parseLong(values[1]));
-               collectorSummaries.get(values[0]).addValue(Long.parseLong(values[1]));
+               int collectorIndex = Integer.parseInt(values[0]);
+               String collector = collectorsIndexed.get(collectorIndex);
+               currentValues.put(collector, Long.parseLong(values[1]));
+               collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
             } else if (line.startsWith(FINAL_VALUE)) {
 
             } else {

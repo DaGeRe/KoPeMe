@@ -5,20 +5,36 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.Map;
 
 import de.dagere.kopeme.datacollection.DataCollector;
 
 public class ResultTempWriter {
-   
+
    private File tempFile;
    private BufferedWriter tempFileWriter;
-   
+   private Map<DataCollector, Integer> collectorIndexed;
+
    public ResultTempWriter() throws IOException {
       tempFile = Files.createTempFile("kopeme", ".tmp").toFile();
       tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
-   
+
+   public void setDataCollectors(Map<String, DataCollector> dataCollectors) {
+      int collectorIndex = 0;
+      collectorIndexed = new HashMap<>();
+      try {
+         for (DataCollector collector : dataCollectors.values()) {
+            tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + collectorIndex + "=" + collector.getName() + "\n");
+            collectorIndexed.put(collector, collectorIndex++);
+
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+
    public File getTempFile() {
       return tempFile;
    }
@@ -30,18 +46,19 @@ public class ResultTempWriter {
          e.printStackTrace();
       }
    }
-   
+
    public void writeValues(Map<String, DataCollector> dataCollectors) {
-      for (final DataCollector dc : dataCollectors.values()) {
-         try {
-            tempFileWriter.write(WrittenResultReader.COLLECTOR + dc.getName() + "=" + dc.getValue() + "\n");
-         } catch (IOException e) {
-            e.printStackTrace();
+      try {
+         for (final DataCollector dc : dataCollectors.values()) {
+            int index = collectorIndexed.get(dc);
+            tempFileWriter.write(WrittenResultReader.COLLECTOR + index + "=" + dc.getValue() + "\n");
          }
+      } catch (IOException e) {
+         e.printStackTrace();
       }
    }
-   
-   public void writeValue(String name, long value){
+
+   public void writeValue(String name, long value) {
       try {
          tempFileWriter.write(WrittenResultReader.FINAL_VALUE + name + "=" + value + "\n");
       } catch (IOException e) {
@@ -57,5 +74,5 @@ public class ResultTempWriter {
          e.printStackTrace();
       }
    }
-   
+
 }
