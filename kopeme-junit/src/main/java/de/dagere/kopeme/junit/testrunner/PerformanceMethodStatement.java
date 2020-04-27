@@ -177,11 +177,11 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
                LOG.debug(fullWarmupStop, execution);
             }
             tr.setRealExecutions(execution);
-            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-               LOG.info("Exiting because of deviation reached");
-               break;
-            }
+//            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+//                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+//               LOG.info("Exiting because of deviation reached");
+//               break;
+//            }
             checkFinished();
          }
       } finally {

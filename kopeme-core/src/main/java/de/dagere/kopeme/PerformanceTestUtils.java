@@ -86,10 +86,13 @@ public final class PerformanceTestUtils {
          final DataStorer xds = getDataStorer(data);
 
          final TestResult tr = data.getTr();
-         final double timeValue = tr.getValue(TimeDataCollector.class.getName()).doubleValue();
-         if (timeValue != 0) {
-            LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
+         if (tr.getValue(TimeDataCollector.class.getName()) != null) {
+            final double timeValue = tr.getValue(TimeDataCollector.class.getName()).doubleValue();
+            if (timeValue != 0) {
+               LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
+            }
          }
+
          for (final String key : tr.getKeys()) {
             buildKeyData(data, xds, tr, key);
          }
@@ -106,11 +109,11 @@ public final class PerformanceTestUtils {
       }
       File potentialFile = new File(folder, data.getTestcasename() + ".xml");
       final DataStorer xds;
-      if (potentialFile.exists()) {
-         xds = new XMLDataStorerStreaming(potentialFile);
-      } else {
-         xds = new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
-      }
+      // if (potentialFile.exists()) {
+      // xds = new XMLDataStorerStreaming(potentialFile);
+      // } else {
+      xds = new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
+      // }
       return xds;
    }
 
@@ -138,15 +141,13 @@ public final class PerformanceTestUtils {
    private static Result getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {
       final double relativeStandardDeviation = tr.getRelativeStandardDeviation(additionalKey);
       final double value = tr.getValue(additionalKey).doubleValue();
-      final long min = tr.getMinumumCurrentValue(additionalKey);
-      final long max = tr.getMaximumCurrentValue(additionalKey);
-      final double first10percentile = getPercentile(tr.getValues(additionalKey), 10);
+      final double min = tr.getMinumumCurrentValue(additionalKey);
+      final double max = tr.getMaximumCurrentValue(additionalKey);
       Result result = new Result();
       result.setValue(value);
       result.setDeviation(relativeStandardDeviation);
       result.setMin(min);
       result.setMax(max);
-      result.setFirst10Percentile(first10percentile);
       result.setWarmupExecutions(data.getConfiguration().getWarmupExecutions());
       result.setExecutionTimes(tr.getRealExecutions());
       result.setRepetitions(data.getConfiguration().getRepetitions());
@@ -154,10 +155,9 @@ public final class PerformanceTestUtils {
       result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
       result.setShowStart(data.getConfiguration().isShowStart());
       result.setDate(new Date().getTime());
-      
-//      result.setRedirectToNull();
+
+      // result.setRedirectToNull();
       result.setJavaVersion(System.getProperty("java.version"));
-      
 
       // final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey,
       // value, relativeStandardDeviation,

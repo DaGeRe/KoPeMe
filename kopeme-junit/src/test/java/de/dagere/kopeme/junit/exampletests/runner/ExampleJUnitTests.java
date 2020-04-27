@@ -35,14 +35,14 @@ public class ExampleJUnitTests {
 		tr.stopCollection();
 		tr.addValue("Anzahl", (int) (1000 + Math.random() * 100));
 
-		tr.setChecker(new Checker() {
-			@Override
-			public void checkValues(final TestResult tr) {
-				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class.getName()).doubleValue(), 
-				      Matchers.lessThan(( (tr.getHistoricalResults()
-						.getLastRunsAverage(TimeDataCollector.class.getName(),
-								5) * 1.10))));
-			}
-		});
+//		tr.setChecker(new Checker() {
+//			@Override
+//			public void checkValues(final TestResult tr) {
+//				MatcherAssert.assertThat(tr.getValue(TimeDataCollector.class.getName()).doubleValue(), 
+//				      Matchers.lessThan(( (tr.getHistoricalResults()
+//						.getLastRunsAverage(TimeDataCollector.class.getName(),
+//								5) * 1.10))));
+//			}
+//		});
 	}
 }

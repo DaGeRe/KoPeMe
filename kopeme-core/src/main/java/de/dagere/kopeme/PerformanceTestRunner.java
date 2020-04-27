@@ -166,6 +166,7 @@ public class PerformanceTestRunner {
       TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
       final Object[] params = {};
       runWarmup(params);
+      tr.clear();
       tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
@@ -223,14 +224,13 @@ public class PerformanceTestRunner {
          }
          LOG.debug("--- Stopping execution " + executions + "/" + executionTimes + " ---");
          for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-            LOG.debug("Entry: {} Aim: {} Value: {}", entry.getKey(), entry.getValue(), tr.getRelativeStandardDeviation(entry.getKey()));
+            LOG.debug("Entry: {} Aim: {}", entry.getKey(), entry.getValue());
          }
          tr.setRealExecutions(executions);
-         if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
-               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-            break;
-         }
-
+//         if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+//               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+//            break;
+//         }
       }
       LOG.debug("Executions: " + executions);
       tr.setRealExecutions(executions);

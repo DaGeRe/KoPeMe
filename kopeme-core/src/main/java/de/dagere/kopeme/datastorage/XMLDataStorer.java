@@ -1,6 +1,8 @@
 package de.dagere.kopeme.datastorage;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import javax.xml.bind.Marshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.util.FileUtil;
 
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
@@ -79,7 +82,21 @@ public final class XMLDataStorer implements DataStorer {
       } else {
          dc.getResult().add(result);
       }
+      if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
+         saveFulldata(result);
+      }
       storeData();
+   }
+
+   private void saveFulldata(final Result result) {
+      File fulldataFile = new File(result.getFulldata().getFileName());
+      final File targetFile = new File(file.getParentFile(), fulldataFile.getName());
+      try {
+         Files.move(fulldataFile.toPath(), targetFile.toPath());
+         result.getFulldata().setFileName(targetFile.getName());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
    }
 
    private Chunk findChunk(final Datacollector dc) {

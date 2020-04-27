@@ -131,11 +131,11 @@ public abstract class KoPeMeBasicStatement extends Statement {
             if (annotation.showStart()) {
                LOG.debug(fullWarmupStop, execution);
             }
-            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-               LOG.info("Exiting because of deviation reached");
-               break;
-            }
+//            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+//                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+//               LOG.info("Exiting because of deviation reached");
+//               break;
+//            }
             checkFinished();
          }
       } finally {
