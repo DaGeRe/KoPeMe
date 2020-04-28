@@ -101,7 +101,7 @@ public class WrittenResultReader {
 
    private void readValues() {
       realValues = new ArrayList<>();
-      executionStartTimes = new LinkedList<>();
+      executionStartTimes = new ArrayList<>();
       finalValues = new HashMap<>();
       collectorsIndexed = new HashMap<>();
 
