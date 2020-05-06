@@ -10,7 +10,7 @@ public class EnvironmentUtil {
          try {
             Process process = new ProcessBuilder("/bin/sh", "-c", "cat /proc/cpuinfo | grep \"model name\" | uniq").start();
             try (Scanner scanner = new Scanner(process.getInputStream())) {
-               result = scanner.useDelimiter("\\A").next().replace("\t", " ");
+               result = scanner.useDelimiter("\\A").next().replace("\t", " ").replace("  ", "");
             }
          } catch (IOException e) {
             e.printStackTrace();
@@ -27,7 +27,7 @@ public class EnvironmentUtil {
          try {
             Process process = new ProcessBuilder("/bin/sh", "-c", "cat /proc/meminfo | grep \"MemTotal\"").start();
             try (Scanner scanner = new Scanner(process.getInputStream())) {
-               result = scanner.useDelimiter("\\A").next();
+               result = scanner.useDelimiter("\\A").next().replace("\t", " ").replace("  ", "");
             }
          } catch (IOException e) {
             e.printStackTrace();
