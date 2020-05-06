@@ -19,6 +19,7 @@ import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
@@ -51,6 +52,10 @@ public class TestFulldataFunctionality {
 			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
+				   System.out.println(r.getCpu());
+				   System.out.println(EnvironmentUtil.getCPU());
+				   Assert.assertEquals(r.getCpu(), EnvironmentUtil.getCPU());
+				   Assert.assertEquals(r.getMemory(), EnvironmentUtil.getMemory());
 					final Fulldata fd = r.getFulldata();
 					if (fd != null) {
 						Assert.assertEquals(0, fd.getValue().size());

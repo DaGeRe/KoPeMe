@@ -98,7 +98,8 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="configuration" />
+		<xs:attribute name="cpu" />
+		<xs:attribute name="memory" />
 		<xs:attribute name="date" type="xs:long">
 			<xs:annotation>
 				<xs:documentation>Saves the timestamp when the test has been

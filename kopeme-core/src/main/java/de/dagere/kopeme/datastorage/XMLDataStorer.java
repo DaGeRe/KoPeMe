@@ -2,9 +2,11 @@ package de.dagere.kopeme.datastorage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -85,6 +87,8 @@ public final class XMLDataStorer implements DataStorer {
       if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
          saveFulldata(result);
       }
+      result.setCpu(EnvironmentUtil.getCPU());
+      result.setMemory(EnvironmentUtil.getMemory());
       storeData();
    }
 
@@ -103,9 +107,9 @@ public final class XMLDataStorer implements DataStorer {
       final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
       Chunk current = null;
       for (final Chunk chunk : dc.getChunk()) {
-       if (chunk.getChunkStartTime() == start){
-      	 current = chunk;
-       }
+         if (chunk.getChunkStartTime() == start) {
+            current = chunk;
+         }
       }
       if (current == null) {
          current = new Chunk();
