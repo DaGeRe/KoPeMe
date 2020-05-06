@@ -44,13 +44,13 @@ public final class TestResult {
 
    protected Map<String, DataCollector> dataCollectors;
    
-   protected int index = 0;
    protected Checker checker;
    private int realExecutions;
    private String methodName;
    private WrittenResultReader reader;
    private ResultTempWriter writer;
    private int executionTimes;
+   private DataCollector[] sortedCollectors;
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -146,8 +146,6 @@ public final class TestResult {
       LOG.debug("All measurements fine.");
    }
 
-   private DataCollector[] sortedCollectors;
-
    public void beforeRun() {
       final Collection<DataCollector> dcCollection = dataCollectors.values();
       sortedCollectors = dcCollection.toArray(new DataCollector[0]);
@@ -205,7 +203,6 @@ public final class TestResult {
          dc.stopCollection();
       }
       writer.writeValues(dataCollectors);
-      index++;
    }
 
    /**
