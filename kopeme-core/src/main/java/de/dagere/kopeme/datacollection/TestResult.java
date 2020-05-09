@@ -38,7 +38,7 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
  * 
  */
 public final class TestResult {
-   private static final int BOUNDARY_SAVE_FILE = 1000;
+   public static final int BOUNDARY_SAVE_FILE = 1000;
 
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
