@@ -16,7 +16,7 @@ public abstract class DataCollector {
 	 * 
 	 * @return Name of the DataCollector
 	 */
-	public final String getName() {
+	public String getName() {
 		return this.getClass().getName();
 	}
 	

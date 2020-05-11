@@ -23,6 +23,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 
 /**
  * Loads XML-Performance-Data.
@@ -156,10 +157,10 @@ public final class XMLDataLoader implements DataLoader {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
-         for (Result r : testcase.getDatacollector().get(0).getResult()) {
-            if (r.getFulldata().getFileName() != null) {
-               Fulldata replacedFulldata = readFulldata(dataFile, warmup, testcase, r);
-               r.setFulldata(replacedFulldata);
+         for (Result result : testcase.getDatacollector().get(0).getResult()) {
+            if (result.getFulldata().getFileName() != null) {
+               Fulldata replacedFulldata = readFulldata(dataFile, warmup, testcase, result);
+               result.setFulldata(replacedFulldata);
             }
          }
       }
@@ -167,19 +168,46 @@ public final class XMLDataLoader implements DataLoader {
       return data;
    }
 
-   private static Fulldata readFulldata(File xmlFile, int warmup, TestcaseType testcase, Result r) {
-      final File file = new File(r.getFulldata().getFileName());
+   public void readFulldataValues() {
+      for (TestcaseType testcase : data.getTestcases().getTestcase()) {
+         for (Datacollector collector : testcase.getDatacollector()) {
+            for (Chunk chunk : collector.getChunk()) {
+               for (Result result : chunk.getResult()) {
+                  replaceFulldata(collector, result);
+               }
+            }
+            for (Result result : collector.getResult()) {
+               replaceFulldata(collector, result);
+            }
+         }
+      }
+   }
+
+   private void replaceFulldata(Datacollector collector, Result result) {
+      if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
+         File dataFile = new File(file.getParentFile(), result.getFulldata().getFileName());
+         
+         Fulldata replacedFulldata = executeReading(collector.getName(), dataFile);
+         result.setFulldata(replacedFulldata);
+      }
+   }
+
+   private static Fulldata readFulldata(File xmlFile, int warmup, TestcaseType testcase, Result result) {
+      final File file = new File(result.getFulldata().getFileName());
       final File dataFile = new File(xmlFile.getParentFile(), file.getName());
-      final WrittenResultReader reader = new WrittenResultReader(dataFile);
 
-      final Set<String> dataCollectors = new HashSet<>();
-      final String currentDatacollector = testcase.getDatacollector().get(0).getName();
-      dataCollectors.add(currentDatacollector);
-      reader.read(null, dataCollectors);
-
-      final Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
+      Fulldata replacedFulldata = executeReading(testcase.getDatacollector().get(0).getName(), dataFile);
       return replacedFulldata;
    }
 
+   private static Fulldata executeReading(String currentDatacollector, File dataFile) {
+      final WrittenResultReader reader = new WrittenResultReader(dataFile);
+      final Set<String> dataCollectors = new HashSet<>();
+      dataCollectors.add(currentDatacollector);
+      reader.read(null, dataCollectors);
+      
+      Fulldata replacedFulldata = reader.createFulldata(0, currentDatacollector);
+      return replacedFulldata;
+   }
 
 }
