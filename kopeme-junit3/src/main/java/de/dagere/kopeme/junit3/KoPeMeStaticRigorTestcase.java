@@ -188,7 +188,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 		waitForTestEnd(timeoutTime, thread);
 		// No matter how the test gets finished, saving should be done here
 		LOG.trace("End-Testcase-Saving begins");
-		RunConfiguration configuration = new RunConfiguration(getWarmupExecutions(), getExecutionTimes(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
+		RunConfiguration configuration = new RunConfiguration(getWarmupExecutions(), -1, showStart(), redirectToTemp(), redirectToNull(), logFullData());
 		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, configuration));
 
 		LOG.debug("KoPeMe-Test {} finished", getName());

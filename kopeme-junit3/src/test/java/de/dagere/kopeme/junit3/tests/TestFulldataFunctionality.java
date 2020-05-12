@@ -37,6 +37,7 @@ public class TestFulldataFunctionality extends TestCase {
 			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
+				   Assert.assertEquals(2, r.getRepetitions());
 					final Fulldata fd = r.getFulldata();
 					if (fd == null) { 
 						Assert.fail();

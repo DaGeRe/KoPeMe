@@ -1,7 +1,5 @@
 package de.dagere.kopeme.datastorage;
 
-import com.sun.xml.bind.v2.schemagen.xmlschema.Redefinable;
-
 import de.dagere.kopeme.annotations.PerformanceTest;
 
 public class RunConfiguration {
