@@ -17,7 +17,6 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.datastorage.XMLDataStorerStreaming;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 

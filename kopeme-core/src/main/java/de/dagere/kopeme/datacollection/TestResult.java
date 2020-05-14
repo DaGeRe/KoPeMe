@@ -287,7 +287,7 @@ public final class TestResult {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
             final Value v = new Value();
             v.setStart(reader.getExecutionStartTimes().get(i));
-            v.setValue("" + reader.getRealValues().get(i).get(key));
+            v.setValue(reader.getRealValues().get(i).get(key));
             fd.getValue().add(v);
          }
       } else {

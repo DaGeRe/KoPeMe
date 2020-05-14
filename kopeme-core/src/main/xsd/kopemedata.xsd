@@ -78,7 +78,7 @@
 						<xs:element name="value">
 							<xs:complexType>
 								<xs:simpleContent>
-									<xs:extension base="xs:string">
+									<xs:extension base="xs:long">
 										<xs:attribute name="start" type="xs:long">
 											<xs:annotation>
 												<xs:documentation>Saves the time when the execution

@@ -75,7 +75,7 @@ public class TestDataSaving {
       for (int i = 0; i < 5; i++) {
          final Value value = new Value();
          value.setStart(Long.valueOf(i));
-         value.setValue("" + i);
+         value.setValue( i);
          result.getFulldata().getValue().add(value);
       }
       return result;

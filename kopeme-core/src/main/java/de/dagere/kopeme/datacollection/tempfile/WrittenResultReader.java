@@ -151,7 +151,7 @@ public class WrittenResultReader {
             final Long value = realValues.get(i).get(currentDatacollector);
             final Value fulldataValue = new Value();
             fulldataValue.setStart(executionStartTime);
-            fulldataValue.setValue(value.toString());
+            fulldataValue.setValue(value);
             result.getValue().add(fulldataValue);
       }
       return result;
