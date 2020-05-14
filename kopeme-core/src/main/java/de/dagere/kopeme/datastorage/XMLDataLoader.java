@@ -187,7 +187,7 @@ public final class XMLDataLoader implements DataLoader {
       if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
          File dataFile = new File(file.getParentFile(), result.getFulldata().getFileName());
          
-         Fulldata replacedFulldata = executeReading(collector.getName(), dataFile);
+         Fulldata replacedFulldata = executeReading(collector.getName(), dataFile, 0);
          result.setFulldata(replacedFulldata);
       }
    }
@@ -196,17 +196,17 @@ public final class XMLDataLoader implements DataLoader {
       final File file = new File(result.getFulldata().getFileName());
       final File dataFile = new File(xmlFile.getParentFile(), file.getName());
 
-      Fulldata replacedFulldata = executeReading(testcase.getDatacollector().get(0).getName(), dataFile);
+      Fulldata replacedFulldata = executeReading(testcase.getDatacollector().get(0).getName(), dataFile, warmup);
       return replacedFulldata;
    }
 
-   private static Fulldata executeReading(String currentDatacollector, File dataFile) {
+   private static Fulldata executeReading(String currentDatacollector, File dataFile, int warmup) {
       final WrittenResultReader reader = new WrittenResultReader(dataFile);
       final Set<String> dataCollectors = new HashSet<>();
       dataCollectors.add(currentDatacollector);
       reader.read(null, dataCollectors);
       
-      Fulldata replacedFulldata = reader.createFulldata(0, currentDatacollector);
+      Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
       return replacedFulldata;
    }
 
