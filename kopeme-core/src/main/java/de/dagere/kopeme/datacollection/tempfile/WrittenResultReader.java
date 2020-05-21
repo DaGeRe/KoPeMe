@@ -143,16 +143,16 @@ public class WrittenResultReader {
          }
       }
    }
-   
+
    public Fulldata createFulldata(int warmup, String currentDatacollector) {
-      Fulldata result = new Fulldata();  
+      Fulldata result = new Fulldata();
       for (int i = warmup; i < realValues.size(); i++) {
-            final Long executionStartTime = executionStartTimes.get(i);
-            final Long value = realValues.get(i).get(currentDatacollector);
-            final Value fulldataValue = new Value();
-            fulldataValue.setStart(executionStartTime);
-            fulldataValue.setValue(value);
-            result.getValue().add(fulldataValue);
+         final Long executionStartTime = executionStartTimes.get(i);
+         final Long value = realValues.get(i).get(currentDatacollector);
+         final Value fulldataValue = new Value();
+         fulldataValue.setStart(executionStartTime);
+         fulldataValue.setValue(value);
+         result.getValue().add(fulldataValue);
       }
       return result;
    }

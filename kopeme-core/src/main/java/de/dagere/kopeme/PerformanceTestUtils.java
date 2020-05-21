@@ -106,14 +106,7 @@ public final class PerformanceTestUtils {
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      File potentialFile = new File(folder, data.getTestcasename() + ".xml");
-      final DataStorer xds;
-      // if (potentialFile.exists()) {
-      // xds = new XMLDataStorerStreaming(potentialFile);
-      // } else {
-      xds = new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
-      // }
-      return xds;
+      return new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
    }
 
    private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String key) {
@@ -154,13 +147,7 @@ public final class PerformanceTestUtils {
       result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
       result.setShowStart(data.getConfiguration().isShowStart());
       result.setDate(new Date().getTime());
-
-      // result.setRedirectToNull();
       result.setJavaVersion(System.getProperty("java.version"));
-
-      // final PerformanceDataMeasure performanceDataMeasure = new PerformanceDataMeasure(testcasename, additionalKey,
-      // value, relativeStandardDeviation,
-      // tr.getRealExecutions(), data.getWarmupExecutions(), data.getRepetitions(), min, max, first10percentile);
       return result;
    }
 

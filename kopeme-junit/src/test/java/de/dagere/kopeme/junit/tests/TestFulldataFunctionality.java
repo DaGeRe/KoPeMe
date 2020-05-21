@@ -16,6 +16,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
+import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
@@ -111,7 +112,7 @@ public class TestFulldataFunctionality {
                final Set<String> collectors = new HashSet<>();
                collectors.add(TimeDataCollectorNoGC.class.getCanonicalName());
                reader.read(null, collectors);
-               Assert.assertEquals(2000, reader.getRealValues().size());
+               Assert.assertEquals(TestResult.BOUNDARY_SAVE_FILE * 2, reader.getRealValues().size());
             }
          }
       } catch (final JAXBException e) {
