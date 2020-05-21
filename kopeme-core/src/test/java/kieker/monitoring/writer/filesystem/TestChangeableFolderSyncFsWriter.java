@@ -53,8 +53,8 @@ public class TestChangeableFolderSyncFsWriter {
 		final int fixture = 100;
 		c.setProperty(ChangeableFolderWriter.CONFIG_MAXENTRIESINFILE, Integer.toString(fixture));
 		final ChangeableFolderWriter testable = ChangeableFolderWriter.getInstance();
-		final Configuration result = testable.toWriterConfiguration(c, BinaryFileWriter.class);
-		final int intResult = result.getIntProperty(BinaryFileWriter.CONFIG_MAXENTRIESINFILE);
+		final Configuration result = testable.toWriterConfiguration(c, FileWriter.class);
+		final int intResult = result.getIntProperty(FileWriter.CONFIG_MAXENTRIESINFILE);
 		assertEquals(fixture, intResult);
 		KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 	}

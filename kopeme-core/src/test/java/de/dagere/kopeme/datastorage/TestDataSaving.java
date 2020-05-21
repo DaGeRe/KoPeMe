@@ -110,7 +110,7 @@ public class TestDataSaving {
       Assert.assertEquals(result2.getExecutionTimes(), 17, 0.01);
       for (int i = 0; i < 5; i++) {
          Value value2 = result2.getFulldata().getValue().get(i);
-         Assert.assertEquals("" + i, value2.getValue());
+         Assert.assertEquals(i, value2.getValue());
          Assert.assertEquals(Long.valueOf(i), value2.getStart());
       }
    }
