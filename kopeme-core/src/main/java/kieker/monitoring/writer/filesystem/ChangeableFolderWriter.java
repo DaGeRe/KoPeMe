@@ -74,13 +74,15 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       }
    }
 
-   Configuration toWriterConfiguration(final Configuration c, final Class<?> writerClass) {
+   Configuration toWriterConfiguration(final Configuration configuration, final Class<?> writerClass) {
       final Configuration returnable = new Configuration();
-      for (final Iterator<Entry<Object, Object>> iterator = c.entrySet().iterator(); iterator.hasNext();) {
+      for (final Iterator<Entry<Object, Object>> iterator = configuration.entrySet().iterator(); iterator.hasNext();) {
          final Entry<Object, Object> entry = iterator.next();
          final String keyAsString = entry.getKey().toString();
          final String replacedPropertyName = keyAsString.replace(getClass().getName(), writerClass.getName());
-         returnable.setProperty(replacedPropertyName, entry.getValue().toString());
+         if (entry.getValue() != null && !(entry.getValue() instanceof String && entry.getValue().equals(""))) {
+            returnable.setProperty(replacedPropertyName, entry.getValue().toString());
+         }
       }
       return returnable;
    }
