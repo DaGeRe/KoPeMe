@@ -46,9 +46,9 @@ public class ResultTempWriter {
       }
    }
 
-   public void writeValues(Map<String, DataCollector> dataCollectors) {
+   public void writeValues(DataCollector collectors[]) {
       try {
-         for (final DataCollector dc : dataCollectors.values()) {
+         for (final DataCollector dc : collectors) {
             int index = collectorIndexed.get(dc);
             tempFileWriter.write(WrittenResultReader.COLLECTOR + index + "=" + dc.getValue() + "\n");
          }

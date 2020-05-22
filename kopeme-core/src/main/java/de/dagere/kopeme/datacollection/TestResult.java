@@ -103,7 +103,7 @@ public final class TestResult {
     */
    public Set<String> getKeys() {
       final Set<String> keySet = new HashSet<>();
-      for (final DataCollector dc : dataCollectors.values()) {
+      for (final DataCollector dc : sortedCollectors) {
          keySet.add(dc.getName());
       }
 
@@ -174,35 +174,15 @@ public final class TestResult {
    }
 
    /**
-    * Starts or restarts the collection for all DataCollectors, e.g. if a TimeDataCollector was started and stopped before, the time measured now is added to the original time.
-    */
-   public void startOrRestartCollection() {
-      writeStartTime();
-      final Collection<DataCollector> dcCollection = dataCollectors.values();
-      final DataCollector[] sortedCollectors = dcCollection.toArray(new DataCollector[0]);
-      final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
-         @Override
-         public int compare(final DataCollector arg0, final DataCollector arg1) {
-            return arg0.getPriority() - arg1.getPriority();
-         }
-      };
-      Arrays.sort(sortedCollectors, comparator);
-      for (final DataCollector dc : sortedCollectors) {
-         LOG.trace("Starte: {}", dc.getName());
-         dc.startOrRestartCollection();
-      }
-   }
-
-   /**
     * Stops the collection of data, that are collected via DataCollectors. The collection of self-defined values isn't stopped and historical data are not loaded, so assertations
     * over self-defined values and historical data is not possible. For this, call finalizeCollection.
     */
    public void stopCollection() {
       // final Map<String, Long> runData = new HashMap<>();
-      for (final DataCollector dc : dataCollectors.values()) {
+      for (final DataCollector dc : sortedCollectors) {
          dc.stopCollection();
       }
-      writer.writeValues(dataCollectors);
+      writer.writeValues(sortedCollectors);
    }
 
    /**
@@ -221,30 +201,6 @@ public final class TestResult {
       } else {
          reader.readStreaming(thrownException, getKeys());
       }
-   }
-
-//   /**
-//    * Adds a self-defined value to the currently measured value. This method should be used if you want to measure data youself (e.g. done transactions in a certain time) and this
-//    * value should be saved along with the performance measures which where measured by KoPeMe.
-//    * 
-//    * @param name Name of the measure that should be saved
-//    * @param value Value of the measure
-//    */
-//   public void addValue(final String name, final long value) {
-//      if (dataCollectors.get(name) != null) {
-//         throw new Error("A self-defined value should not have the name of a DataCollector, name: " + name);
-//      }
-//      writer.writeValue(name, value);
-//   }
-
-   /**
-    * Returns the values of measures, that are not collected via DataCollectors. After the finalization, all values are contained in order to make assertion over these values as
-    * well.
-    * 
-    * @return Additional Values
-    */
-   public Set<String> getAdditionValueKeys() {
-      return reader.getFinalValues().keySet();
    }
 
    /**

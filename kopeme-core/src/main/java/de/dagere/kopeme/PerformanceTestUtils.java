@@ -95,7 +95,6 @@ public final class PerformanceTestUtils {
          for (final String key : tr.getKeys()) {
             buildKeyData(data, xds, tr, key);
          }
-         buildAdditionalKeys(data, xds, tr);
       } catch (final JAXBException e) {
          e.printStackTrace();
       }
@@ -116,18 +115,6 @@ public final class PerformanceTestUtils {
       tr.clearFulldata(key);
       result.setFulldata(fulldata);
       xds.storeValue(result, data.getTestcasename(), key);
-   }
-
-   private static void buildAdditionalKeys(final SaveableTestData data, final DataStorer xds, final TestResult tr) {
-      for (final String additionalKey : tr.getAdditionValueKeys()) {
-         if (!tr.getKeys().contains(additionalKey)) {
-            final Result result = getMeasureFromTR(data, tr, additionalKey);
-            final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(additionalKey) : null;
-            result.setFulldata(fulldata);
-            tr.clearFulldata(additionalKey);
-            xds.storeValue(result, data.getTestcasename(), additionalKey);
-         }
-      }
    }
 
    private static Result getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {
