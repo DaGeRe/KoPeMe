@@ -17,7 +17,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import de.dagere.kopeme.junit.exampletests.runner.ExampleJUnitTests;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleMethodTimeoutTest;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.MultipleCallClassTimeout;
 import de.dagere.kopeme.junit.exampletests.runner.classtimeout.NoTimeoutOutput;
@@ -87,8 +86,4 @@ public class TestJUnitTimeoutExecutions {
 		assertEquals(1, countInterruptedException);
 	}
 
-	public void testNormalJUnitExecution() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(ExampleJUnitTests.class);
-	}
 }

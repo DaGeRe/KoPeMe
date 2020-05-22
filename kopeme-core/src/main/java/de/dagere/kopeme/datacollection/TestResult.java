@@ -42,15 +42,13 @@ public final class TestResult {
 
    private static final Logger LOG = LogManager.getLogger(TestResult.class);
 
-   protected Map<String, DataCollector> dataCollectors;
-   
    protected Checker checker;
    private int realExecutions;
    private String methodName;
    private WrittenResultReader reader;
    private ResultTempWriter writer;
    private int executionTimes;
-   private DataCollector[] sortedCollectors;
+   private final DataCollector[] sortedCollectors;
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -61,15 +59,26 @@ public final class TestResult {
    public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
       this.methodName = methodName;
       this.executionTimes = executionTimes;
-      dataCollectors = collectors.getDataCollectors();
 
+      final Collection<DataCollector> dcCollection = collectors.getDataCollectors().values();
+      sortedCollectors = dcCollection.toArray(new DataCollector[0]);
+      final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
+         @Override
+         public int compare(final DataCollector arg0, final DataCollector arg1) {
+            return arg0.getPriority() - arg1.getPriority();
+         }
+      };
+      Arrays.sort(sortedCollectors, comparator);
+      
       try {
          writer = new ResultTempWriter();
-         writer.setDataCollectors(dataCollectors);
+         writer.setDataCollectors(sortedCollectors);
          reader = new WrittenResultReader(writer.getTempFile());
       } catch (IOException e) {
          e.printStackTrace();
       }
+      
+      
    }
 
    public void setMethodName(final String methodName) {
@@ -83,17 +92,6 @@ public final class TestResult {
     */
    public String getTestcase() {
       return methodName;
-   }
-
-   /**
-    * Sets the DatacollectorList for collecting Performance-Measures.
-    * 
-    * @param dcl List of Datacollectors
-    */
-   public void setCollectors(final DataCollectorList dcl) {
-      dataCollectors = new HashMap<>();
-      dataCollectors = dcl.getDataCollectors();
-      writer.setDataCollectors(dataCollectors);
    }
 
    /**
@@ -134,7 +132,7 @@ public final class TestResult {
     */
    public void checkValues(final Map<String, Long> assertationvalues) {
       for (final Map.Entry<String, Long> entry : assertationvalues.entrySet()) {
-         for (final DataCollector dc : dataCollectors.values()) {
+         for (final DataCollector dc : sortedCollectors) {
             LOG.debug("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
             if (dc.getName().equals(entry.getKey())) {
                LOG.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
@@ -147,15 +145,7 @@ public final class TestResult {
    }
 
    public void beforeRun() {
-      final Collection<DataCollector> dcCollection = dataCollectors.values();
-      sortedCollectors = dcCollection.toArray(new DataCollector[0]);
-      final Comparator<DataCollector> comparator = new Comparator<DataCollector>() {
-         @Override
-         public int compare(final DataCollector arg0, final DataCollector arg1) {
-            return arg0.getPriority() - arg1.getPriority();
-         }
-      };
-      Arrays.sort(sortedCollectors, comparator);
+      
    }
 
    /**

@@ -14,20 +14,17 @@ public class ResultTempWriter {
 
    private File tempFile;
    private BufferedWriter tempFileWriter;
-   private Map<DataCollector, Integer> collectorIndexed;
 
    public ResultTempWriter() throws IOException {
       tempFile = Files.createTempFile("kopeme", ".tmp").toFile();
       tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
 
-   public void setDataCollectors(Map<String, DataCollector> dataCollectors) {
-      int collectorIndex = 0;
-      collectorIndexed = new HashMap<>();
+   public void setDataCollectors(final DataCollector collectors[]) {
       try {
-         for (DataCollector collector : dataCollectors.values()) {
-            tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + collectorIndex + "=" + collector.getName() + "\n");
-            collectorIndexed.put(collector, collectorIndex++);
+         for (int index = 0; index < collectors.length; index++) {
+            DataCollector dc = collectors[index];
+            tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + index + "=" + dc.getName() + "\n");
          }
       } catch (IOException e) {
          e.printStackTrace();
@@ -38,7 +35,7 @@ public class ResultTempWriter {
       return tempFile;
    }
 
-   public void executionStart(long currentTimeMillis) {
+   public void executionStart(final long currentTimeMillis) {
       try {
          tempFileWriter.write(WrittenResultReader.EXECUTIONSTART + System.currentTimeMillis() + "\n");
       } catch (IOException e) {
@@ -46,10 +43,10 @@ public class ResultTempWriter {
       }
    }
 
-   public void writeValues(DataCollector collectors[]) {
+   public void writeValues(final DataCollector collectors[]) {
       try {
-         for (final DataCollector dc : collectors) {
-            int index = collectorIndexed.get(dc);
+         for (int index = 0; index < collectors.length; index++) {
+            DataCollector dc = collectors[index];
             tempFileWriter.write(WrittenResultReader.COLLECTOR + index + "=" + dc.getValue() + "\n");
          }
       } catch (IOException e) {
@@ -57,7 +54,7 @@ public class ResultTempWriter {
       }
    }
 
-   public void writeValue(String name, long value) {
+   public void writeValue(final String name, final long value) {
       try {
          tempFileWriter.write(WrittenResultReader.FINAL_VALUE + name + "=" + value + "\n");
       } catch (IOException e) {
