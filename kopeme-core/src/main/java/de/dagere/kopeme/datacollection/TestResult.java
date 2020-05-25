@@ -154,7 +154,6 @@ public final class TestResult {
    public void startCollection() {
       writeStartTime();
       for (final DataCollector dc : sortedCollectors) {
-         LOG.trace("Starting: {}", dc.getName());
          dc.startCollection();
       }
    }

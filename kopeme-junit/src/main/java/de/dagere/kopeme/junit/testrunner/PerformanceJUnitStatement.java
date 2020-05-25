@@ -41,7 +41,6 @@ public class PerformanceJUnitStatement extends Statement {
 				before.invokeExplosively(fTarget);
 			}
 		} catch (final Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -55,7 +54,6 @@ public class PerformanceJUnitStatement extends Statement {
 				after.invokeExplosively(fTarget);
 			}
 		} catch (final Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

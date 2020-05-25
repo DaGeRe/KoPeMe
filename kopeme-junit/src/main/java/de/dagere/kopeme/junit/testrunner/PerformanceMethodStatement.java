@@ -206,7 +206,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          throw new InterruptedException("Test timed out.");
       }
       final boolean interrupted = Thread.interrupted();
-      LOG.trace("Interrupt state: {}", interrupted);
+//      LOG.trace("Interrupt state: {}", interrupted);
       if (interrupted) {
          LOG.debug("Exiting thread.");
          throw new InterruptedException("Test was interrupted and eventually timed out.");
