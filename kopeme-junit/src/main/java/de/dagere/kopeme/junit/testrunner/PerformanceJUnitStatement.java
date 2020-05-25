@@ -37,7 +37,7 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Called before the measuring evaluation to initialize test.
 	 */
-	public void preEvaluate() {
+	public final void preEvaluate() {
 		try {
 			for (final FrameworkMethod before : befores) {
 				before.invokeExplosively(fTarget);
@@ -50,7 +50,7 @@ public class PerformanceJUnitStatement extends Statement {
 	/**
 	 * Called after the measuring evaluation to cleanup test.
 	 */
-	public void postEvaluate() {
+	public final void postEvaluate() {
 		try {
 			for (final FrameworkMethod after : afters) {
 				after.invokeExplosively(fTarget);
