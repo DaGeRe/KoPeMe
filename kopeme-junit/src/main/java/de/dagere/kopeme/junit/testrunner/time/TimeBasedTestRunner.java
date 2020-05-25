@@ -90,11 +90,10 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 			withRulesMethod.setAccessible(true);
 
 			final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
-			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject);
+			
 			final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
-			final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-			perfStatement.setBefores(befores);
-			perfStatement.setAfters(afters);
+         final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
+			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
 
 			return perfStatement;
 		} catch (final Throwable e) {

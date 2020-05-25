@@ -159,22 +159,24 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
          Statement testExceptionTimeoutStatement = methodInvoker(currentMethod, testObject);
 
          testExceptionTimeoutStatement = possiblyExpectingExceptions(currentMethod, testObject, testExceptionTimeoutStatement);
-         // testExceptionTimeoutStatement = withPotentialTimeout(currentMethod, test, testExceptionTimeoutStatement);
 
-         final Method withRulesMethod = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
-         withRulesMethod.setAccessible(true);
+         Statement withRuleStatement = ruleInvoker(currentMethod, testObject, testExceptionTimeoutStatement);
 
-         final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
-         final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject);
          final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
          final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-         perfStatement.setBefores(befores);
-         perfStatement.setAfters(afters);
+         final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
 
          return perfStatement;
       } catch (final Throwable e) {
          return new PerformanceFail(e);
       }
+   }
+   
+   private Statement ruleInvoker(final FrameworkMethod currentMethod, Object testObject, Statement testExceptionTimeoutStatement) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+      final Method withRulesMethod = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
+      withRulesMethod.setAccessible(true);
+      final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
+      return withRuleStatement;
    }
 
    @Override

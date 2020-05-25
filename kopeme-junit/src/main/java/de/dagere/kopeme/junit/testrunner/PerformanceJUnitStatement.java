@@ -16,8 +16,8 @@ public class PerformanceJUnitStatement extends Statement {
 
 	private final Statement statement;
 	private final Object fTarget;
-	private List<FrameworkMethod> befores;
-	private List<FrameworkMethod> afters;
+	private final List<FrameworkMethod> befores;
+	private final List<FrameworkMethod> afters;
 
 	/**
 	 * Initializes PerformanceJUnitStatement.
@@ -27,9 +27,11 @@ public class PerformanceJUnitStatement extends Statement {
 	 * @param target
 	 *            Object for executing the performance test
 	 */
-	public PerformanceJUnitStatement(final Statement statement, final Object target) {
+	public PerformanceJUnitStatement(final Statement statement, final Object target, List<FrameworkMethod> befores, List<FrameworkMethod> afters) {
 		this.statement = statement;
 		fTarget = target;
+		this.befores = befores;
+		this.afters = afters;
 	}
 
 	/**
@@ -61,26 +63,5 @@ public class PerformanceJUnitStatement extends Statement {
 	@Override
 	public void evaluate() throws Throwable {
 		statement.evaluate();
-	}
-
-	/**
-	 * Sets Before-Methods that should be executed.
-	 * 
-	 * @param befores
-	 *            Before-Methods
-	 */
-	public void setBefores(final List<FrameworkMethod> befores) {
-		this.befores = befores;
-	}
-
-	/**
-	 * Sets Before-Methods that should be executed.
-	 * 
-	 * @param afters
-	 *            After-Methods
-	 */
-	public void setAfters(final List<FrameworkMethod> afters) {
-		this.afters = afters;
-
 	}
 }
