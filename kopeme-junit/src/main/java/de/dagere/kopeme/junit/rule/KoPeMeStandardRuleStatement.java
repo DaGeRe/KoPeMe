@@ -94,8 +94,4 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       tr.finalizeCollection();
       saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, configuration));
    }
-
-   public void setMethodName(final String methodName) {
-      tr.setMethodName(methodName);
-   }
 }

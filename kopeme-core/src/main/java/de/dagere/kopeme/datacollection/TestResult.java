@@ -1,18 +1,11 @@
 package de.dagere.kopeme.datacollection;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +19,6 @@ import org.junit.Assert;
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 
@@ -44,7 +36,7 @@ public final class TestResult {
 
    protected Checker checker;
    private int realExecutions;
-   private String methodName;
+   private final String methodName;
    private WrittenResultReader reader;
    private ResultTempWriter writer;
    private int executionTimes;
@@ -79,10 +71,6 @@ public final class TestResult {
       }
       
       
-   }
-
-   public void setMethodName(final String methodName) {
-      this.methodName = methodName;
    }
 
    /**

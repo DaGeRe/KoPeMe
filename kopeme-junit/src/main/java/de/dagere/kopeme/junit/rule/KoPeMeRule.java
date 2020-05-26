@@ -61,11 +61,4 @@ public class KoPeMeRule implements TestRule {
          return stmt;
       }
    }
-
-   /**
-    * Changes the name of the result - can be used e.g. when a parameterized test is executed and the result should be saved with a differend method name.
-    */
-   public void setMethodName(final String name) {
-      koPeMeStandardRuleStatement.setMethodName(name);
-   }
 }
