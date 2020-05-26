@@ -15,8 +15,8 @@ public class ResultTempWriter {
    public static final String EXECUTIONSTART = "\n" + WrittenResultReader.EXECUTIONSTART;
    public static final String COLLECTOR = "\n" + WrittenResultReader.COLLECTOR;
 
-   private File tempFile;
-   private BufferedWriter tempFileWriter;
+   private final File tempFile;
+   private final BufferedWriter tempFileWriter;
 
    public ResultTempWriter() throws IOException {
       tempFile = Files.createTempFile("kopeme", ".tmp").toFile();
@@ -25,11 +25,10 @@ public class ResultTempWriter {
 
    public void setDataCollectors(final DataCollector collectors[]) {
       try {
-         for (int index = 0; index < collectors.length - 1; index++) {
+         for (int index = 0; index < collectors.length; index++) {
             DataCollector dc = collectors[index];
             tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + index + "=" + dc.getName() + "\n");
          }
-         tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX + (collectors.length - 1) + "=" + collectors[collectors.length - 1].getName());
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -39,32 +38,32 @@ public class ResultTempWriter {
       return tempFile;
    }
 
-   public void executionStart(final long currentTimeMillis) {
+   public final void executionStart(final long currentTimeMillis) {
       try {
-         tempFileWriter.write(EXECUTIONSTART);
+         // tempFileWriter.write(EXECUTIONSTART);
          tempFileWriter.write(Long.toString(System.currentTimeMillis()));
-         // tempFileWriter.write('\n');
+         tempFileWriter.write('\n');
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
-   public void writeValues(final DataCollector collectors[]) {
+   public final void writeValues(final DataCollector collectors[]) {
       try {
          for (int index = 0; index < collectors.length; index++) {
             DataCollector dc = collectors[index];
-            tempFileWriter.write(COLLECTOR);
+            // tempFileWriter.write(COLLECTOR);
             tempFileWriter.write(Integer.toString(index));
             tempFileWriter.write('=');
             tempFileWriter.write(Long.toString(dc.getValue()));
-            // tempFileWriter.write('\n');
+            tempFileWriter.write('\n');
          }
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
-   public void finalizeCollection() {
+   public final void finalizeCollection() {
       try {
          tempFileWriter.flush();
          tempFileWriter.close();

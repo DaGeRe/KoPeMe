@@ -63,22 +63,17 @@ public class WrittenResultReader {
          String line;
          Map<String, Long> currentValues = new HashMap<>();
          while ((line = reader.readLine()) != null) {
-            if (line.startsWith(EXECUTIONSTART)) {
-               // ignore
-            } else if (line.startsWith(COLLECTOR_INDEX)) {
+            if (line.startsWith(COLLECTOR_INDEX)) {
                String collectorString = line.substring(COLLECTOR_INDEX.length());
                String[] values = collectorString.split("=");
                collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
-            } else if (line.startsWith(COLLECTOR)) {
-               String collectorString = line.substring(COLLECTOR.length());
-               String[] values = collectorString.split("=");
+            } else if (line.contains("=")) {
+               String[] values = line.split("=");
                int collectorIndex = Integer.parseInt(values[0]);
                String collector = collectorsIndexed.get(collectorIndex);
                collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
-            } else if (line.startsWith(FINAL_VALUE)) {
-
             } else {
-               throw new RuntimeException("Unexpected line: " + line);
+               // ignore executionstarts when streaming
             }
          }
          finishIteration(currentValues);
@@ -109,26 +104,21 @@ public class WrittenResultReader {
          String line;
          Map<String, Long> currentValues = new HashMap<>();
          while ((line = reader.readLine()) != null) {
-            if (line.startsWith(EXECUTIONSTART)) {
-               currentValues = finishIteration(currentValues);
-               String timeString = line.substring(EXECUTIONSTART.length());
-               Long start = Long.parseLong(timeString);
-               executionStartTimes.add(start);
-            } else if (line.startsWith(COLLECTOR_INDEX)) {
+            if (line.startsWith(COLLECTOR_INDEX)) {
                String collectorString = line.substring(COLLECTOR_INDEX.length());
                String[] values = collectorString.split("=");
                collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
-            } else if (line.startsWith(COLLECTOR)) {
-               String collectorString = line.substring(COLLECTOR.length());
-               String[] values = collectorString.split("=");
+            } else if (line.contains("=")) {
+               String[] values = line.split("=");
                int collectorIndex = Integer.parseInt(values[0]);
                String collector = collectorsIndexed.get(collectorIndex);
                currentValues.put(collector, Long.parseLong(values[1]));
                collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
-            } else if (line.startsWith(FINAL_VALUE)) {
-
-            } else {
-               throw new RuntimeException("Unexpected line: " + line);
+            }  else {
+               currentValues = finishIteration(currentValues);
+               String timeString = line.substring(EXECUTIONSTART.length());
+               Long start = Long.parseLong(timeString);
+               executionStartTimes.add(start);
             }
          }
          finishIteration(currentValues);
