@@ -116,8 +116,7 @@ public class WrittenResultReader {
                collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
             }  else {
                currentValues = finishIteration(currentValues);
-               String timeString = line.substring(EXECUTIONSTART.length());
-               Long start = Long.parseLong(timeString);
+               Long start = Long.parseLong(line);
                executionStartTimes.add(start);
             }
          }
