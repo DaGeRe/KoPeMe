@@ -163,7 +163,7 @@ public class PerformanceTestRunner {
     * @throws InvocationTargetException Thrown if an error during method access occurs
     */
    private TestResult executeSimpleTest() throws IllegalAccessException, InvocationTargetException {
-      TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
+      TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.STANDARD);
       final Object[] params = {};
       runWarmup(params);
       tr.clear();
@@ -185,7 +185,6 @@ public class PerformanceTestRunner {
       LOG.trace("Zeit: " + (System.currentTimeMillis() - start));
       tr.finalizeCollection();
       saveData(SaveableTestData.createFineTestData(method.getName(), filename, tr, configuration));
-      // TODO: statt true setzen, ob die vollen Daten wirklich geloggt werden sollen
       tr.checkValues();
       return tr;
    }
