@@ -1,7 +1,5 @@
 package de.dagere.kopeme.datacollection;
 
-import de.dagere.kopeme.datacollection.DataCollector;
-
 public final class TimeDataCollectorNoGC extends DataCollector {
 
    private long start;

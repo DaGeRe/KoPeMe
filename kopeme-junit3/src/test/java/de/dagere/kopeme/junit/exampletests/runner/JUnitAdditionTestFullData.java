@@ -1,12 +1,11 @@
 package de.dagere.kopeme.junit.exampletests.runner;
 
-import junit.framework.Assert;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit3.KoPeMeTestcase;
+import junit.framework.Assert;
 
 public class JUnitAdditionTestFullData extends KoPeMeTestcase {
 	private final static Logger log = LogManager.getLogger(JUnitAdditionTestFullData.class);

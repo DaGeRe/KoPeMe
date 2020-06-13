@@ -1,15 +1,10 @@
 package de.dagere.kopeme.junit3.tests;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.TestUtils;
-import de.dagere.kopeme.junit.exampletests.runner.TimeoutSetupJUnit3;
-import de.dagere.kopeme.junit.exampletests.runner.TimeoutTestJUnit3;
+import junit.framework.TestCase;
 
 /**
  * Testing needs to spawn new JVM - no unit test possible currently.

@@ -1,17 +1,13 @@
 package de.dagere.kopeme.junit.tests;
 
+import static org.junit.Assert.assertThat;
+
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
 
-import de.dagere.kopeme.junit.exampletests.runner.ExampleAssertionTest;
-import de.dagere.kopeme.junit.exampletests.runner.ExampleNormalJUnitTestWithKoPeMe;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestNoGC;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 
 public class TestAssertion {

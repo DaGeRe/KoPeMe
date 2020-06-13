@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import org.apache.logging.log4j.core.util.NullOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

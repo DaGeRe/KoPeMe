@@ -16,7 +16,6 @@ import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.CPUUsageCollector;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
 
 public class ExamplePurePerformanceTests {
 

@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -17,7 +16,6 @@ import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.datastorage.EnvironmentUtil;

@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.DataStorer;
-import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Result;

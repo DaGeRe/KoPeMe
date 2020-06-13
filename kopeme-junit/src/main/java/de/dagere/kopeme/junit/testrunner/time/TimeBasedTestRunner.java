@@ -3,7 +3,6 @@ package de.dagere.kopeme.junit.testrunner.time;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import junit.framework.AssertionFailedError;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +19,7 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceFail;
 import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
+import junit.framework.AssertionFailedError;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An alternative

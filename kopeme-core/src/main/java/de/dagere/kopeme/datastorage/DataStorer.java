@@ -1,9 +1,6 @@
 package de.dagere.kopeme.datastorage;
 
-import java.util.Map;
-
 import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
 
 /**
  * Interface for storing KoPeMe-data.
