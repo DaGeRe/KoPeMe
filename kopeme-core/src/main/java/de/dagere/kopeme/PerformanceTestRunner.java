@@ -29,7 +29,7 @@ public class PerformanceTestRunner {
 
    private static Logger LOG = LogManager.getLogger(PerformanceTestRunner.class);
 
-   protected final Class klasse;
+   protected final Class<?> klasse;
    protected final Object instanz;
    protected final Method method;
    protected int executionTimes, warmupExecutions, repetitions, minEarlyStopExecutions, timeout;
@@ -47,7 +47,7 @@ public class PerformanceTestRunner {
     * @param instance Instance of the class, whose tests should be run
     * @param method Test method that should be run
     */
-   public PerformanceTestRunner(final Class klasse, final Object instance, final Method method) {
+   public PerformanceTestRunner(final Class<?> klasse, final Object instance, final Method method) {
       this.klasse = klasse;
       this.instanz = instance;
       this.method = method;

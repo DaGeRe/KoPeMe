@@ -43,7 +43,7 @@ public final class PerformanceTestRunnerKoPeMe {
 		String klassenName = args[0];
 
 		try {
-			Class c = Class.forName(klassenName);
+			Class<?> c = Class.forName(klassenName);
 			runTestsWithClass(c);
 		} catch (ClassNotFoundException e) {
 			LOG.error("Die gewünschte Klasse " + klassenName + " wurde unglücklicherweise nicht gefunden.");

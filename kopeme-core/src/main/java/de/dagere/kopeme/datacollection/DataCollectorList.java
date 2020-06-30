@@ -36,7 +36,7 @@ public class DataCollectorList {
 	 */
 	public static final DataCollectorList NONE;
 
-	private final Set<Class<DataCollector>> collectors;
+	private final Set<Class<? extends DataCollector>> collectors;
 
 	static {
 		STANDARD = new DataCollectorList();
@@ -71,7 +71,7 @@ public class DataCollectorList {
 	 * 
 	 * @param collectorName The collector that should be added
 	 */
-	protected final void addDataCollector(final Class collectorName) {
+	protected final void addDataCollector(final Class<? extends DataCollector> collectorName) {
 		if (!DataCollector.class.isAssignableFrom(collectorName)) {
 			throw new RuntimeException("Class must be subclass of DataCollector!");
 		}
@@ -85,7 +85,7 @@ public class DataCollectorList {
 	 */
 	public final Map<String, DataCollector> getDataCollectors() {
 		final Map<String, DataCollector> collectorsRet = new HashMap<>();
-		for (final Class<DataCollector> c : collectors) {
+		for (final Class<? extends DataCollector> c : collectors) {
 			DataCollector dc;
 			try {
 				dc = c.newInstance();

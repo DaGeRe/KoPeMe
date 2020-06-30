@@ -25,7 +25,7 @@ public class GarbageCollectorOverheadTest extends KoPeMeTestcase {
 	}
 
 	public void testOverhead() {
-		List<List> list = new LinkedList<>();
+		List<List<Integer>> list = new LinkedList<>();
 		while (true) {
 			List<Integer> addList = new LinkedList<>();
 			for (int i = 0; i < 500; i++)
