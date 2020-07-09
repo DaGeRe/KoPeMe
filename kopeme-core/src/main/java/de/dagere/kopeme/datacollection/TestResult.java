@@ -187,8 +187,9 @@ public final class TestResult {
     * @return Value of the measure
     */
    public Number getValue(final String key) {
-      if (reader.getFinalValues().get(key) != null) {
-         return reader.getFinalValues().get(key);
+      final Map<String, Number> finalValues = reader.getFinalValues();
+      if (finalValues.get(key) != null) {
+         return finalValues.get(key);
       } else {
          return null;
       }
