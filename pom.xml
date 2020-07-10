@@ -21,7 +21,7 @@
 		<core.version>0.11-SNAPSHOT</core.version>
 		<java.version>1.8</java.version>
 		<kieker.version>1.14</kieker.version>
-		<checkstyle.version>8.29</checkstyle.version>
+		<checkstyle.version>8.34</checkstyle.version>
 	</properties>
 
 	<modules>
