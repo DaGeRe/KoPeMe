@@ -1,6 +1,11 @@
 package de.dagere.kopeme.junit.rule;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
@@ -100,40 +106,70 @@ public abstract class KoPeMeBasicStatement extends Statement {
    }
 
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
-      int execution;
-      tr.beforeRun();
+      System.gc();
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
-      for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution);
-         runnables.getBeforeRunnable().run();
-         tr.startCollection();
-         for (int repetition = 0; repetition < repetitions; repetition++) {
-            runnables.getTestRunnable().run();
+      tr.beforeRun();
+      int execution = 1;
+      try {
+         if (annotation.redirectToTemp()) {
+            redirectToTempFile();
+         } else if (annotation.redirectToNull()) {
+            OutputStreamUtil.redirectToNullStream();
          }
-         tr.stopCollection();
-         runnables.getAfterRunnable().run();
-         tr.setRealExecutions(execution - 1);
-         LOG.debug(fullWarmupStop, execution);
-         for (final Map.Entry<String, Double> entry : maximalRelativeStandardDeviation.entrySet()) {
-            LOG.trace("Entry: {} {}", entry.getKey(), entry.getValue());
+         for (execution = 1; execution <= executions; execution++) {
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStart, execution);
+            }
+            runnables.getBeforeRunnable().run();
+            tr.startCollection();
+            runAllRepetitions(repetitions);
+            tr.stopCollection();
+            runnables.getAfterRunnable().run();
+            tr.setRealExecutions(execution - 1);
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStop, execution);
+            }
+//            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+//                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+//               LOG.info("Exiting because of deviation reached");
+//               break;
+//            }
+            checkFinished();
          }
-         if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-            break;
-         }
-         if (isFinished) {
-            LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
-            throw new InterruptedException("Test timed out.");
-         }
-         final boolean interrupted = Thread.interrupted();
-         LOG.debug("Interrupt state: {}", interrupted);
-         if (interrupted) {
-            LOG.debug("Exiting thread.");
-            throw new InterruptedException("Test was interrupted and eventually timed out.");
-         }
+      } finally {
+         OutputStreamUtil.resetStreams();
       }
+
+      System.gc();
+      Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+   
+   private void redirectToTempFile() throws IOException, FileNotFoundException {
+      File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+      PrintStream stream = new PrintStream(tempFile);
+      System.setOut(stream);
+      System.setErr(stream);
+   }
+
+   private void runAllRepetitions(final int repetitions) throws Throwable {
+      for (int repetition = 0; repetition < repetitions; repetition++) {
+         runnables.getTestRunnable().run();
+      }
+   }
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
    }
 }

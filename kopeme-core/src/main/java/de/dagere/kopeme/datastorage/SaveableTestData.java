@@ -15,8 +15,7 @@ public abstract class SaveableTestData {
          this.type = type;
       }
 
-      public T createTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions,
-            final boolean saveValues) {
+      public T createTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
          T returnable;
          try {
             returnable = type.newInstance();
@@ -24,9 +23,7 @@ public abstract class SaveableTestData {
             returnable.setTestcasename(testcasename);
             returnable.setFilename(filename);
             returnable.setTr(tr);
-            returnable.setRepetitions(repetitions);
-            returnable.setSaveValues(saveValues);
-            returnable.setWarmupExecutions(warmup);
+            returnable.setConfiguration(configuration);
             return returnable;
          } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e); // should never happen
@@ -34,8 +31,8 @@ public abstract class SaveableTestData {
       }
    }
 
-   public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions, final boolean saveValues) {
-      return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, warmup, repetitions, saveValues);
+   public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, RunConfiguration configuration) {
+      return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
    private static File createDefaultFolder(final String filename) {
@@ -44,50 +41,39 @@ public abstract class SaveableTestData {
       return folder;
    }
 
-   public static AssertFailureTestData createAssertFailedTestData(final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions, 
-         final boolean saveValues) {
-      return createAssertFailedTestData(createDefaultFolder(filename), testcasename, filename, tr, warmup, repetitions, saveValues);
+   public static AssertFailureTestData createAssertFailedTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+      return createAssertFailedTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
-   public static TestErrorTestData createErrorTestData(final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions, final boolean saveValues) {
-      return createErrorTestData(createDefaultFolder(filename), testcasename, filename, tr, warmup,  repetitions, saveValues);
+   public static TestErrorTestData createErrorTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+      return createErrorTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
-   public static FineTestData createFineTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions,
-         final boolean saveValues) {
-      return new SaveableTestDataFactory<>(FineTestData.class).createTestData(folder, testcasename, filename, tr, warmup, repetitions, saveValues);
+   public static FineTestData createFineTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+      return new SaveableTestDataFactory<>(FineTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
    }
 
    public static AssertFailureTestData createAssertFailedTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
-         final int warmup, int repetitions, final boolean saveValues) {
-      return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, warmup, repetitions, saveValues);
+         RunConfiguration configuration) {
+      return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
    }
 
-   public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final int warmup, int repetitions,
-         final boolean saveValues) {
-      return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, warmup, repetitions, saveValues);
+   public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+      return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
    }
 
    private File folder;
    private String testcasename, filename;
    private TestResult tr;
-   private int warmupExecutions, repetitions;
-
-   /**
-    * @return the warmupExecutions
-    */
-   public int getWarmupExecutions() {
-      return warmupExecutions;
+   private RunConfiguration configuration;
+   
+   public RunConfiguration getConfiguration() {
+      return configuration;
    }
-
-   /**
-    * @param warmupExecutions the warmupExecutions to set
-    */
-   public void setWarmupExecutions(final int warmupExecutions) {
-      this.warmupExecutions = warmupExecutions;
+   
+   public void setConfiguration(RunConfiguration configuration) {
+      this.configuration = configuration;
    }
-
-   private boolean saveValues;
 
    public static class FineTestData extends SaveableTestData {
    }
@@ -129,22 +115,4 @@ public abstract class SaveableTestData {
    public void setTr(final TestResult tr) {
       this.tr = tr;
    }
-
-   public boolean isSaveValues() {
-      return saveValues;
-   }
-
-   public void setSaveValues(final boolean saveValues) {
-      this.saveValues = saveValues;
-   }
-
-   public int getRepetitions() {
-      return repetitions;
-   }
-
-   public void setRepetitions(int repetitions) {
-      this.repetitions = repetitions;
-   }
-
-
 }

@@ -1,6 +1,7 @@
 package kieker.monitoring.writer.filesystem;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ import kieker.monitoring.writer.AbstractMonitoringWriter;
  * @author reichelt
  *
  */
-public class ChangeableFolderWriter extends AbstractMonitoringWriter implements ChangeableFolder{
+public class ChangeableFolderWriter extends AbstractMonitoringWriter implements ChangeableFolder {
 
    public static final String PREFIX = ChangeableFolderWriter.class.getName() + ".";
    public static final String CONFIG_PATH = PREFIX + "customStoragePath";
@@ -56,29 +57,32 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
 
    private AbstractMonitoringWriter createWriter(final Configuration configuration) {
       final String writerName = configuration.getStringProperty(REAL_WRITER);
-      if (writerName.equals(AsciiFileWriter.class.getSimpleName())) {
-         final Configuration newConfig = toWriterConfiguration(configuration, AsciiFileWriter.class);
-         final AsciiFileWriter asyncFsWriter = new AsciiFileWriter(newConfig);
-         return asyncFsWriter;
-      } else if (writerName.equals(BinaryFileWriter.class.getSimpleName())) {
-         final Configuration newConfig = toWriterConfiguration(configuration, BinaryFileWriter.class);
-         final BinaryFileWriter syncFsWriter = new BinaryFileWriter(newConfig);
-         return syncFsWriter;
-      } else {
-         System.out.println("Defined writer " + writerName + " not found - using default " + AsciiFileWriter.class.getSimpleName());
-         final Configuration newConfig = toWriterConfiguration(configuration, AsciiFileWriter.class);
-         final AsciiFileWriter syncFsWriter = new AsciiFileWriter(newConfig);
-         return syncFsWriter;
+      try {
+         if (writerName.equals(FileWriter.class.getSimpleName())) {
+            final Configuration newConfig = toWriterConfiguration(configuration, FileWriter.class);
+            FileWriter fsWriter = new FileWriter(newConfig);
+            return fsWriter;
+         } else {
+            System.out.println("Defined writer " + writerName + " not found - using default " + FileWriter.class.getSimpleName());
+            final Configuration newConfig = toWriterConfiguration(configuration, FileWriter.class);
+            final FileWriter syncFsWriter = new FileWriter(newConfig);
+            return syncFsWriter;
+         }
+      } catch (IOException e) {
+         e.printStackTrace();
+         return null;
       }
    }
 
-   Configuration toWriterConfiguration(final Configuration c, final Class<?> writerClass) {
+   Configuration toWriterConfiguration(final Configuration configuration, final Class<?> writerClass) {
       final Configuration returnable = new Configuration();
-      for (final Iterator<Entry<Object, Object>> iterator = c.entrySet().iterator(); iterator.hasNext();) {
+      for (final Iterator<Entry<Object, Object>> iterator = configuration.entrySet().iterator(); iterator.hasNext();) {
          final Entry<Object, Object> entry = iterator.next();
          final String keyAsString = entry.getKey().toString();
          final String replacedPropertyName = keyAsString.replace(getClass().getName(), writerClass.getName());
-         returnable.setProperty(replacedPropertyName, entry.getValue().toString());
+         if (entry.getValue() != null && !(entry.getValue() instanceof String && entry.getValue().equals(""))) {
+            returnable.setProperty(replacedPropertyName, entry.getValue().toString());
+         }
       }
       return returnable;
    }

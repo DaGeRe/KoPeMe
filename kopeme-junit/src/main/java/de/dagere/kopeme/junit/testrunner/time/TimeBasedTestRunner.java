@@ -3,7 +3,6 @@ package de.dagere.kopeme.junit.testrunner.time;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import junit.framework.AssertionFailedError;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +19,7 @@ import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceFail;
 import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
+import junit.framework.AssertionFailedError;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An alternative
@@ -90,11 +90,10 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 			withRulesMethod.setAccessible(true);
 
 			final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
-			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject);
+			
 			final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
-			final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-			perfStatement.setBefores(befores);
-			perfStatement.setAfters(afters);
+         final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
+			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
 
 			return perfStatement;
 		} catch (final Throwable e) {
@@ -118,7 +117,7 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 			this.method = currentMethod;
 
 			if (!classFinished){
-				currentMethodStatement = new TimeBasedStatement(callee, filename, klasse, method, logFullData);
+				currentMethodStatement = new TimeBasedStatement(callee, filename, klasse, method, logFullDataClass);
 				return currentMethodStatement;
 			}else{
 				return new Statement() {

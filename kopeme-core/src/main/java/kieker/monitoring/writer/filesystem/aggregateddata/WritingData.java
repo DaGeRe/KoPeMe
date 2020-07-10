@@ -15,7 +15,7 @@ public class WritingData extends AggregatedData {
 
    @JsonIgnore
    protected Map<Long, StatisticalSummary> writeStatistic = new LinkedHashMap<>();
-   
+
    private SummaryStatistics newestStatistic;
    private long newestTime;
    private SummaryStatistics overallStatistics = new SummaryStatistics();

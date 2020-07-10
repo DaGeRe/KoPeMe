@@ -7,14 +7,14 @@ package de.dagere.kopeme.datastorage;
  *
  */
 public class PerformanceDataMeasure {
-	private final String testcase;
-	private final String collectorname;
-	private final long value;
-	private final double deviation;
-	private final int executions, warmup, repetitions;
-	private final long min, max;
-	private final double first10percentile;
-	private final boolean failure, error;
+	public final String testcase;
+	public final String collectorname;
+	public final double value;
+	public final double deviation;
+	public final int executions, warmup, repetitions;
+   public final long min, max;
+	public final double first10percentile;
+	public final boolean failure, error;
 
 	/**
 	 * Initializes the PerformanceDataMeasure.
@@ -29,7 +29,7 @@ public class PerformanceDataMeasure {
 	 * @param first10percentile First 10-Percentil of the measured values
 	 */
 	public PerformanceDataMeasure(final String testcase, final String collectorname, 
-	      final long value, 
+	      final double value, 
 	      final double deviation,
 			final int executionTimes,
 			final int warmupExecutions,
@@ -64,7 +64,7 @@ public class PerformanceDataMeasure {
 	 * @param failure Weather an failure occured
 	 * @param error Weather an error occured
 	 */
-	public PerformanceDataMeasure(final String testcase, final String collectorname, final long value, final double deviation,
+	public PerformanceDataMeasure(final String testcase, final String collectorname, final double value, final double deviation,
 			final int executionTimes,
 			final int warmupExecutions,
 			int repetitions,
@@ -114,7 +114,7 @@ public class PerformanceDataMeasure {
 	/**
 	 * @return the value
 	 */
-	public long getValue() {
+	public double getValue() {
 		return value;
 	}
 

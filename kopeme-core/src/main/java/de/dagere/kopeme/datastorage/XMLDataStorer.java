@@ -1,10 +1,9 @@
 package de.dagere.kopeme.datastorage;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Map;
+import java.io.IOException;
+import java.nio.file.Files;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -14,8 +13,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
@@ -65,60 +62,46 @@ public final class XMLDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(final PerformanceDataMeasure performanceDataMeasure, final Map<Long, Long> values) {
+   public void storeValue(final Result result, String testcase, String collectorName) {
       if (data.getTestcases() == null) {
          data.setTestcases(new Testcases());
       }
-      final TestcaseType test = getOrCreateTestcase(performanceDataMeasure);
+      final TestcaseType test = getOrCreateTestcase(result, testcase);
 
-      final Result r = buildResult(performanceDataMeasure);
-      if (values != null) {
-         buildFulldata(values, r);
-      }
-
-      final Datacollector dc = getOrCreateDatacollector(performanceDataMeasure.getCollectorname(), test);
+      final Datacollector dc = getOrCreateDatacollector(collectorName, test);
 
       if (System.getenv("KOPEME_CHUNKSTARTTIME") != null) {
          final Chunk current = findChunk(dc);
-         current.getResult().add(r);
+         current.getResult().add(result);
       } else {
-         dc.getResult().add(r);
+         dc.getResult().add(result);
       }
-
+      if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
+         saveFulldata(result);
+      }
+      result.setCpu(EnvironmentUtil.getCPU());
+      result.setMemory(EnvironmentUtil.getMemory());
+      storeData();
    }
 
-   private void buildFulldata(final Map<Long, Long> values, final Result r) {
-      final Fulldata fd = new Fulldata();
-      for (final Map.Entry<Long, Long> valueEntry : values.entrySet()) {
-         final Value v = new Value();
-         v.setStart(valueEntry.getKey());
-         v.setValue("" + valueEntry.getValue());
-         fd.getValue().add(v);
+   private void saveFulldata(final Result result) {
+      File fulldataFile = new File(result.getFulldata().getFileName());
+      final File targetFile = new File(file.getParentFile(), fulldataFile.getName());
+      try {
+         Files.move(fulldataFile.toPath(), targetFile.toPath());
+         result.getFulldata().setFileName(targetFile.getName());
+      } catch (IOException e) {
+         e.printStackTrace();
       }
-      r.setFulldata(fd);
-   }
-
-   private Result buildResult(final PerformanceDataMeasure performanceDataMeasure) {
-      final Result r = new Result();
-      r.setDate(new Date().getTime());
-      r.setValue(performanceDataMeasure.getValue());
-      r.setDeviation(performanceDataMeasure.getDeviation());
-      r.setExecutionTimes(performanceDataMeasure.getExecutions());
-      r.setWarmupExecutions(performanceDataMeasure.getWarmup());
-      r.setRepetitions(performanceDataMeasure.getRepetitions());
-      r.setMax(performanceDataMeasure.getMax());
-      r.setMin(performanceDataMeasure.getMin());
-      r.setFirst10Percentile(performanceDataMeasure.getFirst10percentile());
-      return r;
    }
 
    private Chunk findChunk(final Datacollector dc) {
       final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
       Chunk current = null;
       for (final Chunk chunk : dc.getChunk()) {
-       if (chunk.getChunkStartTime() == start){
-      	 current = chunk;
-       }
+         if (chunk.getChunkStartTime() == start) {
+            current = chunk;
+         }
       }
       if (current == null) {
          current = new Chunk();
@@ -147,31 +130,27 @@ public final class XMLDataStorer implements DataStorer {
       return dc;
    }
 
-   private TestcaseType getOrCreateTestcase(final PerformanceDataMeasure performanceDataMeasure) {
+   private TestcaseType getOrCreateTestcase(final Result performanceDataMeasure, String testcase) {
       TestcaseType test = null;
       for (final TestcaseType tc : data.getTestcases().getTestcase()) {
-         if (tc.getName().equals(performanceDataMeasure.getTestcase())) {
+         if (tc.getName().equals(testcase)) {
             test = tc;
          }
       }
       if (test == null) {
          LOG.trace("Test == null, füge hinzu");
          test = new TestcaseType();
-         test.setName(performanceDataMeasure.getTestcase());
+         test.setName(testcase);
          data.getTestcases().getTestcase().add(test);
       }
       return test;
    }
 
-   @Override
-   public void storeData() {
-      JAXBContext jaxbContext;
+   private void storeData() {
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
-         jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-         final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+         final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
          jaxbMarshaller.marshal(data, file);
       } catch (final JAXBException e) {
          e.printStackTrace();
@@ -185,11 +164,9 @@ public final class XMLDataStorer implements DataStorer {
     * @param currentdata Data to save
     */
    public static void storeData(final File file, final Kopemedata currentdata) {
-      JAXBContext jaxbContext;
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
-         jaxbContext = JAXBContext.newInstance(Kopemedata.class);
-         final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+         final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
          jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 

@@ -38,56 +38,56 @@ import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
  */
 @RunWith(Parameterized.class)
 public class TestBeforeExecution {
-	
-	private static final String TEST_NAME = "spendTime";
-	
-	@Parameters(name = "{0}")
-	public static Iterable<Object[]> parameters(){
-		return Arrays.asList(new Object[][]{
-			{ExampleBeforeTestRule.class, TEST_NAME},
-			{ExampleBeforeClassTest.class, TEST_NAME},
-			{ExampleNoBeforeTest.class, TEST_NAME},
-			{ExampleNonMeasuringBefore.class, TEST_NAME}
-		});
-	}
-//	,
-//	{ExampleBeforeTestRunner.class, "testMethod"}
-	@Parameter(0)
-	public Class<?> junitTestClass;
-	
-	@Parameter(1)
-	public String testname;
-	
-	public static Logger LOG = LogManager.getLogger(TestJUnitRuleExecutions.class);
 
-	@BeforeClass
-	public static void cleanResult() throws IOException {
-		TestUtils.cleanAndSetKoPeMeOutputFolder();
-	}
+   private static final String TEST_NAME = "spendTime";
 
-	@Test
-	public void testBefore() throws JAXBException {
-		final JUnitCore jc = new JUnitCore();
-		final Result result = jc.run(junitTestClass);
-		for (final Failure failure : result.getFailures())
-		{
-			System.out.println(failure.toString());
-		}
-		final String canonicalName = junitTestClass.getCanonicalName();
-		final File resultFile = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
-		LOG.debug("Suche: {} Existiert: {}", resultFile.getAbsolutePath(), resultFile.exists());
-		Assert.assertThat(resultFile.exists(), Matchers.equalTo(true));
-		final Integer time = getTimeResult(resultFile, testname);
-		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * 1000));
-		Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * 1000));
-	}
-	
-	public static Integer getTimeResult(final File f, final String methodName) throws JAXBException {
-		final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
-		final Map<Date, Long> data = collectorData.get(methodName);
-		Assert.assertNotNull(data);
-		final Integer time = data.entrySet().iterator().next().getValue().intValue();
-		return time;
-	}
+   @Parameters(name = "{0}")
+   public static Iterable<Object[]> parameters() {
+      return Arrays.asList(new Object[][] {
+            { ExampleBeforeTestRule.class, TEST_NAME },
+            { ExampleBeforeClassTest.class, TEST_NAME },
+            { ExampleNoBeforeTest.class, TEST_NAME },
+            { ExampleNonMeasuringBefore.class, TEST_NAME }
+      });
+   }
+
+   // ,
+   // {ExampleBeforeTestRunner.class, "testMethod"}
+   @Parameter(0)
+   public Class<?> junitTestClass;
+
+   @Parameter(1)
+   public String testname;
+
+   public static Logger LOG = LogManager.getLogger(TestJUnitRuleExecutions.class);
+
+   @BeforeClass
+   public static void cleanResult() throws IOException {
+      TestUtils.cleanAndSetKoPeMeOutputFolder();
+   }
+
+   @Test
+   public void testBefore() throws JAXBException {
+      final JUnitCore jc = new JUnitCore();
+      final Result result = jc.run(junitTestClass);
+      for (final Failure failure : result.getFailures()) {
+         System.out.println(failure.toString());
+      }
+      final String canonicalName = junitTestClass.getCanonicalName();
+      final File resultFile = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
+      LOG.debug("Suche: {} Existiert: {}", resultFile.getAbsolutePath(), resultFile.exists());
+      Assert.assertThat(resultFile.exists(), Matchers.equalTo(true));
+      final Long time = getTimeResult(resultFile, testname);
+      Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
+      Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * TimeDataCollector.TO_MILLISECONDS));
+   }
+
+   public static Long getTimeResult(final File f, final String methodName) throws JAXBException {
+      final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
+      final Map<Date, Long> data = collectorData.get(methodName);
+      Assert.assertNotNull(data);
+      final Long time = data.entrySet().iterator().next().getValue().longValue();
+      return time;
+   }
 
 }

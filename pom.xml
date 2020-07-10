@@ -20,8 +20,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<core.version>0.11-SNAPSHOT</core.version>
 		<java.version>1.8</java.version>
-		<kieker.version>1.13</kieker.version>
-		<checkstyle.version>8.27</checkstyle.version>
+		<kieker.version>1.14</kieker.version>
+		<checkstyle.version>8.29</checkstyle.version>
 	</properties>
 
 	<modules>
@@ -70,7 +70,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.21.0</version>
+					<version>3.0.0-M3</version>
 					<configuration>
 						<forkCount>1</forkCount>
 						<excludes>
@@ -81,7 +81,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.4</version>
+					<version>1.6</version>
 					<executions>
 						<execution>
 							<id>sign-artifacts</id>
@@ -130,7 +130,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>license-maven-plugin</artifactId>
-					<version>1.6</version>
+					<version>1.20</version>
 					<configuration>
 						<verbose>false</verbose>
 						<addSvnKeyWords>false</addSvnKeyWords>
@@ -161,7 +161,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13</version>
 		</dependency>
 	</dependencies>
 

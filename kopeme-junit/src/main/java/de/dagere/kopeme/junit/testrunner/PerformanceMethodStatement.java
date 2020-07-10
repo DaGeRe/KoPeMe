@@ -2,15 +2,23 @@ package de.dagere.kopeme.junit.testrunner;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Files;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 
@@ -20,19 +28,19 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
    protected final PerformanceJUnitStatement callee;
    protected final int timeout;
-   protected int warmupExecutions;
    protected final String className, methodName;
-   protected final boolean saveFullData;
    protected Finishable mainRunnable;
-   protected final int repetitions;
+   protected final RunConfiguration configuration;
 
    public PerformanceMethodStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method,
-         final boolean saveFullData) {
+         final boolean saveValuesClass) {
       super(null, method.getMethod(), filename);
       this.callee = callee;
-      this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
-      warmupExecutions = annotation.warmupExecutions();
-      repetitions = annotation.repetitions();
+//      this.saveFullData = saveFullData ? saveFullData : annotation.logFullData();
+      configuration = new RunConfiguration(annotation);
+      if (saveValuesClass) {
+         configuration.setSaveValues(saveValuesClass);
+      }
       timeout = annotation.timeout();
       this.methodName = method.getName();
       this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass
@@ -102,14 +110,14 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "execution ", executions, callee, repetitions);
+         runMainExecution(tr, "execution ", executions, callee, configuration.getRepetitions());
       } catch (final Throwable t) {
-         tr.finalizeCollection();
-         saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
+         tr.finalizeCollection(t);
+         saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, configuration));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(methodName, filename, tr, warmupExecutions, repetitions, saveFullData));
+      saveData(SaveableTestData.createFineTestData(methodName, filename, tr, configuration));
       return tr;
    }
 
@@ -126,10 +134,10 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, repetitions);
-         warmupExecutions = tr.getRealExecutions();
+         runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, configuration.getRepetitions());
       } catch (final Throwable t) {
-         tr.finalizeCollection();
+         t.printStackTrace();
+         tr.finalizeCollection(t);
          throw t;
       }
       tr.finalizeCollection();
@@ -145,42 +153,71 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     */
    protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions)
          throws Throwable {
+      System.gc();
       final String methodString = className + "." + tr.getTestcase();
-      int execution;
       final String fullWarmupStart = "--- Starting " + warmupString + methodString + " {} / {} ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {} ---";
       tr.beforeRun();
-      for (execution = 1; execution <= executions; execution++) {
-         LOG.debug(fullWarmupStart, execution, executions);
-         tr.startCollection();
-         for (int i = 0; i < repetitions; i++) {
-            callee.preEvaluate();
-            callee.evaluate();
-            callee.postEvaluate();
+      int execution = 1;
+      try {
+         if (annotation.redirectToTemp()) {
+            redirectToTempFile();
+         } else if (annotation.redirectToNull()) {
+            OutputStreamUtil.redirectToNullStream();
          }
-         tr.stopCollection();
-         LOG.debug(fullWarmupStop, execution);
-
-         tr.setRealExecutions(execution);
-         if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
-               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-            LOG.info("Exiting because of deviation reached");
-            break;
+         for (execution = 1; execution <= executions; execution++) {
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStart, execution, executions);
+            }
+            tr.startCollection();
+            runAllRepetitions(callee, repetitions);
+            tr.stopCollection();
+            if (annotation.showStart()) {
+               LOG.debug(fullWarmupStop, execution);
+            }
+            tr.setRealExecutions(execution);
+//            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
+//                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+//               LOG.info("Exiting because of deviation reached");
+//               break;
+//            }
+            checkFinished();
          }
-         if (isFinished) {
-            LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
-            throw new InterruptedException("Test timed out.");
-         }
-         final boolean interrupted = Thread.interrupted();
-         LOG.trace("Interrupt state: {}", interrupted);
-         if (interrupted) {
-            LOG.debug("Exiting thread.");
-            throw new InterruptedException("Test was interrupted and eventually timed out.");
-         }
-         Thread.sleep(1); // To let other threads "breath"
+      } finally {
+         OutputStreamUtil.resetStreams();
       }
+      System.gc();
+      Thread.sleep(1);
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
+   }
+
+   private void redirectToTempFile() throws IOException, FileNotFoundException {
+      File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+      PrintStream stream = new PrintStream(tempFile);
+      System.setOut(stream);
+      System.setErr(stream);
+   }  
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+//      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
+   }
+
+   private void runAllRepetitions(final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
+      for (int i = 0; i < repetitions; i++) {
+         callee.preEvaluate();
+         callee.evaluate();
+         callee.postEvaluate();
+      }
    }
 
    public void setFinished(final boolean isFinished) {

@@ -15,18 +15,26 @@ import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 
 public class KiekerTestHelper {
-   
+
    private static Logger LOG = LogManager.getLogger(KiekerTestHelper.class);
 
-   public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
+   public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature, int eoi, int ess) {
       final OperationExecutionRecord e = new OperationExecutionRecord(
             methodSignature,
             OperationExecutionRecord.NO_SESSION_ID,
             OperationExecutionRecord.NO_TRACE_ID,
             tin, tout, "myHost",
+            eoi,
+            ess);
+      Sample.MONITORING_CONTROLLER.newMonitoringRecord(e);
+   }
+
+   public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
+      createAndWriteOperationExecutionRecord(tin, 
+            tout, 
+            methodSignature, 
             OperationExecutionRecord.NO_EOI_ESS,
             OperationExecutionRecord.NO_EOI_ESS);
-      Sample.MONITORING_CONTROLLER.newMonitoringRecord(e);
    }
 
    public static void runFixture(final int rounds) throws InterruptedException,

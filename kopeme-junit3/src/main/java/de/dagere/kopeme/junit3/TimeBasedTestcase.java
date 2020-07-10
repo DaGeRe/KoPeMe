@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 
 /**
@@ -75,7 +76,7 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		}
 
 		LOG.debug("KoPeMe-Test {} finished", getName());
-		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, 0, 1, true));
+		PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, new RunConfiguration(0,0, showStart(), redirectToTemp(), redirectToNull(), true)));
 	}
 
 	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration) {

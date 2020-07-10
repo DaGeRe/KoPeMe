@@ -1,6 +1,6 @@
 package de.dagere.kopeme.datastorage;
 
-import java.util.Map;
+import de.dagere.kopeme.generated.Result;
 
 /**
  * Interface for storing KoPeMe-data.
@@ -10,10 +10,6 @@ import java.util.Map;
  */
 public interface DataStorer {
 
-	/**
-	 * Stores all already given data to the hard disk.
-	 */
-	void storeData();
 
-	void storeValue(PerformanceDataMeasure performanceDataMeasure, Map<Long, Long> values);
+   void storeValue(Result performanceDataMeasure, String testcase, String collectorName);
 }

@@ -1,12 +1,18 @@
 package de.dagere.kopeme.junit3;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
@@ -15,7 +21,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.SaveableTestData.TestErrorTestData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
@@ -90,6 +96,18 @@ public abstract class KoPeMeTestcase extends TestCase {
    protected boolean logFullData() {
       return annoTestcase.logFullData();
    }
+   
+   protected boolean showStart() {
+      return false;
+   }
+   
+   protected boolean redirectToTemp() {
+      return false;
+   }
+   
+   protected boolean redirectToNull() {
+      return false;
+   }
 
    /**
     * Returns the time all testcase executions may take *in sum* in ms. -1 means unbounded; Standard is set to 120 s.
@@ -159,16 +177,17 @@ public abstract class KoPeMeTestcase extends TestCase {
             return isFinished;
          }
       };
+      RunConfiguration configuration = new RunConfiguration(getWarmupExecutions(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
       try {
          final boolean finished = tbe.execute();
          if (!finished) {
-            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData);
+            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, configuration);
             LOG.debug("Data created");
-             PerformanceTestUtils.saveData(errorTestData);
+            PerformanceTestUtils.saveData(errorTestData);
             fail("Test took too long.");
          } else {
-            PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, warmupExecutions, getRepetitions(), fullData));
+            PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, configuration));
          }
       } catch (final Exception e) {
          e.printStackTrace();
@@ -197,13 +216,13 @@ public abstract class KoPeMeTestcase extends TestCase {
       } catch (final AssertionFailedError t) {
          t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
          throw t;
       } catch (final Throwable t) {
          t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
-         tr.finalizeCollection();
+         tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
          throw t;
       }
@@ -219,35 +238,86 @@ public abstract class KoPeMeTestcase extends TestCase {
     * @throws Throwable
     */
    protected void runMainExecution(final String executionTypName, final String name, final TestResult tr, final int executionTimes) throws Throwable {
-      int executions;
+      System.gc();
       final String firstPart = "--- Starting " + executionTypName + " execution " + name + " ";
       final String firstPartStop = "--- Stopping " + executionTypName + " execution ";
       final String endPart = "/" + executionTimes + " ---";
       final int repetitions = getRepetitions();
       tr.beforeRun();
-      for (executions = 1; executions <= executionTimes; executions++) {
-         LOG.debug(firstPart + executions + endPart);
-         tr.startCollection();
-         for (int repetion = 0; repetion < repetitions; repetion++) {
-            setUp();
-            KoPeMeTestcase.super.runTest();
-            tearDown();
-            if (Thread.currentThread().isInterrupted()) {
-               break;
-            }
+      int execution = 1;
+      try {
+         if (redirectToTemp()) {
+            redirectToTempFile();
+         } else if (redirectToNull()) {
+            OutputStreamUtil.redirectToNullStream();
          }
+         for (execution = 1; execution <= executionTimes; execution++) {
+            if (showStart()) {
+               LOG.debug(firstPart + execution + endPart);
+            }
+            tr.startCollection();
+            runAllRepetitions(repetitions);
+            tr.stopCollection();
+//            tr.getValue(TimeDataCollector.class.getName());
+            tr.setRealExecutions(execution);
+            if (showStart()) {
+               LOG.debug(firstPartStop + execution + endPart);
+            }
+            checkFinished();
+         }
+      } finally {
+         OutputStreamUtil.resetStreams();
+      }
+      System.gc();
+      Thread.sleep(1);
+      LOG.debug("Executions: " + (execution - 1));
+      tr.setRealExecutions(execution - 1);
+   }
+   
+   private void redirectToTempFile() throws IOException, FileNotFoundException {
+      File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
+      PrintStream stream = new PrintStream(tempFile);
+      System.setOut(stream);
+      System.setErr(stream);
+   }
 
-         tr.stopCollection();
-         tr.getValue(TimeDataCollector.class.getName());
-         tr.setRealExecutions(executions);
-         LOG.debug(firstPartStop + executions + endPart);
-         if (Thread.interrupted() || isFinished) {
-            return;
-         } else {
-            LOG.trace("Not interrupted");
+   private void redirectToNullStream() {
+      final OutputStream nullOutputStream = new OutputStream() {
+         @Override
+         public void write(int b) throws IOException {
+         }
+      };
+      final PrintStream nullStream = new PrintStream(nullOutputStream) {
+         @Override
+         public void println() {
+            // do nothing
+         }
+      };
+      System.setOut(nullStream);
+      System.setErr(nullStream);
+   }
+
+   private void checkFinished() throws InterruptedException {
+      if (isFinished) {
+         LOG.debug("Exiting finished thread: {}.", Thread.currentThread().getName());
+         throw new InterruptedException("Test timed out.");
+      }
+      final boolean interrupted = Thread.interrupted();
+      LOG.trace("Interrupt state: {}", interrupted);
+      if (interrupted) {
+         LOG.debug("Exiting thread.");
+         throw new InterruptedException("Test was interrupted and eventually timed out.");
+      }
+   }
+
+   private void runAllRepetitions(final int repetitions) throws Exception, Throwable {
+      for (int repetion = 0; repetion < repetitions; repetion++) {
+         setUp();
+         KoPeMeTestcase.super.runTest();
+         tearDown();
+         if (Thread.currentThread().isInterrupted()) {
+            break;
          }
       }
-      LOG.debug("Executions: " + (executions - 1));
-      tr.setRealExecutions(executions - 1);
    }
 }

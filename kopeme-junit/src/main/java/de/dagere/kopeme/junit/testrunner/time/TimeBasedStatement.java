@@ -41,7 +41,7 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 			@Override
 			public void run() {
 				try {
-					final int executions = calibrateMeasurement(className, method.getName() + " warmup", new TestResult(method.getName(), 1, DataCollectorList.ONLYTIME), duration, repetitions, callee);
+					final int executions = calibrateMeasurement(className, method.getName() + " warmup", new TestResult(method.getName(), 1, DataCollectorList.ONLYTIME), duration, configuration.getRepetitions(), callee);
 					final TestResult tr = executeSimpleTest(callee, executions);
 					tr.checkValues();
 					if (!assertationvalues.isEmpty()) {

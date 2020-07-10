@@ -2,10 +2,11 @@ package de.dagere.kopeme.junit.tests;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -14,6 +15,10 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
+import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
@@ -21,6 +26,7 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
+import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullDataBig;
 
 public class TestFulldataFunctionality {
 
@@ -45,6 +51,10 @@ public class TestFulldataFunctionality {
 			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
+				   System.out.println(r.getCpu());
+				   System.out.println(EnvironmentUtil.getCPU());
+				   Assert.assertEquals(r.getCpu(), EnvironmentUtil.getCPU());
+				   Assert.assertEquals(r.getMemory(), EnvironmentUtil.getMemory());
 					final Fulldata fd = r.getFulldata();
 					if (fd != null) {
 						Assert.assertEquals(0, fd.getValue().size());
@@ -64,15 +74,14 @@ public class TestFulldataFunctionality {
 		jc.run(JUnitAdditionTestFullData.class);
 		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
 		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		XMLDataLoader xdl;
 		try {
-			xdl = new XMLDataLoader(f);
+		   XMLDataLoader xdl = new XMLDataLoader(f);
 			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
 			for (final Datacollector dc : testcase.getDatacollector()) {
 				for (final Result r : dc.getResult()) {
 					final Fulldata fd = r.getFulldata();
 					Assert.assertNotNull(fd);
-					Assert.assertThat(fd.getValue().size(), Matchers.greaterThan(0));
+					Assert.assertEquals(900, fd.getValue().size());
 				}
 			}
 		} catch (final JAXBException e) {
@@ -81,5 +90,35 @@ public class TestFulldataFunctionality {
 
 		f.delete();
 	}
+	
+	@Test
+   public void testFullWritingSeparateFile() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitAdditionTestFullDataBig.class);
+      final File expectedKoPemeXML = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+      Assert.assertTrue("Datei " + expectedKoPemeXML + " sollte existieren", expectedKoPemeXML.exists());
+      try {
+         XMLDataLoader xdl = new XMLDataLoader(expectedKoPemeXML);
+         final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
+         for (final Datacollector dc : testcase.getDatacollector()) {
+            for (final Result r : dc.getResult()) {
+               final Fulldata fd = r.getFulldata();
+               Assert.assertNotNull(fd);
+               final File fulldataFile = new File(expectedKoPemeXML.getParentFile(), fd.getFileName());
+               Assert.assertTrue(fulldataFile.exists());
+               WrittenResultReader reader = new WrittenResultReader(fulldataFile);
+               final Set<String> collectors = new HashSet<>();
+               collectors.add(TimeDataCollectorNoGC.class.getCanonicalName());
+               reader.read(null, collectors);
+               Assert.assertEquals(TestResult.BOUNDARY_SAVE_FILE * 2, reader.getRealValues().size());
+            }
+         }
+      } catch (final JAXBException e) {
+         e.printStackTrace();
+      }
+
+      expectedKoPemeXML.delete();
+   }
+
 
 }

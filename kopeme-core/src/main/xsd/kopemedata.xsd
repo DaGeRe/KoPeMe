@@ -64,16 +64,21 @@
 			<xs:element name="executionTimes" type="xs:long" />
 			<xs:element name="repetitions" type="xs:long" />
 			<xs:element name="version" type="versioninfo" />
-			<xs:element name="min" type="xs:long" minOccurs="0"/>
-			<xs:element name="max" type="xs:long" minOccurs="0"/>
-			<xs:element name="first10percentile" type="xs:double" minOccurs="0"/>
+			<xs:element name="min" type="xs:double" minOccurs="0"/>
+			<xs:element name="max" type="xs:double" minOccurs="0"/>
+			<xs:element name="showStart" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="redirectToTemp" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="redirectToNull" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="useKieker" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="javaVersion" type="xs:string" minOccurs="0"/>
 			<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
-					<xs:sequence minOccurs="1" maxOccurs="unbounded">
+					<xs:sequence maxOccurs="1">
+						<xs:sequence minOccurs="1" maxOccurs="unbounded">
 						<xs:element name="value">
 							<xs:complexType>
 								<xs:simpleContent>
-									<xs:extension base="xs:string">
+									<xs:extension base="xs:long">
 										<xs:attribute name="start" type="xs:long">
 											<xs:annotation>
 												<xs:documentation>Saves the time when the execution
@@ -87,11 +92,14 @@
 								</xs:simpleContent>
 							</xs:complexType>
 						</xs:element>
+						</xs:sequence>
+						<xs:element name="fileName" type="xs:string" maxOccurs="1"/>
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="configuration" />
+		<xs:attribute name="cpu" />
+		<xs:attribute name="memory" />
 		<xs:attribute name="date" type="xs:long">
 			<xs:annotation>
 				<xs:documentation>Saves the timestamp when the test has been

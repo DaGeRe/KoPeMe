@@ -1,6 +1,6 @@
 package de.dagere.kopeme.junit.exampletests.runner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

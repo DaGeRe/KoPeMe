@@ -10,7 +10,7 @@ public class PerformanceFail extends PerformanceJUnitStatement {
 	private final Throwable fError;
 
 	public PerformanceFail(Throwable e) {
-		super(null, null);
+		super(null, null, null, null);
 		fError = e;
 	}
 
