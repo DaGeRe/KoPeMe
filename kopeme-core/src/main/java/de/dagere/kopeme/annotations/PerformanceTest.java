@@ -47,7 +47,7 @@ public @interface PerformanceTest {
 	boolean redirectToNull() default false;
 
 	/**
-	 * Optionally specify count of reptitions of same test.
+	 * Optionally specify count of repetitions of same test.
 	 * 
 	 * @return
 	 */
