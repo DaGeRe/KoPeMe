@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import kieker.common.configuration.Configuration;
@@ -100,7 +101,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
          mappingRecords.add(mappingRecord);
       }
       if (currentWriter != null) {
-         LOG.info("Record: " + record);
+         LOG.log(Level.FINEST, "Record: " + record);
          currentWriter.writeMonitoringRecord(record);
       }
    }
