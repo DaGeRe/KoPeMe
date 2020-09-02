@@ -104,7 +104,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     * @throws Throwable Any exception that occurs during the test
     */
    protected TestResult executeSimpleTest(final PerformanceJUnitStatement callee, final int executions) throws Throwable {
-      final TestResult tr = new TestResult(methodName, executions, datacollectors);
+      final TestResult tr = new TestResult(methodName, executions, datacollectors, false);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");
@@ -128,7 +128,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     * @throws Throwable Any exception that occurs during the test
     */
    private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-      final TestResult tr = new TestResult(methodName, annotation.warmupExecutions(), datacollectors);
+      final TestResult tr = new TestResult(methodName, annotation.warmupExecutions(), datacollectors, true);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");

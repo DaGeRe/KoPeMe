@@ -48,7 +48,7 @@ public final class TestResult {
     * @param methodName Name of the Testcase
     * @param executionTimes Count of the planned executions
     */
-   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors) {
+   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, boolean warmup) {
       this.methodName = methodName;
       this.executionTimes = executionTimes;
 
@@ -63,7 +63,7 @@ public final class TestResult {
       Arrays.sort(sortedCollectors, comparator);
       
       try {
-         writer = new ResultTempWriter();
+         writer = new ResultTempWriter(warmup);
          writer.setDataCollectors(sortedCollectors);
          reader = new WrittenResultReader(writer.getTempFile());
       } catch (IOException e) {
@@ -284,7 +284,7 @@ public final class TestResult {
       return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
    }
 
-   public void clear() {
+   public void deleteTempFile() {
       reader.deleteTempFile();
    }
 
