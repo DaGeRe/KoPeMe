@@ -44,7 +44,7 @@ public class KoPeMeExtension implements BeforeEachCallback {
                
             } };
          final TestRunnables runnables = new TestRunnables(throwingRunnable, instance.getClass(), instance);
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, context.getDisplayName());
+         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName());
          statement.evaluate();
       } catch (Throwable t) {
          t.printStackTrace();
