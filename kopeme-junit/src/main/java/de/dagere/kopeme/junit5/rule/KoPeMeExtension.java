@@ -2,10 +2,12 @@ package de.dagere.kopeme.junit5.rule;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExecutionCondition;
@@ -134,6 +136,18 @@ public class KoPeMeExtension implements BeforeEachCallback {
 
          @Override
          public ExecutionMode getDefaultClassesExecutionMode() {
+            // TODO Auto-generated method stub
+            return null;
+         }
+
+         @Override
+         public <T> Optional<T> getRawConfigurationParameter(String key, Function<String, T> transformer) {
+            // TODO Auto-generated method stub
+            return null;
+         }
+
+         @Override
+         public Optional<MethodOrderer> getDefaultTestMethodOrderer() {
             // TODO Auto-generated method stub
             return null;
          }

@@ -104,12 +104,12 @@
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<version>5.6.2</version>
+			<version>5.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.6.2</version>
+			<version>5.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
@@ -156,7 +156,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.11.2</version>
+			<version>2.11.3</version>
 		</dependency>
 
 
