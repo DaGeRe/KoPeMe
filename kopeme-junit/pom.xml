@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
 		<artifactId>kopeme-parent</artifactId>
-		<version>0.11</version>
+		<version>0.12-SNAPSHOT</version>
 	</parent>
 
 	<name>KoPeMe - JUnit</name>
@@ -65,12 +65,12 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.11.1</version>
+			<version>0.12.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-core</artifactId>
-			<version>0.11.1</version>
+			<version>0.12.1-SNAPSHOT</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
