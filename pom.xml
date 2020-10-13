@@ -29,10 +29,7 @@
 		<module>kopeme-core</module>
 		<module>kopeme-junit</module>
 		<module>kopeme-junit3</module>
-		<!--<module>kopeme-visualizer-core</module> <module>kopeme-analysis</module> -->
 		<!-- <module>kopeme-mojo</module> -->
-		<!-- Mojo wird zurzeit nicht benötigt / weiterentwickelt -->
-		<!-- <module>kopeme-visualizer</module> -->
 	</modules>
 
 	<build>
