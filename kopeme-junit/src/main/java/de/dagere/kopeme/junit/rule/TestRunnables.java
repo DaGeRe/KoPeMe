@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.function.ThrowingRunnable;
 
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
@@ -19,9 +20,6 @@ import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
  */
 public class TestRunnables {
 
-   public static interface ThrowingRunnable {
-      void run() throws Throwable;
-   }
 
    private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 

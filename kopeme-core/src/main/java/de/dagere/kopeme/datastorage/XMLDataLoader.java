@@ -151,6 +151,20 @@ public final class XMLDataLoader implements DataLoader {
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
       return data;
    }
+   
+   public static Kopemedata loadWarmedupData(final File dataFile) throws JAXBException {
+      final Unmarshaller unmarshaller = jc.createUnmarshaller();
+      final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
+      for (TestcaseType testcase : data.getTestcases().getTestcase()) {
+         for (Result result : testcase.getDatacollector().get(0).getResult()) {
+            if (result.getFulldata().getFileName() != null) {
+               Fulldata replacedFulldata = readFulldata(dataFile, (int) (result.getExecutionTimes() / 2), testcase, result);
+               result.setFulldata(replacedFulldata);
+            }
+         }
+      }
+      return data;
+   }
 
    public static Kopemedata loadData(final File dataFile, int warmup) throws JAXBException {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();

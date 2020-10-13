@@ -137,7 +137,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 
 		final String testClassName = this.getClass().getName();
 		final DataCollectorList datacollectors = getDataCollectors();
-		final TestResult tr = new TestResult(testClassName, executionTimes, datacollectors);
+		final TestResult tr = new TestResult(testClassName, executionTimes, datacollectors, false);
 
 		try {
 		   

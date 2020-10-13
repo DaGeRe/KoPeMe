@@ -65,7 +65,7 @@ public abstract class TimeBasedTestcase extends KoPeMeTestcase {
 		LOG.debug("Duration: " + durationInMilliseconds);
 		final String testClassName = this.getClass().getName();
 		final long maximumDuration = durationInMilliseconds * 1000 * NANOTOMIKRO; // Default maximum test duration: 1000 ms = 1 second
-		final TestResult tr = new TestResult(testClassName, -1, DataCollectorList.ONLYTIME);
+		final TestResult tr = new TestResult(testClassName, -1, DataCollectorList.ONLYTIME, false);
 		final int executionTimes = calibrateMeasurement("warmup", testClassName, tr, maximumDuration);
 
 		final String fullName = this.getClass().getName() + "." + getName();

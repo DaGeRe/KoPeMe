@@ -146,7 +146,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
       final String testClassName = this.getClass().getName();
       final DataCollectorList datacollectors = getDataCollectors();
-      final TestResult tr = new TestResult(testClassName, executionTimes, datacollectors);
+      final TestResult finalResult = new TestResult(testClassName, executionTimes, datacollectors, false);
 
       int fullWarmup = warmupExecutions * getRepetitions();
       KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), fullWarmup, testClassName, getName());
@@ -156,14 +156,14 @@ public abstract class KoPeMeTestcase extends TestCase {
          @Override
          public void run() {
             try {
-               runTestCase(tr, warmupExecutions, executionTimes, fullData);
+               runTestCase(finalResult, warmupExecutions, executionTimes, fullData);
             } catch (final AssertionFailedError | IllegalAccessException | InvocationTargetException e) {
                e.printStackTrace();
             } catch (final Throwable e) {
                e.printStackTrace();
             }
             LOG.debug("Finalizing..");
-            tr.finalizeCollection();
+            finalResult.finalizeCollection();
             LOG.debug("Test-call finished");
          }
 
@@ -182,12 +182,12 @@ public abstract class KoPeMeTestcase extends TestCase {
       try {
          final boolean finished = tbe.execute();
          if (!finished) {
-            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, configuration);
+            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), finalResult, configuration);
             LOG.debug("Data created");
             PerformanceTestUtils.saveData(errorTestData);
             fail("Test took too long.");
          } else {
-            PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), tr, configuration));
+            PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), finalResult, configuration));
          }
       } catch (final Exception e) {
          e.printStackTrace();
@@ -210,7 +210,7 @@ public abstract class KoPeMeTestcase extends TestCase {
 
       final String fullName = this.getClass().getName() + "." + getName();
       try {
-         final TestResult bulkResult = new TestResult(tr.getTestcase(), executionTimes, getDataCollectors());
+         final TestResult bulkResult = new TestResult(tr.getTestcase(), executionTimes, getDataCollectors(), true);
          runMainExecution("warmup", fullName, bulkResult, warmupExecutions);
          runMainExecution("main", fullName, tr, executionTimes);
       } catch (final AssertionFailedError t) {

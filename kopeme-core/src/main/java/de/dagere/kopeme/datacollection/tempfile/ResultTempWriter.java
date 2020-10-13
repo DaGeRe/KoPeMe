@@ -16,8 +16,8 @@ public class ResultTempWriter {
    private final File tempFile;
    private final BufferedWriter tempFileWriter;
 
-   public ResultTempWriter() throws IOException {
-      tempFile = Files.createTempFile("kopeme", ".tmp").toFile();
+   public ResultTempWriter(boolean warmup) throws IOException {
+      tempFile = Files.createTempFile(warmup ? "kopeme-warmup-" : "kopeme-", ".tmp").toFile();
       tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
 

@@ -176,6 +176,8 @@ public class WrittenResultReader {
    }
 
    public void deleteTempFile() {
-      file.delete();
+      if (!file.delete()) {
+         System.out.println("Warning: File " + file.getAbsolutePath() + " could not be deleted!");
+      }
    }
 }

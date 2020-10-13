@@ -131,20 +131,19 @@ public class PerformanceTestRunner {
     * @throws InvocationTargetException Thrown if an error during method access occurs
     */
    private TestResult executeComplexTest() throws IllegalAccessException, InvocationTargetException {
-      final TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE);
+      final TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.NONE, true);
       final Object[] params = { tr };
       runWarmup(params);
-      TestResult newResult = null;
 
       try {
          if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
             LOG.warn("Not all Collectors are valid!");
          }
-         newResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
-         params[0] = newResult;
+         TestResult finalResult = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD, false);
+         params[0] = finalResult;
          tr.beforeRun();
-         final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, newResult);
-         runMainExecution(pts, newResult);
+         final PerformanceKoPeMeStatement pts = new PerformanceKoPeMeStatement(method, instanz, false, params, finalResult);
+         runMainExecution(pts, finalResult);
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(method.getName(), filename, tr, configuration));
@@ -163,11 +162,11 @@ public class PerformanceTestRunner {
     * @throws InvocationTargetException Thrown if an error during method access occurs
     */
    private TestResult executeSimpleTest() throws IllegalAccessException, InvocationTargetException {
-      TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.STANDARD);
+      TestResult tr = new TestResult(method.getName(), warmupExecutions, DataCollectorList.STANDARD, false);
       final Object[] params = {};
       runWarmup(params);
-      tr.clear();
-      tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD);
+      tr.deleteTempFile();
+      tr = new TestResult(method.getName(), executionTimes, DataCollectorList.STANDARD, true);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");

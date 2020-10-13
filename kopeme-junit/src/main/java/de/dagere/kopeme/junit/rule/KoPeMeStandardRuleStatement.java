@@ -28,11 +28,11 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 
-   private final TestResult tr;
+   private final TestResult finalResult;
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
       super(runnables, method, filename);
-      tr = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
+      finalResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors, false);
    }
 
    @Override
@@ -41,9 +41,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          @Override
          public void run() {
             try {
-               executeSimpleTest(tr);
+               executeSimpleTest(finalResult);
                if (!assertationvalues.isEmpty()) {
-                  tr.checkValues(assertationvalues);
+                  finalResult.checkValues(assertationvalues);
                }
             } catch (IllegalAccessException | InvocationTargetException e) {
                e.printStackTrace();
@@ -68,30 +68,34 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       LOG.info("Test {} beendet", filename);
    }
 
-   private void executeSimpleTest(final TestResult tr) throws Throwable {
-      if (!checkCollectorValidity(tr)) {
+   private void executeSimpleTest(final TestResult finalResult) throws Throwable {
+      if (!checkCollectorValidity(finalResult)) {
          LOG.warn("Not all Collectors are valid!");
       }
       final RunConfiguration configuration = new RunConfiguration(annotation);
       try {
-         // Run warmup
-         if (annotation.warmupExecutions() > 0) {
-            final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors);
-            runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions(), annotation.repetitions());
-         }
+         runWarmup();
          if (!isFinished) {
-            runMainExecution(tr, "execution ", annotation.executionTimes(), annotation.repetitions());
+            runMainExecution(finalResult, "execution ", annotation.executionTimes(), annotation.repetitions());
          }
       } catch (final AssertionFailedError t) {
-         tr.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(tr.getMethodName(), filename, tr, configuration));
+         finalResult.finalizeCollection(t);
+         saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), filename, finalResult, configuration));
          throw t;
       } catch (final Throwable t) {
-         tr.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(tr.getMethodName(), filename, tr, configuration));
+         finalResult.finalizeCollection(t);
+         saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), filename, finalResult, configuration));
          throw t;
       }
-      tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(tr.getMethodName(), filename, tr, configuration));
+      finalResult.finalizeCollection();
+      saveData(SaveableTestData.createFineTestData(finalResult.getMethodName(), filename, finalResult, configuration));
+   }
+
+   private void runWarmup() throws Throwable {
+      if (annotation.warmupExecutions() > 0) {
+         final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors, true);
+         runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions(), annotation.repetitions());
+         deletableResult.deleteTempFile();
+      }
    }
 }
