@@ -67,7 +67,7 @@ public @interface PerformanceTest {
 	 * @return Warmup executions of the test
 	 */
 	int timeout() default 100000;
-
+	
 	/**
 	 * Optionally specify that all data should be logged, i.e. primarily all measured values instead of only average values.
 	 * 

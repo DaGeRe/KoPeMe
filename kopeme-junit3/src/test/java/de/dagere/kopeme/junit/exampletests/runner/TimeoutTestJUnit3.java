@@ -19,11 +19,11 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
     * Thread.stop is removed and instead the VM is exitted if the Thread does not run anymore. Therefore, this test can't be executed as unit test anymore.
     */
    
-//   public void testFirst() {
-//      LOG.info("First");
-//      forceWaiting(20000);
-//      LOG.info("First End");
-//   }
+   public void testFirst() {
+      LOG.info("First");
+      forceWaiting(20000);
+      LOG.info("First End");
+   }
 
    private void forceWaiting(int duration) {
       long start = System.currentTimeMillis();
@@ -70,7 +70,7 @@ public class TimeoutTestJUnit3 extends KoPeMeTestcase {
 
    @Override
    protected long getMaximalTime() {
-      return 900;
+      return 500;
    }
 
 }

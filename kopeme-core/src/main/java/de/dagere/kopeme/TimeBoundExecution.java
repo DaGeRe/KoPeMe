@@ -24,8 +24,6 @@ public class TimeBoundExecution {
 
    private static final Logger LOG = LogManager.getLogger(TimeBoundExecution.class);
 
-   private static final int INTERRUPT_TRIES = 10;
-
    ThreadGroup experimentThreadGroup;
    private final FinishableThread experimentThread;
    private final Type type;
@@ -33,6 +31,9 @@ public class TimeBoundExecution {
    private boolean needToStopHart = false;
    private final boolean useKieker;
    private Throwable testError;
+   
+   private int interruptTries = 10;
+   private int waitTimeBetweenInterrupts = 10;
 
    public TimeBoundExecution(final Finishable finishable, final long timeout, final Type type, final boolean useKieker) {
       String threadName;
@@ -153,11 +154,11 @@ public class TimeBoundExecution {
 
    private void waitForThreadEnd(final long timeoutTime, final Thread thread) throws InterruptedException {
       thread.join(timeoutTime);
-      Thread.sleep(10);
+      Thread.sleep(waitTimeBetweenInterrupts);
       LOG.trace("Test should be finished...");
       if (thread.isAlive()) {
          int count = tryNTimes(thread);
-         if (count == INTERRUPT_TRIES) {
+         if (count == interruptTries) {
             LOG.debug("Experiment thread does not respond, so the JVM needs to be shutdown now: " + thread.getName());
             needToStopHart = true;
          }
@@ -166,13 +167,21 @@ public class TimeBoundExecution {
 
    private int tryNTimes(final Thread thread) throws InterruptedException {
       int count = 0;
-      while (thread.isAlive() && count < INTERRUPT_TRIES) {
+      while (thread.isAlive() && count < interruptTries) {
          LOG.debug("Thread " + type + " (" + thread.getName() + ") not finished, is kill now..");
          thread.interrupt();
-         Thread.sleep(10);
+         Thread.sleep(waitTimeBetweenInterrupts);
          count++;
       }
       return count;
+   }
+   
+   public void setInterruptTries(int interruptTries) {
+      this.interruptTries = interruptTries;
+   }
+   
+   public void setWaitTimeBetweenInterrupts(int waitTimeBetweenInterrupts) {
+      this.waitTimeBetweenInterrupts = waitTimeBetweenInterrupts;
    }
 
 }

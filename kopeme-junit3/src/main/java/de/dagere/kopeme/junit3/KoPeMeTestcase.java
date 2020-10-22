@@ -36,8 +36,6 @@ import junit.framework.TestCase;
  */
 public abstract class KoPeMeTestcase extends TestCase {
 
-   private static final int INTERRUPT_TRIES = 10;
-
    private static final Logger LOG = LogManager.getLogger(KoPeMeTestcase.class);
 
    private final PerformanceTest annoTestcase = AnnotationDefaults.of(PerformanceTest.class);
@@ -162,8 +160,6 @@ public abstract class KoPeMeTestcase extends TestCase {
             } catch (final Throwable e) {
                e.printStackTrace();
             }
-            LOG.debug("Finalizing..");
-            finalResult.finalizeCollection();
             LOG.debug("Test-call finished");
          }
 
@@ -213,14 +209,14 @@ public abstract class KoPeMeTestcase extends TestCase {
          final TestResult bulkResult = new TestResult(tr.getTestcase(), executionTimes, getDataCollectors(), true);
          runMainExecution("warmup", fullName, bulkResult, warmupExecutions);
          runMainExecution("main", fullName, tr, executionTimes);
+         LOG.debug("Finalizing..");
+         tr.finalizeCollection();
       } catch (final AssertionFailedError t) {
-         t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
          tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createAssertFailedTestData(getName(), getClass().getName(), tr, true));
          throw t;
       } catch (final Throwable t) {
-         t.printStackTrace();
          LOG.error("An error occurred; saving data and finishing");
          tr.finalizeCollection(t);
          // PerformanceTestUtils.saveData(SaveableTestData.createErrorTestData(getName(), getClass().getName(), tr, true));
@@ -279,22 +275,6 @@ public abstract class KoPeMeTestcase extends TestCase {
       PrintStream stream = new PrintStream(tempFile);
       System.setOut(stream);
       System.setErr(stream);
-   }
-
-   private void redirectToNullStream() {
-      final OutputStream nullOutputStream = new OutputStream() {
-         @Override
-         public void write(int b) throws IOException {
-         }
-      };
-      final PrintStream nullStream = new PrintStream(nullOutputStream) {
-         @Override
-         public void println() {
-            // do nothing
-         }
-      };
-      System.setOut(nullStream);
-      System.setErr(nullStream);
    }
 
    private void checkFinished() throws InterruptedException {
