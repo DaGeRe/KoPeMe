@@ -25,8 +25,7 @@ public class AggregatedDataReader {
       }
       final Map<AggregatedDataNode, AggregatedData> resultMap = new HashMap<>();
       for (final File partialDataFile : getFiles(folder)) {
-         final Map<AggregatedDataNode, AggregatedData> partialData = readAggregatedDataFile(partialDataFile);
-         resultMap.putAll(partialData);
+         readAggregatedDataFile(partialDataFile, resultMap);
       }
       return resultMap;
    }
@@ -40,10 +39,9 @@ public class AggregatedDataReader {
       });
    }
 
-   public static Map<AggregatedDataNode, AggregatedData> readAggregatedDataFile(final File currentMeasureFile) throws JsonParseException, JsonMappingException, IOException {
+   public static void readAggregatedDataFile(final File currentMeasureFile, Map<AggregatedDataNode, AggregatedData> datas) throws JsonParseException, JsonMappingException, IOException {
       try (final BufferedReader reader = new BufferedReader(new FileReader(currentMeasureFile))) {
          String line;
-         final Map<AggregatedDataNode, AggregatedData> datas = new LinkedHashMap<>();
          while ((line = reader.readLine()) != null) {
             final String[] parts = line.split(";");
             final AggregatedDataNode node = readDataNode(parts);
@@ -59,7 +57,6 @@ public class AggregatedDataReader {
 
             data.getStatistic().put(time, summary);
          }
-         return datas;
       }
    }
 
@@ -79,16 +76,5 @@ public class AggregatedDataReader {
       final double max = Double.parseDouble(parts[8]);
       final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, mean * n);
       return summary;
-   }
-
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
-      final File currentMeasureFile = new File(
-            "/home/reichelt/.KoPeMe/de.test/demo-project/de.test.CalleeTest/1568624964903/onlyCallMethod1/kieker-20190916-090924-5526425321393-UTC--/measurement-0.json");
-      final Map<AggregatedDataNode, AggregatedData> readAggregatedDataFile = readAggregatedDataFile(currentMeasureFile);
-      readAggregatedDataFile.forEach((key, value) -> {
-         value.getStatistic().forEach((time, statistic) -> {
-            System.out.println(key + " " + statistic.getMean());
-         });
-      });
    }
 }

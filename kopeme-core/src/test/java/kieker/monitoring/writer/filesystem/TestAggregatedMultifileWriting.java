@@ -3,6 +3,7 @@ package kieker.monitoring.writer.filesystem;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -41,7 +42,8 @@ public class TestAggregatedMultifileWriting {
       Assert.assertEquals(11, measureFile.length); // newest is empty file
 
       for (final File file : measureFile) {
-         final Map<AggregatedDataNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(file);
+         final Map<AggregatedDataNode, AggregatedData> data = new HashMap<>();
+         AggregatedDataReader.readAggregatedDataFile(file, data);
          if (!file.getName().equals("measurement-10.csv")) {
             Assert.assertEquals(3, data.size());
          }

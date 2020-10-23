@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.Matchers;
@@ -169,7 +170,8 @@ public class TestAggregatedTreeWriter {
       final File currentMeasureFile = assertOneMeasureFile(kiekerFolder);
       System.out.println("File: " + currentMeasureFile.getAbsolutePath());
 
-      final Map<AggregatedDataNode, AggregatedData> data = AggregatedDataReader.readAggregatedDataFile(currentMeasureFile);
+      final Map<AggregatedDataNode, AggregatedData> data = new HashMap<>();
+      AggregatedDataReader.readAggregatedDataFile(currentMeasureFile, data);
       assertEquals(methods, data.keySet().size());
 
       return data;
