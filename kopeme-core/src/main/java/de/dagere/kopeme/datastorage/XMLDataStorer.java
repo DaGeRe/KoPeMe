@@ -6,6 +6,7 @@ import java.nio.file.Files;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -167,7 +168,12 @@ public final class XMLDataStorer implements DataStorer {
       try {
          LOG.info("Storing data to: {}", file.getAbsoluteFile());
          final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
-         jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");
+         try {
+            jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");
+         } catch (PropertyException e) {
+            LOG.error("Indent String for JAXB can not be set in current JAXB-implementation; consider implementing transformer usage");
+         }
+
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
          jaxbMarshaller.marshal(currentdata, file);
