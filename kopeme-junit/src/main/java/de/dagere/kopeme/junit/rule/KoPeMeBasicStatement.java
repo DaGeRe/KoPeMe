@@ -117,7 +117,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
          } else if (annotation.redirectToNull()) {
             OutputStreamUtil.redirectToNullStream();
          }
-         LOG.debug("Executing " + execution + " " + warmupString);
+         LOG.debug("Executing " + executions + " " + warmupString);
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
                LOG.debug(fullWarmupStart, execution);
