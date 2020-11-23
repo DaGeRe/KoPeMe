@@ -35,17 +35,17 @@ public class KoPeMeKiekerSupport {
       fp = FolderProvider.getInstance();
    }
 
-   public void useKieker(final boolean useIt, int warmup, final String testClassName, final String testCaseName) throws IOException {
+   public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws IOException {
       if (useIt) {
          final IMonitoringController kiekerController = MonitoringController.getInstance();
          final ChangeableFolder fsWriter = getWriter();
          final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
          folderForCurrentPerformanceResult.mkdirs();
          fsWriter.setFolder(folderForCurrentPerformanceResult);
-         if (fsWriter instanceof AggregatedTreeWriter) {
-            AggregatedTreeWriter writer = (AggregatedTreeWriter) fsWriter;
-            writer.getStatisticConfig().setWarmup(warmup);
-         }
+//         if (fsWriter instanceof AggregatedTreeWriter) {
+//            AggregatedTreeWriter writer = (AggregatedTreeWriter) fsWriter;
+//            writer.getStatisticConfig().setWarmup(warmup);
+//         }
          kiekerController.enableMonitoring();
          LOG.debug("Kieker-Monitoring successfully enabled");
       }

@@ -141,7 +141,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 
 		try {
 		   
-			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), warmupExecutions, testClassName, getName());
+			KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 		} catch (final Exception e) {
 			System.err.println("Kieker has failed!");
 			e.printStackTrace();

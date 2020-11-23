@@ -146,8 +146,7 @@ public abstract class KoPeMeTestcase extends TestCase {
       final DataCollectorList datacollectors = getDataCollectors();
       final TestResult finalResult = new TestResult(testClassName, executionTimes, datacollectors, false);
 
-      int fullWarmup = warmupExecutions * getRepetitions();
-      KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), fullWarmup, testClassName, getName());
+      KoPeMeKiekerSupport.INSTANCE.useKieker(useKieker(), testClassName, getName());
 
       final Finishable finishable = new Finishable() {
 
