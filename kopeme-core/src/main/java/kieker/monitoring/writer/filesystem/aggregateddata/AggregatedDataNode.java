@@ -9,7 +9,6 @@ public class AggregatedDataNode {
 
    @JsonCreator
    public AggregatedDataNode(final int eoi, final int ess, final String call) {
-      super();
       this.eoi = eoi;
       this.ess = ess;
       this.call = call;

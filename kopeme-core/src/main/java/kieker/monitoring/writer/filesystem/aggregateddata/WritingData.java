@@ -14,11 +14,11 @@ import kieker.monitoring.writer.filesystem.StatisticConfig;
 public class WritingData extends AggregatedData {
 
    @JsonIgnore
-   protected Map<Long, StatisticalSummary> writeStatistic = new LinkedHashMap<>();
+   protected final Map<Long, StatisticalSummary> writeStatistic = new LinkedHashMap<>();
 
    private SummaryStatistics newestStatistic;
    private long newestTime;
-   private SummaryStatistics overallStatistics = new SummaryStatistics();
+   private final SummaryStatistics overallStatistics = new SummaryStatistics();
 
    public WritingData(final File containedFile, final StatisticConfig statisticConfig) {
       super(containedFile, statisticConfig);
