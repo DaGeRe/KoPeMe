@@ -18,7 +18,7 @@ public class FileDataManager implements Runnable {
 
    private File currentDestination;
    private BufferedWriter currentWriter;
-   private final Map<AggregatedDataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
+   private final Map<DataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
 
    private int currentEntries = 0;
    private int fileIndex = 0;
@@ -58,7 +58,7 @@ public class FileDataManager implements Runnable {
    }
 
    private synchronized void writeAll() throws IOException {
-      for (final Map.Entry<AggregatedDataNode, WritingData> value : nodeMap.entrySet()) {
+      for (final Map.Entry<DataNode, WritingData> value : nodeMap.entrySet()) {
          writeLine(value);
 
          if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
@@ -68,8 +68,8 @@ public class FileDataManager implements Runnable {
       currentWriter.flush();
    }
 
-   private void writeLine(final Map.Entry<AggregatedDataNode, WritingData> value) throws IOException {
-      if (value.getValue().getCurrentStatistic() != null && 
+   private void writeLine(final Map.Entry<DataNode, WritingData> value) throws IOException {
+      if (value.getValue().getCurrentStatistic() != null &&
             !Double.isNaN(value.getValue().getCurrentStatistic().getMean())
             && value.getValue().getCurrentStatistic().getN() != 0) {
          writeHeader(value.getKey());
@@ -88,8 +88,11 @@ public class FileDataManager implements Runnable {
       currentWriter = new BufferedWriter(new FileWriter(currentDestination));
    }
 
-   private void writeHeader(final AggregatedDataNode node) throws IOException {
-      currentWriter.write(node.getCall() + ";" + node.getEoi() + ";" + node.getEss() + ";");
+   private void writeHeader(final DataNode node) throws IOException {
+      currentWriter.write(node.getCall() + ";");
+      if (node instanceof AggregatedDataNode) {
+         currentWriter.write(((AggregatedDataNode) node).getEoi() + ";" + ((AggregatedDataNode) node).getEss() + ";");
+      }
    }
 
    private void writeStatistics(final WritingData value) throws IOException {
@@ -101,12 +104,12 @@ public class FileDataManager implements Runnable {
       currentWriter.write(value.getCurrentStatistic().getMax() + "");
    }
 
-   public synchronized void write(final AggregatedDataNode node, final long duration) {
+   public synchronized void write(final DataNode node, final long duration) {
       final WritingData data = getData(node);
       data.addValue(duration);
    }
 
-   private WritingData getData(final AggregatedDataNode node) {
+   private WritingData getData(final DataNode node) {
       WritingData data = nodeMap.get(node);
       if (data == null) {
          data = new WritingData(currentDestination, aggregatedTreeWriter.getStatisticConfig());

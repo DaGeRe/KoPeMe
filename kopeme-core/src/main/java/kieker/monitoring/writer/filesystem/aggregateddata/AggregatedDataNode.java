@@ -2,16 +2,15 @@ package kieker.monitoring.writer.filesystem.aggregateddata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class AggregatedDataNode {
+public class AggregatedDataNode extends DataNode {
 
    private final int eoi, ess;
-   private final String call;
 
    @JsonCreator
    public AggregatedDataNode(final int eoi, final int ess, final String call) {
+      super(call);
       this.eoi = eoi;
       this.ess = ess;
-      this.call = call;
    }
 
    @Override
@@ -40,9 +39,5 @@ public class AggregatedDataNode {
 
    public int getEss() {
       return ess;
-   }
-
-   public String getCall() {
-      return call;
    }
 }
