@@ -92,6 +92,8 @@ public class FileDataManager implements Runnable {
       currentWriter.write(node.getCall() + ";");
       if (node instanceof AggregatedDataNode) {
          currentWriter.write(((AggregatedDataNode) node).getEoi() + ";" + ((AggregatedDataNode) node).getEss() + ";");
+      } else {
+         currentWriter.write("-1;-1;");
       }
    }
 
