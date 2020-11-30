@@ -6,6 +6,6 @@
 	</weaver>
 	<aspects>
 		<aspect
-			name="kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull" />
+			name="kieker.monitoring.probe.aspectj.operationExecution.ReducedOperationExecutionAspectFull" />
 	</aspects>
 </aspectj>
