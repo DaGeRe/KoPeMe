@@ -83,6 +83,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), filename, finalResult, configuration));
          throw t;
       } catch (final Throwable t) {
+         t.printStackTrace();
          finalResult.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), filename, finalResult, configuration));
          throw t;
