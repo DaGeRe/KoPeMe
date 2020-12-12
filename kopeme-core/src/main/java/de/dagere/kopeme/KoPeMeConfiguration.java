@@ -62,7 +62,7 @@ public class KoPeMeConfiguration {
 		int searchDepth = getIntSystemProperty(KOPEME_SEARCHDEPTH_PROPNAME, 10);
 		if(projectName == null){
 			BuildtoolProjectNameReader reader = new BuildtoolProjectNameReader();
-			if(reader.foundPomXml(workingDir, searchDepth)){
+			if(reader.searchBuildfile(workingDir, searchDepth)){
 				projectName = reader.getProjectName();
 			} else {
 				projectName = DEFAULT_PROJECTNAME;

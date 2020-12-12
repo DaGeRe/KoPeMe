@@ -24,41 +24,41 @@ public class TestBuildtoolProjectNameReader {
 	@Test
 	public void testFoundPom() throws Exception {
 		final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-		assertTrue("pom.xml should be found", testable.foundPomXml(new File(PATH_TO_TESTPOM_SUBFOLDER), 1));
+		assertTrue("pom.xml should be found", testable.searchBuildfile(new File(PATH_TO_TESTPOM_SUBFOLDER), 1));
 		assertEquals(TESTPOM_EXPECTED_PROJECT_NAME, testable.getProjectName());
 	}
 	
 	@Test
    public void testFoundGradle() throws Exception {
       final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-      assertTrue("build.gradle should be found", testable.foundPomXml(new File(PATH_TO_GRADLE_SUBFOLDER), 1));
+      assertTrue("build.gradle should be found", testable.searchBuildfile(new File(PATH_TO_GRADLE_SUBFOLDER), 1));
       assertEquals(GRADLE_EXPECTED_PROJECT_NAME, testable.getProjectName());
    }
 	
 	@Test
    public void testFoundAnt() throws Exception {
       final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-      assertTrue("build.xml should be found", testable.foundPomXml(new File(PATH_TO_ANT_SUBFOLDER), 1));
+      assertTrue("build.xml should be found", testable.searchBuildfile(new File(PATH_TO_ANT_SUBFOLDER), 1));
       assertEquals(ANT_EXPECTED_PROJECT_NAME, testable.getProjectName());
    }
 	
 	@Test
    public void testAntNoName() throws Exception {
       final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-      assertTrue("build.xml should be found", testable.foundPomXml(new File(PATH_TO_ANT_SUBFOLDER_NONAME), 1));
+      assertTrue("build.xml should be found", testable.searchBuildfile(new File(PATH_TO_ANT_SUBFOLDER_NONAME), 1));
       assertEquals("default", testable.getProjectName());
    }
 	
 	@Test
 	public void testDepth() throws Exception {
 		final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-		assertFalse("pom.xml should not be found", testable.foundPomXml(new File(PATH_TO_TESTPOM_SUBFOLDER), 0));
+		assertFalse("pom.xml should not be found", testable.searchBuildfile(new File(PATH_TO_TESTPOM_SUBFOLDER), 0));
 	}
 	
 	@Test
 	public void testPomNotParsable() throws Exception {
 		final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
-		assertTrue("pom.xml should be found", testable.foundPomXml(new File(PATH_TO_TESTPOM_SUBFOLDER + File.separator + "test_bad_pom"), 0));
+		assertTrue("pom.xml should be found", testable.searchBuildfile(new File(PATH_TO_TESTPOM_SUBFOLDER + File.separator + "test_bad_pom"), 0));
 		assertEquals(KoPeMeConfiguration.DEFAULT_PROJECTNAME, testable.getProjectName());
 	}
 	
