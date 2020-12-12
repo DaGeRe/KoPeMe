@@ -48,7 +48,7 @@ public class BuildtoolProjectNameReader {
     * @param depth how many times should we try to go up to find the pom?
     * @return a boolean denoting if the pom was found / side effect setting the pom file
     */
-   public boolean foundPomXml(final File directory, final int depth) {
+   public boolean searchBuildfile(final File directory, final int depth) {
       LOG.debug("Directory: {}", directory);
       if (depth == -1 || directory == null || !directory.isDirectory()) {
          return false;
@@ -70,7 +70,7 @@ public class BuildtoolProjectNameReader {
             }
             return false;
          } else {
-            return foundPomXml(directory.getParentFile(), depth - 1);
+            return searchBuildfile(directory.getParentFile(), depth - 1);
          }
       }
    }
@@ -101,7 +101,10 @@ public class BuildtoolProjectNameReader {
    }
 
    private String readGradleProperty(final String line) {
-      final String shortString = line.substring(line.indexOf("'") + 1, line.lastIndexOf('\''));
+      
+      final String shortString = line.contains("'") ? 
+            line.substring(line.indexOf("'") + 1, line.lastIndexOf('\'')) :
+               line.substring(line.indexOf("\"") + 1, line.lastIndexOf('"'));   
       final String shortened = shortString.trim();
       return shortened;
    }
