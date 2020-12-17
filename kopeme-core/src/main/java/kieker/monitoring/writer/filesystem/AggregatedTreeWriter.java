@@ -8,8 +8,10 @@ import java.util.logging.Logger;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.controlflow.OperationExecutionRecord;
+import kieker.common.record.controlflow.ReducedOperationExecutionRecord;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
 import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
+import kieker.monitoring.writer.filesystem.aggregateddata.DataNode;
 import kieker.monitoring.writer.filesystem.aggregateddata.FileDataManager;
 
 /**
@@ -30,7 +32,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
 
    private static AggregatedTreeWriter instance;
-   
+
    private final int writeInterval;
    private final StatisticConfig statisticConfig;
    private final int entriesPerFile;
@@ -77,6 +79,12 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
          final int eoi = ignoreEOIs ? -1 : operation.getEoi();
          final AggregatedDataNode node = new AggregatedDataNode(eoi, operation.getEss(), operation.getOperationSignature());
+         final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
+         dataManager.write(node, timeInMikroseconds);
+      }
+      if (record instanceof ReducedOperationExecutionRecord) {
+         ReducedOperationExecutionRecord operation = (ReducedOperationExecutionRecord) record;
+         final DataNode node = new DataNode(operation.getOperationSignature());
          final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
          dataManager.write(node, timeInMikroseconds);
       }
@@ -127,7 +135,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public StatisticConfig getStatisticConfig() {
       return statisticConfig;
    }
-   
+
    public boolean isIgnoreEOI() {
       return ignoreEOIs;
    }

@@ -4,8 +4,4 @@
 		<exclude within="org.junit..*" />
 		<exclude within="junit.framework..*" />
 	</weaver>
-	<aspects>
-		<aspect
-			name="kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull" />
-	</aspects>
 </aspectj>
