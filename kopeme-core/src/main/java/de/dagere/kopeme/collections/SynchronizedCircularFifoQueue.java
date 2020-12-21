@@ -28,6 +28,10 @@ import java.util.Queue;
 /**
  * This is a tweaked version of Commons Collections CircularFifoQueue to check whether a synchronized CircularFifoQueue is faster 
  * than a LinkedBlockingQueue
+ * 
+ * This version works if offer, and and remove are used (to my knowledge also with parallel usage), but I cannot make any
+ * statements about the other methods. Furthermore, you are required to not add any null elements; the implementation does not
+ * check this anymore.
  */
 public class SynchronizedCircularFifoQueue<E> extends AbstractCollection<E>
     implements Queue<E>, Serializable {
