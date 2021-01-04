@@ -22,12 +22,12 @@ public class JUnit3EndlessTest extends KoPeMeTestcase {
 	}
 
 	@Override
-	protected int getWarmupExecutions() {
+	protected int getWarmup() {
 		return 2;
 	}
 
 	@Override
-	protected int getExecutionTimes() {
+	protected int getIterations() {
 		return 10;
 	}
 

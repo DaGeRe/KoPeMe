@@ -12,13 +12,13 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class NoTimeoutOutput {
 
 	@Test
-	@PerformanceTest(warmupExecutions = 5, executionTimes = 5, timeout = 150000)
+	@PerformanceTest(warmup = 5, iterations = 5, timeout = 150000)
 	public void testFastMethod() throws InterruptedException {
 		Thread.sleep(5);
 	}
 
 	@Test
-	@PerformanceTest(warmupExecutions = 5, executionTimes = 5, timeout = 150000)
+	@PerformanceTest(warmup = 5, iterations = 5, timeout = 150000)
 	public void testFastMethod2() throws InterruptedException {
 		Thread.sleep(5);
 	}

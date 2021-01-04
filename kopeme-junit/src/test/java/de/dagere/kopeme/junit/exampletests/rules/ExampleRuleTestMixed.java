@@ -33,7 +33,7 @@ public class ExampleRuleTestMixed {
 	
 
 	@Test
-	@PerformanceTest(executionTimes = 5, timeout = 1000)
+	@PerformanceTest(iterations = 5, timeout = 1000)
 	public void testNormal() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {

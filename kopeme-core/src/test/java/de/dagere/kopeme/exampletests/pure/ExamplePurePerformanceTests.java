@@ -33,7 +33,7 @@ public class ExamplePurePerformanceTests {
       System.out.println("Test finished");
    }
 
-   @PerformanceTest(warmupExecutions = 3, executionTimes = 10, assertions = {
+   @PerformanceTest(warmup = 3, iterations = 10, assertions = {
          @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 1750l) }, minEarlyStopExecutions = 15, deviations = {
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.1),
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.RAMUsageCollector", maxvalue = 0.1),

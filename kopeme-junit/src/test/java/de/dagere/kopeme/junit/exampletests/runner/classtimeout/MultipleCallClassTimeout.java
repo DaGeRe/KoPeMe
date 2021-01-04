@@ -18,19 +18,19 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class MultipleCallClassTimeout {
 
 	@Test
-	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
+	@PerformanceTest(warmup = 10, iterations = 10, timeout = 100000)
 	public void testClassTimeout() throws InterruptedException {
 		Thread.sleep(10);
 	}
 
 	@Test
-	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
+	@PerformanceTest(warmup = 10, iterations = 10, timeout = 100000)
 	public void testClassTimeout2() throws InterruptedException {
 		Thread.sleep(10);
 	}
 
 	@Test
-	@PerformanceTest(warmupExecutions = 10, executionTimes = 10, timeout = 100000)
+	@PerformanceTest(warmup = 10, iterations = 10, timeout = 100000)
 	public void testClassTimeout3() throws InterruptedException {
 		Thread.sleep(10);
 	}

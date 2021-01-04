@@ -23,7 +23,7 @@ public class ExampleClassTimeoutTest {
 	}
 	
 	@Test
-	@PerformanceTest(executionTimes=5, warmupExecutions=2)
+	@PerformanceTest(iterations=5, warmup=2)
 	public void testMethod() {
 		System.out.println("Sleep Example");
 //		Thread.dumpStack();

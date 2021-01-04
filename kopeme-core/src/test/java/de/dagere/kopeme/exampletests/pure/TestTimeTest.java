@@ -4,7 +4,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 
 public class TestTimeTest {
 
-	@PerformanceTest(executionTimes = 20, warmupExecutions = 20)
+	@PerformanceTest(iterations = 20, warmup = 20)
 	public void simpleTest() {
 		System.out.println("This is a very simple test");
 		int i = 10000;

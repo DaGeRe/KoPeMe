@@ -14,7 +14,7 @@ public class ExampleMethodTimeoutTest {
 	private static final Logger log = LogManager.getLogger(ExampleMethodTimeoutTest.class);
 
 	@Test
-	@PerformanceTest(executionTimes = 5, timeout = 500)
+	@PerformanceTest(iterations = 5, timeout = 500)
 	public void testSleep() {
 		log.debug("Sleep Example");
 		try {

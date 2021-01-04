@@ -32,7 +32,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
       super(runnables, method, filename);
-      finalResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors, false);
+      finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
    }
 
    @Override
@@ -76,7 +76,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       try {
          runWarmup();
          if (!isFinished) {
-            runMainExecution(finalResult, "execution ", annotation.executionTimes(), annotation.repetitions());
+            runMainExecution(finalResult, "execution ", annotation.iterations(), annotation.repetitions());
          }
       } catch (final AssertionFailedError t) {
          finalResult.finalizeCollection(t);
@@ -93,9 +93,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
    }
 
    private void runWarmup() throws Throwable {
-      if (annotation.warmupExecutions() > 0) {
-         final TestResult deletableResult = new TestResult(method.getName(), annotation.warmupExecutions(), datacollectors, true);
-         runMainExecution(deletableResult, "warmup execution ", annotation.warmupExecutions(), annotation.repetitions());
+      if (annotation.warmup() > 0) {
+         final TestResult deletableResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, true);
+         runMainExecution(deletableResult, "warmup execution ", annotation.warmup(), annotation.repetitions());
          deletableResult.deleteTempFile();
       }
    }

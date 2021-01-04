@@ -14,7 +14,7 @@ public class JUnitMultiplicationTest {
 	private final static Logger log = LogManager.getLogger(JUnitMultiplicationTest.class);
 
 	@Test
-	@PerformanceTest(executionTimes = 5)
+	@PerformanceTest(iterations = 5)
 	public void testMultiplication() {
 		try {
 			Thread.sleep(100);

@@ -35,7 +35,7 @@ public @interface PerformanceTest {
 	 * 
 	 * @return
 	 */
-	int executionTimes() default 10;
+	int iterations() default 10;
 	
 	/**
 	 * Specify whether to show the start and the end of a test execution.
@@ -58,7 +58,7 @@ public @interface PerformanceTest {
 	 * 
 	 * @return Execution times of the test
 	 */
-	int warmupExecutions() default 1;
+	int warmup() default 1;
 
 	/**
 	 * Optionally specify the timeout after which the test is canceled. The test is canceled after the timeout occurs for all executions, not for a single.

@@ -17,7 +17,7 @@ public class RunConfiguration {
    }
 
    public RunConfiguration(PerformanceTest annotation) {
-      warmupExecutions = annotation.warmupExecutions();
+      warmupExecutions = annotation.warmup();
       repetitions = annotation.repetitions();
       showStart = annotation.showStart();
       redirectToTemp = annotation.redirectToTemp();

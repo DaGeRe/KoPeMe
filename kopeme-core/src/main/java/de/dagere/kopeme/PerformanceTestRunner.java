@@ -56,8 +56,8 @@ public class PerformanceTestRunner {
 
       if (annotation != null) {
          useKieker = annotation.useKieker();
-         executionTimes = annotation.executionTimes();
-         warmupExecutions = annotation.warmupExecutions();
+         executionTimes = annotation.iterations();
+         warmupExecutions = annotation.warmup();
          repetitions = annotation.repetitions();
          minEarlyStopExecutions = annotation.minEarlyStopExecutions();
          timeout = annotation.timeout();

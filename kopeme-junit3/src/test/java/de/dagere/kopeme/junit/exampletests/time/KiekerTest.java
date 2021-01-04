@@ -5,7 +5,7 @@ import de.dagere.kopeme.junit3.KoPeMeTestcase;
 public class KiekerTest extends KoPeMeTestcase{
 	
 	@Override
-	protected int getExecutionTimes() {
+	protected int getIterations() {
 		return 2;
 	}
 	

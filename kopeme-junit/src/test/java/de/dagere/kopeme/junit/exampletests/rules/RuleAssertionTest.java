@@ -13,7 +13,7 @@ public class RuleAssertionTest {
 	public TestRule rule = new KoPeMeRule(this);
 
 	@Test
-	@PerformanceTest(executionTimes = 5, assertions = { @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 200000) })
+	@PerformanceTest(iterations = 5, assertions = { @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 200000) })
 	public void testTimeout() {
 		try {
 			Thread.sleep(300);

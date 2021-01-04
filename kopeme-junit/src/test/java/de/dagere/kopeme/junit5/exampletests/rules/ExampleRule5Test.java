@@ -31,7 +31,7 @@ public class ExampleRule5Test {
 	
 
 	@Test
-	@PerformanceTest(warmupExecutions = 5, executionTimes = 50, timeout = 50000)
+	@PerformanceTest(warmup = 5, iterations = 50, timeout = 50000)
 	public void testNormal() {
 	   System.out.println("Normal");
 		int a = 0;

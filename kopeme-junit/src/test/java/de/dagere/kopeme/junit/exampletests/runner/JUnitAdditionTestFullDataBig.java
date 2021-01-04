@@ -16,7 +16,7 @@ public class JUnitAdditionTestFullDataBig {
    private static final int ADD_COUNT = 10;
    
    @Test
-   @PerformanceTest(executionTimes = 2000, dataCollectors = "ONLYTIME_NOGC")
+   @PerformanceTest(iterations = 2000, dataCollectors = "ONLYTIME_NOGC")
    public void testAddition() {
       int a = 0;
       for (int i = 0; i < ADD_COUNT; i++) {

@@ -11,25 +11,25 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 @RunWith(PerformanceTestRunnerJUnit.class)
 public class OverheadTest {
 
-   @PerformanceTest(executionTimes = 100, warmupExecutions = 0, repetitions = 1, dataCollectors = "ONLYTIME")
+   @PerformanceTest(iterations = 100, warmup = 0, repetitions = 1, dataCollectors = "ONLYTIME")
    @Test
    public void testIterationOverhead() throws Exception {
 
    }
 
-   @PerformanceTest(executionTimes = 1, warmupExecutions = 1000, repetitions = 1, dataCollectors = "ONLYTIME")
+   @PerformanceTest(iterations = 1, warmup = 1000, repetitions = 1, dataCollectors = "ONLYTIME")
    @Test
    public void testWarmupOverhead() throws Exception {
 
    }
 
-   @PerformanceTest(executionTimes = 1, warmupExecutions = 0, repetitions = 1000, dataCollectors = "ONLYTIME")
+   @PerformanceTest(iterations = 1, warmup = 0, repetitions = 1000, dataCollectors = "ONLYTIME")
    @Test
    public void testRepetitionOverhead() throws Exception {
 
    }
 
-   @PerformanceTest(executionTimes = 1000, warmupExecutions = 1000, repetitions = 1000, dataCollectors = "ONLYTIME")
+   @PerformanceTest(iterations = 1000, warmup = 1000, repetitions = 1000, dataCollectors = "ONLYTIME")
    @Test
    public void testCombinedOverhead() throws Exception {
 

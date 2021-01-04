@@ -67,7 +67,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	 * @return Warmup executions
 	 */
 	protected int getWarmupExecutions() {
-		return annoTestcase.warmupExecutions();
+		return annoTestcase.warmup();
 	}
 
 	/**
@@ -76,7 +76,7 @@ public abstract class KoPeMeStaticRigorTestcase extends TestCase {
 	 * @return real executions
 	 */
 	protected int getExecutionTimes() {
-		return annoTestcase.executionTimes();
+		return annoTestcase.iterations();
 	}
 
 	/**

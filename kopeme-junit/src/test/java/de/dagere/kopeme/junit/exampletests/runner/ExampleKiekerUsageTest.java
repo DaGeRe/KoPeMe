@@ -24,7 +24,7 @@ interface MyTestInterface {
 public class ExampleKiekerUsageTest {
 
 	@Test
-	@PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 2, warmupExecutions = 2, useKieker = true)
+	@PerformanceTest(timeout = Integer.MAX_VALUE, iterations = 2, warmup = 2, useKieker = true)
 	public void testAssertionAddition() throws FileNotFoundException {
 		final MyTestInterface impl = new MyTestInterface() {
 		};
@@ -45,7 +45,7 @@ public class ExampleKiekerUsageTest {
 	}
 	
 	@Test
-   @PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 2, warmupExecutions = 2, useKieker = true)
+   @PerformanceTest(timeout = Integer.MAX_VALUE, iterations = 2, warmup = 2, useKieker = true)
    public void testSecondStuffAddition() throws FileNotFoundException {
       System.out.println("Just run a second method, in order to asure, that kieker.map is written twice");
    }

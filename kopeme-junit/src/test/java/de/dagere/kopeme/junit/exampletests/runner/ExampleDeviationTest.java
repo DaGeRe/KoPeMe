@@ -12,7 +12,7 @@ import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 public class ExampleDeviationTest {
 
 	@Test
-	@PerformanceTest(executionTimes = 10, warmupExecutions = 10, timeout = 1000, assertions =
+	@PerformanceTest(iterations = 10, warmup = 10, timeout = 1000, assertions =
 	{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000),
 			@Assertion(collectorname = "de.dagere.kopeme.datacollection.CPUUsageCollector", maxvalue = 50) })
 	public void testAssertionAddition() {

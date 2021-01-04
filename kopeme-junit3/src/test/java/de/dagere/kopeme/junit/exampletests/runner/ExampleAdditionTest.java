@@ -25,12 +25,12 @@ public class ExampleAdditionTest extends KoPeMeTestcase {
 	}
 
 	@Override
-	protected int getWarmupExecutions() {
+	protected int getWarmup() {
 		return 50;
 	}
 
 	@Override
-	protected int getExecutionTimes() {
+	protected int getIterations() {
 		return 10;
 	}
 

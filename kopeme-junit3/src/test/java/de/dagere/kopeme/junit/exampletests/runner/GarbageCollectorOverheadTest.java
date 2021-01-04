@@ -8,12 +8,12 @@ import de.dagere.kopeme.junit3.KoPeMeTestcase;
 public class GarbageCollectorOverheadTest extends KoPeMeTestcase {
 
 	@Override
-	protected int getWarmupExecutions() {
+	protected int getWarmup() {
 		return 2;
 	}
 
 	@Override
-	protected int getExecutionTimes() {
+	protected int getIterations() {
 		// TODO Auto-generated method stub
 		return 10;
 	}

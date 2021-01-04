@@ -56,7 +56,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          public void run() {
             try {
                runWarmup(callee);
-               final TestResult tr = executeSimpleTest(callee, annotation.executionTimes());
+               final TestResult tr = executeSimpleTest(callee, annotation.iterations());
                tr.checkValues();
                if (!assertationvalues.isEmpty()) {
                   LOG.info("Checking: " + assertationvalues.size());
@@ -128,13 +128,13 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
     * @throws Throwable Any exception that occurs during the test
     */
    private void runWarmup(final PerformanceJUnitStatement callee) throws Throwable {
-      final TestResult tr = new TestResult(methodName, annotation.warmupExecutions(), datacollectors, true);
+      final TestResult tr = new TestResult(methodName, annotation.warmup(), datacollectors, true);
 
       if (!PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "warmup execution ", annotation.warmupExecutions(), callee, configuration.getRepetitions());
+         runMainExecution(tr, "warmup execution ", annotation.warmup(), callee, configuration.getRepetitions());
       } catch (final Throwable t) {
          t.printStackTrace();
          tr.finalizeCollection(t);

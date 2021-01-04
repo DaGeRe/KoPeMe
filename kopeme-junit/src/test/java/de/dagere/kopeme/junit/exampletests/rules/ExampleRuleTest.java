@@ -32,7 +32,7 @@ public class ExampleRuleTest {
 	
 
 	@Test
-	@PerformanceTest(executionTimes = 50, timeout = 500)
+	@PerformanceTest(iterations = 50, timeout = 500)
 	public void testNormal() {
 		int a = 0;
 		for (int i = 0; i < 10000; i++) {

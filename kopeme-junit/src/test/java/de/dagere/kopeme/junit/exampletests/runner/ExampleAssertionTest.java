@@ -28,7 +28,7 @@ public class ExampleAssertionTest {
    public final int MAX_VALUE = 100;
    
    @Test
-   @PerformanceTest(timeout = Integer.MAX_VALUE, executionTimes = 10, warmupExecutions = 10, deviations = {
+   @PerformanceTest(timeout = Integer.MAX_VALUE, iterations = 10, warmup = 10, deviations = {
          @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 0.01) }, assertions = {
                @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15) })
    public void testAssertionAddition() throws FileNotFoundException {
@@ -63,7 +63,7 @@ public class ExampleAssertionTest {
 
    @Ignore
    @Test
-   @PerformanceTest(executionTimes = 10, warmupExecutions = 10, assertions = {
+   @PerformanceTest(iterations = 10, warmup = 10, assertions = {
          @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) }, deviations = {
                @MaximalRelativeStandardDeviation(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) }, useKieker = true)
    public void testAssertionAdditionDoubleTest() {

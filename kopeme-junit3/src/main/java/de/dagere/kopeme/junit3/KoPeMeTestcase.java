@@ -64,8 +64,8 @@ public abstract class KoPeMeTestcase extends TestCase {
     * 
     * @return Warmup executions
     */
-   protected int getWarmupExecutions() {
-      return annoTestcase.warmupExecutions();
+   protected int getWarmup() {
+      return annoTestcase.warmup();
    }
 
    /**
@@ -82,8 +82,8 @@ public abstract class KoPeMeTestcase extends TestCase {
     * 
     * @return real executions
     */
-   protected int getExecutionTimes() {
-      return annoTestcase.executionTimes();
+   protected int getIterations() {
+      return annoTestcase.iterations();
    }
 
    /**
@@ -138,7 +138,7 @@ public abstract class KoPeMeTestcase extends TestCase {
    public void runBare() throws InterruptedException, IOException {
       LOG.trace("Initialize JUnit-3-KoPeMe-Testcase");
 
-      final int warmupExecutions = getWarmupExecutions(), executionTimes = getExecutionTimes();
+      final int warmupExecutions = getWarmup(), executionTimes = getIterations();
       final boolean fullData = logFullData();
       final long timeoutTime = getMaximalTime();
 
@@ -172,7 +172,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             return isFinished;
          }
       };
-      RunConfiguration configuration = new RunConfiguration(getWarmupExecutions(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
+      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
       try {
          final boolean finished = tbe.execute();

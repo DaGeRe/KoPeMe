@@ -12,12 +12,12 @@ public class TimeRunnerExample extends KoPeMeTestcase {
 	}
 	
 	@Override
-	protected int getWarmupExecutions() {
+	protected int getWarmup() {
 		return 0;
 	}
 	
 	@Override
-	protected int getExecutionTimes() {
+	protected int getIterations() {
 		return 18000;
 	}
 	

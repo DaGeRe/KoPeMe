@@ -25,7 +25,7 @@ public class ExampleRuleTimeoutTest {
 	}
 	
 	@Test(timeout = 400)
-	@PerformanceTest(executionTimes = 5, timeout = 1000)
+	@PerformanceTest(iterations = 5, timeout = 1000)
 	public void testTimeout() {
 		try {
 			Thread.sleep(300);
