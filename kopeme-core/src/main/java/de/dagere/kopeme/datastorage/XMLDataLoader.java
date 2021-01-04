@@ -15,6 +15,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
@@ -74,6 +75,37 @@ public final class XMLDataLoader implements DataLoader {
          final Testcases tc = data.getTestcases();
          LOG.trace("TC: {}", tc);
          tc.setClazz(file.getName());
+      }
+      updateFields();
+   }
+
+   /**
+    * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup
+    * For the beginning, fields will be changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
+    */
+   private void updateFields() {
+      for (TestcaseType testcase : data.getTestcases().getTestcase()) {
+         for (Datacollector collector : testcase.getDatacollector()) {
+            for (Chunk chunk : collector.getChunk()) {
+               for (Result result : chunk.getResult()) {
+                  updateResultFields(result);
+               }
+            }
+            for (Result result : collector.getResult()) {
+               updateResultFields(result);
+            }
+         }
+      }
+   }
+
+   private void updateResultFields(Result result) {
+      if (result.getWarmup() == 0 && result.getWarmupExecutions() != 0) {
+         result.setWarmup(result.getWarmupExecutions());
+         result.setWarmupExecutions(0);
+      }
+      if (result.getIterations() == 0 && result.getExecutionTimes() != 0) {
+         result.setIterations(result.getExecutionTimes());
+         result.setExecutionTimes(0);
       }
    }
 
@@ -158,7 +190,7 @@ public final class XMLDataLoader implements DataLoader {
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
          for (Result result : testcase.getDatacollector().get(0).getResult()) {
             if (result.getFulldata().getFileName() != null) {
-               Fulldata replacedFulldata = readFulldata(dataFile, (int) (result.getExecutionTimes() / 2), testcase, result);
+               Fulldata replacedFulldata = readFulldata(dataFile, (int) (result.getIterations() / 2), testcase, result);
                result.setFulldata(replacedFulldata);
             }
          }

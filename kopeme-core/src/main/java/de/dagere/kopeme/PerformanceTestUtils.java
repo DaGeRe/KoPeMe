@@ -126,8 +126,8 @@ public final class PerformanceTestUtils {
       result.setDeviation(relativeStandardDeviation);
       result.setMin(min);
       result.setMax(max);
-      result.setWarmupExecutions(data.getConfiguration().getWarmupExecutions());
-      result.setExecutionTimes(tr.getRealExecutions());
+      result.setWarmup(data.getConfiguration().getWarmupExecutions());
+      result.setIterations(tr.getRealExecutions());
       result.setRepetitions(data.getConfiguration().getRepetitions());
       result.setRedirectToNull(data.getConfiguration().isRedirectToNull());
       result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());

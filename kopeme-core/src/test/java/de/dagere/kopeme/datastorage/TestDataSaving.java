@@ -62,9 +62,9 @@ public class TestDataSaving {
       result.setMin(5D);
       result.setMax(15D);
       result.setDeviation(3.5);
-      result.setWarmupExecutions(15);
+      result.setWarmup(15);
       result.setRepetitions(16);
-      result.setExecutionTimes(17);
+      result.setIterations(17);
       result.setJavaVersion("1.8");
       result.setShowStart(false);
       result.setRedirectToNull(true);
@@ -103,9 +103,9 @@ public class TestDataSaving {
       Assert.assertEquals(result2.getMin(), 5L, 0.01);
       Assert.assertEquals(result2.getMax(), 15L, 0.01);
       Assert.assertEquals(result2.getDeviation(), 3.5, 0.01);
-      Assert.assertEquals(result2.getWarmupExecutions(), 15, 0.01);
+      Assert.assertEquals(result2.getWarmup(), 15, 0.01);
       Assert.assertEquals(result2.getRepetitions(), 16, 0.01);
-      Assert.assertEquals(result2.getExecutionTimes(), 17, 0.01);
+      Assert.assertEquals(result2.getIterations(), 17, 0.01);
       for (int i = 0; i < 5; i++) {
          Value value2 = result2.getFulldata().getValue().get(i);
          Assert.assertEquals(i, value2.getValue());
