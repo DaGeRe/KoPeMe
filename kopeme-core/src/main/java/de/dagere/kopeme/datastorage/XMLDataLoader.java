@@ -76,14 +76,14 @@ public final class XMLDataLoader implements DataLoader {
          LOG.trace("TC: {}", tc);
          tc.setClazz(file.getName());
       }
-      updateFields();
+      updateFields(data);
    }
 
    /**
     * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup
     * For the beginning, fields will be changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
     */
-   private void updateFields() {
+   private static void updateFields(Kopemedata data) {
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
          for (Datacollector collector : testcase.getDatacollector()) {
             for (Chunk chunk : collector.getChunk()) {
@@ -98,7 +98,7 @@ public final class XMLDataLoader implements DataLoader {
       }
    }
 
-   private void updateResultFields(Result result) {
+   private static void updateResultFields(Result result) {
       if (result.getWarmup() == 0 && result.getWarmupExecutions() != 0) {
          result.setWarmup(result.getWarmupExecutions());
          result.setWarmupExecutions(0);
@@ -181,6 +181,7 @@ public final class XMLDataLoader implements DataLoader {
    public static Kopemedata loadData(final File dataFile) throws JAXBException {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
+      updateFields(data);
       return data;
    }
    
