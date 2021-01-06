@@ -67,20 +67,10 @@ public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord  {
 	 * 
 	 * @param operationSignature
 	 *            operationSignature
-	 * @param sessionId
-	 *            sessionId
-	 * @param traceId
-	 *            traceId
 	 * @param tin
 	 *            tin
 	 * @param tout
 	 *            tout
-	 * @param hostname
-	 *            hostname
-	 * @param eoi
-	 *            eoi
-	 * @param ess
-	 *            ess
 	 */
 	public ReducedOperationExecutionRecord(final String operationSignature, final long tin, final long tout) {
 		this.operationSignature = operationSignature == null?NO_OPERATION_SIGNATURE:operationSignature;
