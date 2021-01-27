@@ -74,7 +74,8 @@ public class AggregatedDataReader {
       final long n = Long.parseLong(parts[6]);
       final double min = Double.parseDouble(parts[7]);
       final double max = Double.parseDouble(parts[8]);
-      final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, mean * n);
+      final double sum = mean * n;
+      final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, sum);
       return summary;
    }
 }
