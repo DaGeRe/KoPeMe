@@ -18,7 +18,6 @@
 		<additionalparam>-Xdoclint:none</additionalparam>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<core.version>0.11-SNAPSHOT</core.version>
 		<java.version>1.8</java.version>
 		<kieker.version>1.15-SNAPSHOT</kieker.version>
 		<checkstyle.version>8.38</checkstyle.version>

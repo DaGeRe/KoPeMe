@@ -20,15 +20,10 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.common.record.controlflow.ReducedOperationExecutionRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
-import kieker.monitoring.core.registry.ControlFlowRegistry;
-import kieker.monitoring.core.registry.SessionRegistry;
 import kieker.monitoring.probe.aspectj.AbstractAspectJProbe;
 import kieker.monitoring.timer.ITimeSource;
 
@@ -39,7 +34,6 @@ import kieker.monitoring.timer.ITimeSource;
  */
 @Aspect
 public abstract class AbstractReducedOperationExecutionAspect extends AbstractAspectJProbe {
-   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractReducedOperationExecutionAspect.class);
 
    private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
    private static final ITimeSource TIME = CTRLINST.getTimeSource();
