@@ -91,18 +91,21 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    }
 
    @Override
-   public void onTerminating() {
+   public synchronized void onTerminating() {
       try {
-         System.out.println("Finishing AggregatedTreeWriter");
-         dataManager.finish();
-         writerThread.interrupt();
-         dataManager.finalWriting();
+         if (writerThread != null) {
+            System.out.println("Finishing AggregatedTreeWriter");
+            dataManager.finish();
+            writerThread.interrupt();
+            dataManager.finalWriting();
+         }
       } catch (final IOException e) {
          e.printStackTrace();
       }
    }
 
-   public void setFolder(final File writingFolder) throws IOException {
+   @Override
+   public synchronized void setFolder(final File writingFolder) throws IOException {
       LOG.info("Writing to: " + writingFolder);
       final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
@@ -114,10 +117,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    public Thread getWriterThread() {
       return writerThread;
-   }
-
-   public void setWriterThread(final Thread writerThread) {
-      this.writerThread = writerThread;
    }
 
    public int getWriteInterval() {
