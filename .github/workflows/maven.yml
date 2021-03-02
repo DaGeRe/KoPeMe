@@ -5,11 +5,11 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main, develop ] # build all relevant branches; switching to main is intended
   pull_request:
-    branches: [ master ]
+    branches: [ master, main, develop ]
   workflow_dispatch:
-    branches: [ master ]
+    branches: [ master, main, develop ]
 
 jobs:
   build:
