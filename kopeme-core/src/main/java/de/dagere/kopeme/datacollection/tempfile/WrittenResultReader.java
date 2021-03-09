@@ -34,24 +34,24 @@ public class WrittenResultReader {
    protected Map<String, SummaryStatistics> collectorSummaries = null;
    private Map<Integer, String> collectorsIndexed;
 
-   public WrittenResultReader(File file) {
+   public WrittenResultReader(final File file) {
       this.file = file;
    }
 
-   public void read(Throwable exception, Set<String> keys) {
+   public void read(final Throwable exception, final Set<String> keys) {
       initSummaries(keys);
       readValues();
       checkValues(exception);
    }
 
-   private void checkValues(Throwable exception) {
+   private void checkValues(final Throwable exception) {
       LOG.debug("Count of executions: {}  Values: {}", executionStartTimes.size(), realValues.size());
       if (executionStartTimes.size() != realValues.size()) {
          throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), exception);
       }
    }
 
-   public void readStreaming(Throwable thrownException, Set<String> keys) {
+   public void readStreaming(final Throwable thrownException, final Set<String> keys) {
       finalValues = new HashMap<>();
       collectorsIndexed = new HashMap<>();
       initSummaries(keys);
@@ -84,7 +84,7 @@ public class WrittenResultReader {
       }
    }
 
-   private void initSummaries(Set<String> keys) {
+   private void initSummaries(final Set<String> keys) {
       collectorSummaries = new HashMap<>();
       for (String key : keys) {
          collectorSummaries.put(key, new SummaryStatistics());
@@ -130,7 +130,7 @@ public class WrittenResultReader {
       }
    }
 
-   public Fulldata createFulldata(int warmup, String currentDatacollector) {
+   public Fulldata createFulldata(final int warmup, final String currentDatacollector) {
       Fulldata result = new Fulldata();
       for (int i = warmup; i < realValues.size(); i++) {
          final Long executionStartTime = executionStartTimes.get(i);
@@ -167,7 +167,7 @@ public class WrittenResultReader {
       return finalValues;
    }
 
-   public void clear(String key) {
+   public void clear(final String key) {
       if (realValues != null) {
          for (int i = 0; i < realValues.size(); i++) {
             realValues.get(i).remove(key);
@@ -177,7 +177,7 @@ public class WrittenResultReader {
 
    public void deleteTempFile() {
       if (!file.delete()) {
-         System.out.println("Warning: File " + file.getAbsolutePath() + " could not be deleted!");
+         System.out.println("Warning: File " + file.getAbsolutePath() + " could not be deleted, existing: " + file.exists() + "!");
       }
    }
 }

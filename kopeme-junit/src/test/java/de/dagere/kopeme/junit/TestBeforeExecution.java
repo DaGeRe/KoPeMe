@@ -51,8 +51,6 @@ public class TestBeforeExecution {
       });
    }
 
-   // ,
-   // {ExampleBeforeTestRunner.class, "testMethod"}
    @Parameter(0)
    public Class<?> junitTestClass;
 

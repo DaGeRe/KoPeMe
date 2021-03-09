@@ -16,7 +16,7 @@ public class ResultTempWriter {
    private final File tempFile;
    private final BufferedWriter tempFileWriter;
 
-   public ResultTempWriter(boolean warmup) throws IOException {
+   public ResultTempWriter(final boolean warmup) throws IOException {
       tempFile = Files.createTempFile(warmup ? "kopeme-warmup-" : "kopeme-", ".tmp").toFile();
       tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
@@ -65,6 +65,7 @@ public class ResultTempWriter {
       try {
          tempFileWriter.flush();
          tempFileWriter.close();
+         System.out.println("Flusing to " + tempFile.getAbsolutePath() + " finished");
       } catch (IOException e) {
          e.printStackTrace();
       }
