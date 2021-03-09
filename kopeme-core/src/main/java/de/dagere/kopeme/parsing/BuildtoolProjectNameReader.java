@@ -79,7 +79,7 @@ public class BuildtoolProjectNameReader {
       final File[] pomFiles = directory.listFiles(new FileFilter() {
          @Override
          public boolean accept(final File pathname) {
-            return filename.equals(pathname.getName()) ;
+            return filename.equals(pathname.getName());
          }
       });
       return pomFiles;
@@ -91,7 +91,7 @@ public class BuildtoolProjectNameReader {
    public String getProjectName() {
       return !projectInfo.getGroupId().equals("") ? projectInfo.getGroupId() + "/" + projectInfo.getArtifactId() : projectInfo.getArtifactId();
    }
-   
+
    public String getArtifactId() {
       return projectInfo.getArtifactId();
    }
@@ -101,10 +101,8 @@ public class BuildtoolProjectNameReader {
    }
 
    private String readGradleProperty(final String line) {
-      
-      final String shortString = line.contains("'") ? 
-            line.substring(line.indexOf("'") + 1, line.lastIndexOf('\'')) :
-               line.substring(line.indexOf("\"") + 1, line.lastIndexOf('"'));   
+
+      final String shortString = line.contains("'") ? line.substring(line.indexOf("'") + 1, line.lastIndexOf('\'')) : line.substring(line.indexOf("\"") + 1, line.lastIndexOf('"'));
       final String shortened = shortString.trim();
       return shortened;
    }
@@ -199,8 +197,8 @@ public class BuildtoolProjectNameReader {
 
    private ProjectInfo readMaven(final File pomXmlFile, ProjectInfo result) {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
-      try {
-         final Model model = reader.read(new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset()));
+      try (InputStreamReader inputStream = new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset())) {
+         final Model model = reader.read(inputStream);
          final String groupId = getGroupid(model);
          result = new ProjectInfo(model.getArtifactId(), groupId);
          // return groupId + File.separator + model.getArtifactId();
