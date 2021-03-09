@@ -17,8 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy: 
         matrix:
+          os: [ubuntu-latest, windows-latest]
           java: [ 1.8, 11, 15 ]
         fail-fast: false
+    runs-on: ${{ matrix.os }}
     name: Java ${{ matrix.java }} sample
     steps:
     - uses: actions/checkout@v2
