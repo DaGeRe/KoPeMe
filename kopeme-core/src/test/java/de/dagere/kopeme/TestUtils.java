@@ -16,18 +16,18 @@ public class TestUtils {
       if (file.exists()) {
          if (!file.isDirectory()) {
             if (!file.delete()) {
-               throw new RuntimeException("Could not delete " + file.getAbsolutePath());
+               throw new RuntimeException("Could not delete " + file.getAbsolutePath() + " Exists: " + file.exists());
             }
          } else {
             for (final File subfile : file.listFiles()) {
                deleteRecursively(subfile);
             }
             if (!file.delete()) {
-               throw new RuntimeException("Could not delete " + file.getAbsolutePath());
+               throw new RuntimeException("Could not delete " + file.getAbsolutePath() + " Exists: " + file.exists());
             }
-         } 
+         }
       }
-      
+
    }
 
    public static void cleanAndSetKoPeMeOutputFolder() {
