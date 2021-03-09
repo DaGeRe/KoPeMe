@@ -29,7 +29,7 @@ public class TestChangeableFolderSyncFsWriter {
    private static final File NEW_FOLDER_AT_RUNTIME2 = new File("target" + File.separator + "kieker_testresults_changed_folder2");
 
    @BeforeClass
-   public static void setupClass() {
+   public static void setupClass() throws IOException {
       KiekerTestHelper.emptyFolder(DEFAULT_FOLDER);
       KiekerTestHelper.emptyFolder(NEW_FOLDER_AT_RUNTIME);
       KiekerTestHelper.emptyFolder(NEW_FOLDER_AT_RUNTIME2);

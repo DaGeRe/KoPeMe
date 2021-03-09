@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
@@ -71,7 +72,7 @@ public class KiekerTestHelper {
       return measureFile;
    }
 
-   public static void emptyFolder(final File folder) {
+   public static void emptyFolder(final File folder) throws IOException {
       TestUtils.deleteRecursively(folder);
       folder.mkdirs();
       for (File containedFile : folder.listFiles()) {

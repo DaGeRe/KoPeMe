@@ -20,7 +20,7 @@ import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 public class TestAggregatedMultifileWriting {
 
    @Before
-   public void setupClass() {
+   public void setupClass() throws IOException {
       KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
    }
 

@@ -1,6 +1,7 @@
 package de.dagere.kopeme.example.tests;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +26,7 @@ public class PureKoPeMeTest {
 	private static final Logger log = LogManager.getLogger(PureKoPeMeTest.class);
 
 	@BeforeClass
-	public static void setupClass(){
+	public static void setupClass() throws IOException{
 		TestUtils.cleanAndSetKoPeMeOutputFolder();
 	}
 	
