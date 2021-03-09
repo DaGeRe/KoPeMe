@@ -74,6 +74,9 @@ public class KiekerTestHelper {
    public static void emptyFolder(final File folder) {
       TestUtils.deleteRecursively(folder);
       folder.mkdirs();
+      for (File containedFile : folder.listFiles()) {
+         LOG.error("Unexpected file: {}", containedFile);
+      }
       Assert.assertEquals(0, folder.listFiles().length);
    }
 }
