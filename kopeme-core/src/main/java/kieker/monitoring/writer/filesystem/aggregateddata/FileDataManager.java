@@ -1,18 +1,16 @@
 package kieker.monitoring.writer.filesystem.aggregateddata;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
 
-public class FileDataManager implements Runnable {
+public class FileDataManager implements Runnable, Closeable {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
@@ -121,8 +119,11 @@ public class FileDataManager implements Runnable {
 
    }
 
-   public void finalWriting() throws JsonGenerationException, JsonMappingException, IOException {
+   @Override
+   public void close() throws IOException {
       System.out.println("Writing finally...");
       writeAll();
+      currentWriter.close();
+      currentWriter = null;
    }
 }

@@ -97,7 +97,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
             System.out.println("Finishing AggregatedTreeWriter");
             dataManager.finish();
             writerThread.interrupt();
-            dataManager.finalWriting();
+            dataManager.close();
          }
       } catch (final IOException e) {
          e.printStackTrace();
