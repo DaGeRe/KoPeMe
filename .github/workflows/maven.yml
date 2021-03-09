@@ -19,7 +19,7 @@ jobs:
           java: [ 1.8, 11, 15 ]
         fail-fast: false
     runs-on: ${{ matrix.os }}
-    name: Java ${{ matrix.java }} sample
+    name: Java ${{ matrix.java }} OS ${{ matrix.os }} sample
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
