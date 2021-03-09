@@ -19,7 +19,7 @@ public class FolderProviderTest {
 
 	private FolderProvider testable;
 
-	private final String testClasses = "target/test-classes";
+	private final String testClasses = "target" + File.separator + "test-classes";
 	
 	@BeforeClass
 	public static void setupClass(){
@@ -39,7 +39,7 @@ public class FolderProviderTest {
 		assertEquals(fixture, testable.getFolderForCurrentPerformanceresults(fileName));
 	}
 
-	private String createFixturePathForTestclass(String fileName) {
+	private String createFixturePathForTestclass(final String fileName) {
 		return testClasses + File.separator + DEFAULT_PROJECTNAME + File.separator + fileName + File.separator + FolderProvider.MEASURE_TIME;
 	}
 	

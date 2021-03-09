@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 
 import de.dagere.kopeme.TestUtils;
 import kieker.common.record.controlflow.OperationExecutionRecord;
@@ -18,7 +19,7 @@ public class KiekerTestHelper {
 
    private static Logger LOG = LogManager.getLogger(KiekerTestHelper.class);
 
-   public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature, int eoi, int ess) {
+   public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature, final int eoi, final int ess) {
       final OperationExecutionRecord e = new OperationExecutionRecord(
             methodSignature,
             OperationExecutionRecord.NO_SESSION_ID,
@@ -73,5 +74,6 @@ public class KiekerTestHelper {
    public static void emptyFolder(final File folder) {
       TestUtils.deleteRecursively(folder);
       folder.mkdirs();
+      Assert.assertEquals(0, folder.listFiles().length);
    }
 }
