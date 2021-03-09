@@ -13,20 +13,18 @@ public class TestUtils {
    public static final String TEST_ADDITION = "testAddition";
 
    public static void deleteRecursively(final File file) {
-      if (file.isFile()) {
+      if (!file.isDirectory()) {
          if (!file.delete()) {
             throw new RuntimeException("Could not delete " + file.getAbsolutePath());
          }
-      } else if (file.isDirectory()) {
+      } else {
          for (final File subfile : file.listFiles()) {
             deleteRecursively(subfile);
          }
          if (!file.delete()) {
             throw new RuntimeException("Could not delete " + file.getAbsolutePath());
          }
-      } else {
-         throw new RuntimeException("Neither file nor directory " + file.getAbsolutePath());
-      }
+      } 
    }
 
    public static void cleanAndSetKoPeMeOutputFolder() {
