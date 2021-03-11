@@ -45,6 +45,6 @@ jobs:
       with:
         name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
         path: |
-          dependency/target/surefire-reports/*
-          measurement/target/surefire-reports/*
-          analysis/target/surefire-reports/*
+          kopeme-core/target/surefire-reports/*
+          kopeme-junit/target/surefire-reports/*
+          kopeme-junit3/target/surefire-reports/*
