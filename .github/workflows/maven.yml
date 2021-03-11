@@ -34,8 +34,17 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
       run: mvn -B verify --file pom.xml 
-    - name: Publish Test Report ${{ matrix.java }}
+    - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}
       if: ${{ always() }}
       uses: scacap/action-surefire-report@v1
       with:
          github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Unit Test Results
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
+        path: |
+          dependency/target/surefire-reports/*
+          measurement/target/surefire-reports/*
+          analysis/target/surefire-reports/*
