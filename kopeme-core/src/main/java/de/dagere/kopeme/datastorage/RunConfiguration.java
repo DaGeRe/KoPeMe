@@ -5,24 +5,27 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 public class RunConfiguration {
    private final int warmupExecutions, repetitions;
    private final boolean showStart, redirectToTemp, redirectToNull;
-   private boolean saveValues;
+   private boolean saveValues, executeBeforeClassInMeasurement;
    
-   public RunConfiguration(int warmupExecutions, int repetitions, boolean showStart, boolean redirectToTemp, boolean redirectToNull, boolean saveValues) {
+   public RunConfiguration(final int warmupExecutions, final int repetitions, final boolean showStart, final boolean redirectToTemp, 
+         final boolean redirectToNull, final boolean saveValues, final boolean executeBeforeClassInMeasurement) {
       this.warmupExecutions = warmupExecutions;
       this.repetitions = repetitions;
       this.showStart = showStart;
       this.redirectToTemp = redirectToTemp;
       this.redirectToNull = redirectToNull;
       this.saveValues = saveValues;
+      this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
 
-   public RunConfiguration(PerformanceTest annotation) {
+   public RunConfiguration(final PerformanceTest annotation) {
       warmupExecutions = annotation.warmup();
       repetitions = annotation.repetitions();
       showStart = annotation.showStart();
       redirectToTemp = annotation.redirectToTemp();
       redirectToNull = annotation.redirectToNull();
       saveValues = annotation.logFullData();
+      executeBeforeClassInMeasurement = annotation.executeBeforeClassInMeasurement();
    }
 
    public int getWarmupExecutions() {
@@ -49,7 +52,7 @@ public class RunConfiguration {
       return saveValues;
    }
    
-   public void setSaveValues(boolean saveValues) {
+   public void setSaveValues(final boolean saveValues) {
       this.saveValues = saveValues;
    }
 }

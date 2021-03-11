@@ -19,7 +19,7 @@ public class TestSaveableTestData {
 	private static final String MY_TEST_CASE_NAME = "myTestCaseName";
 	private static final TestResult COMPLEX = new TestResult(MY_TEST_CASE_NAME, 1, DataCollectorList.STANDARD, false);
 	private static final boolean SAVE_VALUES = true;
-	private static final RunConfiguration exampleConfig = new RunConfiguration(0, 1, false, true, true, SAVE_VALUES);
+	private static final RunConfiguration exampleConfig = new RunConfiguration(0, 1, false, true, true, SAVE_VALUES, false);
 
 	@Test
 	public void testFailureData() throws Exception {

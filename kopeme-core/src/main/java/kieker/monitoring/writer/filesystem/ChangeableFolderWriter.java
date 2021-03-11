@@ -109,10 +109,12 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
    @Override
    public void onTerminating() {
       if (currentWriter != null) {
+         LOG.info("Terminating writing");
          currentWriter.onTerminating();
       }
    }
 
+   @Override
    public void setFolder(final File writingFolder) {
       if (currentWriter != null) {
          currentWriter.onTerminating();

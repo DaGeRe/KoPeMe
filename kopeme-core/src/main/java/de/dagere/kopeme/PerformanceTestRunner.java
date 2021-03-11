@@ -73,7 +73,7 @@ public class PerformanceTestRunner {
          }
          configuration = new RunConfiguration(annotation);
       } else {
-         configuration = new RunConfiguration(5, 1, false, false, false, true);
+         configuration = new RunConfiguration(5, 1, false, false, false, true, false);
          useKieker = false;
       }
 

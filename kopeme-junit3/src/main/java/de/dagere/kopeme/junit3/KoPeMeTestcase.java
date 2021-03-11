@@ -3,7 +3,6 @@ package de.dagere.kopeme.junit3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
@@ -106,6 +105,10 @@ public abstract class KoPeMeTestcase extends TestCase {
    protected boolean redirectToNull() {
       return false;
    }
+   
+   protected boolean executeBeforeClassInMeasurement() {
+      return false;
+   }
 
    /**
     * Returns the time all testcase executions may take *in sum* in ms. -1 means unbounded; Standard is set to 120 s.
@@ -172,7 +175,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             return isFinished;
          }
       };
-      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData());
+      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData(), executeBeforeClassInMeasurement());
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
       try {
          final boolean finished = tbe.execute();

@@ -45,6 +45,8 @@ public @interface PerformanceTest {
 	boolean redirectToTemp() default false;
 	
 	boolean redirectToNull() default false;
+	
+	boolean executeBeforeClassInMeasurement() default false;
 
 	/**
 	 * Optionally specify count of repetitions of same test.
