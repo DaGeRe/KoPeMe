@@ -124,6 +124,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       final String absolutePath = writingFolder.getAbsolutePath();
       configuration.setProperty(CONFIG_PATH, absolutePath);
       final AbstractMonitoringWriter writer = createWriter(configuration);
+      LOG.info("New writer " + System.identityHashCode(writer) + " created; old writer " + System.identityHashCode(currentWriter));
       for (final KiekerMetadataRecord record : mappingRecords) {
          LOG.info("Adding registry record: " + record);
          writer.writeMonitoringRecord(record);
