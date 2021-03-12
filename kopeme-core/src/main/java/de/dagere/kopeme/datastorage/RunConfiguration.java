@@ -6,8 +6,8 @@ public class RunConfiguration {
    private final int warmupExecutions, repetitions;
    private final boolean showStart, redirectToTemp, redirectToNull;
    private boolean saveValues, executeBeforeClassInMeasurement;
-   
-   public RunConfiguration(final int warmupExecutions, final int repetitions, final boolean showStart, final boolean redirectToTemp, 
+
+   public RunConfiguration(final int warmupExecutions, final int repetitions, final boolean showStart, final boolean redirectToTemp,
          final boolean redirectToNull, final boolean saveValues, final boolean executeBeforeClassInMeasurement) {
       this.warmupExecutions = warmupExecutions;
       this.repetitions = repetitions;
@@ -16,6 +16,9 @@ public class RunConfiguration {
       this.redirectToNull = redirectToNull;
       this.saveValues = saveValues;
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+      if (executeBeforeClassInMeasurement) {
+         throw new RuntimeException("Not implemented yet - please set executeBeforeClassInMeasurement to false");
+      }
    }
 
    public RunConfiguration(final PerformanceTest annotation) {
@@ -26,6 +29,9 @@ public class RunConfiguration {
       redirectToNull = annotation.redirectToNull();
       saveValues = annotation.logFullData();
       executeBeforeClassInMeasurement = annotation.executeBeforeClassInMeasurement();
+      if (executeBeforeClassInMeasurement) {
+         throw new RuntimeException("Not implemented yet - please set executeBeforeClassInMeasurement to false");
+      }
    }
 
    public int getWarmupExecutions() {
@@ -51,7 +57,7 @@ public class RunConfiguration {
    public boolean isSaveValues() {
       return saveValues;
    }
-   
+
    public void setSaveValues(final boolean saveValues) {
       this.saveValues = saveValues;
    }

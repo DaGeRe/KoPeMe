@@ -14,6 +14,7 @@ public class TestBuildtoolProjectNameReader {
 
    public static final String PATH_TO_TESTPOM_SUBFOLDER = "src/test/resources/pomreader/test";
    public static final String PATH_TO_GRADLE_SUBFOLDER = "src/test/resources/gradlereader/test";
+   public static final String PATH_TO_GRADLE_PROJECTGROUP = "src/test/resources/gradlereader_projectgroup";
    public static final String PATH_TO_ANT_SUBFOLDER = "src/test/resources/antreader/test";
    public static final String PATH_TO_ANT_SUBFOLDER_NONAME = "src/test/resources/antreader_noname/test";
    
@@ -33,6 +34,13 @@ public class TestBuildtoolProjectNameReader {
       final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
       assertTrue("build.gradle should be found", testable.searchBuildfile(new File(PATH_TO_GRADLE_SUBFOLDER), 1));
       assertEquals(GRADLE_EXPECTED_PROJECT_NAME, testable.getProjectName());
+   }
+	
+	@Test
+   public void testGradleProjectgroup() throws Exception {
+      final BuildtoolProjectNameReader testable = new BuildtoolProjectNameReader();
+      assertTrue("build.gradle should be found", testable.searchBuildfile(new File(PATH_TO_GRADLE_PROJECTGROUP), 1));
+      assertEquals("projectgroup/gradlereader_projectgroup", testable.getProjectName());
    }
 	
 	@Test

@@ -101,8 +101,14 @@ public class BuildtoolProjectNameReader {
    }
 
    private String readGradleProperty(final String line) {
-
-      final String shortString = line.contains("'") ? line.substring(line.indexOf("'") + 1, line.lastIndexOf('\'')) : line.substring(line.indexOf("\"") + 1, line.lastIndexOf('"'));
+      final String shortString;
+      if (line.contains("'")) {
+         shortString = line.substring(line.indexOf("'") + 1, line.lastIndexOf('\''));
+      } else if (line.contains("\"")) {
+         shortString = line.substring(line.indexOf("\"") + 1, line.lastIndexOf('"'));
+      } else {
+         shortString = line.substring(line.indexOf("=") + 1);
+      }
       final String shortened = shortString.trim();
       return shortened;
    }
