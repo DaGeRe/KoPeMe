@@ -48,7 +48,7 @@ public final class TestResult {
     * @param methodName Name of the Testcase
     * @param executionTimes Count of the planned executions
     */
-   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, boolean warmup) {
+   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, final boolean warmup) {
       this.methodName = methodName;
       this.executionTimes = executionTimes;
 
@@ -215,7 +215,7 @@ public final class TestResult {
       return reader.getCollectorSummary(key).getMax();
    }
 
-   public Fulldata getFulldata(String key) {
+   public Fulldata getFulldata(final String key) {
       final Fulldata fd = new Fulldata();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
@@ -231,11 +231,11 @@ public final class TestResult {
       return fd;
    }
 
-   public void clearFulldata(String key) {
+   public void clearFulldata(final String key) {
       reader.clear(key);
    }
 
-   public List<Long> getValues(String key) {
+   public List<Long> getValues(final String key) {
       List<Long> currentValues = new ArrayList<>();
       for (int i = 0; i < reader.getRealValues().size(); i++) {
          currentValues.add(reader.getRealValues().get(i).get(key));
@@ -279,12 +279,13 @@ public final class TestResult {
       return methodName;
    }
 
-   public double getRelativeStandardDeviation(String additionalKey) {
+   public double getRelativeStandardDeviation(final String additionalKey) {
       final SummaryStatistics collectorSummary = reader.getCollectorSummary(additionalKey);
       return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
    }
 
    public void deleteTempFile() {
+      writer.finalizeCollection();
       reader.deleteTempFile();
    }
 
