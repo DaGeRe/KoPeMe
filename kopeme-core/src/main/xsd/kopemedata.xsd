@@ -69,6 +69,7 @@
 			<xs:element name="min" type="xs:double" minOccurs="0"/>
 			<xs:element name="max" type="xs:double" minOccurs="0"/>
 			<xs:element name="showStart" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="executeBeforeClassInMeasurement" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="redirectToTemp" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="redirectToNull" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="useKieker" type="xs:boolean" minOccurs="0"/>

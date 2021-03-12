@@ -16,9 +16,6 @@ public class RunConfiguration {
       this.redirectToNull = redirectToNull;
       this.saveValues = saveValues;
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
-      if (executeBeforeClassInMeasurement) {
-         throw new RuntimeException("Not implemented yet - please set executeBeforeClassInMeasurement to false");
-      }
    }
 
    public RunConfiguration(final PerformanceTest annotation) {
@@ -29,13 +26,14 @@ public class RunConfiguration {
       redirectToNull = annotation.redirectToNull();
       saveValues = annotation.logFullData();
       executeBeforeClassInMeasurement = annotation.executeBeforeClassInMeasurement();
-      if (executeBeforeClassInMeasurement) {
-         throw new RuntimeException("Not implemented yet - please set executeBeforeClassInMeasurement to false");
-      }
    }
 
    public int getWarmupExecutions() {
       return warmupExecutions;
+   }
+   
+   public boolean isExecuteBeforeClassInMeasurement() {
+      return executeBeforeClassInMeasurement;
    }
 
    public int getRepetitions() {

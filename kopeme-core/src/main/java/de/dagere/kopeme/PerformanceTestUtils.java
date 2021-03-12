@@ -132,6 +132,7 @@ public final class PerformanceTestUtils {
       result.setRedirectToNull(data.getConfiguration().isRedirectToNull());
       result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
       result.setShowStart(data.getConfiguration().isShowStart());
+      result.setExecuteBeforeClassInMeasurement(data.getConfiguration().isExecuteBeforeClassInMeasurement());
       result.setDate(new Date().getTime());
       result.setJavaVersion(System.getProperty("java.version"));
       return result;

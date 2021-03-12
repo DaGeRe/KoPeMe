@@ -23,13 +23,15 @@ import org.junit.jupiter.engine.extension.MutableExtensionRegistry;
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
 import org.junit.platform.engine.UniqueId;
 
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
 public class KoPeMeExtension implements BeforeEachCallback {
 
    @Override
-   public void beforeEach(ExtensionContext context) throws Exception {
+   public void beforeEach(final ExtensionContext context) throws Exception {
       final Object instance = context.getTestInstance().get();
       Method method = context.getTestMethod().get();
 
@@ -45,7 +47,8 @@ public class KoPeMeExtension implements BeforeEachCallback {
                descriptor.execute(jupiterContext, null);
                
             } };
-         final TestRunnables runnables = new TestRunnables(throwingRunnable, instance.getClass(), instance);
+         RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
+         final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
          final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName());
          statement.evaluate();
       } catch (Throwable t) {
@@ -53,8 +56,8 @@ public class KoPeMeExtension implements BeforeEachCallback {
       }
    }
 
-   private JupiterEngineExecutionContext prepareJUnit5(ExtensionContext context, final Object instance, final JupiterConfiguration configuration,
-         TestMethodTestDescriptor descriptor) {
+   private JupiterEngineExecutionContext prepareJUnit5(final ExtensionContext context, final Object instance, final JupiterConfiguration configuration,
+         final TestMethodTestDescriptor descriptor) {
       MutableExtensionRegistry extensionRegistry = MutableExtensionRegistry.createRegistryWithDefaultExtensions(configuration);
       
       final JupiterEngineExecutionContext context2 = new JupiterEngineExecutionContext(null, configuration)
@@ -87,7 +90,7 @@ public class KoPeMeExtension implements BeforeEachCallback {
          }
 
          @Override
-         public Optional<String> getRawConfigurationParameter(String key) {
+         public Optional<String> getRawConfigurationParameter(final String key) {
             // TODO Auto-generated method stub
             return null;
          }
@@ -116,18 +119,18 @@ public class KoPeMeExtension implements BeforeEachCallback {
             return new DisplayNameGenerator() {
 
                @Override
-               public String generateDisplayNameForNestedClass(Class<?> nestedClass) {
+               public String generateDisplayNameForNestedClass(final Class<?> nestedClass) {
                   return nestedClass.getName();
                }
 
                @Override
-               public String generateDisplayNameForMethod(Class<?> testClass, Method testMethod) {
+               public String generateDisplayNameForMethod(final Class<?> testClass, final Method testMethod) {
                   // TODO Auto-generated method stub
                   return testClass.getName() + "#" + testMethod.getName();
                }
 
                @Override
-               public String generateDisplayNameForClass(Class<?> testClass) {
+               public String generateDisplayNameForClass(final Class<?> testClass) {
                   // TODO Auto-generated method stub
                   return testClass.getName();
                }
@@ -141,7 +144,7 @@ public class KoPeMeExtension implements BeforeEachCallback {
          }
 
          @Override
-         public <T> Optional<T> getRawConfigurationParameter(String key, Function<String, T> transformer) {
+         public <T> Optional<T> getRawConfigurationParameter(final String key, final Function<String, T> transformer) {
             // TODO Auto-generated method stub
             return null;
          }

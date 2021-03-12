@@ -4,12 +4,13 @@ import java.lang.reflect.Method;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.function.ThrowingRunnable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.junit.function.ThrowingRunnable;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 
 /**
  * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution
@@ -45,12 +46,13 @@ public class KoPeMeRule implements TestRule {
          }
          final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
          if (annotation != null) {
-            final TestRunnables runnables = new TestRunnables(new ThrowingRunnable() {
+            ThrowingRunnable testRunnable = new ThrowingRunnable() {
                @Override
                public void run() throws Throwable {
                   stmt.evaluate();
                }
-            }, testClass, testObject);
+            };
+            final TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
 
             koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName());
             return koPeMeStandardRuleStatement;
