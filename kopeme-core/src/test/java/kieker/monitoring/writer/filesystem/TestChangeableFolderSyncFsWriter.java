@@ -42,7 +42,7 @@ public class TestChangeableFolderSyncFsWriter {
       config.setProperty(ChangeableFolderWriter.CONFIG_MAXLOGSIZE, "1");
       config.setProperty(ChangeableFolderWriter.CONFIG_FLUSH, "true");
       config.setProperty(ChangeableFolderWriter.CONFIG_BUFFER, "8192");
-      config.setProperty(ChangeableFolderWriter.REAL_WRITER, "AsciiFileWriter");
+      config.setProperty(ChangeableFolderWriter.REAL_WRITER, "FileWriter");
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
    }
