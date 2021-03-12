@@ -102,6 +102,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       }
       if (currentWriter != null) {
          LOG.log(Level.FINEST, "Record: " + record);
+         LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
    }
@@ -119,7 +120,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       if (currentWriter != null) {
          currentWriter.onTerminating();
       }
-      LOG.info("Writing to: " + writingFolder);
+      LOG.info("Writing to: " + writingFolder + " " + System.identityHashCode(currentWriter));
       final String absolutePath = writingFolder.getAbsolutePath();
       configuration.setProperty(CONFIG_PATH, absolutePath);
       final AbstractMonitoringWriter writer = createWriter(configuration);
@@ -129,5 +130,6 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       }
       full = true;
       currentWriter = writer;
+      LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
    }
 }
