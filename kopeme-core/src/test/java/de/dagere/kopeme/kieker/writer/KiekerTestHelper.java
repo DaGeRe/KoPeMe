@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

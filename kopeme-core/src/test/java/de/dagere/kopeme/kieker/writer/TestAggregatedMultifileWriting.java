@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +14,15 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
 
 public class TestAggregatedMultifileWriting {
 
    @Before
    public void setupClass() throws IOException {
-      KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
+      KiekerTestHelper.emptyFolder(TestChangeableFolderWriter.DEFAULT_FOLDER);
    }
 
    @Test
@@ -38,7 +39,7 @@ public class TestAggregatedMultifileWriting {
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
-      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
+      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderWriter.DEFAULT_FOLDER);
       Assert.assertEquals(11, measureFile.length); // newest is empty file
 
       for (final File file : measureFile) {
@@ -66,7 +67,7 @@ public class TestAggregatedMultifileWriting {
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
 
-      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
+      final File[] measureFile = KiekerTestHelper.getMeasurementFiles(TestChangeableFolderWriter.DEFAULT_FOLDER);
       Assert.assertEquals(2, measureFile.length);
    }
 }

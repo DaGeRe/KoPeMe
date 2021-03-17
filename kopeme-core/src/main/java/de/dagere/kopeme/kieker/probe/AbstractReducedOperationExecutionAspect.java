@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-package kieker.common.probe.aspectj.operationExecution;
+package de.dagere.kopeme.kieker.probe;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
-import kieker.common.record.controlflow.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.probe.aspectj.AbstractAspectJProbe;

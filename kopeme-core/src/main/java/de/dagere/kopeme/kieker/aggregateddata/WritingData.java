@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.kopeme.kieker.aggregateddata;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -9,7 +9,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import kieker.monitoring.writer.filesystem.StatisticConfig;
+import de.dagere.kopeme.kieker.writer.StatisticConfig;
 
 public class WritingData extends AggregatedData {
 

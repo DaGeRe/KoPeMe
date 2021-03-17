@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,6 +15,7 @@ import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
+import kieker.monitoring.writer.filesystem.FileWriter;
 
 /**
  * Writes Kieker examples result to the kieker monitoring controller for tests.
@@ -22,7 +23,7 @@ import kieker.monitoring.core.controller.MonitoringController;
  * @author dhaeb
  *
  */
-public class TestChangeableFolderSyncFsWriter {
+public class TestChangeableFolderWriter {
 
    public static final File DEFAULT_FOLDER = new File("target" + File.separator + "kieker_testresults");
    private static final File NEW_FOLDER_AT_RUNTIME = new File("target" + File.separator + "kieker_testresults_changed_folder");

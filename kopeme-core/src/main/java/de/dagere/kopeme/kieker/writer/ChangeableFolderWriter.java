@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.misc.KiekerMetadataRecord;
 import kieker.common.record.misc.RegistryRecord;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
+import kieker.monitoring.writer.filesystem.FileWriter;
 
 /**
  * This class enables Kieker writing in different folders for KoPeMe purposes. It does so by creating a new {@link SyncFsWriter} with every new folder that is set to the

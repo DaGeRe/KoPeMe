@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 public class StatisticConfig {
    private int warmup;

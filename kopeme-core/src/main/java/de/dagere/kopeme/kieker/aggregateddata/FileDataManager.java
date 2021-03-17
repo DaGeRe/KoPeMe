@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.kopeme.kieker.aggregateddata;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
 public class FileDataManager implements Runnable, Closeable {
 

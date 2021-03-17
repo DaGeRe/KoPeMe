@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.kopeme.kieker.aggregateddata;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import kieker.monitoring.writer.filesystem.StatisticConfig;
+import de.dagere.kopeme.kieker.writer.StatisticConfig;
 
 public class AggregatedData {
 

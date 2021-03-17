@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.kopeme.kieker.aggregateddata;
 
 public class DataNode {
    protected final String call;

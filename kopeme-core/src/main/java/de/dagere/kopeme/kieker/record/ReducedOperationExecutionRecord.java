@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-package kieker.common.record.controlflow;
+package de.dagere.kopeme.kieker.record;
 
 import java.nio.BufferOverflowException;
 

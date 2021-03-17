@@ -6,8 +6,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import kieker.monitoring.writer.filesystem.StatisticConfig;
-import kieker.monitoring.writer.filesystem.aggregateddata.WritingData;
+import de.dagere.kopeme.kieker.aggregateddata.WritingData;
+import de.dagere.kopeme.kieker.writer.StatisticConfig;
 
 public class TestStatistic {
 

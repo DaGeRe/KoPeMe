@@ -1,18 +1,25 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.aggregateddata.DataNode;
+import de.dagere.kopeme.kieker.aggregateddata.FileDataManager;
+import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.controlflow.OperationExecutionRecord;
-import kieker.common.record.controlflow.ReducedOperationExecutionRecord;
+import kieker.common.util.filesystem.FSUtil;
+import kieker.monitoring.core.configuration.ConfigurationConstants;
 import kieker.monitoring.writer.AbstractMonitoringWriter;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
-import kieker.monitoring.writer.filesystem.aggregateddata.DataNode;
-import kieker.monitoring.writer.filesystem.aggregateddata.FileDataManager;
 
 /**
  * This class creates a tree with statistical summaries from the data.
@@ -52,7 +59,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       super(configuration);
       LOG.info("Init..");
       instance = this;
-      final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
+      final Path kiekerPath = buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
 
@@ -107,7 +114,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    @Override
    public synchronized void setFolder(final File writingFolder) throws IOException {
       LOG.info("Writing to: " + writingFolder);
-      final Path kiekerPath = KiekerLogFolder.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
+      final Path kiekerPath = buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
       onTerminating();
@@ -137,5 +144,19 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    public boolean isIgnoreEOI() {
       return ignoreEOIs;
+   }
+   
+   public static Path buildKiekerLogFolder(final String customStoragePath, final Configuration configuration) {
+      final DateFormat date = new SimpleDateFormat("yyyyMMdd'-'HHmmss", Locale.US);
+      date.setTimeZone(TimeZone.getTimeZone("UTC"));
+      final String currentDateStr = date.format(new java.util.Date())
+            + "-" + System.nanoTime(); // 'SSS' in SimpleDateFormat is not accurate enough for fast unit tests
+
+      final String hostName = configuration.getStringProperty(ConfigurationConstants.HOST_NAME);
+      final String controllerName = configuration.getStringProperty(ConfigurationConstants.CONTROLLER_NAME);
+
+      final String filename = String.format("%s-%s-UTC-%s-%s", FSUtil.FILE_PREFIX, currentDateStr, hostName, controllerName);
+
+      return Paths.get(customStoragePath, filename);
    }
 }

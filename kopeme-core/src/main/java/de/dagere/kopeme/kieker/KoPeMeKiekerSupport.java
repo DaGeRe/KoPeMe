@@ -10,14 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.FolderProvider;
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
+import de.dagere.kopeme.kieker.writer.ChangeableFolder;
+import de.dagere.kopeme.kieker.writer.ChangeableFolderWriter;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.controller.WriterController;
 import kieker.monitoring.writer.MonitoringWriterThread;
-import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
-import kieker.monitoring.writer.filesystem.ChangeableFolder;
-import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
  * Class to control kieker tracing for KoPeMe.

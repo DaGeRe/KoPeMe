@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,11 +14,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 
 /**
  * Writes Kieker example results for the {@link AggregatedTreeWriter}
@@ -30,7 +32,7 @@ public class TestAggregatedTreeWriter {
 
    @Before
    public void setupClass() throws IOException {
-      KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
+      KiekerTestHelper.emptyFolder(TestChangeableFolderWriter.DEFAULT_FOLDER);
    }
 
    public static void initWriter(final int warmup, final int entriesPerFile) {
@@ -39,7 +41,7 @@ public class TestAggregatedTreeWriter {
    
    public static void initWriter(final int warmup, final int entriesPerFile, final int interval, final boolean ignoreEOI) {
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
-      final String absolutePath = TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER.getAbsolutePath();
+      final String absolutePath = TestChangeableFolderWriter.DEFAULT_FOLDER.getAbsolutePath();
       config.setProperty("kieker.monitoring.writer", AggregatedTreeWriter.class.getName());
       config.setProperty(AggregatedTreeWriter.CONFIG_PATH, absolutePath);
       config.setProperty(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL, 100);
@@ -65,7 +67,7 @@ public class TestAggregatedTreeWriter {
       initWriter(0, 100);
       KiekerTestHelper.runFixture(15);
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); 
+      assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3); 
    }
 
    @Test
@@ -77,7 +79,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 0); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 0); 
 
       Assert.assertEquals(0, data.size());
    }
@@ -94,7 +96,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method1()", 0, 1);
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3); 
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, 0, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
@@ -122,7 +124,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method1()", 0, 1);
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 4); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 4); 
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(0, 0, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
@@ -156,7 +158,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public new NonExistant.<init>()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 1); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 1); 
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, -1, "public new NonExistant.<init>()");
       final AggregatedData summaryStatistics = data.get(expectedNode);

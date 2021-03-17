@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import java.io.IOException;
 import java.util.Map;
@@ -9,8 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
 /**
  * Writes Kieker example results for the {@link AggregatedTreeWriter}
@@ -22,7 +23,7 @@ public class TestAggregatedTreeWriterSplitted {
 
    @Before
    public void setupClass() throws IOException {
-      KiekerTestHelper.emptyFolder(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER);
+      KiekerTestHelper.emptyFolder(TestChangeableFolderWriter.DEFAULT_FOLDER);
    }
 
 
@@ -33,7 +34,7 @@ public class TestAggregatedTreeWriterSplitted {
       Thread.sleep(105);
       KiekerTestHelper.runFixture(15 * 3);
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = TestAggregatedTreeWriter.assertJSONFileContainsMethods(TestChangeableFolderSyncFsWriter.DEFAULT_FOLDER, 3); 
+      final Map<AggregatedDataNode, AggregatedData> data = TestAggregatedTreeWriter.assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3); 
       
       for (final Map.Entry<AggregatedDataNode, AggregatedData> method : data.entrySet()) {
          System.out.println(method.getKey() + " " + method.getValue().getStatistic());

@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.kopeme.kieker.aggregateddata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

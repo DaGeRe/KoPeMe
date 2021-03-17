@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem;
+package de.dagere.kopeme.kieker.writer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,8 +15,8 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 
 public class AggregatedDataReader {
    public static Map<AggregatedDataNode, AggregatedData> getFullDataMap(final File folder) throws JsonParseException, JsonMappingException, IOException {
