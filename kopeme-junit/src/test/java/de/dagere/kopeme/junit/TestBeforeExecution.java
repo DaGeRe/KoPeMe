@@ -79,8 +79,12 @@ public class TestBeforeExecution {
       LOG.debug("Searching: {} Existing: {}", resultFile.getAbsolutePath(), resultFile.exists());
       MatcherAssert.assertThat(resultFile.exists(), Matchers.equalTo(true));
       final Long time = getTimeResult(resultFile, testname);
-      MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
-      MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * TimeDataCollector.TO_MILLISECONDS));
+      /*
+       * Executiontimes vary between 100 and 130 ms. Because Thread.sleep is sometimes slightly inaccurate, there is a tolerance.
+       * Since threads will tend to oversleep rather than undersleep, there is more room up.
+       */
+      MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(135 * TimeDataCollector.TO_MILLISECONDS));
+      MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
    }
 
    public static Long getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
