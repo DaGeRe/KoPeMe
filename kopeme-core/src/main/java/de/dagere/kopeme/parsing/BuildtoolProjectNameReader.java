@@ -55,7 +55,7 @@ public class BuildtoolProjectNameReader {
       } else {
          File[] buildFile = findBuildfile(directory, "pom.xml");
          if (buildFile.length != 1) {
-            buildFile = findBuildfile(directory, "build.gradle");
+            buildFile = GradleParseHelper.searchGradleFiles(directory);
          }
          if (buildFile.length != 1) {
             buildFile = findBuildfile(directory, "build.xml");
@@ -84,7 +84,7 @@ public class BuildtoolProjectNameReader {
       });
       return pomFiles;
    }
-
+   
    /**
     * @return the projectname extract by the pom.xml as groupid/artifactid
     */
