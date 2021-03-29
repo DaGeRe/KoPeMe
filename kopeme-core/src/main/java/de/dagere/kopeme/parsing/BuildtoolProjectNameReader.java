@@ -92,14 +92,6 @@ public class BuildtoolProjectNameReader {
       return !projectInfo.getGroupId().equals("") ? projectInfo.getGroupId() + "/" + projectInfo.getArtifactId() : projectInfo.getArtifactId();
    }
 
-   public String getArtifactId() {
-      return projectInfo.getArtifactId();
-   }
-
-   public String getGroupId() {
-      return projectInfo.getGroupId();
-   }
-
    private String readGradleProperty(final String line) {
       final String shortString;
       if (line.contains("'")) {
@@ -213,30 +205,6 @@ public class BuildtoolProjectNameReader {
          e.printStackTrace();
       }
       return result;
-   }
-
-   public static class ProjectInfo {
-      final String artifactId, groupId;
-
-      public ProjectInfo(final String artifactId, final String groupId) {
-         super();
-         this.artifactId = artifactId;
-         this.groupId = groupId;
-      }
-
-      /**
-       * @return the artifactId
-       */
-      public String getArtifactId() {
-         return artifactId;
-      }
-
-      /**
-       * @return the groupId
-       */
-      public String getGroupId() {
-         return groupId;
-      }
    }
 
 }
