@@ -98,14 +98,18 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
    @Override
    public void writeMonitoringRecord(final IMonitoringRecord record) {
       if (record instanceof KiekerMetadataRecord && !full) {
-         final KiekerMetadataRecord mappingRecord = (KiekerMetadataRecord) record;
-         mappingRecords.add(mappingRecord);
+         addMappingRecord(record);
       }
       if (currentWriter != null) {
          LOG.log(Level.FINEST, "Record: " + record);
          LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
+   }
+
+   private synchronized void addMappingRecord(final IMonitoringRecord record) {
+      final KiekerMetadataRecord mappingRecord = (KiekerMetadataRecord) record;
+      mappingRecords.add(mappingRecord);
    }
 
    @Override
@@ -126,12 +130,16 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       configuration.setProperty(CONFIG_PATH, absolutePath);
       final AbstractMonitoringWriter writer = createWriter(configuration);
       LOG.info("New writer " + System.identityHashCode(writer) + " created; old writer " + System.identityHashCode(currentWriter));
+      addRecordsToNewWriter(writer);
+      full = true;
+      currentWriter = writer;
+      LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
+   }
+
+   private synchronized void addRecordsToNewWriter(final AbstractMonitoringWriter writer) {
       for (final KiekerMetadataRecord record : mappingRecords) {
          LOG.info("Adding registry record: " + record);
          writer.writeMonitoringRecord(record);
       }
-      full = true;
-      currentWriter = writer;
-      LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
    }
 }
