@@ -117,7 +117,7 @@ public class BuildtoolProjectNameReader {
       ProjectInfo result = new ProjectInfo(KoPeMeConfiguration.DEFAULT_PROJECTNAME, "");
       if (buildFile.getName().equals("pom.xml")) {
          result = readMaven(buildFile, result);
-      } else if (buildFile.getName().equals("build.gradle")) {
+      } else if (buildFile.getName().endsWith(".gradle")) {
          result = readGradle(buildFile, result);
       } else if (buildFile.getName().equals("build.xml")) {
          result = readAnt(buildFile, result);
@@ -142,18 +142,18 @@ public class BuildtoolProjectNameReader {
       return result;
    }
 
-   private ProjectInfo readGradle(final File pomXmlFile, ProjectInfo result) {
+   private ProjectInfo readGradle(final File gradleFile, ProjectInfo result) {
       try {
          String groupId = null;
          String name = null;
-         final List<String> lines = Files.readAllLines(Paths.get(pomXmlFile.toURI()));
+         final List<String> lines = Files.readAllLines(Paths.get(gradleFile.toURI()));
          for (final String line : lines) {
             if (line.contains("group") && line.contains("=")) {
                groupId = readGradleProperty(line);
             }
          }
-         name = readSettingsfile(pomXmlFile, name);
-         final File propertyFile = new File(pomXmlFile.getParentFile(), "gradle.properties");
+         name = readSettingsfile(gradleFile, name);
+         final File propertyFile = new File(gradleFile.getParentFile(), "gradle.properties");
          if (propertyFile.exists()) {
             final List<String> linesProperties = Files.readAllLines(Paths.get(propertyFile.toURI()));
             for (final String line : linesProperties) {
@@ -167,7 +167,7 @@ public class BuildtoolProjectNameReader {
          }
 
          if (name == null) {
-            name = pomXmlFile.getParentFile().getName();
+            name = gradleFile.getParentFile().getName();
          }
          if (groupId != null) {
             result = new ProjectInfo(name, groupId);
