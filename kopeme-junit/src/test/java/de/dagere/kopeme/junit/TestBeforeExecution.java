@@ -84,9 +84,9 @@ public class TestBeforeExecution {
        * Since threads will tend to oversleep rather than undersleep, there is more room up.
        */
       if (!System.getProperty("os.name").startsWith("Mac")) {
-         MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
+         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
       }
-      MatcherAssert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
+      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
    }
 
    public static Long getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
