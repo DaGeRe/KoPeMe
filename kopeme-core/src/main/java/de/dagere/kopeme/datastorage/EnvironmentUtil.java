@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class EnvironmentUtil {
    public static String getCPU() {
       String result = "";
-      if (!System.getProperty("os.name").startsWith("Windows")) {
+      if (!System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac")) {
          try {
             Process process = new ProcessBuilder("/bin/sh", "-c", "cat /proc/cpuinfo | grep \"model name\" | uniq").start();
             result = getProcessResultString(process);
@@ -21,7 +21,7 @@ public class EnvironmentUtil {
 
    public static String getMemory() {
       String result = "";
-      if (!System.getProperty("os.name").startsWith("Windows")) {
+      if (!System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac")) {
          try {
             Process process = new ProcessBuilder("/bin/sh", "-c", "cat /proc/meminfo | grep \"MemTotal\"").start();
             result = getProcessResultString(process);
@@ -33,8 +33,8 @@ public class EnvironmentUtil {
       }
       return result;
    }
-   
-   private static String getProcessResultString(Process process) {
+
+   private static String getProcessResultString(final Process process) {
       String result;
       try (Scanner scanner = new Scanner(process.getInputStream())) {
          result = scanner.useDelimiter("\\A").next().replace("\t", " ").replace("  ", "").replace("\n", "");

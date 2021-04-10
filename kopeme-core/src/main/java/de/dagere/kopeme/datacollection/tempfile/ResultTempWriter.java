@@ -8,7 +8,7 @@ import java.nio.file.Files;
 
 import de.dagere.kopeme.datacollection.DataCollector;
 
-public class ResultTempWriter {
+public class ResultTempWriter implements AutoCloseable {
 
    public static final String EXECUTIONSTART = "\n" + WrittenResultReader.EXECUTIONSTART;
    public static final String COLLECTOR = "\n" + WrittenResultReader.COLLECTOR;
@@ -69,6 +69,11 @@ public class ResultTempWriter {
       } catch (IOException e) {
          e.printStackTrace();
       }
+   }
+
+   @Override
+   public void close() throws Exception {
+      tempFileWriter.close();
    }
 
 }
