@@ -45,4 +45,18 @@ public class TestUtils {
       return Paths.get(folder, canonicalName, testCaseName + ".xml").toFile();
    }
 
+   /*
+    * Since Thread.sleep is sometimes slightly inaccurate, it is called with 0 to minimize its error.
+    */
+   public static void waitSomeMillisecond(final long milliSeconds) throws InterruptedException {
+	   final long start = System.nanoTime();
+	   //Convert to nanoseconds
+	   final long waitingTime = milliSeconds * 1000000;
+	   final long end = start + waitingTime;
+
+	   while (System.nanoTime() < end) {
+			Thread.sleep(0);
+		}
+   }
+
 }
