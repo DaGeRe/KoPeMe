@@ -15,14 +15,18 @@ public class ExampleBeforeTestRule {
 
 	@Before
 	public void init() throws InterruptedException {
-		System.out.println("Init");
+		//System.out.println("Init");
+		long start = System.nanoTime();
 		Thread.sleep(60);
+		System.out.println("Before(60), slept for: " + (System.nanoTime()-start));
 	}
 
 	@Test
 	@PerformanceTest
 	public void spendTime() throws InterruptedException {
-		System.out.println("SpendTime");
+		//System.out.println("SpendTime");
+		long start = System.nanoTime();
 		Thread.sleep(60);
+		System.out.println("spendTime(60), slept for: " + (System.nanoTime() - start));
 	}
 }

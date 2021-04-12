@@ -14,7 +14,9 @@ public class ExampleNoBeforeTest {
 	@Test
 	@PerformanceTest
 	public void spendTime() throws InterruptedException {
-		System.out.println("SpendTime");
+		//System.out.println("SpendTime");
+		long start = System.nanoTime();
 		Thread.sleep(100);
+		System.out.println("spendTime, slept for: " + (System.nanoTime()-start));
 	}
 }
