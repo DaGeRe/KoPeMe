@@ -29,6 +29,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest;
+import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
 
 /**
  * Test for checking the behaviour of before and after for all runners (rule and junit runner).
@@ -47,7 +48,7 @@ public class TestBeforeExecution {
             { ExampleBeforeTestRule.class, TEST_NAME },
             { ExampleBeforeClassTest.class, TEST_NAME },
             { ExampleNoBeforeTest.class, TEST_NAME },
-//            { ExampleNonMeasuringBefore.class, TEST_NAME },
+            { ExampleNonMeasuringBefore.class, TEST_NAME },
 //            { ExampleBeforeClassMeasurement.class, TEST_NAME }
       });
    }
