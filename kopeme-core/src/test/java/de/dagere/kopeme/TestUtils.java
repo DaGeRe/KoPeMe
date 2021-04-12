@@ -48,7 +48,7 @@ public class TestUtils {
    /*
     * Since Thread.sleep is sometimes slightly inaccurate, it is called with 0 to minimize its error.
     */
-   public static void waitSomeMillisecond(final long milliSeconds) throws InterruptedException {
+   public static void waitSomeMilliseconds(final long milliSeconds) throws InterruptedException {
 	   final long start = System.nanoTime();
 	   //Convert to nanoseconds
 	   final long waitingTime = milliSeconds * 1000000;

@@ -17,13 +17,13 @@ public class ExampleBeforeTestRule {
 	@Before
 	public void init() throws InterruptedException {
 		System.out.println("Init");
-		TestUtils.waitSomeMillisecond(60);
+		TestUtils.waitSomeMilliseconds(60);
 	}
 
 	@Test
 	@PerformanceTest
 	public void spendTime() throws InterruptedException {
 		System.out.println("SpendTime");
-		TestUtils.waitSomeMillisecond(60);
+		TestUtils.waitSomeMilliseconds(60);
 	}
 }
