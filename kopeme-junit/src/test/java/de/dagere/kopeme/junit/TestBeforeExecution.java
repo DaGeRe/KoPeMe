@@ -60,7 +60,7 @@ public class TestBeforeExecution {
    @Parameter(1)
    public String testname;
 
-   public static Logger LOG = LogManager.getLogger(TestJUnitRuleExecutions.class);
+   public static Logger LOG = LogManager.getLogger(TestBeforeExecution.class);
 
    @BeforeClass
    public static void cleanResult() throws IOException {
