@@ -79,13 +79,11 @@ public class TestBeforeExecution {
       LOG.debug("Searching: {} Existing: {}", resultFile.getAbsolutePath(), resultFile.exists());
       MatcherAssert.assertThat(resultFile.exists(), Matchers.equalTo(true));
       final Long time = getTimeResult(resultFile, testname);
+      LOG.debug("Testtime: {}", time);
       /*
        * Executiontimes vary between 100 and 130 ms. Because Thread.sleep is sometimes slightly inaccurate, there is a tolerance.
        * Since threads will tend to oversleep rather than undersleep, there is more room up.
        */
-//      if (!System.getProperty("os.name").startsWith("Mac")) {
-//         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
-//      }
       MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
       MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
    }
