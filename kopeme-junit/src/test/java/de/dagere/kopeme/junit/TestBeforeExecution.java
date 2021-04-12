@@ -47,10 +47,10 @@ public class TestBeforeExecution {
    public static Iterable<Object[]> parameters() {
       return Arrays.asList(new Object[][] {
             { ExampleBeforeTestRule.class, TEST_NAME },
-            { ExampleBeforeClassTest.class, TEST_NAME },
-            { ExampleNoBeforeTest.class, TEST_NAME },
-            { ExampleNonMeasuringBefore.class, TEST_NAME },
-            { ExampleBeforeClassMeasurement.class, TEST_NAME }
+//            { ExampleBeforeClassTest.class, TEST_NAME },
+//            { ExampleNoBeforeTest.class, TEST_NAME },
+//            { ExampleNonMeasuringBefore.class, TEST_NAME },
+//            { ExampleBeforeClassMeasurement.class, TEST_NAME }
       });
    }
 
