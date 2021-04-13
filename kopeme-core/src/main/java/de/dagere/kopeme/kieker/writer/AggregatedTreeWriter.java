@@ -101,7 +101,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public synchronized void onTerminating() {
       try {
          if (writerThread != null) {
-            System.out.println("Finishing AggregatedTreeWriter");
+            LOG.info("Finishing AggregatedTreeWriter");
             dataManager.finish();
             writerThread.interrupt();
             dataManager.close();
