@@ -46,7 +46,7 @@ public class KiekerTraceEntry {
 		return new CellProcessor[] {
 			new ParseInt(){
 				@Override
-				public Object execute(Object value, CsvContext context) {
+				public Object execute(final Object value, final CsvContext context) {
 					String content = value.toString();
 					String[] split = content.split("\\$");
 					return super.execute(split[1], context);
@@ -79,7 +79,7 @@ public class KiekerTraceEntry {
 		return mappningNumber;
 	}
 
-	public void setMappningNumber(int mappningNumber) {
+	public void setMappningNumber(final int mappningNumber) {
 		this.mappningNumber = mappningNumber;
 	}
 
@@ -87,7 +87,7 @@ public class KiekerTraceEntry {
 		return loggingTime;
 	}
 
-	public void setLoggingTime(long loggingTime) {
+	public void setLoggingTime(final long loggingTime) {
 		this.loggingTime = loggingTime;
 	}
 
@@ -95,7 +95,7 @@ public class KiekerTraceEntry {
 		return entryName;
 	}
 
-	public void setEntryName(String entryName) {
+	public void setEntryName(final String entryName) {
 		this.entryName = entryName;
 	}
 
@@ -103,7 +103,7 @@ public class KiekerTraceEntry {
 		return sessionId;
 	}
 
-	public void setSessionId(String sessionId) {
+	public void setSessionId(final String sessionId) {
 		this.sessionId = sessionId;
 	}
 
@@ -111,7 +111,7 @@ public class KiekerTraceEntry {
 		return traceId;
 	}
 
-	public void setTraceId(long traceId) {
+	public void setTraceId(final long traceId) {
 		this.traceId = traceId;
 	}
 
@@ -119,7 +119,7 @@ public class KiekerTraceEntry {
 		return tin;
 	}
 
-	public void setTin(long tin) {
+	public void setTin(final long tin) {
 		this.tin = tin;
 	}
 
@@ -127,7 +127,7 @@ public class KiekerTraceEntry {
 		return tout;
 	}
 
-	public void setTout(long tout) {
+	public void setTout(final long tout) {
 		this.tout = tout;
 	}
 
@@ -135,7 +135,7 @@ public class KiekerTraceEntry {
 		return host;
 	}
 
-	public void setHost(String host) {
+	public void setHost(final String host) {
 		this.host = host;
 	}
 
@@ -143,7 +143,7 @@ public class KiekerTraceEntry {
 		return eoi;
 	}
 
-	public void setEoi(int eoi) {
+	public void setEoi(final int eoi) {
 		this.eoi = eoi;
 	}
 
@@ -151,8 +151,8 @@ public class KiekerTraceEntry {
 		return ess;
 	}
 
-	public void setEss(int ess) {
+	public void setEss(final int ess) {
 		this.ess = ess;
-	}
-	
+   }
+
 }
