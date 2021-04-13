@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.logging.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollector;
 
 public class ResultTempWriter {
+   
+   private static final Logger LOG = Logger.getLogger(ResultTempWriter.class.getName());
 
    public static final String EXECUTIONSTART = "\n" + WrittenResultReader.EXECUTIONSTART;
    public static final String COLLECTOR = "\n" + WrittenResultReader.COLLECTOR;
@@ -65,7 +68,7 @@ public class ResultTempWriter {
       try {
          tempFileWriter.flush();
          tempFileWriter.close();
-         System.out.println("Flusing to " + tempFile.getAbsolutePath() + " finished");
+         LOG.info("Flushing to " + tempFile.getAbsolutePath() + " finished");
       } catch (IOException e) {
          e.printStackTrace();
       }
