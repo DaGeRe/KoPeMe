@@ -2,8 +2,8 @@ package de.dagere.kopeme.kieker.aggregateddata;
 
 public class DataNode {
    protected final String call;
-   
-   public DataNode(String call) {
+
+   public DataNode(final String call) {
       this.call = call;
    }
 

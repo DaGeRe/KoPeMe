@@ -39,7 +39,8 @@ public class AggregatedDataReader {
       });
    }
 
-   public static void readAggregatedDataFile(final File currentMeasureFile, Map<AggregatedDataNode, AggregatedData> datas) throws JsonParseException, JsonMappingException, IOException {
+   public static void readAggregatedDataFile(final File currentMeasureFile, final Map<AggregatedDataNode, AggregatedData> datas)
+         throws JsonParseException, JsonMappingException, IOException {
       try (final BufferedReader reader = new BufferedReader(new FileReader(currentMeasureFile))) {
          String line;
          while ((line = reader.readLine()) != null) {

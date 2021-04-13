@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import de.dagere.kopeme.datacollection.DataCollector;
 
 public class ResultTempWriter {
-   
+
    private static final Logger LOG = Logger.getLogger(ResultTempWriter.class.getName());
 
    public static final String EXECUTIONSTART = "\n" + WrittenResultReader.EXECUTIONSTART;

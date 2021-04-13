@@ -61,7 +61,7 @@ public final class TestResult {
          }
       };
       Arrays.sort(sortedCollectors, comparator);
-      
+
       try {
          writer = new ResultTempWriter(warmup);
          writer.setDataCollectors(sortedCollectors);
@@ -69,8 +69,7 @@ public final class TestResult {
       } catch (IOException e) {
          e.printStackTrace();
       }
-      
-      
+
    }
 
    /**
@@ -133,7 +132,7 @@ public final class TestResult {
    }
 
    public void beforeRun() {
-      
+
    }
 
    /**

@@ -23,9 +23,9 @@ public enum GradleParseHelper {
             }
          });
          return gradleFiles;
-      }else {
-         return new File[] {gradleFile};
+      } else {
+         return new File[] { gradleFile };
       }
-     
+
    }
 }

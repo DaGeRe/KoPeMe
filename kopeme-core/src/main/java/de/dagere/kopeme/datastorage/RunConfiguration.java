@@ -31,7 +31,7 @@ public class RunConfiguration {
    public int getWarmupExecutions() {
       return warmupExecutions;
    }
-   
+
    public boolean isExecuteBeforeClassInMeasurement() {
       return executeBeforeClassInMeasurement;
    }

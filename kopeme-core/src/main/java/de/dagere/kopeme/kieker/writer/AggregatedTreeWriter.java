@@ -145,7 +145,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public boolean isIgnoreEOI() {
       return ignoreEOIs;
    }
-   
+
    public static Path buildKiekerLogFolder(final String customStoragePath, final Configuration configuration) {
       final DateFormat date = new SimpleDateFormat("yyyyMMdd'-'HHmmss", Locale.US);
       date.setTimeZone(TimeZone.getTimeZone("UTC"));

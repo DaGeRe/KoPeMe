@@ -27,16 +27,16 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class ReducedOperationExecutionAspectFull extends AbstractReducedOperationExecutionAspect {
 
-	/**
-	 * Default constructor.
-	 */
-	public ReducedOperationExecutionAspectFull() {
-		// empty default constructor
-	}
+   /**
+    * Default constructor.
+    */
+   public ReducedOperationExecutionAspectFull() {
+      // empty default constructor
+   }
 
-	@Override
-	@Pointcut("execution(* *(..)) || execution(new(..))")
-	public void monitoredOperation() {
-		// Aspect Declaration (MUST be empty)
-	}
+   @Override
+   @Pointcut("execution(* *(..)) || execution(new(..))")
+   public void monitoredOperation() {
+      // Aspect Declaration (MUST be empty)
+   }
 }

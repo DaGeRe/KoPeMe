@@ -84,7 +84,7 @@ public class BuildtoolProjectNameReader {
       });
       return pomFiles;
    }
-   
+
    /**
     * @return the projectname extract by the pom.xml as groupid/artifactid
     */

@@ -10,10 +10,10 @@ import java.util.Map;
  *
  */
 public interface DataLoader {
-	/**
-	 * Method for loading the KoPeMe-data.
-	 * 
-	 * @return KoPeMe-data
-	 */
-	Map<String, Map<Date, Long>> getData();
+   /**
+    * Method for loading the KoPeMe-data.
+    * 
+    * @return KoPeMe-data
+    */
+   Map<String, Map<Date, Long>> getData();
 }

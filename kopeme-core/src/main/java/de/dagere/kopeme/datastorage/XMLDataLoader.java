@@ -83,8 +83,8 @@ public final class XMLDataLoader implements DataLoader {
    }
 
    /**
-    * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup
-    * For the beginning, fields will be changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
+    * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup For the beginning, fields will be
+    * changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
     */
    private static void updateFields(final Kopemedata data) {
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
@@ -187,7 +187,7 @@ public final class XMLDataLoader implements DataLoader {
       updateFields(data);
       return data;
    }
-   
+
    public static Kopemedata loadWarmedupData(final File dataFile) throws JAXBException {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
@@ -235,7 +235,7 @@ public final class XMLDataLoader implements DataLoader {
    private void replaceFulldata(final Datacollector collector, final Result result) {
       if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
          File dataFile = new File(file.getParentFile(), result.getFulldata().getFileName());
-         
+
          Fulldata replacedFulldata = executeReading(collector.getName(), dataFile, 0);
          result.setFulldata(replacedFulldata);
       }
@@ -254,7 +254,7 @@ public final class XMLDataLoader implements DataLoader {
       final Set<String> dataCollectors = new HashSet<>();
       dataCollectors.add(currentDatacollector);
       reader.read(null, dataCollectors);
-      
+
       Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
       return replacedFulldata;
    }

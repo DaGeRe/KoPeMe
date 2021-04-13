@@ -10,10 +10,10 @@ import de.dagere.kopeme.datacollection.TestResult;
  */
 public interface Checker {
 
-	/**
-	 * The method which checks the results.
-	 * 
-	 * @param tr Results that should be checked
-	 */
-	void checkValues(TestResult tr);
+   /**
+    * The method which checks the results.
+    * 
+    * @param tr Results that should be checked
+    */
+   void checkValues(TestResult tr);
 }

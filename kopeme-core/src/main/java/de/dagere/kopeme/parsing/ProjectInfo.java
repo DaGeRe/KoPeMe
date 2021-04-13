@@ -4,7 +4,6 @@ public class ProjectInfo {
    final String artifactId, groupId;
 
    public ProjectInfo(final String artifactId, final String groupId) {
-      super();
       this.artifactId = artifactId;
       this.groupId = groupId;
    }

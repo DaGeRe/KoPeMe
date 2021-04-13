@@ -42,10 +42,6 @@ public class KoPeMeKiekerSupport {
          final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
          folderForCurrentPerformanceResult.mkdirs();
          fsWriter.setFolder(folderForCurrentPerformanceResult);
-//         if (fsWriter instanceof AggregatedTreeWriter) {
-//            AggregatedTreeWriter writer = (AggregatedTreeWriter) fsWriter;
-//            writer.getStatisticConfig().setWarmup(warmup);
-//         }
          kiekerController.enableMonitoring();
          LOG.debug("Kieker-Monitoring successfully enabled");
       }
@@ -62,6 +58,8 @@ public class KoPeMeKiekerSupport {
             final File tempDirFile = new File(tempdir);
             if (!tempDirFile.exists()) {
                System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+            } else {
+               System.err.println("Given java.io.tmpdir was " + tempdir);
             }
             throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
          }

@@ -17,142 +17,142 @@ import org.supercsv.util.CsvContext;
  */
 public class KiekerTraceEntry {
 
-	private static String[] FIELDS;  
-	
-	/**
-	 * Returns a description for the Super CSV parser, how to map a column of the csv to this type. 
-	 * 
-	 * @return array with field names representing the order in the csv
-	 */
-	public static String[] getFieldDescription() {
-		if(FIELDS == null){
-			ArrayList<String> fields = new ArrayList<String>();
-			for(Field field : KiekerTraceEntry.class.getDeclaredFields()){
-				if(!Modifier.isStatic(field.getModifiers())){
-					fields.add(field.getName());
-				}
-			}
-			FIELDS = fields.toArray(new String[fields.size()]);
-		}
-		return FIELDS;
-	}
-	
-	/**
-	 * Provide this array to parse the columns of the csv into the right type using the Super CSV framework. 
-	 * 
-	 * @return
-	 */
-	public static CellProcessor[] getCellProcessors(){
-		return new CellProcessor[] {
-			new ParseInt(){
-				@Override
-				public Object execute(final Object value, final CsvContext context) {
-					String content = value.toString();
-					String[] split = content.split("\\$");
-					return super.execute(split[1], context);
-				}
-			},
-			new ParseLong(),
-			null,
-			null,
-			new ParseLong(),
-			new ParseLong(),
-			new ParseLong(),
-			null,
-			new ParseInt(),
-			new ParseInt()
-		};
-	}
-	
-	private int mappningNumber;
-	private long loggingTime;
-	private String entryName;
-	private String sessionId;
-	private long traceId;
-	private long tin;
-	private long tout;
-	private String host;
-	private int eoi;
-	private int ess;
+   private static String[] FIELDS;
 
-	public int getMappningNumber() {
-		return mappningNumber;
-	}
+   /**
+    * Returns a description for the Super CSV parser, how to map a column of the csv to this type.
+    * 
+    * @return array with field names representing the order in the csv
+    */
+   public static String[] getFieldDescription() {
+      if (FIELDS == null) {
+         ArrayList<String> fields = new ArrayList<String>();
+         for (Field field : KiekerTraceEntry.class.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+               fields.add(field.getName());
+            }
+         }
+         FIELDS = fields.toArray(new String[fields.size()]);
+      }
+      return FIELDS;
+   }
 
-	public void setMappningNumber(final int mappningNumber) {
-		this.mappningNumber = mappningNumber;
-	}
+   /**
+    * Provide this array to parse the columns of the csv into the right type using the Super CSV framework.
+    * 
+    * @return
+    */
+   public static CellProcessor[] getCellProcessors() {
+      return new CellProcessor[] {
+            new ParseInt() {
+               @Override
+               public Object execute(final Object value, final CsvContext context) {
+                  String content = value.toString();
+                  String[] split = content.split("\\$");
+                  return super.execute(split[1], context);
+               }
+            },
+            new ParseLong(),
+            null,
+            null,
+            new ParseLong(),
+            new ParseLong(),
+            new ParseLong(),
+            null,
+            new ParseInt(),
+            new ParseInt()
+      };
+   }
 
-	public long getLoggingTime() {
-		return loggingTime;
-	}
+   private int mappningNumber;
+   private long loggingTime;
+   private String entryName;
+   private String sessionId;
+   private long traceId;
+   private long tin;
+   private long tout;
+   private String host;
+   private int eoi;
+   private int ess;
 
-	public void setLoggingTime(final long loggingTime) {
-		this.loggingTime = loggingTime;
-	}
+   public int getMappningNumber() {
+      return mappningNumber;
+   }
 
-	public String getEntryName() {
-		return entryName;
-	}
+   public void setMappningNumber(final int mappningNumber) {
+      this.mappningNumber = mappningNumber;
+   }
 
-	public void setEntryName(final String entryName) {
-		this.entryName = entryName;
-	}
+   public long getLoggingTime() {
+      return loggingTime;
+   }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+   public void setLoggingTime(final long loggingTime) {
+      this.loggingTime = loggingTime;
+   }
 
-	public void setSessionId(final String sessionId) {
-		this.sessionId = sessionId;
-	}
+   public String getEntryName() {
+      return entryName;
+   }
 
-	public long getTraceId() {
-		return traceId;
-	}
+   public void setEntryName(final String entryName) {
+      this.entryName = entryName;
+   }
 
-	public void setTraceId(final long traceId) {
-		this.traceId = traceId;
-	}
+   public String getSessionId() {
+      return sessionId;
+   }
 
-	public long getTin() {
-		return tin;
-	}
+   public void setSessionId(final String sessionId) {
+      this.sessionId = sessionId;
+   }
 
-	public void setTin(final long tin) {
-		this.tin = tin;
-	}
+   public long getTraceId() {
+      return traceId;
+   }
 
-	public long getTout() {
-		return tout;
-	}
+   public void setTraceId(final long traceId) {
+      this.traceId = traceId;
+   }
 
-	public void setTout(final long tout) {
-		this.tout = tout;
-	}
+   public long getTin() {
+      return tin;
+   }
 
-	public String getHost() {
-		return host;
-	}
+   public void setTin(final long tin) {
+      this.tin = tin;
+   }
 
-	public void setHost(final String host) {
-		this.host = host;
-	}
+   public long getTout() {
+      return tout;
+   }
 
-	public int getEoi() {
-		return eoi;
-	}
+   public void setTout(final long tout) {
+      this.tout = tout;
+   }
 
-	public void setEoi(final int eoi) {
-		this.eoi = eoi;
-	}
+   public String getHost() {
+      return host;
+   }
 
-	public int getEss() {
-		return ess;
-	}
+   public void setHost(final String host) {
+      this.host = host;
+   }
 
-	public void setEss(final int ess) {
-		this.ess = ess;
+   public int getEoi() {
+      return eoi;
+   }
+
+   public void setEoi(final int eoi) {
+      this.eoi = eoi;
+   }
+
+   public int getEss() {
+      return ess;
+   }
+
+   public void setEss(final int ess) {
+      this.ess = ess;
    }
 
 }
