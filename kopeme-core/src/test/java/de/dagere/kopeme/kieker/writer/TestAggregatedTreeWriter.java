@@ -16,8 +16,6 @@ import org.junit.Test;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
-import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
-import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import kieker.common.configuration.Configuration;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.MonitoringController;
@@ -38,7 +36,7 @@ public class TestAggregatedTreeWriter {
    public static void initWriter(final int warmup, final int entriesPerFile) {
       initWriter(warmup, entriesPerFile, 5, false);
    }
-   
+
    public static void initWriter(final int warmup, final int entriesPerFile, final int interval, final boolean ignoreEOI) {
       final Configuration config = ConfigurationFactory.createSingletonConfiguration();
       final String absolutePath = TestChangeableFolderWriter.DEFAULT_FOLDER.getAbsolutePath();
@@ -49,7 +47,7 @@ public class TestAggregatedTreeWriter {
       config.setProperty(AggregatedTreeWriter.CONFIG_ENTRIESPERFILE, entriesPerFile);
       Sample.MONITORING_CONTROLLER = MonitoringController.createInstance(config);
       Sample.MONITORING_CONTROLLER.enableMonitoring();
-      
+
       AggregatedTreeWriter fsWriter = AggregatedTreeWriter.getInstance();
       fsWriter.getStatisticConfig().setWarmup(warmup);
    }
@@ -67,7 +65,7 @@ public class TestAggregatedTreeWriter {
       initWriter(0, 100);
       KiekerTestHelper.runFixture(15);
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3); 
+      assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3);
    }
 
    @Test
@@ -79,24 +77,24 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 0); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 0);
 
       Assert.assertEquals(0, data.size());
    }
-   
+
    @Test
    public void testIgnoreEOI() throws Exception {
       initWriter(0, 100, 5, true);
       for (int i = 0; i < 3; i++) {
          final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime()+1;
+         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime() + 1;
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 0);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 1, 0);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 1);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method1()", 0, 1);
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 3);
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, 0, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
@@ -111,20 +109,20 @@ public class TestAggregatedTreeWriter {
       Assert.assertNotNull(summaryStatistics0_2);
       Assert.assertEquals(3, summaryStatistics0_2.getOverallStatistic().getN());
    }
-   
+
    @Test
    public void testUseEOI() throws Exception {
       initWriter(0, 100, 5, false);
       for (int i = 0; i < 3; i++) {
          final long tin = Sample.MONITORING_CONTROLLER.getTimeSource().getTime();
-         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime()+1;
+         final long tout = Sample.MONITORING_CONTROLLER.getTimeSource().getTime() + 1;
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 0);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 1, 0);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method0()", 0, 1);
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public void NonExistant.method1()", 0, 1);
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 4); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 4);
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(0, 0, "public void NonExistant.method0()");
       final AggregatedData summaryStatistics = data.get(expectedNode);
@@ -158,7 +156,7 @@ public class TestAggregatedTreeWriter {
          KiekerTestHelper.createAndWriteOperationExecutionRecord(tin, tout, "public new NonExistant.<init>()");
       }
       KoPeMeKiekerSupport.finishMonitoring(Sample.MONITORING_CONTROLLER);
-      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 1); 
+      final Map<AggregatedDataNode, AggregatedData> data = assertJSONFileContainsMethods(TestChangeableFolderWriter.DEFAULT_FOLDER, 1);
 
       final AggregatedDataNode expectedNode = new AggregatedDataNode(-1, -1, "public new NonExistant.<init>()");
       final AggregatedData summaryStatistics = data.get(expectedNode);

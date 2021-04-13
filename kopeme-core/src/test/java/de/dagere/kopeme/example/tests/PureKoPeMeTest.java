@@ -23,49 +23,49 @@ import de.dagere.kopeme.testrunner.PerformanceTestRunnerKoPeMe;
 
 public class PureKoPeMeTest {
 
-	private static final Logger log = LogManager.getLogger(PureKoPeMeTest.class);
+   private static final Logger log = LogManager.getLogger(PureKoPeMeTest.class);
 
-	@BeforeClass
-	public static void setupClass() throws IOException{
-		TestUtils.cleanAndSetKoPeMeOutputFolder();
-	}
-	
-	@Test
-	public void testPureKoPeMeExecution() throws Throwable {
-		final String params[] = new String[] { ExamplePurePerformanceTests.class.getName() };
-		PerformanceTestRunnerKoPeMe.main(params);
-	}
-	
-	@Test
-	public void testExecutionTimeMeasurement() throws Throwable {
-		final long start = System.currentTimeMillis();
-		PerformanceTestRunnerKoPeMe.main(new String[] { TestTimeTest.class.getName() });
-		final long duration = System.currentTimeMillis() - start;
-		log.debug("Overall Duration: " + duration);
-		final String className = TestTimeTest.class.getCanonicalName();
-		final String folderName = FolderProvider.getInstance().getFolderFor(className);
-		final String filename = "simpleTest.xml";
-		log.info("Suche in: {}", folderName);
-		final XMLDataLoader xdl = new XMLDataLoader(new File(folderName, filename));
-		final Kopemedata kd = xdl.getFullData();
-		List<Datacollector> collectors = null; 
-		for (final TestcaseType tct : kd.getTestcases().getTestcase()) {
-			if (tct.getName().contains("simpleTest")) {
-				collectors = tct.getDatacollector();
-			}
-		}
-		Assert.assertNotNull(collectors);
+   @BeforeClass
+   public static void setupClass() throws IOException {
+      TestUtils.cleanAndSetKoPeMeOutputFolder();
+   }
 
-		double timeConsumption = 0.0;
-		for (final Datacollector collector : collectors) {
-			if (collector.getName().contains("TimeData")) {
-				timeConsumption = collector.getResult().get(collector.getResult().size() - 1).getValue();
-			}
-		}
-		Assert.assertNotEquals(timeConsumption, 0.0);
+   @Test
+   public void testPureKoPeMeExecution() throws Throwable {
+      final String params[] = new String[] { ExamplePurePerformanceTests.class.getName() };
+      PerformanceTestRunnerKoPeMe.main(params);
+   }
 
-		final long milisecondTime = (long) ((timeConsumption * 40l) / (1000l * 1000l));
+   @Test
+   public void testExecutionTimeMeasurement() throws Throwable {
+      final long start = System.currentTimeMillis();
+      PerformanceTestRunnerKoPeMe.main(new String[] { TestTimeTest.class.getName() });
+      final long duration = System.currentTimeMillis() - start;
+      log.debug("Overall Duration: " + duration);
+      final String className = TestTimeTest.class.getCanonicalName();
+      final String folderName = FolderProvider.getInstance().getFolderFor(className);
+      final String filename = "simpleTest.xml";
+      log.info("Suche in: {}", folderName);
+      final XMLDataLoader xdl = new XMLDataLoader(new File(folderName, filename));
+      final Kopemedata kd = xdl.getFullData();
+      List<Datacollector> collectors = null;
+      for (final TestcaseType tct : kd.getTestcases().getTestcase()) {
+         if (tct.getName().contains("simpleTest")) {
+            collectors = tct.getDatacollector();
+         }
+      }
+      Assert.assertNotNull(collectors);
 
-		Assert.assertThat( milisecondTime, Matchers.lessThan(duration));
-	}
+      double timeConsumption = 0.0;
+      for (final Datacollector collector : collectors) {
+         if (collector.getName().contains("TimeData")) {
+            timeConsumption = collector.getResult().get(collector.getResult().size() - 1).getValue();
+         }
+      }
+      Assert.assertNotEquals(timeConsumption, 0.0);
+
+      final long milisecondTime = (long) ((timeConsumption * 40l) / (1000l * 1000l));
+
+      Assert.assertThat(milisecondTime, Matchers.lessThan(duration));
+   }
 }

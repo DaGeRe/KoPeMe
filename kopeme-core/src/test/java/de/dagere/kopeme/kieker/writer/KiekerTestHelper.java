@@ -32,9 +32,9 @@ public class KiekerTestHelper {
    }
 
    public static void createAndWriteOperationExecutionRecord(final long tin, final long tout, final String methodSignature) {
-      createAndWriteOperationExecutionRecord(tin, 
-            tout, 
-            methodSignature, 
+      createAndWriteOperationExecutionRecord(tin,
+            tout,
+            methodSignature,
             OperationExecutionRecord.NO_EOI_ESS,
             OperationExecutionRecord.NO_EOI_ESS);
    }

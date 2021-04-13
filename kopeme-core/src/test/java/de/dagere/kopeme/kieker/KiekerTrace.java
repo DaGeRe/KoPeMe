@@ -13,43 +13,42 @@ import org.supercsv.io.CsvBeanReader;
 import org.supercsv.prefs.CsvPreference;
 
 /**
- * Class containing the in memory representation of a kieker trace file.
- * We use a mapping of the method names with a head / tail list, to represent the stack. 
+ * Class containing the in memory representation of a kieker trace file. We use a mapping of the method names with a head / tail list, to represent the stack.
  * 
  * @author dhaeb
  *
  */
 public class KiekerTrace {
 
-	private Map<String, List<KiekerTraceEntry>> entries = new HashMap<>();
-	
-	public KiekerTrace(final InputStream resource) throws IOException {
-		try(CsvBeanReader reader = new CsvBeanReader(new BufferedReader(new InputStreamReader(resource)), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE)){
-			KiekerTraceEntry currentEntry = null; 
-			while((currentEntry = getNextKiekerTraceEntry(reader)) != null){
-				handleEntry(currentEntry);
-			}
-		}
-	}
+   private Map<String, List<KiekerTraceEntry>> entries = new HashMap<>();
 
-	private KiekerTraceEntry getNextKiekerTraceEntry(final CsvBeanReader reader) throws IOException {
-		return reader.read(KiekerTraceEntry.class, KiekerTraceEntry.getFieldDescription(), KiekerTraceEntry.getCellProcessors());
-	}
+   public KiekerTrace(final InputStream resource) throws IOException {
+      try (CsvBeanReader reader = new CsvBeanReader(new BufferedReader(new InputStreamReader(resource)), CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE)) {
+         KiekerTraceEntry currentEntry = null;
+         while ((currentEntry = getNextKiekerTraceEntry(reader)) != null) {
+            handleEntry(currentEntry);
+         }
+      }
+   }
 
-	private void handleEntry(KiekerTraceEntry currentEntry) {
-		String entryName = currentEntry.getEntryName();
-		List<KiekerTraceEntry> addable;
-		if(entries.containsKey(entryName)){
-			addable = entries.get(entryName);
-		} else {
-			addable = new ArrayList<>();
-		}
-		addable.add(0, currentEntry);
-		entries.put(entryName, addable);
-	}
+   private KiekerTraceEntry getNextKiekerTraceEntry(final CsvBeanReader reader) throws IOException {
+      return reader.read(KiekerTraceEntry.class, KiekerTraceEntry.getFieldDescription(), KiekerTraceEntry.getCellProcessors());
+   }
 
-	public Map<String, List<KiekerTraceEntry>> getEntries() {
-		return entries;
-	}
+   private void handleEntry(final KiekerTraceEntry currentEntry) {
+      String entryName = currentEntry.getEntryName();
+      List<KiekerTraceEntry> addable;
+      if (entries.containsKey(entryName)) {
+         addable = entries.get(entryName);
+      } else {
+         addable = new ArrayList<>();
+      }
+      addable.add(0, currentEntry);
+      entries.put(entryName, addable);
+   }
+
+   public Map<String, List<KiekerTraceEntry>> getEntries() {
+      return entries;
+   }
 
 }
