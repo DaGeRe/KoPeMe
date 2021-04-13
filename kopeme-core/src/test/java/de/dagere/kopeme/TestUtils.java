@@ -48,16 +48,16 @@ public class TestUtils {
    /*
     * Since Thread.sleep is sometimes slightly inaccurate, it is called with 0 to minimize its error.
     */
-	public static void waitSomeMilliseconds(final long milliSeconds) throws InterruptedException {
+   public static void waitSomeMilliseconds(final long milliSeconds) throws InterruptedException {
 
-		// Convert to nanoseconds
-		final long waitingTime = milliSeconds * 1000000;
-		final long exitTime = System.nanoTime() + waitingTime;
+      // Convert to nanoseconds
+      final long waitingTime = milliSeconds * 1000000;
+      final long exitTime = System.nanoTime() + waitingTime;
 
-		long currentTime;
-		do {
-			currentTime = System.nanoTime();
-		} while (currentTime < exitTime);
-	}
+      long currentTime;
+      do {
+	 currentTime = System.nanoTime();
+      } while (currentTime < exitTime);
+   }
 
 }
