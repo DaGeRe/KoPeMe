@@ -6,10 +6,6 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class KoPeMeExtension implements ExecutionCondition {
 
-   // private static final String KOPEME_IS_ACTIVE = "KOPEME_IS_ACTIVE";
-
-   
-
    @Override
    public ConditionEvaluationResult evaluateExecutionCondition(final ExtensionContext context) {
       if (context.getTestInstance().isPresent()) {
