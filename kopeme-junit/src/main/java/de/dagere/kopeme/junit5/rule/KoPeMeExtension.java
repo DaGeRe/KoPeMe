@@ -1,160 +1,27 @@
 package de.dagere.kopeme.junit5.rule;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import org.junit.function.ThrowingRunnable;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junit.jupiter.engine.config.JupiterConfiguration;
-import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor;
-import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
-import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
-import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
-import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
-import org.junit.jupiter.engine.extension.MutableExtensionRegistry;
-import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
-import org.junit.platform.engine.UniqueId;
 
-import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
-import de.dagere.kopeme.junit.rule.TestRunnables;
+public class KoPeMeExtension implements ExecutionCondition {
 
-public class KoPeMeExtension implements BeforeEachCallback {
+   // private static final String KOPEME_IS_ACTIVE = "KOPEME_IS_ACTIVE";
+
+   
 
    @Override
-   public void beforeEach(final ExtensionContext context) throws Exception {
-      final Object instance = context.getTestInstance().get();
-      Method method = context.getTestMethod().get();
-
-      final JupiterConfiguration configuration = getDummyConfiguration();
-      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(UniqueId.forEngine(JupiterEngineDescriptor.ENGINE_ID), instance.getClass(), method, configuration);
-
-      final JupiterEngineExecutionContext jupiterContext = prepareJUnit5(context, instance, configuration, descriptor);
-      try {
-         final ThrowingRunnable throwingRunnable = new ThrowingRunnable() {
-            
-            @Override
-            public void run() throws Throwable {
-               descriptor.execute(jupiterContext, null);
-               
-            } };
-         RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
-         final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName());
-         statement.evaluate();
-      } catch (Throwable t) {
-         t.printStackTrace();
+   public ConditionEvaluationResult evaluateExecutionCondition(final ExtensionContext context) {
+      if (context.getTestInstance().isPresent()) {
+         try {
+            final KoPeMeJUnit5Starter starter = new KoPeMeJUnit5Starter(context);
+            starter.start();
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+         return ConditionEvaluationResult.disabled("Outside KoPeMe");
+      } else {
+         return ConditionEvaluationResult.enabled("Inside KoPeMe");
       }
-   }
-
-   private JupiterEngineExecutionContext prepareJUnit5(final ExtensionContext context, final Object instance, final JupiterConfiguration configuration,
-         final TestMethodTestDescriptor descriptor) {
-      MutableExtensionRegistry extensionRegistry = MutableExtensionRegistry.createRegistryWithDefaultExtensions(configuration);
-      
-      final JupiterEngineExecutionContext context2 = new JupiterEngineExecutionContext(null, configuration)
-            .extend()
-            .withExtensionRegistry(extensionRegistry)
-            .withExtensionContext(context)
-            .withThrowableCollector(JupiterThrowableCollectorFactory.createThrowableCollector())
-            .build();
-      
-      ClassBasedTestDescriptor classDescriptor = new ClassTestDescriptor(UniqueId.forEngine(JupiterEngineDescriptor.ENGINE_ID), instance.getClass(), configuration);
-      classDescriptor.prepare(context2);
-
-      descriptor.prepare(context2);
-      return context2;
-   }
-
-   private JupiterConfiguration getDummyConfiguration() {
-      final JupiterConfiguration configuration = new JupiterConfiguration() {
-
-         @Override
-         public boolean isParallelExecutionEnabled() {
-            // TODO Auto-generated method stub
-            return false;
-         }
-
-         @Override
-         public boolean isExtensionAutoDetectionEnabled() {
-            // TODO Auto-generated method stub
-            return false;
-         }
-
-         @Override
-         public Optional<String> getRawConfigurationParameter(final String key) {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public Predicate<ExecutionCondition> getExecutionConditionFilter() {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public Lifecycle getDefaultTestInstanceLifecycle() {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public ExecutionMode getDefaultExecutionMode() {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public DisplayNameGenerator getDefaultDisplayNameGenerator() {
-            // TODO Auto-generated method stub
-            return new DisplayNameGenerator() {
-
-               @Override
-               public String generateDisplayNameForNestedClass(final Class<?> nestedClass) {
-                  return nestedClass.getName();
-               }
-
-               @Override
-               public String generateDisplayNameForMethod(final Class<?> testClass, final Method testMethod) {
-                  // TODO Auto-generated method stub
-                  return testClass.getName() + "#" + testMethod.getName();
-               }
-
-               @Override
-               public String generateDisplayNameForClass(final Class<?> testClass) {
-                  // TODO Auto-generated method stub
-                  return testClass.getName();
-               }
-            };
-         }
-
-         @Override
-         public ExecutionMode getDefaultClassesExecutionMode() {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public <T> Optional<T> getRawConfigurationParameter(final String key, final Function<String, T> transformer) {
-            // TODO Auto-generated method stub
-            return null;
-         }
-
-         @Override
-         public Optional<MethodOrderer> getDefaultTestMethodOrderer() {
-            // TODO Auto-generated method stub
-            return null;
-         }
-      };
-      return configuration;
    }
 }

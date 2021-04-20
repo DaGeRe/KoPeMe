@@ -1,6 +1,6 @@
 package de.dagere.kopeme.junit5.exampletests.rules;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,28 +16,35 @@ import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
  */
 @ExtendWith(KoPeMeExtension.class)
 public class ExampleRule5Test {
-   
 
 	@BeforeEach
 	public void setUp() {
-		System.out.println("Führe aus");
+		System.out.println("Executing Setup");
 		try {
-			Thread.sleep(10);
+			Thread.sleep(5);
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-
 	
+	@AfterEach
+   public void tearDown() {
+      System.out.println("Executing Teardown");
+      try {
+         Thread.sleep(5);
+      } catch (final InterruptedException e) {
+         e.printStackTrace();
+      }
+   }
 
 	@Test
-	@PerformanceTest(warmup = 5, iterations = 50, timeout = 50000)
+	@PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME")
 	public void testNormal() {
-	   System.out.println("Normal");
-		int a = 0;
-		for (int i = 0; i < 10000; i++) {
-			a += i;
-		}
-		Assert.assertEquals(10000 * 9999 / 2, a);
+	   System.out.println("Normal Execution");
+	   try {
+         Thread.sleep(15);
+      } catch (InterruptedException e) {
+         e.printStackTrace();
+      }
 	}
 }
