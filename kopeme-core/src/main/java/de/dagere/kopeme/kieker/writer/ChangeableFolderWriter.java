@@ -102,7 +102,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       }
       if (currentWriter != null) {
          LOG.log(Level.FINEST, "Record: " + record);
-         LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
+//         LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
    }
