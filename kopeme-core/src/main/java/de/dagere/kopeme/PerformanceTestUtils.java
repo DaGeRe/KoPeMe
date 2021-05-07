@@ -47,20 +47,20 @@ public final class PerformanceTestUtils {
       LOG.trace("Checking DataCollector validity...");
       boolean valid = true;
       for (final String collectorName : assertationvalues.keySet()) {
-         if (!tr.getKeys().contains(collectorName)) {
+         if (!tr.getDatacollectors().contains(collectorName)) {
             valid = false;
             LOG.warn("Invalid Collector for assertion: " + collectorName);
          }
       }
-      String keys = "";
-      for (final String key : tr.getKeys()) {
-         keys += key + " ";
+      String datacollectors = "";
+      for (final String datacollector : tr.getDatacollectors()) {
+         datacollectors += datacollector + " ";
       }
       for (final String collectorName : maximalRelativeStandardDeviation.keySet()) {
-         if (!tr.getKeys().contains(collectorName)) {
+         if (!tr.getDatacollectors().contains(collectorName)) {
             valid = false;
-            LOG.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + keys);
-            for (final String key : tr.getKeys()) {
+            LOG.warn("Invalid Collector for maximale relative standard deviation: " + collectorName + " Available Keys: " + datacollectors);
+            for (final String key : tr.getDatacollectors()) {
                LOG.warn(key + " - " + collectorName + ": " + key.equals(collectorName));
             }
          }
@@ -91,8 +91,8 @@ public final class PerformanceTestUtils {
             }
          }
 
-         for (final String key : tr.getKeys()) {
-            buildKeyData(data, xds, tr, key);
+         for (final String datacollector : tr.getDatacollectors()) {
+            buildKeyData(data, xds, tr, datacollector);
          }
       } catch (final JAXBException e) {
          e.printStackTrace();
@@ -107,13 +107,13 @@ public final class PerformanceTestUtils {
       return new XMLDataStorer(folder, data.getFilename(), data.getTestcasename());
    }
 
-   private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String key) {
-      LOG.trace("Collector Key: {}", key);
-      final Result result = getMeasureFromTR(data, tr, key);
-      final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(key) : null;
-      tr.clearFulldata(key);
+   private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String datacollector) {
+      LOG.trace("Collector Key: {}", datacollector);
+      final Result result = getMeasureFromTR(data, tr, datacollector);
+      final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(datacollector) : null;
+      tr.clearFulldata(datacollector);
       result.setFulldata(fulldata);
-      xds.storeValue(result, data.getTestcasename(), key);
+      xds.storeValue(result, data.getTestcasename(), datacollector);
    }
 
    private static Result getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {

@@ -86,13 +86,13 @@ public final class TestResult {
     * 
     * @return Names of used DataCollectors
     */
-   public Set<String> getKeys() {
-      final Set<String> keySet = new HashSet<>();
+   public Set<String> getDatacollectors() {
+      final Set<String> datacollectorSet = new HashSet<>();
       for (final DataCollector dc : sortedCollectors) {
-         keySet.add(dc.getName());
+         datacollectorSet.add(dc.getName());
       }
 
-      return keySet;
+      return datacollectorSet;
    }
 
    /**
@@ -172,10 +172,10 @@ public final class TestResult {
    public void finalizeCollection(final Throwable thrownException) {
       writer.finalizeCollection();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
-         reader.read(thrownException, getKeys());
+         reader.read(thrownException, getDatacollectors());
          reader.deleteTempFile();
       } else {
-         reader.readStreaming(thrownException, getKeys());
+         reader.readStreaming(thrownException, getDatacollectors());
       }
    }
 

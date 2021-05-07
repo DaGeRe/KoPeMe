@@ -38,8 +38,8 @@ public class WrittenResultReader {
       this.file = file;
    }
 
-   public void read(final Throwable exception, final Set<String> keys) {
-      initSummaries(keys);
+   public void read(final Throwable exception, final Set<String> datacollectors) {
+      initSummaries(datacollectors);
       readValues();
       checkValues(exception);
    }
@@ -84,10 +84,10 @@ public class WrittenResultReader {
       }
    }
 
-   private void initSummaries(final Set<String> keys) {
+   private void initSummaries(final Set<String> datacollectors) {
       collectorSummaries = new HashMap<>();
-      for (String key : keys) {
-         collectorSummaries.put(key, new SummaryStatistics());
+      for (String datacollector : datacollectors) {
+         collectorSummaries.put(datacollector, new SummaryStatistics());
       }
    }
 
