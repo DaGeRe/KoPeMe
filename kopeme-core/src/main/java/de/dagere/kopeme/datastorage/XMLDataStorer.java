@@ -63,7 +63,7 @@ public final class XMLDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(final Result result, String testcase, String collectorName) {
+   public void storeValue(final Result result, final String testcase, final String collectorName) {
       if (data.getTestcases() == null) {
          data.setTestcases(new Testcases());
       }
@@ -131,7 +131,7 @@ public final class XMLDataStorer implements DataStorer {
       return dc;
    }
 
-   private TestcaseType getOrCreateTestcase(final Result performanceDataMeasure, String testcase) {
+   private TestcaseType getOrCreateTestcase(final Result performanceDataMeasure, final String testcase) {
       TestcaseType test = null;
       for (final TestcaseType tc : data.getTestcases().getTestcase()) {
          if (tc.getName().equals(testcase)) {
@@ -154,7 +154,7 @@ public final class XMLDataStorer implements DataStorer {
          jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
          jaxbMarshaller.marshal(data, file);
       } catch (final JAXBException e) {
-         e.printStackTrace();
+         throw new RuntimeException(e);
       }
    }
 
@@ -178,7 +178,8 @@ public final class XMLDataStorer implements DataStorer {
 
          jaxbMarshaller.marshal(currentdata, file);
       } catch (final JAXBException e) {
-         e.printStackTrace();
+         LOG.error("An exception occured", e);
+         throw new RuntimeException(e);
       }
       LOG.debug("Storing finished.");
    }
