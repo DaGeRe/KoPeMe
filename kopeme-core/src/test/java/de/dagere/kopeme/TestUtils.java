@@ -45,4 +45,28 @@ public class TestUtils {
       return Paths.get(folder, canonicalName, testCaseName + ".xml").toFile();
    }
 
+   public static void waitSomeMilliseconds(final long milliSeconds) throws InterruptedException {
+
+      if (!System.getProperty("os.name").startsWith("Mac")) {
+         Thread.sleep(milliSeconds);
+      } else {
+         waitOnMac(milliSeconds);
+      }
+
+   }
+
+   /*
+    * Thread.sleep was highly inaccurate on macOS, so this workaround is used.
+    */
+   private static void waitOnMac(final long milliSeconds) {
+      // Convert to nanoseconds
+      final long waitingTime = milliSeconds * 1000000;
+      final long exitTime = System.nanoTime() + waitingTime;
+
+      long currentTime;
+      do {
+         currentTime = System.nanoTime();
+      } while (currentTime < exitTime);
+   }
+
 }

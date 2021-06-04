@@ -7,13 +7,13 @@ on:
   push:
     branches: [ master, main, develop ] # build all relevant branches; switching to main is intended
   workflow_dispatch:
-    branches: [ master, main, develop ]
+    branches: [ develop ]
 
 jobs:
   build:
     strategy: 
         matrix:
-          os: [ubuntu-latest, windows-latest, macos-latest]
+          os: [macos-latest]
           java: [ 1.8, 11, 15 ]
         fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -31,7 +31,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: mvn -B verify --file pom.xml 
+      run: mvn -B verify --file pom.xml
     - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}
       if: ${{ always() }}
       uses: scacap/action-surefire-report@v1

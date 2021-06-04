@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
+import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
@@ -16,18 +17,17 @@ public class ExampleBeforeClassMeasurement {
 
    @BeforeClass
    public static void beforeClass() throws InterruptedException {
-      Thread.sleep(40);
+	  TestUtils.waitSomeMilliseconds(40);
    }
    
    @AfterClass
    public static void afterClass() throws InterruptedException {
-      Thread.sleep(40);
+	  TestUtils.waitSomeMilliseconds(40);
    }
    
    @PerformanceTest(executeBeforeClassInMeasurement = true, iterations = 2, warmup = 2)
    @Test
    public void spendTime() throws InterruptedException {
-      System.out.println("Spend Time");
-      Thread.sleep(50);
+      TestUtils.waitSomeMilliseconds(50);
    }
 }

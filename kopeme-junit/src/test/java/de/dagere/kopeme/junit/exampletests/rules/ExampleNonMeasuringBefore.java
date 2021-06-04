@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
 
+import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
@@ -17,25 +18,25 @@ public class ExampleNonMeasuringBefore {
 	@BeforeNoMeasurement
 	public void spendSomeTimeBefore() throws InterruptedException {
 		System.out.println("Before");
-		Thread.sleep(100);
+		TestUtils.waitSomeMilliseconds(100);
 	}
 
 	@AfterNoMeasurement
 	public void spendSomeTimeAfter() throws InterruptedException {
 		System.out.println("After");
-		Thread.sleep(100);
+		TestUtils.waitSomeMilliseconds(100);
 	}
 
 	@AfterNoMeasurement
 	public void spendSomeTimeAfter2() throws InterruptedException {
 		System.out.println("After 2");
-		Thread.sleep(100);
+		TestUtils.waitSomeMilliseconds(100);
 	}
 
 	@PerformanceTest
 	@Test
 	public void spendTime() throws InterruptedException {
 		System.out.println("Spend Time");
-		Thread.sleep(110);
+		TestUtils.waitSomeMilliseconds(110);
 	}
 }
