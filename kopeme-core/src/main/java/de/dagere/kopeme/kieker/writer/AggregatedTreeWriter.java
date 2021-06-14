@@ -113,6 +113,10 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    @Override
    public synchronized void setFolder(final File writingFolder) throws IOException {
+      if (dataManager != null) {
+         dataManager.finish();
+         dataManager.close();
+      }
       LOG.info("Writing to: " + writingFolder);
       final Path kiekerPath = buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();

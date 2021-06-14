@@ -3,11 +3,8 @@
 
 name: Java CI with Maven
 
-on:
-  push:
-    branches: [ master, main, develop ] # build all relevant branches; switching to main is intended
-  workflow_dispatch:
-    branches: [ master, main, develop ]
+on: [push, workflow_dispatch ]
+# build all relevant branches; switching to main is intended
 
 jobs:
   build:
