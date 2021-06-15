@@ -105,6 +105,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
             dataManager.finish();
             writerThread.interrupt();
             dataManager.close();
+         } else {
+            if (dataManager != null) {
+               dataManager.finish();
+               dataManager.close();
+            }
          }
       } catch (final IOException e) {
          e.printStackTrace();
@@ -113,15 +118,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    @Override
    public synchronized void setFolder(final File writingFolder) throws IOException {
-      if (dataManager != null) {
-         dataManager.finish();
-         dataManager.close();
-      }
       LOG.info("Writing to: " + writingFolder);
+      onTerminating();
       final Path kiekerPath = buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
-      onTerminating();
       dataManager = new FileDataManager(this);
       onStarting();
    }

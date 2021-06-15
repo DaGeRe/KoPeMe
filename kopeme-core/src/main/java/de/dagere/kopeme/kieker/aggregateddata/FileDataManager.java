@@ -14,6 +14,7 @@ public class FileDataManager implements Runnable, Closeable {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
+   private final File destinationFolder;
    private File currentDestination;
    private BufferedWriter currentWriter;
    private final Map<DataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
@@ -28,7 +29,8 @@ public class FileDataManager implements Runnable, Closeable {
     */
    public FileDataManager(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
-      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-0.csv");
+      this.destinationFolder = aggregatedTreeWriter.getResultFolder();
+      currentDestination = new File(destinationFolder, "measurement-0.csv");
       currentWriter = new BufferedWriter(new FileWriter(currentDestination));
    }
 
@@ -82,7 +84,7 @@ public class FileDataManager implements Runnable, Closeable {
       currentEntries = 0;
       fileIndex++;
       currentWriter.close();
-      currentDestination = new File(aggregatedTreeWriter.getResultFolder(), "measurement-" + fileIndex + ".csv");
+      currentDestination = new File(destinationFolder, "measurement-" + fileIndex + ".csv");
       currentWriter = new BufferedWriter(new FileWriter(currentDestination));
    }
 
