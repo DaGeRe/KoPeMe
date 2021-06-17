@@ -15,7 +15,7 @@ import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
  *
  */
 @ExtendWith(KoPeMeExtension.class)
-public class ExampleRule5Test {
+public class ExampleExtension5Test {
 
 	@BeforeEach
 	public void setUp() {

@@ -21,7 +21,7 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary.Failure;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleRule5Test;
+import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5Test;
 
 /**
  * Tests just whether JUnit 5 execution works
@@ -43,7 +43,7 @@ public class TestJUnit5Execution {
       }
 
       LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-            .selectors(DiscoverySelectors.selectClass(ExampleRule5Test.class))
+            .selectors(DiscoverySelectors.selectClass(ExampleExtension5Test.class))
             .build();
       Launcher launcher = LauncherFactory.create();
       SummaryGeneratingListener summaryGeneratingListener = new SummaryGeneratingListener();
