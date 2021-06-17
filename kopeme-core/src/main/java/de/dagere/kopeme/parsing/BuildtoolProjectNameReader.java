@@ -194,8 +194,8 @@ public class BuildtoolProjectNameReader {
    }
 
    private ProjectInfo readMaven(final File pomXmlFile, ProjectInfo result) {
-      final MavenXpp3Reader reader = new MavenXpp3Reader();
       try (InputStreamReader inputStream = new InputStreamReader(new FileInputStream(pomXmlFile), Charset.defaultCharset())) {
+         final MavenXpp3Reader reader = new MavenXpp3Reader();
          final Model model = reader.read(inputStream);
          final String groupId = getGroupid(model);
          result = new ProjectInfo(model.getArtifactId(), groupId);
