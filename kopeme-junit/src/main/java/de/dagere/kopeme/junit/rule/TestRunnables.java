@@ -1,16 +1,61 @@
 package de.dagere.kopeme.junit.rule;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.function.ThrowingRunnable;
 
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
+
+class ListOfMethodRunnable implements ThrowingRunnable {
+   private final List<Method> currentMethods;
+   private final Object testObject;
+
+   public ListOfMethodRunnable(final List<Method> beforeMethods, final Object testObject) {
+      this.currentMethods = beforeMethods;
+      this.testObject = testObject;
+   }
+
+   @Override
+   public void run() throws Throwable {
+      for (final Method method : currentMethods) {
+         method.invoke(testObject);
+      }
+   }
+}
+
+class BeforeAfterMethodRunnable implements ThrowingRunnable {
+   private final List<Method> beforeMethods;
+   private final ThrowingRunnable runnable;
+   private final List<Method> afterMethods;
+   private final Object testObject;
+
+   public BeforeAfterMethodRunnable(final List<Method> beforeMethods, final ThrowingRunnable runnable, final List<Method> afterMethods, final Object testObject) {
+      this.beforeMethods = beforeMethods;
+      this.runnable = runnable;
+      this.afterMethods = afterMethods;
+      this.testObject = testObject;
+   }
+
+
+   @Override
+   public void run() throws Throwable {
+      for (final Method method : beforeMethods) {
+         method.invoke(testObject);
+      }
+      runnable.run();
+      for (final Method method : afterMethods) {
+         method.invoke(testObject);
+      }
+   }
+}
 
 /**
  * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.
@@ -19,7 +64,6 @@ import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
  *
  */
 public class TestRunnables {
-
 
    private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 
@@ -32,9 +76,7 @@ public class TestRunnables {
     * @param testClass Class that should be tested
     * @param testObject Object that should be tested
     */
-   public TestRunnables(final ThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
-      super();
-      this.testRunnable = testRunnable;
+   public TestRunnables(final RunConfiguration config, final ThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
       final List<Method> beforeMethods = new LinkedList<>();
       final List<Method> afterMethods = new LinkedList<>();
       LOG.debug("Klasse: {}", testClass);
@@ -54,26 +96,24 @@ public class TestRunnables {
          }
       }
 
-      beforeRunnable = new ThrowingRunnable() {
-
-         @Override
-         public void run() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-            for (final Method method : beforeMethods) {
-               method.invoke(testObject);
+      if (config.isExecuteBeforeClassInMeasurement()) {
+         List<Method> beforeClassMethod = new LinkedList<Method>();
+         List<Method> afterClassMethod = new LinkedList<Method>();
+         for (final Method classMethod : testClass.getMethods()) {
+            if (classMethod.getAnnotation(BeforeClass.class) != null) {
+               beforeClassMethod.add(classMethod);
             }
-
-         }
-      };
-
-      afterRunnable = new ThrowingRunnable() {
-
-         @Override
-         public void run() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-            for (final Method method : afterMethods) {
-               method.invoke(testObject);
+            if (classMethod.getAnnotation(AfterClass.class) != null) {
+               afterClassMethod.add(classMethod);
             }
          }
-      };
+         this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
+      } else {
+         this.testRunnable = testRunnable;
+      }
+
+      beforeRunnable = new ListOfMethodRunnable(beforeMethods, testObject);
+      afterRunnable = new ListOfMethodRunnable(afterMethods, testObject);
    }
 
    /**

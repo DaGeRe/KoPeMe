@@ -1,42 +1,56 @@
-KoPeMe
-======
+# KoPeMe
 
 KoPeMe is a framework for enabling performance tests in Java. This makes it possible to live a software development process where performance measures are taken continously and therefore react continously to changes in performance. With continous performance testing, one avoids refactorings after performance problems occured in a big testing phase before releasing the software.
 
-In it's core, KoPeMe got three possibilities to enable performance tests in Java: Performance Tests with JUnit 4 style by kopeme-junit (which is the preferred way), Performance Tests without JUnit by kopeme-core and Performance Tests with JUnit 3 style by kopeme-junit3. 
+## Usage
 
-== Getting Started ==
+KoPeMe got three possibilities to enable performance tests in Java: 
+- Using JUnit 4 with the performance test runner, by adding `@RunWith(PerformanceTestRunnerJUnit.class)` as annotation at class level
+- Using JUnit 4 with the rule, by adding `@Rule public TestRule rule = new KoPeMeRule(this);` as instance variable to the class
+- Using Junit 5 with the extension, by adding `@ExtendWith(KoPeMeExtension.class)` as annotation at class level
+- Using JUnit 3, using `extends KoPeMeTestcase` (instead `extends TestCase`). This is mainly for compatibility with old software and is not recommended for daily use.
+- Using kopeme-core, by running `PerformanceTestRunnerKoPeMe` for a class with performance tests
 
-KoPeMe is in maven central, so to get started, just add
+One of these variants should be enabled.
+
+Additionally, the test should be annotated, e.g. like
+
+```xml
+@Test
+@PerformanceTest(iterations = 500, warmup = 500, repetitions = 100)
+public void measureMe() {
+```
+
+The usual JUnit test annotation should still be added if JUnit tests are measured.
+
+The workload inside the test is repeated `repetitions*iterations` times, and `iterations` duration measurements are done (each after `repetitions` executions). Before this, `repetitions*warmup` workload executions are done without measurement (for warming up the current VM).
+
+## Dependencies
+
+For JUnit 4 or 5 tests, please add
 
 ```xml
 <dependency>
     <groupId>de.dagere.kopeme</groupId>
     <artifactId>kopeme-junit</artifactId>
-    <version>0.7</version>
+    <version>0.13</version>
 </dependency>
 ```
 
-To your maven depencies. After that, add a test class with a simple performance test:
+to your build.
 
-```java
-        @Test
-	@PerformanceTest(executionTimes = 1000, warmupExecutions = 500,
-			assertions =
-			{ @Assertion(collectorname = "de.dagere.kopeme.datacollection.TimeDataCollector", maxvalue = 15000) })
-	public void testSomething() {
-	   ...
-        }
+For JUnit 3 tests, please add
+
+```xml
+<dependency>
+    <groupId>de.dagere.kopeme</groupId>
+    <artifactId>kopeme-junit3</artifactId>
+    <version>0.13</version>
+</dependency>
 ```
 
-Furthermore the class needs to be annotated with the PerformanceTestRunnerJUnit, i.e.
+to your build.
 
-```
-@RunWith(PerformanceTestRunnerJUnit.class)
-```
+## Results
 
-Now just run this test with JUnit from your IDE or maven shurefire, and whatever you've written in the method will by executed 500 times for warmup and 1000 times for real measurement. In your KOPEME\_HOME-folder, a result-file will be placed. It will be extended by new results in every new run. If you don't define KOPEME\_HOME-folder, the file will be placed in your HOME-Folder in .KoPeMe. 
-
-If your execution takes more than 15 seconds, the test will fail. If you now execute this test every time in your continous build environment, you can be shure that in every new commit, your testcase will not take more than 15 seconds.
-
-To explore other abilities of KopeMe like pure or JUnit-3-Style tests, Jenkins plugin and more, please visit kopeme.dagere.de or explore the javadocs of KoPeMe.
+After measurement, in your KOPEME\_HOME-folder, a result-file will be placed. It will be extended by new results in every new run. If you don't define KOPEME\_HOME-folder, the file will be placed in your HOME-Folder in .KoPeMe. 

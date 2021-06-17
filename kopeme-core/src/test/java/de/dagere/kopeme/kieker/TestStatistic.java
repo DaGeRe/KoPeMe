@@ -6,8 +6,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import kieker.monitoring.writer.filesystem.StatisticConfig;
-import kieker.monitoring.writer.filesystem.aggregateddata.WritingData;
+import de.dagere.kopeme.kieker.aggregateddata.WritingData;
+import de.dagere.kopeme.kieker.writer.StatisticConfig;
 
 public class TestStatistic {
 
@@ -45,26 +45,26 @@ public class TestStatistic {
       Assert.assertEquals(10, data.getOverallStatistic().getMean(), 0.01);
    }
 
-//   @Test
-//   public void testOverallStatistic() throws Exception {
-//      addMeasurements(30, 15);
-//      testConverted();
-//
-//      addMeasurements(15, 20);
-//      testConverted();
-//
-//      addMeasurements(15, 25);
-//      testConverted();
-//   }
-//
-//   private void testConverted() throws JsonProcessingException, IOException, JsonParseException, JsonMappingException {
-//      final String serialized = FileDataManager.MAPPER.writeValueAsString(data);
-//      final AggregatedData deserialized = FileDataManager.MAPPER.readValue(serialized, AggregatedData.class);
-//      Assert.assertEquals(data.getOverallStatistic().getN(), deserialized.getOverallStatistic().getN(), 0.01);
-//      Assert.assertEquals(data.getOverallStatistic().getMean(), deserialized.getOverallStatistic().getMean(), 0.01);
-//      System.out.println(data.getOverallStatistic().getMean() + " " + data.getOverallStatistic().getStandardDeviation() + " " + deserialized.getOverallStatistic().getN());
-//      Assert.assertEquals(data.getOverallStatistic().getStandardDeviation(), deserialized.getOverallStatistic().getStandardDeviation(), 0.01);
-//   }
+   // @Test
+   // public void testOverallStatistic() throws Exception {
+   // addMeasurements(30, 15);
+   // testConverted();
+   //
+   // addMeasurements(15, 20);
+   // testConverted();
+   //
+   // addMeasurements(15, 25);
+   // testConverted();
+   // }
+   //
+   // private void testConverted() throws JsonProcessingException, IOException, JsonParseException, JsonMappingException {
+   // final String serialized = FileDataManager.MAPPER.writeValueAsString(data);
+   // final AggregatedData deserialized = FileDataManager.MAPPER.readValue(serialized, AggregatedData.class);
+   // Assert.assertEquals(data.getOverallStatistic().getN(), deserialized.getOverallStatistic().getN(), 0.01);
+   // Assert.assertEquals(data.getOverallStatistic().getMean(), deserialized.getOverallStatistic().getMean(), 0.01);
+   // System.out.println(data.getOverallStatistic().getMean() + " " + data.getOverallStatistic().getStandardDeviation() + " " + deserialized.getOverallStatistic().getN());
+   // Assert.assertEquals(data.getOverallStatistic().getStandardDeviation(), deserialized.getOverallStatistic().getStandardDeviation(), 0.01);
+   // }
 
    @Test
    public void testPersisting() throws Exception {

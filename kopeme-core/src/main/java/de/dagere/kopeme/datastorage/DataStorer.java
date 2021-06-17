@@ -10,6 +10,5 @@ import de.dagere.kopeme.generated.Result;
  */
 public interface DataStorer {
 
-
    void storeValue(Result performanceDataMeasure, String testcase, String collectorName);
 }

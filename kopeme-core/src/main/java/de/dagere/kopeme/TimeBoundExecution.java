@@ -31,7 +31,7 @@ public class TimeBoundExecution {
    private boolean needToStopHart = false;
    private final boolean useKieker;
    private Throwable testError;
-   
+
    private int interruptTries = 10;
    private int waitTimeBetweenInterrupts = 10;
 
@@ -72,8 +72,8 @@ public class TimeBoundExecution {
 
       if (needToStopHart == true && type != Type.CLASS) {
          LOG.error("Would normally stop " + type + " hard; omitted.");
-////         System.exit(1);
-      } 
+         //// System.exit(1);
+      }
       finishKieker();
 
       if (testError != null) {
@@ -148,7 +148,7 @@ public class TimeBoundExecution {
       if (experimentThreadGroup.activeCount() != 0) {
          LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
          needToStopHart = true;
-//               testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
+         // testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
       }
    }
 
@@ -175,12 +175,12 @@ public class TimeBoundExecution {
       }
       return count;
    }
-   
-   public void setInterruptTries(int interruptTries) {
+
+   public void setInterruptTries(final int interruptTries) {
       this.interruptTries = interruptTries;
    }
-   
-   public void setWaitTimeBetweenInterrupts(int waitTimeBetweenInterrupts) {
+
+   public void setWaitTimeBetweenInterrupts(final int waitTimeBetweenInterrupts) {
       this.waitTimeBetweenInterrupts = waitTimeBetweenInterrupts;
    }
 

@@ -41,13 +41,13 @@ public class TestEmptySerialization {
       final File tempFile = Files.createTempFile("start", "end").toFile();
       System.out.println("File: " + tempFile.getAbsolutePath());
       XMLDataStorer.storeData(tempFile, data);
-      
+
       final List<String> gradleFileContents = Files.readAllLines(tempFile.toPath());
-      
+
       for (final String line : gradleFileContents) {
          System.out.println(line);
       }
-      
+
       Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(Matchers.containsString("value")));
       Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(Matchers.containsString("deviation")));
       Assert.assertThat(gradleFileContents, Matchers.not(IsCollectionContaining.hasItem(Matchers.containsString("min"))));

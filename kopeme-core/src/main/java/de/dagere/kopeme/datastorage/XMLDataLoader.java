@@ -15,10 +15,12 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datacollection.DataCollector;
+import com.sun.xml.bind.v2.ContextFactory;
+
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
+import de.dagere.kopeme.generated.ObjectFactory;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -51,11 +53,12 @@ public final class XMLDataLoader implements DataLoader {
    static JAXBContext jc;
    static {
       try {
-         jc = JAXBContext.newInstance(Kopemedata.class);
+         jc = ContextFactory.createContext(
+               ObjectFactory.class.getPackage().getName(),
+               ObjectFactory.class.getClassLoader(), null);
       } catch (final JAXBException e) {
          e.printStackTrace();
       }
-
    }
 
    /**
@@ -80,10 +83,10 @@ public final class XMLDataLoader implements DataLoader {
    }
 
    /**
-    * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup
-    * For the beginning, fields will be changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
+    * In KoPeMe 0.12, the fields should be named suiting to the Peass-fields, i.e. executionTimes -> iterations and warmupExecutions -> warmup For the beginning, fields will be
+    * changed when reading and written differently by KoPeMe; in the future, executionTimes and warmupExecutions will be removed fully
     */
-   private static void updateFields(Kopemedata data) {
+   private static void updateFields(final Kopemedata data) {
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
          for (Datacollector collector : testcase.getDatacollector()) {
             for (Chunk chunk : collector.getChunk()) {
@@ -98,7 +101,7 @@ public final class XMLDataLoader implements DataLoader {
       }
    }
 
-   private static void updateResultFields(Result result) {
+   private static void updateResultFields(final Result result) {
       if (result.getWarmup() == 0 && result.getWarmupExecutions() != 0) {
          result.setWarmup(result.getWarmupExecutions());
          result.setWarmupExecutions(0);
@@ -184,7 +187,7 @@ public final class XMLDataLoader implements DataLoader {
       updateFields(data);
       return data;
    }
-   
+
    public static Kopemedata loadWarmedupData(final File dataFile) throws JAXBException {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
@@ -199,7 +202,7 @@ public final class XMLDataLoader implements DataLoader {
       return data;
    }
 
-   public static Kopemedata loadData(final File dataFile, int warmup) throws JAXBException {
+   public static Kopemedata loadData(final File dataFile, final int warmup) throws JAXBException {
       final Unmarshaller unmarshaller = jc.createUnmarshaller();
       final Kopemedata data = (Kopemedata) unmarshaller.unmarshal(dataFile);
       for (TestcaseType testcase : data.getTestcases().getTestcase()) {
@@ -229,16 +232,16 @@ public final class XMLDataLoader implements DataLoader {
       }
    }
 
-   private void replaceFulldata(Datacollector collector, Result result) {
+   private void replaceFulldata(final Datacollector collector, final Result result) {
       if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
          File dataFile = new File(file.getParentFile(), result.getFulldata().getFileName());
-         
+
          Fulldata replacedFulldata = executeReading(collector.getName(), dataFile, 0);
          result.setFulldata(replacedFulldata);
       }
    }
 
-   private static Fulldata readFulldata(File xmlFile, int warmup, TestcaseType testcase, Result result) {
+   private static Fulldata readFulldata(final File xmlFile, final int warmup, final TestcaseType testcase, final Result result) {
       final File file = new File(result.getFulldata().getFileName());
       final File dataFile = new File(xmlFile.getParentFile(), file.getName());
 
@@ -246,12 +249,12 @@ public final class XMLDataLoader implements DataLoader {
       return replacedFulldata;
    }
 
-   private static Fulldata executeReading(String currentDatacollector, File dataFile, int warmup) {
+   private static Fulldata executeReading(final String currentDatacollector, final File dataFile, final int warmup) {
       final WrittenResultReader reader = new WrittenResultReader(dataFile);
       final Set<String> dataCollectors = new HashSet<>();
       dataCollectors.add(currentDatacollector);
       reader.read(null, dataCollectors);
-      
+
       Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
       return replacedFulldata;
    }

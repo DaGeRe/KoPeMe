@@ -73,7 +73,7 @@ public class PerformanceTestRunner {
          }
          configuration = new RunConfiguration(annotation);
       } else {
-         configuration = new RunConfiguration(5, 1, false, false, false, true);
+         configuration = new RunConfiguration(5, 1, false, false, false, true, false);
          useKieker = false;
       }
 
@@ -225,10 +225,10 @@ public class PerformanceTestRunner {
             LOG.debug("Entry: {} Aim: {}", entry.getKey(), entry.getValue());
          }
          tr.setRealExecutions(executions);
-//         if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
-//               && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
-//            break;
-//         }
+         // if (executions >= minEarlyStopExecutions && !maximalRelativeStandardDeviation.isEmpty()
+         // && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
+         // break;
+         // }
       }
       LOG.debug("Executions: " + executions);
       tr.setRealExecutions(executions);

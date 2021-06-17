@@ -10,14 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.FolderProvider;
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
+import de.dagere.kopeme.kieker.writer.ChangeableFolder;
+import de.dagere.kopeme.kieker.writer.ChangeableFolderWriter;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.controller.WriterController;
 import kieker.monitoring.writer.MonitoringWriterThread;
-import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
-import kieker.monitoring.writer.filesystem.ChangeableFolder;
-import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 /**
  * Class to control kieker tracing for KoPeMe.
@@ -42,10 +42,6 @@ public class KoPeMeKiekerSupport {
          final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
          folderForCurrentPerformanceResult.mkdirs();
          fsWriter.setFolder(folderForCurrentPerformanceResult);
-//         if (fsWriter instanceof AggregatedTreeWriter) {
-//            AggregatedTreeWriter writer = (AggregatedTreeWriter) fsWriter;
-//            writer.getStatisticConfig().setWarmup(warmup);
-//         }
          kiekerController.enableMonitoring();
          LOG.debug("Kieker-Monitoring successfully enabled");
       }
@@ -62,6 +58,8 @@ public class KoPeMeKiekerSupport {
             final File tempDirFile = new File(tempdir);
             if (!tempDirFile.exists()) {
                System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+            } else {
+               System.err.println("Given java.io.tmpdir was " + tempdir);
             }
             throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
          }

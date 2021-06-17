@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -25,6 +26,7 @@ import org.junit.runners.Parameterized.Parameters;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassMeasurement;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest;
@@ -47,12 +49,11 @@ public class TestBeforeExecution {
             { ExampleBeforeTestRule.class, TEST_NAME },
             { ExampleBeforeClassTest.class, TEST_NAME },
             { ExampleNoBeforeTest.class, TEST_NAME },
-            { ExampleNonMeasuringBefore.class, TEST_NAME }
+            { ExampleNonMeasuringBefore.class, TEST_NAME },
+            { ExampleBeforeClassMeasurement.class, TEST_NAME }
       });
    }
 
-   // ,
-   // {ExampleBeforeTestRunner.class, "testMethod"}
    @Parameter(0)
    public Class<?> junitTestClass;
 
@@ -75,15 +76,21 @@ public class TestBeforeExecution {
       }
       final String canonicalName = junitTestClass.getCanonicalName();
       final File resultFile = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
-      LOG.debug("Suche: {} Existiert: {}", resultFile.getAbsolutePath(), resultFile.exists());
-      Assert.assertThat(resultFile.exists(), Matchers.equalTo(true));
+      LOG.debug("Searching: {} Existing: {}", resultFile.getAbsolutePath(), resultFile.exists());
+      MatcherAssert.assertThat(resultFile.exists(), Matchers.equalTo(true));
       final Long time = getTimeResult(resultFile, testname);
-      Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
-      Assert.assertThat("Testfehler in " + canonicalName, time, Matchers.greaterThan(100 * TimeDataCollector.TO_MILLISECONDS));
+      /*
+       * Executiontimes vary between 100 and 130 ms. Because Thread.sleep is sometimes slightly inaccurate, there is a tolerance.
+       * Since threads will tend to oversleep rather than undersleep, there is more room up.
+       */
+      if (!System.getProperty("os.name").startsWith("Mac")) {
+         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
+      }
+      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
    }
 
-   public static Long getTimeResult(final File f, final String methodName) throws JAXBException {
-      final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(f).getData(TimeDataCollector.class.getCanonicalName());
+   public static Long getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
+      final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(measurementFile).getData(TimeDataCollector.class.getCanonicalName());
       final Map<Date, Long> data = collectorData.get(methodName);
       Assert.assertNotNull(data);
       final Long time = data.entrySet().iterator().next().getValue().longValue();

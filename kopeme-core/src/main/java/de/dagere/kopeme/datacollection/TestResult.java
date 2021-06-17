@@ -48,7 +48,7 @@ public final class TestResult {
     * @param methodName Name of the Testcase
     * @param executionTimes Count of the planned executions
     */
-   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, boolean warmup) {
+   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, final boolean warmup) {
       this.methodName = methodName;
       this.executionTimes = executionTimes;
 
@@ -61,7 +61,7 @@ public final class TestResult {
          }
       };
       Arrays.sort(sortedCollectors, comparator);
-      
+
       try {
          writer = new ResultTempWriter(warmup);
          writer.setDataCollectors(sortedCollectors);
@@ -69,8 +69,7 @@ public final class TestResult {
       } catch (IOException e) {
          e.printStackTrace();
       }
-      
-      
+
    }
 
    /**
@@ -87,13 +86,13 @@ public final class TestResult {
     * 
     * @return Names of used DataCollectors
     */
-   public Set<String> getKeys() {
-      final Set<String> keySet = new HashSet<>();
+   public Set<String> getDatacollectors() {
+      final Set<String> datacollectorSet = new HashSet<>();
       for (final DataCollector dc : sortedCollectors) {
-         keySet.add(dc.getName());
+         datacollectorSet.add(dc.getName());
       }
 
-      return keySet;
+      return datacollectorSet;
    }
 
    /**
@@ -133,7 +132,7 @@ public final class TestResult {
    }
 
    public void beforeRun() {
-      
+
    }
 
    /**
@@ -173,10 +172,10 @@ public final class TestResult {
    public void finalizeCollection(final Throwable thrownException) {
       writer.finalizeCollection();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
-         reader.read(thrownException, getKeys());
+         reader.read(thrownException, getDatacollectors());
          reader.deleteTempFile();
       } else {
-         reader.readStreaming(thrownException, getKeys());
+         reader.readStreaming(thrownException, getDatacollectors());
       }
    }
 
@@ -215,7 +214,7 @@ public final class TestResult {
       return reader.getCollectorSummary(key).getMax();
    }
 
-   public Fulldata getFulldata(String key) {
+   public Fulldata getFulldata(final String key) {
       final Fulldata fd = new Fulldata();
       if (executionTimes < BOUNDARY_SAVE_FILE) {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
@@ -231,11 +230,11 @@ public final class TestResult {
       return fd;
    }
 
-   public void clearFulldata(String key) {
+   public void clearFulldata(final String key) {
       reader.clear(key);
    }
 
-   public List<Long> getValues(String key) {
+   public List<Long> getValues(final String key) {
       List<Long> currentValues = new ArrayList<>();
       for (int i = 0; i < reader.getRealValues().size(); i++) {
          currentValues.add(reader.getRealValues().get(i).get(key));
@@ -279,12 +278,13 @@ public final class TestResult {
       return methodName;
    }
 
-   public double getRelativeStandardDeviation(String additionalKey) {
+   public double getRelativeStandardDeviation(final String additionalKey) {
       final SummaryStatistics collectorSummary = reader.getCollectorSummary(additionalKey);
       return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
    }
 
    public void deleteTempFile() {
+      writer.finalizeCollection();
       reader.deleteTempFile();
    }
 

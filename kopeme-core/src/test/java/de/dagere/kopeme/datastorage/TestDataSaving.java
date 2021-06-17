@@ -17,13 +17,13 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 
 public class TestDataSaving {
-   
+
    final File file = new File("target/test.xml");
-   
+
    @Test
    public void testSavingJAXB() throws Exception {
       Kopemedata data = createData();
-     
+
       XMLDataStorer.storeData(file, data);
       Result addResult = createResult(16.5);
       data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().add(addResult);
@@ -31,17 +31,6 @@ public class TestDataSaving {
 
       testLoadedResults();
    }
-   
-//   @Test
-//   public void testSavingSAX() throws Exception {
-//      Kopemedata data = createData();
-//      XMLDataStorer.storeData(file, data);
-//      
-//      Result result2 = createResult(16.5);
-//      XMLDataStorerStreaming.storeData(file, result2, "Test", "CollectorA" );
-//      
-//      testLoadedResults();
-//   }
 
    private Kopemedata createData() {
       Kopemedata data = new Kopemedata();
@@ -73,12 +62,12 @@ public class TestDataSaving {
       for (int i = 0; i < 5; i++) {
          final Value value = new Value();
          value.setStart(Long.valueOf(i));
-         value.setValue( i);
+         value.setValue(i);
          result.getFulldata().getValue().add(value);
       }
       return result;
    }
-   
+
    private void testLoadedResults() throws JAXBException {
       Kopemedata data2 = XMLDataLoader.loadData(file);
       final List<Result> loadedResults = data2.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
@@ -86,7 +75,7 @@ public class TestDataSaving {
       assertCorrectResult(result2, 15.5);
       final Result result21 = loadedResults.get(1);
       assertCorrectResult(result21, 16.5);
-      
+
       Assert.assertNotNull(result2.getJavaVersion());
       Assert.assertNotNull(result2.isRedirectToNull());
       Assert.assertNotNull(result2.isRedirectToTemp());
@@ -97,7 +86,7 @@ public class TestDataSaving {
       Assert.assertEquals(result2.isRedirectToTemp(), result21.isRedirectToTemp());
       Assert.assertEquals(result2.isShowStart(), result21.isShowStart());
    }
-   
+
    private void assertCorrectResult(final Result result2, final double actual) {
       Assert.assertEquals(result2.getValue(), actual, 0.01);
       Assert.assertEquals(result2.getMin(), 5L, 0.01);

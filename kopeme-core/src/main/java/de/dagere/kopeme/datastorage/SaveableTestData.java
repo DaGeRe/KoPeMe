@@ -31,7 +31,7 @@ public abstract class SaveableTestData {
       }
    }
 
-   public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, RunConfiguration configuration) {
+   public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
       return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
@@ -54,11 +54,12 @@ public abstract class SaveableTestData {
    }
 
    public static AssertFailureTestData createAssertFailedTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
-         RunConfiguration configuration) {
+         final RunConfiguration configuration) {
       return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
    }
 
-   public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+   public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
+         final RunConfiguration configuration) {
       return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
    }
 
@@ -66,12 +67,12 @@ public abstract class SaveableTestData {
    private String testcasename, filename;
    private TestResult tr;
    private RunConfiguration configuration;
-   
+
    public RunConfiguration getConfiguration() {
       return configuration;
    }
-   
-   public void setConfiguration(RunConfiguration configuration) {
+
+   public void setConfiguration(final RunConfiguration configuration) {
       this.configuration = configuration;
    }
 

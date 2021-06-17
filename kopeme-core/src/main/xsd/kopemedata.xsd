@@ -69,16 +69,38 @@
 			<xs:element name="min" type="xs:double" minOccurs="0"/>
 			<xs:element name="max" type="xs:double" minOccurs="0"/>
 			<xs:element name="showStart" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="executeBeforeClassInMeasurement" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="redirectToTemp" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="redirectToNull" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="useKieker" type="xs:boolean" minOccurs="0"/>
 			<xs:element name="javaVersion" type="xs:string" minOccurs="0"/>
+			<xs:element name="params" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="param">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="key" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Represents keys of jmh or other params (if they are transformed to KoPeMe-format)
+												</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>			
+					
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:sequence maxOccurs="1">
 						<xs:sequence minOccurs="1" maxOccurs="unbounded">
-						<xs:element name="value">
-							<xs:complexType>
+							<xs:element name="value">
+								<xs:complexType>
 								<xs:simpleContent>
 									<xs:extension base="xs:long">
 										<xs:attribute name="start" type="xs:long">
@@ -92,8 +114,8 @@
 										</xs:attribute>
 									</xs:extension>
 								</xs:simpleContent>
-							</xs:complexType>
-						</xs:element>
+								</xs:complexType>
+							</xs:element>
 						</xs:sequence>
 						<xs:element name="fileName" type="xs:string" maxOccurs="1"/>
 					</xs:sequence>
