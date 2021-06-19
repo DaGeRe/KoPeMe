@@ -1,23 +1,16 @@
 package de.dagere.kopeme.junit.testrunner.time;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.internal.runners.model.ReflectiveCallable;
-import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
-import de.dagere.kopeme.junit.testrunner.PerformanceFail;
-import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
+import de.dagere.kopeme.junit.rule.TestRunnables;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 import junit.framework.AssertionFailedError;
 
@@ -48,69 +41,16 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 	}
 
 	/**
-	 * Gets the PerformanceJUnitStatement for the test execution of the given method.
-	 * 
-	 * @param currentMethod
-	 *            Method that should be tested
-	 * @return PerformanceJUnitStatement for testing the method
-	 * @throws NoSuchMethodException
-	 *             Thrown if the method does not exist
-	 * @throws SecurityException
-	 *             Thrown if the method is not accessible
-	 * @throws IllegalAccessException
-	 *             Thrown if the method is not accessible
-	 * @throws IllegalArgumentException
-	 *             Thrown if the method has arguments
-	 * @throws InvocationTargetException
-	 *             Thrown if the method is not accessible
-	 */
-	private PerformanceJUnitStatement getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
-			IllegalAccessException,
-			IllegalArgumentException,
-			InvocationTargetException {
-
-		try {
-			final Object testObject = new ReflectiveCallable() {
-				@Override
-				protected Object runReflectiveCall() throws Throwable {
-					return createTest();
-				}
-			}.run();
-			if (classFinished){
-				return null;
-			}
-			LOG.debug("Statement: " + currentMethod.getName() + " " + classFinished);
-
-			Statement testExceptionTimeoutStatement = methodInvoker(currentMethod, testObject);
-
-			testExceptionTimeoutStatement = possiblyExpectingExceptions(currentMethod, testObject, testExceptionTimeoutStatement);
-			// testExceptionTimeoutStatement = withPotentialTimeout(currentMethod, test, testExceptionTimeoutStatement);
-
-			final Method withRulesMethod = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
-			withRulesMethod.setAccessible(true);
-
-			final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
-			
-			final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
-         final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-			final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
-
-			return perfStatement;
-		} catch (final Throwable e) {
-			return new PerformanceFail(e);
-		}
-	}
-
-	/**
 	 * Creates a PerformanceStatement out of a method
 	 * 
 	 * @param currentMethod
 	 *            Method for which the statement should be created
 	 * @return The statement
 	 */
-	protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
+	@Override
+   protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
 		try {
-			final PerformanceJUnitStatement callee = getStatement(currentMethod);
+			final TestRunnables callee = getStatement(currentMethod);
 			
 			LOG.trace("Im methodBlock für " + currentMethod.getName());
 

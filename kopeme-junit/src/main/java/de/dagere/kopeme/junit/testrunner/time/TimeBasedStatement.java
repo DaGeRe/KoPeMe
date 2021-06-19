@@ -13,7 +13,7 @@ import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.junit.testrunner.PerformanceJUnitStatement;
+import de.dagere.kopeme.junit.rule.TestRunnables;
 import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
 
 /**
@@ -29,7 +29,7 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 
 	private final long duration;
 
-	public TimeBasedStatement(final PerformanceJUnitStatement callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
+	public TimeBasedStatement(final TestRunnables callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(callee, filename, calledClass, method, saveFullData);
 		duration = annotation.duration() * NANOTOMIKRO;
 	}
@@ -41,8 +41,8 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 			@Override
 			public void run() {
 				try {
-					final int executions = calibrateMeasurement(className, method.getName() + " warmup", new TestResult(method.getName(), 1, DataCollectorList.ONLYTIME, true), duration, configuration.getRepetitions(), callee);
-					final TestResult tr = executeSimpleTest(callee, executions);
+					final int executions = calibrateMeasurement(className, method.getName() + " warmup", new TestResult(method.getName(), 1, DataCollectorList.ONLYTIME, true), duration, configuration.getRepetitions());
+					final TestResult tr = executeSimpleTest(executions);
 					tr.checkValues();
 					if (!assertationvalues.isEmpty()) {
 						LOG.info("Checking: " + assertationvalues.size());
@@ -83,17 +83,17 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 		LOG.debug("Timebounded execution finished");
 	}
 
-	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration, final int repetitions, final PerformanceJUnitStatement callee) {
+	private int calibrateMeasurement(final String executionTypName, final String name, final TestResult tr, final long maximumDuration, final int repetitions) {
 		int executions = 1;
 		final long calibrationStart = System.nanoTime();
 		try {
-			final long emptyDuration = runMainExecutionTimed(tr, executionTypName, 0, callee, 1);
-			final long basicDuration = runMainExecutionTimed(tr, executionTypName, 1, callee, 1);
+			final long emptyDuration = runMainExecutionTimed(tr, executionTypName, 0, 1);
+			final long basicDuration = runMainExecutionTimed(tr, executionTypName, 1,  1);
 			long calibration = basicDuration;
 			final List<Long> calibrationValues = new LinkedList<>();
 
 			while (calibration < maximumDuration / 2) {
-				final long value = runMainExecutionTimed(tr, executionTypName, 1, callee, 1);
+				final long value = runMainExecutionTimed(tr, executionTypName, 1,  1);
 				calibration += value;
 				LOG.debug("Adding: {}", calibration / NANOTOMIKRO, value / NANOTOMIKRO, maximumDuration/ NANOTOMIKRO);
 				calibrationValues.add(value);
@@ -131,9 +131,9 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 	 * @throws Throwable
 	 *             Any exception that occurs during the test
 	 */
-	private long runMainExecutionTimed(final TestResult tr, final String warmupString, final int executions, final PerformanceJUnitStatement callee, final int repetitions) throws Throwable {
+	private long runMainExecutionTimed(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
 		final long beginTime = System.nanoTime();
-		runMainExecution(tr, warmupString, executions, callee, repetitions);
+		runMainExecution(tr, warmupString, executions, repetitions);
 		final long endTime = System.nanoTime();
 		return (endTime - beginTime) / NANOTOMIKRO;
 	}
