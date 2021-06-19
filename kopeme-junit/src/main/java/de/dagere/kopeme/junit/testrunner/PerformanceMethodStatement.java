@@ -11,7 +11,6 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
 import de.dagere.kopeme.junit.rule.TestRunnables;
@@ -20,19 +19,16 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
    private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 
-   protected final int timeout;
    protected final String className, methodName;
    protected Finishable mainRunnable;
-   protected final RunConfiguration configuration;
+   
 
    public PerformanceMethodStatement(final TestRunnables runnables, final String filename, final Class<?> calledClass, final FrameworkMethod method,
          final boolean saveValuesClass) {
       super(runnables, method.getMethod(), filename);
-      configuration = new RunConfiguration(annotation);
       if (saveValuesClass) {
          configuration.setSaveValues(saveValuesClass);
       }
-      timeout = annotation.timeout();
       this.methodName = method.getName();
       this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass
                                                     // anyway
@@ -81,7 +77,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          }
       };
       if (!isFinished) {
-         final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, Type.METHOD, annotation.useKieker());
+         final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, annotation.timeout(), Type.METHOD, annotation.useKieker());
          tbe.execute();
       }
       LOG.debug("Timebounded execution finished");
