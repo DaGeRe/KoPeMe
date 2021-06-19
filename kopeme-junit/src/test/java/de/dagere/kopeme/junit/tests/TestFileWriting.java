@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -95,9 +96,9 @@ public class TestFileWriting {
             final int val = (int) r.getValue();
             final int min = r.getMin().intValue();
             final int max = r.getMax().intValue();
-            Assert.assertThat(val, Matchers.greaterThan(0));
-            Assert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
-            Assert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
+            MatcherAssert.assertThat(val, Matchers.greaterThan(0));
+            MatcherAssert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
+            MatcherAssert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
             Assert.assertEquals(r.getIterations(), 5);
          }
 
