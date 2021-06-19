@@ -8,8 +8,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.function.ThrowingRunnable;
 import org.junit.internal.runners.model.EachTestNotifier;
 import org.junit.internal.runners.model.ReflectiveCallable;
 import org.junit.runner.Description;
@@ -26,6 +25,8 @@ import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.junit.rule.TestRunnables;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An
@@ -139,7 +140,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
     * @throws IllegalArgumentException Thrown if the method has arguments
     * @throws InvocationTargetException Thrown if the method is not accessible
     */
-   private PerformanceJUnitStatement getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
+   protected TestRunnables getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
          IllegalAccessException,
          IllegalArgumentException,
          InvocationTargetException {
@@ -162,17 +163,30 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
          Statement withRuleStatement = ruleInvoker(currentMethod, testObject, testExceptionTimeoutStatement);
 
-         final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
-         final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
-         final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
+//         final List<FrameworkMethod> befores = getTestClass().getAnnotatedMethods(Before.class);
+//         final List<FrameworkMethod> afters = getTestClass().getAnnotatedMethods(After.class);
+//         final PerformanceJUnitStatement perfStatement = new PerformanceJUnitStatement(withRuleStatement, testObject, befores, afters);
 
-         return perfStatement;
+         PerformanceTest annotation = currentMethod.getAnnotation(PerformanceTest.class);
+         if (annotation != null) {
+            ThrowingRunnable testRunnable = new ThrowingRunnable() {
+               @Override
+               public void run() throws Throwable {
+                  withRuleStatement.evaluate();
+               }
+            };
+            TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, klasse, testObject);
+            return runnables;
+         } else {
+            return null;
+         }
       } catch (final Throwable e) {
-         return new PerformanceFail(e);
+         return null;
       }
    }
-   
-   private Statement ruleInvoker(final FrameworkMethod currentMethod, Object testObject, Statement testExceptionTimeoutStatement) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+
+   private Statement ruleInvoker(final FrameworkMethod currentMethod, final Object testObject, final Statement testExceptionTimeoutStatement)
+         throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
       final Method withRulesMethod = BlockJUnit4ClassRunner.class.getDeclaredMethod("withRules", FrameworkMethod.class, Object.class, Statement.class);
       withRulesMethod.setAccessible(true);
       final Statement withRuleStatement = (Statement) withRulesMethod.invoke(this, new Object[] { currentMethod, testObject, testExceptionTimeoutStatement });
@@ -196,7 +210,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
     */
    protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
       try {
-         final PerformanceJUnitStatement callee = getStatement(currentMethod);
+         final TestRunnables callee = getStatement(currentMethod);
 
          LOG.trace("Im methodBlock für " + currentMethod.getName());
 

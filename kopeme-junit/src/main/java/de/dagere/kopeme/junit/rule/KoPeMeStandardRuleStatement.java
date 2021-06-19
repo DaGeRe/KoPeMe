@@ -72,6 +72,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       if (!checkCollectorValidity(finalResult)) {
          LOG.warn("Not all Collectors are valid!");
       }
+      
       final RunConfiguration configuration = new RunConfiguration(annotation);
       try {
          runWarmup();
