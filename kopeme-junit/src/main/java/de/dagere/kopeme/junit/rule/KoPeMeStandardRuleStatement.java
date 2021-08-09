@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -41,7 +42,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          @Override
          public void run() {
             try {
-               executeSimpleTest(finalResult);
+               executeSimpleTest();
                if (!assertationvalues.isEmpty()) {
                   finalResult.checkValues(assertationvalues);
                }
@@ -68,8 +69,8 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       LOG.info("Test {} beendet", filename);
    }
 
-   private void executeSimpleTest(final TestResult finalResult) throws Throwable {
-      if (!checkCollectorValidity(finalResult)) {
+   private void executeSimpleTest() throws Throwable {
+      if (!PerformanceTestUtils.checkCollectorValidity(finalResult, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");
       }
       

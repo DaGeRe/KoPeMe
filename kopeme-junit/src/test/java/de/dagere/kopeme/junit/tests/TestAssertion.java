@@ -1,7 +1,7 @@
 package de.dagere.kopeme.junit.tests;
 
-import static org.junit.Assert.assertThat;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -16,7 +16,7 @@ public class TestAssertion {
 	public void testAssertionFailure() {
 		JUnitCore jc = new JUnitCore();
 		Result r = jc.run(JUnitAdditionTestNoGC.class);
-		assertThat(r.getFailures(), Matchers.empty());
+		MatcherAssert.assertThat(r.getFailures(), Matchers.empty());
 	}
 	
 }

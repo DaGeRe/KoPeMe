@@ -20,6 +20,7 @@ import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 
 /**
@@ -43,6 +44,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
    protected DataCollectorList datacollectors;
 
    protected PerformanceTest annotation;
+   protected final RunConfiguration configuration;
 
    /**
     * Initializes the KoPemeBasicStatement.
@@ -76,6 +78,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
       if (annotation != null) {
          AnnotationChecker.check(annotation);
+         configuration = new RunConfiguration(annotation);
          try {
             KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
          } catch (final Exception e) {
@@ -93,6 +96,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
          }
       } else {
          LOG.error("No @PerformanceTest-Annotation present!");
+         configuration = null;
       }
    }
 

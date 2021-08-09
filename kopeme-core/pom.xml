@@ -109,12 +109,12 @@
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-			<version>5.7.1</version>
+			<version>5.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.7.1</version>
+			<version>5.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.supercsv</groupId>
@@ -156,11 +156,12 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.14.1</version>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.30</version>
-		</dependency>
+<!-- TODO Normally, this should be provided via the kieker dependency; remove this dependency finally when Kieker 1.15 is released and used by KoPeMe -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.slf4j</groupId> -->
+<!-- 			<artifactId>slf4j-api</artifactId> -->
+<!-- 			<version>1.7.30</version> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>

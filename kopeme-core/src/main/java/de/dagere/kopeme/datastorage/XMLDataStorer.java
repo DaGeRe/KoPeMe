@@ -166,7 +166,7 @@ public final class XMLDataStorer implements DataStorer {
     */
    public static void storeData(final File file, final Kopemedata currentdata) {
       try {
-         LOG.info("Storing data to: {}", file.getAbsoluteFile());
+         LOG.info("Storing external data to: {}", file.getAbsoluteFile());
          final Marshaller jaxbMarshaller = XMLDataLoader.jc.createMarshaller();
          try {
             jaxbMarshaller.setProperty("com.sun.xml.bind.indentString", " ");

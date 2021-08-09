@@ -32,12 +32,3 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
       run: mvn -B verify --file pom.xml 
-    - name: Upload Unit Test Results
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
-        path: |
-          kopeme-core/target/surefire-reports/*
-          kopeme-junit/target/surefire-reports/*
-          kopeme-junit3/target/surefire-reports/*

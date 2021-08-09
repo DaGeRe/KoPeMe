@@ -77,7 +77,7 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 		};
 		if (!isFinished){
 		   
-			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, timeout, Type.METHOD, annotation.useKieker());
+			final TimeBoundExecution tbe = new TimeBoundExecution(mainRunnable, annotation.timeout(), Type.METHOD, annotation.useKieker());
 			tbe.execute();
 		}
 		LOG.debug("Timebounded execution finished");
