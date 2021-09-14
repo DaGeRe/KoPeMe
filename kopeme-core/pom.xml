@@ -73,15 +73,31 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<id>xjc</id>
+						<id>xjc_v1</id>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/xsd/v1</source>
+							</sources>
+							<packageName>de.dagere.kopeme.generated</packageName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>xjc_v2</id>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/xsd/v2</source>
+							</sources>
+							<packageName>de.dagere.kopeme.generated2</packageName>
+							<clearOutputDir>false</clearOutputDir>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<packageName>de.dagere.kopeme.generated</packageName> <!-- The name of your generated source package -->
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -156,12 +172,13 @@
 			<artifactId>log4j-slf4j-impl</artifactId>
 			<version>2.14.1</version>
 		</dependency>
-<!-- TODO Normally, this should be provided via the kieker dependency; remove this dependency finally when Kieker 1.15 is released and used by KoPeMe -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-api</artifactId> -->
-<!-- 			<version>1.7.30</version> -->
-<!-- 		</dependency> -->
+		<!-- TODO Normally, this should be provided via the kieker dependency; 
+			remove this dependency finally when Kieker 1.15 is released and used by KoPeMe -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.slf4j</groupId> -->
+		<!-- <artifactId>slf4j-api</artifactId> -->
+		<!-- <version>1.7.30</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.apache.maven</groupId>

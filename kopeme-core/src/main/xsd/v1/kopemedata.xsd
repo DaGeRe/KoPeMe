@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="kopemedata">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="configurations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="configuration" type="configType"
+								maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="testcases" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="testcase" type="testcaseType"
+								maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute name="class" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="configType">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="cpu" type="xs:string" />
+			<xs:element name="ram" type="xs:string" />
+		</xs:sequence> 
+	</xs:complexType>
+	<xs:complexType name="testcaseType">
+		<xs:sequence>
+			<xs:element name="datacollector" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="chunk" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="result" maxOccurs="unbounded"
+										type="result" />
+								</xs:sequence>
+								<xs:attribute name="chunkStartTime" type="xs:long" />
+							</xs:complexType>
+						</xs:element>
+						<xs:sequence>
+							<xs:element name="result" maxOccurs="unbounded"
+								type="result" />
+						</xs:sequence>
+					</xs:choice>
+
+					<xs:attribute name="name" />
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+	<xs:complexType name="result">
+		<xs:sequence>
+			<xs:element name="value" type="xs:double" />
+			<xs:element name="deviation" type="xs:double" />
+			<xs:element name="warmupExecutions" type="xs:long" />
+			<xs:element name="executionTimes" type="xs:long" />
+			<xs:element name="warmup" type="xs:long" />
+			<xs:element name="iterations" type="xs:long" />
+			<xs:element name="repetitions" type="xs:long" />
+			<xs:element name="version" type="versioninfo" />
+			<xs:element name="min" type="xs:double" minOccurs="0"/>
+			<xs:element name="max" type="xs:double" minOccurs="0"/>
+			<xs:element name="showStart" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="executeBeforeClassInMeasurement" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="redirectToTemp" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="redirectToNull" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="useKieker" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="javaVersion" type="xs:string" minOccurs="0"/>
+			<xs:element name="params" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="param">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:string">
+										<xs:attribute name="key" type="xs:string">
+											<xs:annotation>
+												<xs:documentation>Represents keys of jmh or other params (if they are transformed to KoPeMe-format)
+												</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>			
+					
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="fulldata" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:sequence maxOccurs="1">
+						<xs:sequence minOccurs="1" maxOccurs="unbounded">
+							<xs:element name="value">
+								<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:long">
+										<xs:attribute name="start" type="xs:long">
+											<xs:annotation>
+												<xs:documentation>Saves the time when the execution
+													has
+													been
+													started
+												</xs:documentation>
+											</xs:annotation>
+										</xs:attribute>
+									</xs:extension>
+								</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:element name="fileName" type="xs:string" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="cpu" />
+		<xs:attribute name="memory" />
+		<xs:attribute name="date" type="xs:long">
+			<xs:annotation>
+				<xs:documentation>Saves the timestamp when the test has been
+					finished
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="failure" type="xs:boolean" />
+		<xs:attribute name="error" type="xs:boolean" />
+		<xs:attribute name="cputemperature" type="xs:long" />
+	</xs:complexType>
+	<xs:complexType name="versioninfo">
+		<xs:choice>
+			<xs:element name="gitversion" type="xs:string" />
+			<xs:element name="committer" type="xs:string" />
+			<xs:element name="time" type="xs:long" />
+		</xs:choice>
+	</xs:complexType>
+</xs:schema>

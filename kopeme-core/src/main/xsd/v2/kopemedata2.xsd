@@ -38,15 +38,15 @@
 						<xs:element name="chunk" maxOccurs="unbounded">
 							<xs:complexType>
 								<xs:sequence>
-									<xs:element name="result" maxOccurs="unbounded"
-										type="result" />
+									<xs:element name="vmRun" maxOccurs="unbounded"
+										type="vmRun" />
 								</xs:sequence>
 								<xs:attribute name="chunkStartTime" type="xs:long" />
 							</xs:complexType>
 						</xs:element>
 						<xs:sequence>
-							<xs:element name="result" maxOccurs="unbounded"
-								type="result" />
+							<xs:element name="vmRun" maxOccurs="unbounded"
+								type="vmRun" />
 						</xs:sequence>
 					</xs:choice>
 
@@ -56,12 +56,10 @@
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" />
 	</xs:complexType>
-	<xs:complexType name="result">
+	<xs:complexType name="vmRun">
 		<xs:sequence>
 			<xs:element name="value" type="xs:double" />
 			<xs:element name="deviation" type="xs:double" />
-			<xs:element name="warmupExecutions" type="xs:long" />
-			<xs:element name="executionTimes" type="xs:long" />
 			<xs:element name="warmup" type="xs:long" />
 			<xs:element name="iterations" type="xs:long" />
 			<xs:element name="repetitions" type="xs:long" />
@@ -121,7 +119,7 @@
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-		</xs:sequence>
+		</xs:sequence> 
 		<xs:attribute name="cpu" />
 		<xs:attribute name="memory" />
 		<xs:attribute name="date" type="xs:long">
