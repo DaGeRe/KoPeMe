@@ -45,7 +45,7 @@ public abstract class AbstractReducedOperationExecutionAspect extends AbstractAs
    @Pointcut
    public abstract void monitoredOperation();
 
-   @Around("monitoredOperation() && notWithinKieker()")
+   @Around("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
    public Object operation(final ProceedingJoinPoint thisJoinPoint) throws Throwable { // NOCS (Throwable)
       if (!CTRLINST.isMonitoringEnabled()) {
          return thisJoinPoint.proceed();
