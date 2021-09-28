@@ -23,9 +23,8 @@ import kieker.common.record.io.IValueDeserializer;
 import kieker.common.record.io.IValueSerializer;
 
 /**
- * @author Andre van Hoorn, Jan Waller API compatibility: Kieker 1.15.0
- * 
- * @since 0.91
+ * This is a reduced operation execution record, which aims for fastest possible execution duration recording
+ * @author DaGeRe Kieker 1.16.0
  */
 public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord {
    /** Descriptive definition of the serialization size of the record. */
