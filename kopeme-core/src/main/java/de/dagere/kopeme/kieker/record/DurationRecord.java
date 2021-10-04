@@ -26,7 +26,7 @@ import kieker.common.record.io.IValueSerializer;
  * This is a reduced operation execution record, which aims for fastest possible execution duration recording
  * @author DaGeRe Kieker 1.16.0
  */
-public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord {
+public class DurationRecord extends AbstractMonitoringRecord {
    /** Descriptive definition of the serialization size of the record. */
    public static final int SIZE = TYPE_SIZE_STRING // OperationExecutionRecord.operationSignature
          + TYPE_SIZE_LONG // OperationExecutionRecord.tin
@@ -66,7 +66,7 @@ public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord {
     * @param tin tin
     * @param tout tout
     */
-   public ReducedOperationExecutionRecord(final String operationSignature, final long tin, final long tout) {
+   public DurationRecord(final String operationSignature, final long tin, final long tout) {
       this.operationSignature = operationSignature == null ? NO_OPERATION_SIGNATURE : operationSignature;
       this.tin = tin;
       this.tout = tout;
@@ -76,7 +76,7 @@ public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord {
     * @param deserializer The deserializer to use
     * @throws RecordInstantiationException when the record could not be deserialized
     */
-   public ReducedOperationExecutionRecord(final IValueDeserializer deserializer) throws RecordInstantiationException {
+   public DurationRecord(final IValueDeserializer deserializer) throws RecordInstantiationException {
       this.operationSignature = deserializer.getString();
       this.tin = deserializer.getLong();
       this.tout = deserializer.getLong();
@@ -131,7 +131,7 @@ public class ReducedOperationExecutionRecord extends AbstractMonitoringRecord {
          return false;
       }
 
-      final ReducedOperationExecutionRecord castedRecord = (ReducedOperationExecutionRecord) obj;
+      final DurationRecord castedRecord = (DurationRecord) obj;
       if (this.getLoggingTimestamp() != castedRecord.getLoggingTimestamp()) {
          return false;
       }

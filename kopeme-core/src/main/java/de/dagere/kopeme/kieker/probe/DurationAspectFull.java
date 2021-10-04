@@ -25,12 +25,12 @@ import org.aspectj.lang.annotation.Pointcut;
  * @since 1.3
  */
 @Aspect
-public class ReducedOperationExecutionAspectFull extends AbstractReducedOperationExecutionAspect {
+public class DurationAspectFull extends AbstractDurationAspect {
 
    /**
     * Default constructor.
     */
-   public ReducedOperationExecutionAspectFull() {
+   public DurationAspectFull() {
       // empty default constructor
    }
 
