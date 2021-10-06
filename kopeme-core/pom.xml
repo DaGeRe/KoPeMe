@@ -44,7 +44,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
         
-                <!-- This is only temporary a part of KoPeMe, until Kieker supports ReducedOperationExecutionRecords -->
+                <!-- This is only temporary a part of KoPeMe, until Kieker supports DurationRecords -->
                 <configuration>
                   <archive>
                     <manifest>
@@ -124,7 +124,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 			</plugin>
-            <!-- This is only temporary a part of KoPeMe, until Kieker supports ReducedOperationExecutionRecords -->
+            <!-- This is only temporary a part of KoPeMe, until Kieker supports DurationRecords -->
             <plugin>
               <groupId>org.codehaus.mojo</groupId>
               <artifactId>aspectj-maven-plugin</artifactId>
@@ -146,7 +146,7 @@
 	</build>
 
 	<dependencies>
-      <!-- This is only temporary a part of KoPeMe, until Kieker supports ReducedOperationExecutionRecords -->
+      <!-- This is only temporary a part of KoPeMe, until Kieker supports DurationRecords -->
       <dependency>
           <groupId>org.aspectj</groupId>
           <artifactId>aspectjweaver</artifactId>
