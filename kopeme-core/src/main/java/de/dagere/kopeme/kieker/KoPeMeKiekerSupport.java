@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,8 +75,11 @@ public class KoPeMeKiekerSupport {
     */
    public void waitForEnd() {
       LOG.debug("Disabling Monitoring..");
-      MonitoringController.getInstance().disableMonitoring();
       try {
+         waitQueueToFinish();
+         
+         MonitoringController.getInstance().disableMonitoring();
+         
          final Field field = finishMonitoring(MonitoringController.getInstance());
 
          final WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
@@ -88,6 +92,26 @@ public class KoPeMeKiekerSupport {
       } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e1) {
          e1.printStackTrace();
       }
+   }
+
+   private void waitQueueToFinish() throws NoSuchFieldException, IllegalAccessException {
+      final Field controllerField = MonitoringController.class.getDeclaredField("writerController");
+      controllerField.setAccessible(true);
+      final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
+      final Field queueField = WriterController.class.getDeclaredField("writerQueue");
+      final BlockingQueue writerQueue = (BlockingQueue) queueField.get(writerController);
+      queueField.setAccessible(true);
+      int size = writerQueue.size();
+      for (int i = 0; i < 10 && size > 0; i++) {
+         LOG.debug("Queue size: {}", writerQueue.size());
+         size = writerQueue.size();
+         try {
+            Thread.sleep(1000);
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
+      LOG.debug("Final queue size: {}", writerQueue.size());
    }
 
    public static Field finishMonitoring(final IMonitoringController monitoringController)
