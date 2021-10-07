@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataNode;
 import de.dagere.kopeme.kieker.aggregateddata.FileDataManager;
-import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
 import kieker.common.record.controlflow.OperationExecutionRecord;
@@ -88,9 +88,8 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
          final AggregatedDataNode node = new AggregatedDataNode(eoi, operation.getEss(), operation.getOperationSignature());
          final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
          dataManager.write(node, timeInMikroseconds);
-      }
-      if (record instanceof ReducedOperationExecutionRecord) {
-         ReducedOperationExecutionRecord operation = (ReducedOperationExecutionRecord) record;
+      } else if (record instanceof DurationRecord) {
+         DurationRecord operation = (DurationRecord) record;
          final DataNode node = new DataNode(operation.getOperationSignature());
          final long timeInMikroseconds = (operation.getTout() - operation.getTin()) / 1000;
          dataManager.write(node, timeInMikroseconds);

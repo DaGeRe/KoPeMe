@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -88,5 +89,11 @@ final class DummyConfiguration implements JupiterConfiguration {
    @Override
    public Optional<MethodOrderer> getDefaultTestMethodOrderer() {
       return Optional.of(new MethodOrderer.DisplayName());
+   }
+
+   @Override
+   public Optional<ClassOrderer> getDefaultTestClassOrderer() {
+      // TODO Auto-generated method stub
+      return null;
    }
 }

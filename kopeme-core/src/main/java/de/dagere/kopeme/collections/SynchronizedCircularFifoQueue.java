@@ -242,11 +242,11 @@ public class SynchronizedCircularFifoQueue<E> extends AbstractCollection<E>
 
     @Override
     public E remove() {
-        if (isEmpty()) {
-            throw new NoSuchElementException("queue is empty");
-        }
-
-        synchronized(this) {
+       synchronized(this) {
+           if (isEmpty()) {
+               throw new NoSuchElementException("queue is empty");
+           }
+        
            final E element = elements[start];
            if (null != element) {
                elements[start++] = null;

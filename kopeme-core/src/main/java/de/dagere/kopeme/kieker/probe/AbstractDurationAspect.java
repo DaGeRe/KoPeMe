@@ -21,7 +21,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
-import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.probe.aspectj.AbstractAspectJProbe;
@@ -33,7 +33,7 @@ import kieker.monitoring.timer.ITimeSource;
  * @since 1.3
  */
 @Aspect
-public abstract class AbstractReducedOperationExecutionAspect extends AbstractAspectJProbe {
+public abstract class AbstractDurationAspect extends AbstractAspectJProbe {
 
    private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
    private static final ITimeSource TIME = CTRLINST.getTimeSource();
@@ -45,7 +45,7 @@ public abstract class AbstractReducedOperationExecutionAspect extends AbstractAs
    @Pointcut
    public abstract void monitoredOperation();
 
-   @Around("monitoredOperation() && notWithinKieker()")
+   @Around("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
    public Object operation(final ProceedingJoinPoint thisJoinPoint) throws Throwable { // NOCS (Throwable)
       if (!CTRLINST.isMonitoringEnabled()) {
          return thisJoinPoint.proceed();
@@ -63,7 +63,7 @@ public abstract class AbstractReducedOperationExecutionAspect extends AbstractAs
       } finally {
          // measure after
          final long tout = TIME.getTime();
-         CTRLINST.newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout));
+         CTRLINST.newMonitoringRecord(new DurationRecord(signature, tin, tout));
       }
       return retval;
    }
