@@ -99,8 +99,8 @@ public class KoPeMeKiekerSupport {
       controllerField.setAccessible(true);
       final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
       final Field queueField = WriterController.class.getDeclaredField("writerQueue");
-      final BlockingQueue writerQueue = (BlockingQueue) queueField.get(writerController);
       queueField.setAccessible(true);
+      final BlockingQueue writerQueue = (BlockingQueue) queueField.get(writerController);
       int size = writerQueue.size();
       for (int i = 0; i < 10 && size > 0; i++) {
          LOG.debug("Queue size: {}", writerQueue.size());
