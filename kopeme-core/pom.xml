@@ -208,7 +208,6 @@
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
 			<version>${kieker.version}</version>
-			<classifier>jar</classifier>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
