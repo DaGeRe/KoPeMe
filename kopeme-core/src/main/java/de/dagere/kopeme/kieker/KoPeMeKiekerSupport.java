@@ -14,6 +14,7 @@ import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.dagere.kopeme.kieker.writer.ChangeableFolder;
 import de.dagere.kopeme.kieker.writer.ChangeableFolderWriter;
+import kieker.common.record.IMonitoringRecord;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
@@ -100,7 +101,7 @@ public class KoPeMeKiekerSupport {
       final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
       final Field queueField = WriterController.class.getDeclaredField("writerQueue");
       queueField.setAccessible(true);
-      final BlockingQueue writerQueue = (BlockingQueue) queueField.get(writerController);
+      final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
       int size = writerQueue.size();
       for (int i = 0; i < 10 && size > 0; i++) {
          LOG.debug("Queue size: {}", writerQueue.size());
