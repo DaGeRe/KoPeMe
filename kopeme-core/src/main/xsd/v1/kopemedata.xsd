@@ -60,8 +60,6 @@
 		<xs:sequence>
 			<xs:element name="value" type="xs:double" />
 			<xs:element name="deviation" type="xs:double" />
-			<xs:element name="warmupExecutions" type="xs:long" />
-			<xs:element name="executionTimes" type="xs:long" />
 			<xs:element name="warmup" type="xs:long" />
 			<xs:element name="iterations" type="xs:long" />
 			<xs:element name="repetitions" type="xs:long" />
