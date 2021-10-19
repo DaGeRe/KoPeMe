@@ -1,5 +1,6 @@
 package de.dagere.kopeme.datastorage;
 
+import de.dagere.kopeme.annotations.AnnotationChecker;
 import de.dagere.kopeme.annotations.PerformanceTest;
 
 public class RunConfiguration {
@@ -26,6 +27,8 @@ public class RunConfiguration {
       redirectToNull = annotation.redirectToNull();
       saveValues = annotation.logFullData();
       executeBeforeClassInMeasurement = annotation.executeBeforeClassInMeasurement();
+      
+      AnnotationChecker.check(annotation);
    }
 
    public int getWarmupExecutions() {

@@ -77,7 +77,6 @@ public abstract class KoPeMeBasicStatement extends Statement {
       }
 
       if (annotation != null) {
-         AnnotationChecker.check(annotation);
          configuration = new RunConfiguration(annotation);
          try {
             KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());

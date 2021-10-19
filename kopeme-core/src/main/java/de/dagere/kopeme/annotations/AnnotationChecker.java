@@ -1,6 +1,4 @@
-package de.dagere.kopeme.junit.rule;
-
-import de.dagere.kopeme.annotations.PerformanceTest;
+package de.dagere.kopeme.annotations;
 
 public class AnnotationChecker {
    public static void check(final PerformanceTest annotation) {
