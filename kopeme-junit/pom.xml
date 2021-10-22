@@ -83,8 +83,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-runner</artifactId>
-			<version>1.8.0</version>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>1.8.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
