@@ -64,6 +64,6 @@ public class TestJUnit5Execution {
       double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
-      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(25));
+      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(20));
    }
 }
