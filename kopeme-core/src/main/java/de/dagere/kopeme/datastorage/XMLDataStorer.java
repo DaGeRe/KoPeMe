@@ -181,7 +181,7 @@ public final class XMLDataStorer implements DataStorer {
          LOG.error("An exception occured", e);
          throw new RuntimeException(e);
       }
-      LOG.debug("Storing finished.");
+      LOG.trace("Storing finished.");
    }
 
 }
