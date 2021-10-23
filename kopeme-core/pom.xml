@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
 		<artifactId>kopeme-parent</artifactId>
-		<version>0.15</version>
+		<version>0.16-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
