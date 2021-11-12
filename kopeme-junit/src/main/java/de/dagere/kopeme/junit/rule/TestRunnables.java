@@ -14,49 +14,6 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
 
-class ListOfMethodRunnable implements ThrowingRunnable {
-   private final List<Method> currentMethods;
-   private final Object testObject;
-
-   public ListOfMethodRunnable(final List<Method> beforeMethods, final Object testObject) {
-      this.currentMethods = beforeMethods;
-      this.testObject = testObject;
-   }
-
-   @Override
-   public void run() throws Throwable {
-      for (final Method method : currentMethods) {
-         method.invoke(testObject);
-      }
-   }
-}
-
-class BeforeAfterMethodRunnable implements ThrowingRunnable {
-   private final List<Method> beforeMethods;
-   private final ThrowingRunnable runnable;
-   private final List<Method> afterMethods;
-   private final Object testObject;
-
-   public BeforeAfterMethodRunnable(final List<Method> beforeMethods, final ThrowingRunnable runnable, final List<Method> afterMethods, final Object testObject) {
-      this.beforeMethods = beforeMethods;
-      this.runnable = runnable;
-      this.afterMethods = afterMethods;
-      this.testObject = testObject;
-   }
-
-
-   @Override
-   public void run() throws Throwable {
-      for (final Method method : beforeMethods) {
-         method.invoke(testObject);
-      }
-      runnable.run();
-      for (final Method method : afterMethods) {
-         method.invoke(testObject);
-      }
-   }
-}
-
 /**
  * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.
  * 

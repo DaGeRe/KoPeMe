@@ -123,6 +123,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
    @Override
    public void setFolder(final File writingFolder) {
       if (currentWriter != null) {
+         LOG.info("Terminating old writer");
          currentWriter.onTerminating();
       }
       LOG.info("Writing to: " + writingFolder + " " + System.identityHashCode(currentWriter));
