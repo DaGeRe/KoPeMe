@@ -36,7 +36,7 @@ public class TestJUnit5SetupExecution {
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(900));
-      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.lessThan(1200));
+      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.lessThan(1300));
    }
 
    
