@@ -12,7 +12,9 @@ import org.junit.function.ThrowingRunnable;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
+import de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
+import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
 
 /**
  * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.
@@ -57,13 +59,16 @@ public class TestRunnables {
          List<Method> beforeClassMethod = new LinkedList<Method>();
          List<Method> afterClassMethod = new LinkedList<Method>();
          for (final Method classMethod : testClass.getMethods()) {
-            if (classMethod.getAnnotation(BeforeClass.class) != null) {
+            if (classMethod.getAnnotation(BeforeClass.class) != null || 
+                  classMethod.getAnnotation(BeforeWithMeasurement.class) != null) {
                beforeClassMethod.add(classMethod);
             }
-            if (classMethod.getAnnotation(AfterClass.class) != null) {
+            if (classMethod.getAnnotation(AfterClass.class) != null ||
+                  classMethod.getAnnotation(AfterWithMeasurement.class) != null) {
                afterClassMethod.add(classMethod);
             }
          }
+         
          this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
       } else {
          this.testRunnable = testRunnable;

@@ -1,15 +1,9 @@
-package de.dagere.kopeme.junit;
+package de.dagere.kopeme.junit5;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.hamcrest.io.FileMatchers;
-import org.junit.jupiter.api.Test;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -19,25 +13,10 @@ import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary.Failure;
 
 import de.dagere.kopeme.datastorage.FolderProvider;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5Test;
 
-/**
- * Tests just whether JUnit 5 execution works
- * 
- * @author reichelt
- * 
- */
-public class TestJUnit5Execution {
-
-   public static Logger log = LogManager.getLogger(TestJUnit5Execution.class);
-
-   private static final Class<?> TESTED_CLASS = ExampleExtension5Test.class;
-   
-   @Test
-   public void testRegularExecution() throws JAXBException {
-      String folder = FolderProvider.getInstance().getFolderFor(TESTED_CLASS.getCanonicalName());
+public class JUnit5RunUtil {
+   public static File runJUnit5Test(final Class<?> testedClass) {
+      String folder = FolderProvider.getInstance().getFolderFor(testedClass.getCanonicalName());
       File file = new File(folder, "testNormal.xml");
       if (file.exists()) {
          System.out.println("Deleting " + file.getAbsolutePath());
@@ -45,7 +24,7 @@ public class TestJUnit5Execution {
       }
 
       LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-            .selectors(DiscoverySelectors.selectClass(TESTED_CLASS))
+            .selectors(DiscoverySelectors.selectClass(testedClass))
             .build();
       Launcher launcher = LauncherFactory.create();
       SummaryGeneratingListener summaryGeneratingListener = new SummaryGeneratingListener();
@@ -57,13 +36,6 @@ public class TestJUnit5Execution {
          failure.getException().printStackTrace();
       }
       MatcherAssert.assertThat(summaryGeneratingListener.getSummary().getFailures(), Matchers.empty());
-
-      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
-
-      Kopemedata data = XMLDataLoader.loadData(file);
-      double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
-      System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
-
-      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(20));
+      return file;
    }
 }

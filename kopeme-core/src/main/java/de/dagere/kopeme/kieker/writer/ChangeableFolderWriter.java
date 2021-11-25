@@ -55,6 +55,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       this.configuration = configuration;
       currentWriter = createWriter(configuration);
       instance = this;
+      LOG.info("Writer: " + currentWriter.getClass());
    }
 
    private AbstractMonitoringWriter createWriter(final Configuration configuration) {
@@ -91,7 +92,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
 
    @Override
    public void onStarting() {
-      System.out.println("Initializing " + getClass());
+      LOG.info("Initializing " + getClass());
       currentWriter.onStarting();
    }
 
@@ -100,9 +101,10 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       if (record instanceof KiekerMetadataRecord && !full) {
          addMappingRecord(record);
       }
+//      LOG.info("Writing: " + record);
       if (currentWriter != null) {
          LOG.log(Level.FINEST, "Record: " + record);
-//         LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
+         // LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
    }
@@ -124,6 +126,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
    public void setFolder(final File writingFolder) {
       if (currentWriter != null) {
          LOG.info("Terminating old writer");
+         LOG.info("writer: " + currentWriter.getClass());
          currentWriter.onTerminating();
       }
       LOG.info("Writing to: " + writingFolder + " " + System.identityHashCode(currentWriter));
