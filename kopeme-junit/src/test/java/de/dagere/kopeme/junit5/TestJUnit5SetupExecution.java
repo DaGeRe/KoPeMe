@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.junit5.exampletests.rules.ExamplePackageVisibilityTest;
 import de.dagere.kopeme.junit5.exampletests.rules.JUnit5SetupTest;
 
 /**
@@ -38,6 +39,20 @@ public class TestJUnit5SetupExecution {
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(900));
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.lessThan(1300));
    }
+   
+   @Test
+   public void testPackageVisibleExecution() throws JAXBException {
+      File file = JUnit5RunUtil.runJUnit5Test(ExamplePackageVisibilityTest.class);
+
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = XMLDataLoader.loadData(file);
+      double averageDurationInMus = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000;
+      System.out.println(file.getAbsolutePath() + "=" + averageDurationInMus);
+
+      MatcherAssert.assertThat((int) averageDurationInMus, Matchers.greaterThan(90));
+   }
+
 
    
 }

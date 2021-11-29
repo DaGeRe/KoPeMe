@@ -39,36 +39,41 @@ public class TestRunnables {
       final List<Method> beforeMethods = new LinkedList<>();
       final List<Method> afterMethods = new LinkedList<>();
       LOG.debug("Klasse: {}", testClass);
-      for (final Method classMethod : testClass.getMethods()) {
+      for (final Method classMethod : testClass.getDeclaredMethods()) {
          LOG.trace("Prüfe: {}", classMethod);
          if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
             if (classMethod.getParameterTypes().length > 0) {
                throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
             }
             beforeMethods.add(classMethod);
+            classMethod.setAccessible(true);
          }
          if (classMethod.getAnnotation(AfterNoMeasurement.class) != null) {
             if (classMethod.getParameterTypes().length > 0) {
                throw new RuntimeException("AfterNoMeasurement-methods must not have arguments");
             }
             afterMethods.add(classMethod);
+            classMethod.setAccessible(true);
          }
       }
 
       if (config.isExecuteBeforeClassInMeasurement()) {
          List<Method> beforeClassMethod = new LinkedList<Method>();
          List<Method> afterClassMethod = new LinkedList<Method>();
-         for (final Method classMethod : testClass.getMethods()) {
-            if (classMethod.getAnnotation(BeforeClass.class) != null || 
+         for (final Method classMethod : testClass.getDeclaredMethods()) {
+            System.out.println(classMethod.getName());
+            if (classMethod.getAnnotation(BeforeClass.class) != null ||
                   classMethod.getAnnotation(BeforeWithMeasurement.class) != null) {
                beforeClassMethod.add(classMethod);
+               classMethod.setAccessible(true);
             }
             if (classMethod.getAnnotation(AfterClass.class) != null ||
                   classMethod.getAnnotation(AfterWithMeasurement.class) != null) {
                afterClassMethod.add(classMethod);
+               classMethod.setAccessible(true);
             }
          }
-         
+
          this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
       } else {
          this.testRunnable = testRunnable;
