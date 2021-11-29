@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
 		<artifactId>kopeme-parent</artifactId>
-		<version>0.15.2-SNAPSHOT</version>
+		<version>0.15.2</version>
 	</parent>
 
 	<name>KoPeMe - JUnit</name>
