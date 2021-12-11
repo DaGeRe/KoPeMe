@@ -9,7 +9,7 @@
 
 	<parent>
 		<groupId>de.dagere.kopeme</groupId>
-		<version>0.15.4</version>
+		<version>0.15.5-SNAPSHOT</version>
 		<artifactId>kopeme-parent</artifactId>
 		<relativePath>../</relativePath>
 	</parent>
