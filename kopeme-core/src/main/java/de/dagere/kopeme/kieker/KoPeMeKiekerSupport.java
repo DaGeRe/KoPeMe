@@ -33,6 +33,8 @@ public class KoPeMeKiekerSupport {
 
    private final FolderProvider fp;
 
+   private int kiekerWaitTime = 10;
+
    private KoPeMeKiekerSupport() {
       fp = FolderProvider.getInstance();
    }
@@ -78,13 +80,13 @@ public class KoPeMeKiekerSupport {
       LOG.debug("Disabling Monitoring..");
       try {
          waitQueueToFinish();
-         
+
          MonitoringController.getInstance().disableMonitoring();
-         
-         final Field field = finishMonitoring(MonitoringController.getInstance());
+
+         final Field writerController = finishMonitoring(MonitoringController.getInstance());
 
          final WriterController newController = new WriterController(ConfigurationFactory.createSingletonConfiguration());
-         field.set(MonitoringController.getInstance(), newController);
+         writerController.set(MonitoringController.getInstance(), newController);
 
          final Method init = WriterController.class.getDeclaredMethod("init");
          init.setAccessible(true);
@@ -96,14 +98,9 @@ public class KoPeMeKiekerSupport {
    }
 
    private void waitQueueToFinish() throws NoSuchFieldException, IllegalAccessException {
-      final Field controllerField = MonitoringController.class.getDeclaredField("writerController");
-      controllerField.setAccessible(true);
-      final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
-      final Field queueField = WriterController.class.getDeclaredField("writerQueue");
-      queueField.setAccessible(true);
-      final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
+      final BlockingQueue<IMonitoringRecord> writerQueue = getWriterQueue();
       int size = writerQueue.size();
-      for (int i = 0; i < 10 && size > 0; i++) {
+      for (int i = 0; i < kiekerWaitTime && size > 0; i++) {
          LOG.debug("Queue size: {}", writerQueue.size());
          size = writerQueue.size();
          try {
@@ -115,19 +112,27 @@ public class KoPeMeKiekerSupport {
       LOG.debug("Final queue size: {}", writerQueue.size());
    }
 
+   BlockingQueue<IMonitoringRecord> getWriterQueue() throws NoSuchFieldException, IllegalAccessException {
+      final Field controllerField = MonitoringController.class.getDeclaredField("writerController");
+      controllerField.setAccessible(true);
+      final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
+      final Field queueField = WriterController.class.getDeclaredField("writerQueue");
+      queueField.setAccessible(true);
+      final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
+      return writerQueue;
+   }
+
    public static Field finishMonitoring(final IMonitoringController monitoringController)
          throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-      final Field field = MonitoringController.class.getDeclaredField("writerController");
-      field.setAccessible(true);
-      final WriterController writerController = (WriterController) field.get(monitoringController);
+      final Field writerControllerField = MonitoringController.class.getDeclaredField("writerController");
+      writerControllerField.setAccessible(true);
+      final WriterController writerController = (WriterController) writerControllerField.get(monitoringController);
 
       final Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
       cleanup.setAccessible(true);
       cleanup.invoke(writerController);
-
-      final Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
-      monitoringWriterThreadField.setAccessible(true);
-      final MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
+      
+      final MonitoringWriterThread thread = getMonitoringWriterThread(writerController);
       try {
          LOG.debug("Waiting for Thread-End: {}", thread);
          for (int i = 0; i < 100 && thread.isAlive(); i++) {
@@ -138,7 +143,26 @@ public class KoPeMeKiekerSupport {
       } catch (final InterruptedException e1) {
          e1.printStackTrace();
       }
-      return field;
+      return writerControllerField;
+   }
+
+   static MonitoringWriterThread getMonitoringWriterThread(final WriterController writerController)
+         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+      final Field monitoringWriterThreadField = WriterController.class.getDeclaredField("monitoringWriterThread");
+      monitoringWriterThreadField.setAccessible(true);
+      final MonitoringWriterThread thread = (MonitoringWriterThread) monitoringWriterThreadField.get(writerController);
+      return thread;
+   }
+
+   public void setKiekerWaitTime(final int kiekerWaitTime) {
+      if (kiekerWaitTime < 1) {
+         throw new RuntimeException("Kieker wait time needs to be at least 1, but was " + kiekerWaitTime);
+      }
+      this.kiekerWaitTime = kiekerWaitTime;
+   }
+
+   public int getKiekerWaitTime() {
+      return kiekerWaitTime;
    }
 
 }

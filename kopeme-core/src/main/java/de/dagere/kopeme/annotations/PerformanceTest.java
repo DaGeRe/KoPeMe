@@ -112,6 +112,17 @@ public @interface PerformanceTest {
     * @return true if the kieker framework should be used
     */
    boolean useKieker() default true;
+   
+   /**
+    * Optionally specifies how long to wait (in seconds) until the Kieker wrinting thread is finished. By default, KoPeMe waits 10 seconds
+    * and kills the writer thread afterwards. This might lead to unreadable or incomplete traces. 
+    * 
+    * The log will indicate this problem. If you encounter this problem and measure the performance, try to monitor less methods or use DurationRecords
+    * for monitoring instead simply increasing this timeout, since big writer queues will affect the performance and might lead to lost monitoring records.
+    * 
+    * @return seconds KoPeMe waites for Kieker writer finishing
+    */
+   int kiekerWaitTime() default 10;
 
    /**
     * Defines the duration for a timebased testcase in milliseconds
