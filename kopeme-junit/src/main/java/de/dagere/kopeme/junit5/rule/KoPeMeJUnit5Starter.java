@@ -13,6 +13,7 @@ import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.jupiter.engine.extension.MutableExtensionRegistry;
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
@@ -50,8 +51,12 @@ public class KoPeMeJUnit5Starter {
          final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
          final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName());
          statement.evaluate();
+         ThrowableCollector collector = jupiterContext.getThrowableCollector();
+         if (!collector.isEmpty()) {
+            throw new RuntimeException("Test caused exception", collector.getThrowable());
+         }
       } catch (Throwable t) {
-         t.printStackTrace();
+         throw new RuntimeException("Test caused exception", t);
       }
    }
 

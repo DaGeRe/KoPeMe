@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class KoPeMeExtension implements ExecutionCondition {
 
+   private static boolean lastRunFailed = false;
+   
    @Override
    public ConditionEvaluationResult evaluateExecutionCondition(final ExtensionContext context) {
       if (context.getTestInstance().isPresent()) {
@@ -14,10 +16,15 @@ public class KoPeMeExtension implements ExecutionCondition {
             starter.start();
          } catch (Exception e) {
             e.printStackTrace();
+            lastRunFailed = true;
          }
          return ConditionEvaluationResult.disabled("Outside KoPeMe");
       } else {
          return ConditionEvaluationResult.enabled("Inside KoPeMe");
       }
+   }
+   
+   public static boolean isLastRunFailed() {
+      return lastRunFailed;
    }
 }
