@@ -100,6 +100,7 @@ public class KoPeMeKiekerSupport {
    private void waitQueueToFinish() throws NoSuchFieldException, IllegalAccessException {
       final BlockingQueue<IMonitoringRecord> writerQueue = getWriterQueue();
       int size = writerQueue.size();
+      LOG.info("Waiting for Kieker writer queue to finish");
       for (int i = 0; i < kiekerWaitTime && size > 0; i++) {
          LOG.debug("Queue size: {}", writerQueue.size());
          size = writerQueue.size();
@@ -110,6 +111,9 @@ public class KoPeMeKiekerSupport {
          }
       }
       LOG.debug("Final queue size: {}", writerQueue.size());
+      if (writerQueue.size() > 0) {
+         LOG.error("Writer queue could not be written; non-deterministic or empty results are likely! Consider increasing kiekerWaitTime.");
+      }
    }
 
    BlockingQueue<IMonitoringRecord> getWriterQueue() throws NoSuchFieldException, IllegalAccessException {
