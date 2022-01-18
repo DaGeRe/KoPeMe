@@ -41,7 +41,7 @@ public abstract class AbstractOneCallAspect extends AbstractAspectJProbe {
    @Pointcut
    public abstract void monitoredOperation();
 
-   @Before("monitoredOperation() && notWithinKieker()")
+   @Before("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
    public void beforeOperation(final JoinPoint thisJoinPoint) throws Throwable { // NOCS
       if (!CTRLINST.isMonitoringEnabled()) {
          return;
