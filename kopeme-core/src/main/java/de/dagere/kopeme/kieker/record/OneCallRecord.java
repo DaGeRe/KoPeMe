@@ -98,7 +98,7 @@ public class OneCallRecord extends AbstractMonitoringRecord {
          return false;
       }
 
-      final DurationRecord castedRecord = (DurationRecord) obj;
+      final OneCallRecord castedRecord = (OneCallRecord) obj;
       if (this.getLoggingTimestamp() != castedRecord.getLoggingTimestamp()) {
          return false;
       }

@@ -25,7 +25,6 @@ import de.dagere.kopeme.kieker.record.OneCallRecord;
 import kieker.monitoring.core.controller.IMonitoringController;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.probe.aspectj.AbstractAspectJProbe;
-import kieker.monitoring.timer.ITimeSource;
 
 /**
  * Allows to only record which methods are called (especially relevant for big traces)
@@ -34,7 +33,6 @@ import kieker.monitoring.timer.ITimeSource;
 public abstract class AbstractOneCallAspect extends AbstractAspectJProbe {
 
    private static final IMonitoringController CTRLINST = MonitoringController.getInstance();
-   private static final ITimeSource TIME = CTRLINST.getTimeSource();
 
    /**
     * The pointcut for the monitored operations. Inheriting classes should extend the pointcut in order to find the correct executions of the methods (e.g. all methods or only

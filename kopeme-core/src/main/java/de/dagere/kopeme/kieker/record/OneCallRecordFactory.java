@@ -4,11 +4,11 @@ import kieker.common.exception.RecordInstantiationException;
 import kieker.common.record.factory.IRecordFactory;
 import kieker.common.record.io.IValueDeserializer;
 
-public class OneCallRecordFactory implements IRecordFactory<DurationRecord>{
+public class OneCallRecordFactory implements IRecordFactory<OneCallRecord>{
 
    @Override
-   public DurationRecord create(final IValueDeserializer deserializer) throws RecordInstantiationException {
-      return new DurationRecord(deserializer);
+   public OneCallRecord create(final IValueDeserializer deserializer) throws RecordInstantiationException {
+      return new OneCallRecord(deserializer);
    }
 
    @Override
