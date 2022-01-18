@@ -41,7 +41,11 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
       super(configuration);
       LOG.info("Init..");
       instance = this;
-      final Path kiekerPath = WriterUtil.buildKiekerLogFolder(configuration.getStringProperty(CONFIG_PATH), configuration);
+      String configPath = configuration.getStringProperty(CONFIG_PATH);
+      if (configPath.isEmpty()) { // if the property does not exist or if the path is empty
+         configPath = System.getProperty("java.io.tmpdir");
+      }
+      final Path kiekerPath = WriterUtil.buildKiekerLogFolder(configPath, configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
 
@@ -55,6 +59,7 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
       final Path kiekerPath = WriterUtil.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
+      onStarting();
    }
 
    @Override

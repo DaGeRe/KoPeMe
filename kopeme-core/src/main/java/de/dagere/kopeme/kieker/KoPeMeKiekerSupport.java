@@ -14,6 +14,7 @@ import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.dagere.kopeme.kieker.writer.ChangeableFolder;
 import de.dagere.kopeme.kieker.writer.ChangeableFolderWriter;
+import de.dagere.kopeme.kieker.writer.onecall.OneCallWriter;
 import kieker.common.record.IMonitoringRecord;
 import kieker.monitoring.core.configuration.ConfigurationFactory;
 import kieker.monitoring.core.controller.IMonitoringController;
@@ -56,16 +57,19 @@ public class KoPeMeKiekerSupport {
       if (fsWriter == null) {
          fsWriter = AggregatedTreeWriter.getInstance();
          if (fsWriter == null) {
-            System.err.println("Kieker is not used, although specified. The " +
-                  ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName() + " have to be used!");
-            final String tempdir = System.getProperty("java.io.tmpdir");
-            final File tempDirFile = new File(tempdir);
-            if (!tempDirFile.exists()) {
-               System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
-            } else {
-               System.err.println("Given java.io.tmpdir was " + tempdir);
+            fsWriter = OneCallWriter.getInstance();
+            if (fsWriter == null) {
+               System.err.println("Kieker is not used, although specified. The " +
+                     OneCallWriter.class.getCanonicalName() + ", " + ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName() + " have to be used!");
+               final String tempdir = System.getProperty("java.io.tmpdir");
+               final File tempDirFile = new File(tempdir);
+               if (!tempDirFile.exists()) {
+                  System.err.println("Warning: Given java.io.tmpdir was " + tempdir + ", but this directory is not existing!");
+               } else {
+                  System.err.println("Given java.io.tmpdir was " + tempdir);
+               }
+               throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
             }
-            throw new RuntimeException("Kieker Error: Monitoring not possible, but specified!");
          }
       }
       return fsWriter;
@@ -135,7 +139,7 @@ public class KoPeMeKiekerSupport {
       final Method cleanup = WriterController.class.getDeclaredMethod("cleanup");
       cleanup.setAccessible(true);
       cleanup.invoke(writerController);
-      
+
       final MonitoringWriterThread thread = getMonitoringWriterThread(writerController);
       try {
          LOG.debug("Waiting for Thread-End: {}", thread);
