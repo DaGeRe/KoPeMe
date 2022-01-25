@@ -16,9 +16,12 @@
 
 package de.dagere.kopeme.kieker.probe;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import java.util.Stack;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
 import de.dagere.kopeme.kieker.record.DurationRecord;
@@ -45,26 +48,38 @@ public abstract class AbstractDurationAspect extends AbstractAspectJProbe {
    @Pointcut
    public abstract void monitoredOperation();
 
-   @Around("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
-   public Object operation(final ProceedingJoinPoint thisJoinPoint) throws Throwable { // NOCS (Throwable)
+   private final ThreadLocal<Stack<Long>> tinStack = new ThreadLocal<Stack<Long>>() {
+      @Override
+      protected Stack<Long> initialValue() {
+         return new Stack<>();
+      }
+   };
+
+   @Before("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
+   public void beforeOperation(final JoinPoint thisJoinPoint) throws Throwable { // NOCS (Throwable)
       if (!CTRLINST.isMonitoringEnabled()) {
-         return thisJoinPoint.proceed();
+         return;
       }
       final String signature = this.signatureToLongString(thisJoinPoint.getSignature());
       if (!CTRLINST.isProbeActivated(signature)) {
-         return thisJoinPoint.proceed();
+         return;
       }
-      // measure before
       final long tin = TIME.getTime();
-      // execution of the called method
-      final Object retval;
-      try {
-         retval = thisJoinPoint.proceed();
-      } finally {
-         // measure after
-         final long tout = TIME.getTime();
-         CTRLINST.newMonitoringRecord(new DurationRecord(signature, tin, tout));
+      tinStack.get().push(tin);
+   }
+
+   @After("monitoredOperation() && notWithinKieker() && !within(de.dagere.kopeme..*)")
+   public void afterOperation(final JoinPoint thisJoinPoint) {
+      if (!CTRLINST.isMonitoringEnabled()) {
+         return;
       }
-      return retval;
+      final String operationSignature = this.signatureToLongString(thisJoinPoint.getSignature());
+      if (!CTRLINST.isProbeActivated(operationSignature)) {
+         return;
+      }
+
+      final long tin = tinStack.get().pop();
+      final long tout = TIME.getTime();
+      CTRLINST.newMonitoringRecord(new DurationRecord(operationSignature, tin, tout));
    }
 }

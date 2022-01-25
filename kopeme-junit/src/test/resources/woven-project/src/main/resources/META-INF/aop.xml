@@ -1,0 +1,9 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.aspectj.org/dtd/aspectj_1_5_0.dtd">
+<aspectj>
+	<weaver options="-verbose -showWeaveInfo">
+		<include within="de.test.*" />
+	</weaver>
+	<aspects>
+		<aspect	name="de.dagere.kopeme.kieker.probe.DurationAspectFull" />
+	</aspects>
+</aspectj>
