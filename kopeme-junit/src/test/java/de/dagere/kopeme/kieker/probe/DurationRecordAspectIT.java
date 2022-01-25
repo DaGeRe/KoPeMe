@@ -55,13 +55,15 @@ public class DurationRecordAspectIT {
       checkResultFolder(tempDir);
    }
 
-   private void checkResultFolder(File tempDir) throws IOException {
+   private void checkResultFolder(final File tempDir) throws IOException {
       File resultFolder = tempDir.listFiles()[0];
       File resultFile = resultFolder.listFiles((FileFilter) new WildcardFileFilter("*.dat"))[0];
       String content = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       
       MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.getParameters"));
       MatcherAssert.assertThat(content, Matchers.containsString("de.test.MainWithError.main"));
+      MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.throwSomething"));
+      MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.catchSomething"));
       MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.<init>"));
    }
 
