@@ -1,10 +1,15 @@
 package de.dagere.kopeme.kieker.probe;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.aspectj.util.FileUtil;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +51,18 @@ public class DurationRecordAspectIT {
       waitForProcessEnd(process);
 
       Assert.assertEquals(0, process.exitValue());
+      
+      checkResultFolder(tempDir);
+   }
 
+   private void checkResultFolder(File tempDir) throws IOException {
+      File resultFolder = tempDir.listFiles()[0];
+      File resultFile = resultFolder.listFiles((FileFilter) new WildcardFileFilter("*.dat"))[0];
+      String content = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
+      
+      MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.getParameters"));
+      MatcherAssert.assertThat(content, Matchers.containsString("de.test.MainWithError.main"));
+      MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.<init>"));
    }
 
    private File getTempDir() {
