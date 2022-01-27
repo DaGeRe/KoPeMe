@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExamplePackageVisibilityTest;
 import de.dagere.kopeme.junit5.exampletests.rules.JUnit5SetupTest;
 
@@ -53,6 +54,18 @@ public class TestJUnit5SetupExecution {
       MatcherAssert.assertThat((int) averageDurationInMus, Matchers.greaterThan(90));
    }
 
+   @Test
+   public void testBeforeWithMeasurement() throws JAXBException {
+      File file = JUnit5RunUtil.runJUnit5Test(ExampleBeforeWithMeasurementOrderTest.class);
 
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = XMLDataLoader.loadData(file);
+      double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
+      System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
+
+      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(50));
+      MatcherAssert.assertThat((int) averageDurationInMs, Matchers.lessThan(1500));
+   }
    
 }

@@ -9,7 +9,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
 
 /**
- * An example test für testing whether the KoPeMe-TestRule works correct
+ * An example test for testing whether the KoPeMe-TestRule works correct
  * 
  * @author reichelt
  *
