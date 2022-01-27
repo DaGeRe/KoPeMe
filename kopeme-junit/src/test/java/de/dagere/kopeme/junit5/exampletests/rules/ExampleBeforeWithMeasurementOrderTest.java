@@ -1,6 +1,7 @@
 package de.dagere.kopeme.junit5.exampletests.rules;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -18,13 +19,22 @@ public class ExampleBeforeWithMeasurementOrderTest {
 
    private static Object myStuff;
    
-   @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement()
+   @BeforeAll
+   static void someClassicBefore() {
+      
+   }
+   
+   @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement(priority = 10)
+   static void highPriorityStuff() {
+   }
+   
+   @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement(priority = 1)
    static void setUp() {
       System.out.println("setup");
       myStuff = new Object();
    }
    
-   @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement()
+   @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement(priority = 0)
    void init() {
       System.out.println("Hash: " + myStuff.hashCode());
    }

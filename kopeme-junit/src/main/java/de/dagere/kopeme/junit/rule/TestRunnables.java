@@ -1,20 +1,13 @@
 package de.dagere.kopeme.junit.rule;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.function.ThrowingRunnable;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement;
-import de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement;
-import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
-import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
 
 /**
  * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.
@@ -36,43 +29,13 @@ public class TestRunnables {
     * @param testObject Object that should be tested
     */
    public TestRunnables(final RunConfiguration config, final ThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
-      final List<Method> beforeMethods = new LinkedList<>();
-      final List<Method> afterMethods = new LinkedList<>();
+      final List<Method> beforeMethods = BeforeAfterMethodFinder.getBeforeNoMeasurements(testClass);
+      final List<Method> afterMethods = BeforeAfterMethodFinder.getAfterNoMeasurements(testClass);
       LOG.debug("Klasse: {}", testClass);
-      for (final Method classMethod : testClass.getDeclaredMethods()) {
-         LOG.trace("Prüfe: {}", classMethod);
-         if (classMethod.getAnnotation(BeforeNoMeasurement.class) != null) {
-            if (classMethod.getParameterTypes().length > 0) {
-               throw new RuntimeException("BeforeNoMeasurement-methods must not have arguments");
-            }
-            beforeMethods.add(classMethod);
-            classMethod.setAccessible(true);
-         }
-         if (classMethod.getAnnotation(AfterNoMeasurement.class) != null) {
-            if (classMethod.getParameterTypes().length > 0) {
-               throw new RuntimeException("AfterNoMeasurement-methods must not have arguments");
-            }
-            afterMethods.add(classMethod);
-            classMethod.setAccessible(true);
-         }
-      }
 
       if (config.isExecuteBeforeClassInMeasurement()) {
-         List<Method> beforeClassMethod = new LinkedList<Method>();
-         List<Method> afterClassMethod = new LinkedList<Method>();
-         for (final Method classMethod : testClass.getDeclaredMethods()) {
-            System.out.println(classMethod.getName());
-            if (classMethod.getAnnotation(BeforeClass.class) != null ||
-                  classMethod.getAnnotation(BeforeWithMeasurement.class) != null) {
-               beforeClassMethod.add(classMethod);
-               classMethod.setAccessible(true);
-            }
-            if (classMethod.getAnnotation(AfterClass.class) != null ||
-                  classMethod.getAnnotation(AfterWithMeasurement.class) != null) {
-               afterClassMethod.add(classMethod);
-               classMethod.setAccessible(true);
-            }
-         }
+         List<Method> beforeClassMethod = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClass);
+         List<Method> afterClassMethod = BeforeAfterMethodFinder.getAfterWithMeasurements(testClass);
 
          this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
       } else {

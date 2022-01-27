@@ -19,5 +19,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ METHOD })
 public @interface BeforeWithMeasurement {
-
+   /**
+    * Optionally specificy the priority of the method; higher priority will be executed first
+    * 
+    * @return
+    */
+   int priority() default 1;
 }
