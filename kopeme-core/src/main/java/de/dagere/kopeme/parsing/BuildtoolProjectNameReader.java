@@ -149,7 +149,9 @@ public class BuildtoolProjectNameReader {
          final List<String> lines = Files.readAllLines(Paths.get(gradleFile.toURI()));
          for (final String line : lines) {
             if (line.contains("group") && line.contains("=")) {
-               groupId = readGradleProperty(line);
+               if (line.indexOf("group") < line.indexOf("=")) {
+                  groupId = readGradleProperty(line);
+               }
             }
          }
          name = readSettingsfile(gradleFile, name);
