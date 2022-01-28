@@ -1,6 +1,10 @@
+package de.dagere.kopeme.kieker.probe;
+
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
+
+
 
 public class DurationRecordAspectIT {
    
