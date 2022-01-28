@@ -5,13 +5,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollector;
 
 public class ResultTempWriter {
 
-   private static final Logger LOG = Logger.getLogger(ResultTempWriter.class.getName());
+   private static final Logger LOG = LogManager.getLogger(ResultTempWriter.class);
 
    public static final String EXECUTIONSTART = "\n" + WrittenResultReader.EXECUTIONSTART;
    public static final String COLLECTOR = "\n" + WrittenResultReader.COLLECTOR;
