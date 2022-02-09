@@ -11,6 +11,8 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Params;
 
 /**
  * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution
@@ -20,6 +22,8 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
  *
  */
 public class KoPeMeRule implements TestRule {
+   
+   public static final String JUNIT_PARAMETERIZED = "JUNIT_PARAMETERIZED";
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
 
@@ -42,16 +46,15 @@ public class KoPeMeRule implements TestRule {
             // testClass = Class.forName(descr.getClassName());
             testClass = testObject.getClass();
             final String methodDescription = descr.getMethodName();
-            final String methodResultName;
+            final Params params;
             int squaredBracketIndex = methodDescription.indexOf('[');
             if (squaredBracketIndex != -1) {
                String methodName = methodDescription.substring(0, squaredBracketIndex);
-               String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
-               methodResultName = methodName + "_" + indexString;
+               params = parseParams(methodDescription, squaredBracketIndex);
                testMethod = testClass.getMethod(methodName);
             } else {
                testMethod = testClass.getMethod(methodDescription);
-               methodResultName = methodDescription;
+               params = null;
             }
 
             final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
@@ -64,7 +67,7 @@ public class KoPeMeRule implements TestRule {
                };
                final TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
 
-               koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), methodResultName);
+               koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), params);
                return koPeMeStandardRuleStatement;
             } else {
                return stmt;
@@ -76,5 +79,16 @@ public class KoPeMeRule implements TestRule {
       } else {
          return stmt;
       }
+   }
+
+   private Params parseParams(final String methodDescription, final int squaredBracketIndex) {
+      final Params params;
+      String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
+      params = new Params();
+      Result.Params.Param param = new Result.Params.Param();
+      param.setKey(JUNIT_PARAMETERIZED);
+      param.setValue(indexString);
+      params.getParam().add(param);
+      return params;
    }
 }

@@ -15,6 +15,7 @@ import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.generated.Result.Params;
 import junit.framework.AssertionFailedError;
 
 /**
@@ -36,9 +37,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
    }
    
-   public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final String methodResultName) {
+   public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final Params params) {
       super(runnables, method, filename);
-      finalResult = new TestResult(methodResultName, annotation.warmup(), datacollectors, false);
+      finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
    }
 
    @Override

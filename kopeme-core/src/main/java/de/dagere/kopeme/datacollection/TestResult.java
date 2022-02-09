@@ -21,6 +21,7 @@ import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.generated.Result.Params;
 
 /**
  * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are inserted into the
@@ -39,18 +40,23 @@ public final class TestResult {
    private final String methodName;
    private WrittenResultReader reader;
    private ResultTempWriter writer;
-   private int executionTimes;
+   private int iterations;
    private final DataCollector[] sortedCollectors;
+   private final Params params;
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
     * 
     * @param methodName Name of the Testcase
-    * @param executionTimes Count of the planned executions
+    * @param iterations Count of the planned executions
     */
-   public TestResult(final String methodName, final int executionTimes, final DataCollectorList collectors, final boolean warmup) {
+   public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup) {
+      this(methodName, iterations, collectors, warmup, null);
+   }
+   
+   public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup, final Params params) {
       this.methodName = methodName;
-      this.executionTimes = executionTimes;
+      this.iterations = iterations;
 
       final Collection<DataCollector> dcCollection = collectors.getDataCollectors().values();
       sortedCollectors = dcCollection.toArray(new DataCollector[0]);
@@ -60,8 +66,9 @@ public final class TestResult {
             return arg0.getPriority() - arg1.getPriority();
          }
       };
-      Arrays.sort(sortedCollectors, comparator);
-
+      Arrays.sort(sortedCollectors, comparator);  
+      this.params = params;
+      
       try {
          writer = new ResultTempWriter(warmup);
          writer.setDataCollectors(sortedCollectors);
@@ -69,7 +76,10 @@ public final class TestResult {
       } catch (IOException e) {
          e.printStackTrace();
       }
-
+   }
+   
+   public Params getParams() {
+      return params;
    }
 
    /**
@@ -171,7 +181,7 @@ public final class TestResult {
 
    public void finalizeCollection(final Throwable thrownException) {
       writer.finalizeCollection();
-      if (executionTimes < BOUNDARY_SAVE_FILE) {
+      if (iterations < BOUNDARY_SAVE_FILE) {
          reader.read(thrownException, getDatacollectors());
          reader.deleteTempFile();
       } else {
@@ -216,7 +226,7 @@ public final class TestResult {
 
    public Fulldata getFulldata(final String key) {
       final Fulldata fd = new Fulldata();
-      if (executionTimes < BOUNDARY_SAVE_FILE) {
+      if (iterations < BOUNDARY_SAVE_FILE) {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
             final Value v = new Value();
             v.setStart(reader.getExecutionStartTimes().get(i));

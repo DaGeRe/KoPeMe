@@ -122,6 +122,7 @@ public final class PerformanceTestUtils {
       final double min = tr.getMinumumCurrentValue(additionalKey);
       final double max = tr.getMaximumCurrentValue(additionalKey);
       Result result = new Result();
+      result.setParams(tr.getParams());
       result.setValue(value);
       result.setDeviation(relativeStandardDeviation);
       result.setMin(min);
