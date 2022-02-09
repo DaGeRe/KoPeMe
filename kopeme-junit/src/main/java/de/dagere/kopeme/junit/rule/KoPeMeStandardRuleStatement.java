@@ -35,6 +35,11 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       super(runnables, method, filename);
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
    }
+   
+   public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final String methodResultName) {
+      super(runnables, method, filename);
+      finalResult = new TestResult(methodResultName, annotation.warmup(), datacollectors, false);
+   }
 
    @Override
    public void evaluate() throws Throwable {

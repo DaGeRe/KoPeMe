@@ -37,27 +37,41 @@ public class KoPeMeRule implements TestRule {
 
          Method testMethod = null;
          Class<?> testClass = null;
+
          try {
             // testClass = Class.forName(descr.getClassName());
             testClass = testObject.getClass();
-            testMethod = testClass.getMethod(descr.getMethodName());
+            final String methodDescription = descr.getMethodName();
+            final String methodResultName;
+            int squaredBracketIndex = methodDescription.indexOf('[');
+            if (squaredBracketIndex != -1) {
+               String methodName = methodDescription.substring(0, squaredBracketIndex);
+               String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
+               methodResultName = methodName + "_" + indexString;
+               testMethod = testClass.getMethod(methodName);
+            } else {
+               testMethod = testClass.getMethod(methodDescription);
+               methodResultName = methodDescription;
+            }
+
+            final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
+            if (annotation != null) {
+               ThrowingRunnable testRunnable = new ThrowingRunnable() {
+                  @Override
+                  public void run() throws Throwable {
+                     stmt.evaluate();
+                  }
+               };
+               final TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
+
+               koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), methodResultName);
+               return koPeMeStandardRuleStatement;
+            } else {
+               return stmt;
+            }
          } catch (NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
-         }
-         final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
-         if (annotation != null) {
-            ThrowingRunnable testRunnable = new ThrowingRunnable() {
-               @Override
-               public void run() throws Throwable {
-                  stmt.evaluate();
-               }
-            };
-            final TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
-
-            koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName());
-            return koPeMeStandardRuleStatement;
-         } else {
-            return stmt;
+            return null;
          }
       } else {
          return stmt;
