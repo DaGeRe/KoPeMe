@@ -44,7 +44,14 @@ public class KoPeMeJUnit5Starter {
 
             @Override
             public void run() throws Throwable {
-               descriptor.execute(jupiterContext, null);
+               JupiterEngineExecutionContext methodContext = descriptor.prepare(jupiterContext);
+               descriptor.execute(methodContext, null);
+               methodContext.close();
+               if (!methodContext.getThrowableCollector().isEmpty()) {
+                  Method addMethod = ThrowableCollector.class.getDeclaredMethod("add", Throwable.class);
+                  addMethod.setAccessible(true);
+                  addMethod.invoke(jupiterContext.getThrowableCollector(), methodContext.getThrowableCollector().getThrowable());
+               }
             }
          };
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
@@ -72,8 +79,8 @@ public class KoPeMeJUnit5Starter {
 
       ClassBasedTestDescriptor classDescriptor = new ClassTestDescriptor(currentId, instance.getClass(), configuration);
       JupiterEngineExecutionContext clazzContext = classDescriptor.prepare(kopemeContext);
-      JupiterEngineExecutionContext methodContext = descriptor.prepare(clazzContext);
-      return methodContext;
+     
+      return clazzContext;
    }
 
    private JupiterConfiguration getDummyConfiguration() {

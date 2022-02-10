@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5MockitoTest;
+import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtensionInjectMockJUnit5Test;
 
 /**
  * Tests just whether JUnit 5 execution works
@@ -38,5 +39,19 @@ public class TestJUnit5Mockito {
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(20));
    }
 
+   @Test
+   public void testWithFinalInjectedField() throws JAXBException {
+      File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionInjectMockJUnit5Test.class);
+
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = XMLDataLoader.loadData(file);
+      double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
+      System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
+
+      
+      
+      MatcherAssert.assertThat(ExampleExtensionInjectMockJUnit5Test.finishCount, Matchers.is(3));
+   }
    
 }
