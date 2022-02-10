@@ -41,6 +41,7 @@ public class TestJUnit5Mockito {
 
    @Test
    public void testWithFinalInjectedField() throws JAXBException {
+      ExampleExtensionInjectMockJUnit5Test.finishCount = 0;
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionInjectMockJUnit5Test.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
