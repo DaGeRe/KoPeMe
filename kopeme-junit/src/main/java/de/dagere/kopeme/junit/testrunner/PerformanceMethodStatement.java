@@ -25,7 +25,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
    public PerformanceMethodStatement(final TestRunnables runnables, final String filename, final Class<?> calledClass, final FrameworkMethod method,
          final boolean saveValuesClass) {
-      super(runnables, method.getMethod(), filename);
+      super(runnables, method.getMethod(), filename, method.getName());
       if (saveValuesClass) {
          configuration.setSaveValues(saveValuesClass);
       }
@@ -100,11 +100,11 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
          runMainExecution(tr, "execution ", executions, configuration.getRepetitions());
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(methodName, filename, tr, configuration));
+         saveData(SaveableTestData.createErrorTestData(methodName, clazzname, tr, configuration));
          throw t;
       }
       tr.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(methodName, filename, tr, configuration));
+      saveData(SaveableTestData.createFineTestData(methodName, clazzname, tr, configuration));
       return tr;
    }
 

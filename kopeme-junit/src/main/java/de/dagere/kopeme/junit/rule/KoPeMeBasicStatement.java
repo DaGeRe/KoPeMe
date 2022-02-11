@@ -37,7 +37,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
    protected Map<String, Double> maximalRelativeStandardDeviation;
    protected Map<String, Long> assertationvalues;
-   protected final String filename;
+   protected final String clazzname;
    protected Method method;
    protected TestRunnables runnables;
    protected boolean isFinished = false;
@@ -51,12 +51,11 @@ public abstract class KoPeMeBasicStatement extends Statement {
     * 
     * @param runnables Runnables that should be run
     * @param method Method that should be executed
-    * @param filename Name of the
+    * @param clazzname Name of the
     */
-   public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String filename) {
-      super();
+   public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String clazzname, final String methodFileName) {
       this.runnables = runnables;
-      this.filename = filename;
+      this.clazzname = clazzname;
       this.method = method;
 
       annotation = method.getAnnotation(PerformanceTest.class);
@@ -80,7 +79,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
          configuration = new RunConfiguration(annotation);
          try {
             KoPeMeKiekerSupport.INSTANCE.setKiekerWaitTime(annotation.kiekerWaitTime());
-            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), filename, method.getName());
+            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), clazzname, methodFileName);
          } catch (final Exception e) {
             System.err.println("kieker has failed!");
             e.printStackTrace();

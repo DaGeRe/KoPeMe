@@ -13,6 +13,7 @@ import de.dagere.kopeme.PerformanceTestUtils;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.generated.Result.Params;
@@ -33,12 +34,15 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
    private final TestResult finalResult;
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
-      super(runnables, method, filename);
+      super(runnables, method, filename, method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
    }
-   
+
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final Params params) {
-      super(runnables, method, filename);
+      super(runnables, 
+            method, 
+            filename, 
+            (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
    }
 
@@ -72,14 +76,14 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), Type.METHOD, annotation.useKieker());
       tbe.execute();
-      LOG.info("Test {} beendet", filename);
+      LOG.info("Test {} beendet", clazzname);
    }
 
    private void executeSimpleTest() throws Throwable {
       if (!PerformanceTestUtils.checkCollectorValidity(finalResult, assertationvalues, maximalRelativeStandardDeviation)) {
          LOG.warn("Not all Collectors are valid!");
       }
-      
+
       final RunConfiguration configuration = new RunConfiguration(annotation);
       try {
          runWarmup();
@@ -88,16 +92,16 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          }
       } catch (final AssertionFailedError t) {
          finalResult.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), filename, finalResult, configuration));
+         saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
          throw t;
       } catch (final Throwable t) {
          t.printStackTrace();
          finalResult.finalizeCollection(t);
-         saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), filename, finalResult, configuration));
+         saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
          throw t;
       }
       finalResult.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(finalResult.getMethodName(), filename, finalResult, configuration));
+      saveData(SaveableTestData.createFineTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
    }
 
    private void runWarmup() throws Throwable {
