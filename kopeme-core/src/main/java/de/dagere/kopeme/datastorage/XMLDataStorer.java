@@ -2,8 +2,11 @@ package de.dagere.kopeme.datastorage;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
@@ -183,5 +186,16 @@ public final class XMLDataStorer implements DataStorer {
       }
       LOG.trace("Storing finished.");
    }
-
+   
+   /**
+    * According to https://stackoverflow.com/questions/930840/how-do-i-clone-a-jaxb-object, this
+    * is the one solution to clone an jaxb object; making the objects serializable or even letting xjc 
+    * create a copy method would be nicer
+    */
+   public static Kopemedata clone(final Kopemedata jaxbObject) throws IOException {
+      StringWriter xml = new StringWriter();
+      JAXB.marshal(jaxbObject, xml);
+      StringReader reader = new StringReader(xml.toString());
+      return JAXB.unmarshal(reader, jaxbObject.getClass());
+    }
 }
