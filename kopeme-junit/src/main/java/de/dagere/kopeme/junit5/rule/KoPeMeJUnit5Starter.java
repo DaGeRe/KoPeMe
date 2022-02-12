@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
@@ -18,9 +17,7 @@ import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.support.descriptor.MethodSource;
-import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -39,6 +36,7 @@ public class KoPeMeJUnit5Starter {
    private final Method method;
    private final JupiterConfiguration configuration;
    private Params params = null;
+   private boolean enabled = true;
 
    public KoPeMeJUnit5Starter(final ExtensionContext context) {
       this.context = context;
@@ -51,6 +49,15 @@ public class KoPeMeJUnit5Starter {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, instance.getClass(), method, configuration);
 
       final JupiterEngineExecutionContext jupiterContext = prepareJUnit5(descriptor);
+      
+      if (enabled) {
+         executeTest(descriptor, jupiterContext);
+      }else {
+         System.out.println("Test has been disabled by chosenIndex");
+      }
+   }
+
+   private void executeTest(TestMethodTestDescriptor descriptor, final JupiterEngineExecutionContext jupiterContext) {
       try {
          final ThrowingRunnable throwingRunnable = new ThrowingRunnable() {
 
@@ -78,7 +85,6 @@ public class KoPeMeJUnit5Starter {
       } catch (Throwable t) {
          throw new RuntimeException("Test caused exception", t);
       }
-      // HierarchicalTestExecutorService
    }
 
    private JupiterEngineExecutionContext prepareJUnit5(final TestMethodTestDescriptor descriptor) {
@@ -125,9 +131,11 @@ public class KoPeMeJUnit5Starter {
                   TestTemplateInvocationTestDescriptor testTemplateDescriptor = (TestTemplateInvocationTestDescriptor) testDescriptor;
                   clazzContext = testTemplateDescriptor.prepare(clazzContext);
 
-                  String index = getIndex(testTemplateDescriptor);
+                  int index = getIndex(testTemplateDescriptor);
                   createParams(index);
-
+                  
+                  checkEnabled(index);
+                  
                } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                   e.printStackTrace();
                }
@@ -137,18 +145,26 @@ public class KoPeMeJUnit5Starter {
       return clazzContext;
    }
 
-   private void createParams(String index) {
+   private void checkEnabled(int index) {
+      PerformanceTest[] testAnnotation = method.getAnnotationsByType(PerformanceTest.class);
+      int chosenParameterIndex = testAnnotation[0].chosenParameterIndex();
+      if (chosenParameterIndex != -1 && chosenParameterIndex != index) {
+         enabled = false;
+      }
+   }
+
+   private void createParams(int index) {
       Result.Params.Param param = new Result.Params.Param();
       param.setKey(KoPeMeRule.JUNIT_PARAMETERIZED);
-      param.setValue(index);
+      param.setValue(Integer.toString(index));
       params = new Params();
       params.getParam().add(param);
    }
 
-   private String getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
+   private int getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
       String displayName = testTemplateDescriptor.getDisplayName();
       String index = displayName.substring(1, displayName.indexOf(" ") - 1);
-      return index;
+      return Integer.parseInt(index);
    }
 
    private JupiterConfiguration getDummyConfiguration() {
