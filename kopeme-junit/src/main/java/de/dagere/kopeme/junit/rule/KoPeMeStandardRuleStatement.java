@@ -32,22 +32,31 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
    private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
 
    private final TestResult finalResult;
+   private final Params params;
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
       super(runnables, method, filename, method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
+      params = null;
    }
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final Params params) {
-      super(runnables, 
-            method, 
-            filename, 
+      super(runnables,
+            method,
+            filename,
             (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
+      this.params = params;
    }
 
    @Override
    public void evaluate() throws Throwable {
+      int chosenParameterIndex = annotation.chosenParameterIndex();
+      if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
+         System.out.println("Test was disabled because of chosen parameter index " + chosenParameterIndex);
+         return;
+      }
+      
       final Finishable finishable = new Finishable() {
          @Override
          public void run() {

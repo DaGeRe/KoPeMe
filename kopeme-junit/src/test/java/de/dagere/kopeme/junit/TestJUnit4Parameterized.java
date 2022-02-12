@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,6 +22,7 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
+import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestChosenParameter;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
 public class TestJUnit4Parameterized {
@@ -34,22 +36,53 @@ public class TestJUnit4Parameterized {
    }
 
    @Test
-   public void testNormalWriting() throws JAXBException {
+   public void testParameterized() throws JAXBException {
+      final String testClass = ExampleRuleParameterizedTest.class.getName();
+      cleanup(testClass);
+      
       final JUnitCore jc = new JUnitCore();
       jc.run(ExampleRuleParameterizedTest.class);
-      final String testClass = ExampleRuleParameterizedTest.class.getName();
+      
       
       for (int i : new int[] {0, 1, 2}) {
-         final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
-         MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
-         Kopemedata kopemedata = XMLDataLoader.loadData(file);
-         
-         List<Result> results = kopemedata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
-         
-         Params params = results.get(0).getParams();
-         
-         Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeRule.JUNIT_PARAMETERIZED);
-         Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
+         checkExistingAndCorrect(testClass, i);
       }
+   }
+   
+   @Test
+   public void testParameterizedChosenParameter() throws JAXBException {
+      final String testClass = ExampleRuleParameterizedTestChosenParameter.class.getName();
+      cleanup(testClass);
+      
+      final JUnitCore jc = new JUnitCore();
+      jc.run(ExampleRuleParameterizedTestChosenParameter.class);
+      
+      
+      checkExistingAndCorrect(testClass, 1);
+      
+      for (int i : new int[] {0, 2}) {
+         final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         MatcherAssert.assertThat(file, Matchers.not(FileMatchers.anExistingFile()));
+      }
+   }
+
+   private void cleanup(final String testClass) {
+      for (int i : new int[] {0, 1, 2}) {
+         final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         file.delete();
+      }
+   }
+   
+   private void checkExistingAndCorrect(final String testClass, int i) throws JAXBException {
+      final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+      MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
+      Kopemedata kopemedata = XMLDataLoader.loadData(file);
+      
+      List<Result> results = kopemedata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      
+      Params params = results.get(0).getParams();
+      
+      Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeRule.JUNIT_PARAMETERIZED);
+      Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
    }
 }

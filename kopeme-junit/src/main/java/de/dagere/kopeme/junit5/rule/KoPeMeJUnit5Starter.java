@@ -134,8 +134,6 @@ public class KoPeMeJUnit5Starter {
                   int index = getIndex(testTemplateDescriptor);
                   createParams(index);
                   
-                  checkEnabled(index);
-                  
                } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                   e.printStackTrace();
                }
@@ -143,14 +141,6 @@ public class KoPeMeJUnit5Starter {
          }
       }
       return clazzContext;
-   }
-
-   private void checkEnabled(int index) {
-      PerformanceTest[] testAnnotation = method.getAnnotationsByType(PerformanceTest.class);
-      int chosenParameterIndex = testAnnotation[0].chosenParameterIndex();
-      if (chosenParameterIndex != -1 && chosenParameterIndex != index) {
-         enabled = false;
-      }
    }
 
    private void createParams(int index) {
