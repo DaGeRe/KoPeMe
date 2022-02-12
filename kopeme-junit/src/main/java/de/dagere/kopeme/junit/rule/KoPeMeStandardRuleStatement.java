@@ -30,6 +30,8 @@ import junit.framework.AssertionFailedError;
 public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
+   
+   public static final String KOPEME_CHOSEN_PARAMETER_INDEX = "KOPEME_CHOSEN_PARAMETER_INDEX";
 
    private final TestResult finalResult;
    private final Params params;
@@ -51,9 +53,8 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
    @Override
    public void evaluate() throws Throwable {
-      int chosenParameterIndex = annotation.chosenParameterIndex();
-      if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
-         System.out.println("Test was disabled because of chosen parameter index " + chosenParameterIndex);
+      boolean checkParameterIndex = checkParameterIndex();
+      if (checkParameterIndex) {
          return;
       }
       
@@ -86,6 +87,23 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), Type.METHOD, annotation.useKieker());
       tbe.execute();
       LOG.info("Test {} beendet", clazzname);
+   }
+
+   private boolean checkParameterIndex() {
+      int chosenParameterIndex = annotation.chosenParameterIndex();
+      if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
+         System.out.println("Test was disabled because of chosen parameter index " + chosenParameterIndex);
+         return true;
+      }
+      String chosenParameterIndexEnvironment = System.getenv("KOPEME_CHOSEN_PARAMETER_INDEX");
+      if (chosenParameterIndexEnvironment != null) {
+         int environmentChosenIndex = Integer.parseInt(chosenParameterIndexEnvironment);
+         if (environmentChosenIndex != -1 && environmentChosenIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
+            System.out.println("Test was disabled because of chosen parameter index " + environmentChosenIndex);
+            return true;
+         }
+      }
+      return false;
    }
 
    private void executeSimpleTest() throws Throwable {
