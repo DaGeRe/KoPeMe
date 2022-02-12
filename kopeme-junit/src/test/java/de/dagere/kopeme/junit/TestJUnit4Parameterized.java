@@ -23,7 +23,7 @@ import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 
-public class TestParameterized {
+public class TestJUnit4Parameterized {
 
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
