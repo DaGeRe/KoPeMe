@@ -1,8 +1,5 @@
 package de.dagere.kopeme.junit5.exampletests.rules;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,7 +12,7 @@ import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
  * 
  * @author reichelt
  *
- */
+ */ 
 @ExtendWith(KoPeMeExtension.class)
 public class ExampleExtension5ParameterizedTest {
 
