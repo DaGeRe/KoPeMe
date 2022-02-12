@@ -1,22 +1,33 @@
 package de.dagere.kopeme.junit5.rule;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
+import org.junit.jupiter.engine.descriptor.TestTemplateInvocationTestDescriptor;
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.jupiter.engine.extension.MutableExtensionRegistry;
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
@@ -27,6 +38,7 @@ public class KoPeMeJUnit5Starter {
    private final Object instance;
    private final Method method;
    private final JupiterConfiguration configuration;
+   private Params params = null;
 
    public KoPeMeJUnit5Starter(final ExtensionContext context) {
       this.context = context;
@@ -45,6 +57,7 @@ public class KoPeMeJUnit5Starter {
             @Override
             public void run() throws Throwable {
                JupiterEngineExecutionContext methodContext = descriptor.prepare(jupiterContext);
+
                descriptor.execute(methodContext, null);
                methodContext.close();
                if (!methodContext.getThrowableCollector().isEmpty()) {
@@ -56,7 +69,7 @@ public class KoPeMeJUnit5Starter {
          };
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
          final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName());
+         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = jupiterContext.getThrowableCollector();
          if (!collector.isEmpty()) {
@@ -65,6 +78,7 @@ public class KoPeMeJUnit5Starter {
       } catch (Throwable t) {
          throw new RuntimeException("Test caused exception", t);
       }
+      // HierarchicalTestExecutorService
    }
 
    private JupiterEngineExecutionContext prepareJUnit5(final TestMethodTestDescriptor descriptor) {
@@ -79,8 +93,62 @@ public class KoPeMeJUnit5Starter {
 
       ClassBasedTestDescriptor classDescriptor = new ClassTestDescriptor(currentId, instance.getClass(), configuration);
       JupiterEngineExecutionContext clazzContext = classDescriptor.prepare(kopemeContext);
-     
+
+      clazzContext = eventuallyAddParameterContext(descriptor, clazzContext);
+
       return clazzContext;
+   }
+
+   private static Method getTestDescriptorMethod;
+   
+   static {
+      try {
+         Class<?> abstractExtensionContextClass = Class.forName("org.junit.jupiter.engine.descriptor.AbstractExtensionContext");
+         getTestDescriptorMethod = abstractExtensionContextClass.getDeclaredMethod("getTestDescriptor");
+         getTestDescriptorMethod.setAccessible(true);
+      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
+         e.printStackTrace();
+      }
+      
+   }
+   
+   private JupiterEngineExecutionContext eventuallyAddParameterContext(final TestMethodTestDescriptor descriptor, JupiterEngineExecutionContext clazzContext) {
+      if (descriptor.getSource().isPresent()) {
+         TestSource testSource = descriptor.getSource().get();
+         if (testSource instanceof MethodSource) {
+            MethodSource source = (MethodSource) testSource;
+            String parameters = source.getMethodParameterTypes();
+            if (parameters.length() != 0) {
+               try {
+                  TestDescriptor testDescriptor = (TestDescriptor) getTestDescriptorMethod.invoke(context);
+
+                  TestTemplateInvocationTestDescriptor testTemplateDescriptor = (TestTemplateInvocationTestDescriptor) testDescriptor;
+                  clazzContext = testTemplateDescriptor.prepare(clazzContext);
+
+                  String index = getIndex(testTemplateDescriptor);
+                  createParams(index);
+
+               } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                  e.printStackTrace();
+               }
+            }
+         }
+      }
+      return clazzContext;
+   }
+
+   private void createParams(String index) {
+      Result.Params.Param param = new Result.Params.Param();
+      param.setKey(KoPeMeRule.JUNIT_PARAMETERIZED);
+      param.setValue(index);
+      params = new Params();
+      params.getParam().add(param);
+   }
+
+   private String getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
+      String displayName = testTemplateDescriptor.getDisplayName();
+      String index = displayName.substring(1, displayName.indexOf(" ") - 1);
+      return index;
    }
 
    private JupiterConfiguration getDummyConfiguration() {

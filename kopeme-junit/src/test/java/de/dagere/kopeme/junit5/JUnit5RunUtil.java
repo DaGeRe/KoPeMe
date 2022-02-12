@@ -23,6 +23,11 @@ public class JUnit5RunUtil {
          file.delete();
       }
 
+      runJUnit5TestOnly(testedClass);
+      return file;
+   }
+
+   public static void runJUnit5TestOnly(final Class<?> testedClass) {
       LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
             .selectors(DiscoverySelectors.selectClass(testedClass))
             .build();
@@ -36,6 +41,5 @@ public class JUnit5RunUtil {
          failure.getException().printStackTrace();
       }
       MatcherAssert.assertThat(summaryGeneratingListener.getSummary().getFailures(), Matchers.empty());
-      return file;
    }
 }
