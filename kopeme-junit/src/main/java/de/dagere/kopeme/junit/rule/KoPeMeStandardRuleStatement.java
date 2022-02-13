@@ -39,7 +39,9 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
       super(runnables, method, filename, method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
+      
       params = null;
+      initializeKieker(clazzname, method.getName());
    }
 
    public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final Params params) {
@@ -49,12 +51,17 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
             (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
       this.params = params;
+      
+      if (!parameterIndexInvalid()) {
+         String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
+         initializeKieker(clazzname, methodFileName);
+      }
    }
 
    @Override
    public void evaluate() throws Throwable {
-      boolean checkParameterIndex = checkParameterIndex();
-      if (checkParameterIndex) {
+      boolean parameterIndexInvalid = parameterIndexInvalid();
+      if (parameterIndexInvalid) {
          return;
       }
       
@@ -89,17 +96,17 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       LOG.info("Test {} beendet", clazzname);
    }
 
-   private boolean checkParameterIndex() {
+   private boolean parameterIndexInvalid() {
       int chosenParameterIndex = annotation.chosenParameterIndex();
       if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
-         System.out.println("Test was disabled because of chosen parameter index " + chosenParameterIndex);
+         System.out.println("Test was disabled because of chosen parameter index (parameter) " + chosenParameterIndex);
          return true;
       }
-      String chosenParameterIndexEnvironment = System.getenv("KOPEME_CHOSEN_PARAMETER_INDEX");
+      String chosenParameterIndexEnvironment = System.getenv(KOPEME_CHOSEN_PARAMETER_INDEX);
       if (chosenParameterIndexEnvironment != null) {
          int environmentChosenIndex = Integer.parseInt(chosenParameterIndexEnvironment);
          if (environmentChosenIndex != -1 && environmentChosenIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
-            System.out.println("Test was disabled because of chosen parameter index " + environmentChosenIndex);
+            System.out.println("Test was disabled because of chosen parameter index (environment variable) " + environmentChosenIndex);
             return true;
          }
       }

@@ -32,6 +32,8 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
       this.methodName = method.getName();
       this.className = calledClass.getSimpleName(); // The name of the testcase-class is recorded; if tests of subclasses are called, they belong to the testcase of the superclass
                                                     // anyway
+      
+      initializeKieker(clazzname, method.getName());
    }
 
    @Override

@@ -77,13 +77,6 @@ public abstract class KoPeMeBasicStatement extends Statement {
 
       if (annotation != null) {
          configuration = new RunConfiguration(annotation);
-         try {
-            KoPeMeKiekerSupport.INSTANCE.setKiekerWaitTime(annotation.kiekerWaitTime());
-            KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), clazzname, methodFileName);
-         } catch (final Exception e) {
-            System.err.println("kieker has failed!");
-            e.printStackTrace();
-         }
          maximalRelativeStandardDeviation = new HashMap<>();
          assertationvalues = new HashMap<>();
          for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
@@ -96,6 +89,16 @@ public abstract class KoPeMeBasicStatement extends Statement {
       } else {
          LOG.error("No @PerformanceTest-Annotation present!");
          configuration = null;
+      }
+   }
+
+   protected void initializeKieker(final String clazzname, final String methodFileName) {
+      try {
+         KoPeMeKiekerSupport.INSTANCE.setKiekerWaitTime(annotation.kiekerWaitTime());
+         KoPeMeKiekerSupport.INSTANCE.useKieker(annotation.useKieker(), clazzname, methodFileName);
+      } catch (final Exception e) {
+         System.err.println("kieker has failed!");
+         e.printStackTrace();
       }
    }
 
