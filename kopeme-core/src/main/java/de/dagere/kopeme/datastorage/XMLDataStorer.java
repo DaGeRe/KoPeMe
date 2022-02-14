@@ -6,10 +6,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 
-import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -191,11 +191,14 @@ public final class XMLDataStorer implements DataStorer {
     * According to https://stackoverflow.com/questions/930840/how-do-i-clone-a-jaxb-object, this
     * is the one solution to clone an jaxb object; making the objects serializable or even letting xjc 
     * create a copy method would be nicer
+    * @throws JAXBException 
     */
-   public static Kopemedata clone(final Kopemedata jaxbObject) throws IOException {
+   public static Kopemedata clone(final Kopemedata jaxbObject) throws IOException, JAXBException {
       StringWriter xml = new StringWriter();
-      JAXB.marshal(jaxbObject, xml);
+      Marshaller marshaller = XMLDataLoader.jc.createMarshaller();
+      marshaller.marshal(jaxbObject, xml);
       StringReader reader = new StringReader(xml.toString());
-      return JAXB.unmarshal(reader, jaxbObject.getClass());
+      Unmarshaller unmarshaller = XMLDataLoader.jc.createUnmarshaller();
+      return (Kopemedata) unmarshaller.unmarshal(reader);
     }
 }
