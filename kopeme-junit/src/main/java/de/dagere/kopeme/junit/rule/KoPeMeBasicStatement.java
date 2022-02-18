@@ -15,6 +15,7 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -39,7 +40,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
    protected Map<String, Long> assertationvalues;
    protected final String clazzname;
    protected Method method;
-   protected TestRunnables runnables;
+   protected TestRunnable runnables;
    protected boolean isFinished = false;
    protected DataCollectorList datacollectors;
 
@@ -53,7 +54,7 @@ public abstract class KoPeMeBasicStatement extends Statement {
     * @param method Method that should be executed
     * @param clazzname Name of the
     */
-   public KoPeMeBasicStatement(final TestRunnables runnables, final Method method, final String clazzname, final String methodFileName) {
+   public KoPeMeBasicStatement(final TestRunnable runnables, final Method method, final String clazzname, final String methodFileName) {
       this.runnables = runnables;
       this.clazzname = clazzname;
       this.method = method;

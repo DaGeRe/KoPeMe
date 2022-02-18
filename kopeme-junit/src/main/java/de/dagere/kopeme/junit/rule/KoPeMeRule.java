@@ -9,6 +9,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
@@ -65,7 +66,7 @@ public class KoPeMeRule implements TestRule {
                      stmt.evaluate();
                   }
                };
-               final TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
+               final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
 
                koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), params);
                return koPeMeStandardRuleStatement;

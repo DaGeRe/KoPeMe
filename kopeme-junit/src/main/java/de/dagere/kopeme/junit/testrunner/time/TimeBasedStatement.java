@@ -9,11 +9,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.junit.rule.TestRunnables;
 import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
 
 /**
@@ -29,7 +29,7 @@ public class TimeBasedStatement extends PerformanceMethodStatement {
 
 	private final long duration;
 
-	public TimeBasedStatement(final TestRunnables callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
+	public TimeBasedStatement(final TestRunnable callee, final String filename, final Class<?> calledClass, final FrameworkMethod method, final boolean saveFullData) {
 		super(callee, filename, calledClass, method, saveFullData);
 		duration = annotation.duration() * NANOTOMIKRO;
 	}

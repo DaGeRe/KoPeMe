@@ -24,6 +24,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
@@ -115,7 +116,7 @@ public class KoPeMeJUnit5Starter {
          final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
 
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
-         final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance);
+         final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance);
          final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = clazzContext.getThrowableCollector();

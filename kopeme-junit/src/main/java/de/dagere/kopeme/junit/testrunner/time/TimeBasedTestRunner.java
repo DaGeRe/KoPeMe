@@ -8,9 +8,9 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
-import de.dagere.kopeme.junit.rule.TestRunnables;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
 import junit.framework.AssertionFailedError;
 
@@ -50,7 +50,7 @@ public class TimeBasedTestRunner extends PerformanceTestRunnerJUnit {
 	@Override
    protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
 		try {
-			final TestRunnables callee = getStatement(currentMethod);
+			final TestRunnable callee = getStatement(currentMethod);
 			
 			LOG.trace("Im methodBlock für " + currentMethod.getName());
 

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.function.ThrowingRunnable;
 
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 
 /**
@@ -15,7 +16,7 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
  * @author reichelt
  *
  */
-public class TestRunnables {
+public class TestRunnables implements TestRunnable {
 
    private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 
@@ -51,6 +52,7 @@ public class TestRunnables {
     * 
     * @return Test-Runnable
     */
+   @Override
    public ThrowingRunnable getTestRunnable() {
       return testRunnable;
    }
@@ -60,6 +62,7 @@ public class TestRunnables {
     * 
     * @return Before-Runnable
     */
+   @Override
    public ThrowingRunnable getBeforeRunnable() {
       return beforeRunnable;
    }
@@ -69,6 +72,7 @@ public class TestRunnables {
     * 
     * @return After-Runnable
     */
+   @Override
    public ThrowingRunnable getAfterRunnable() {
       return afterRunnable;
    }

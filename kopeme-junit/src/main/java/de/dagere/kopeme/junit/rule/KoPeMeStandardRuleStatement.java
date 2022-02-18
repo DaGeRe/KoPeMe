@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -36,7 +37,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
    private final TestResult finalResult;
    private final Params params;
 
-   public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename) {
+   public KoPeMeStandardRuleStatement(final TestRunnable runnables, final Method method, final String filename) {
       super(runnables, method, filename, method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
       
@@ -44,7 +45,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       initializeKieker(clazzname, method.getName());
    }
 
-   public KoPeMeStandardRuleStatement(final TestRunnables runnables, final Method method, final String filename, final Params params) {
+   public KoPeMeStandardRuleStatement(final TestRunnable runnables, final Method method, final String filename, final Params params) {
       super(runnables,
             method,
             filename,

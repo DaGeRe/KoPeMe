@@ -8,12 +8,12 @@ import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
-import de.dagere.kopeme.junit.rule.TestRunnables;
 
 public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 
@@ -23,7 +23,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement {
    protected Finishable mainRunnable;
    
 
-   public PerformanceMethodStatement(final TestRunnables runnables, final String filename, final Class<?> calledClass, final FrameworkMethod method,
+   public PerformanceMethodStatement(final TestRunnable runnables, final String filename, final Class<?> calledClass, final FrameworkMethod method,
          final boolean saveValuesClass) {
       super(runnables, method.getMethod(), filename, method.getName());
       if (saveValuesClass) {

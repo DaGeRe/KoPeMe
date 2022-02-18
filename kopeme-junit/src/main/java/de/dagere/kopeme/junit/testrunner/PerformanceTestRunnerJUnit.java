@@ -19,6 +19,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.Finishable;
+import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
@@ -140,7 +141,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
     * @throws IllegalArgumentException Thrown if the method has arguments
     * @throws InvocationTargetException Thrown if the method is not accessible
     */
-   protected TestRunnables getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
+   protected TestRunnable getStatement(final FrameworkMethod currentMethod) throws NoSuchMethodException, SecurityException,
          IllegalAccessException,
          IllegalArgumentException,
          InvocationTargetException {
@@ -175,7 +176,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
                   withRuleStatement.evaluate();
                }
             };
-            TestRunnables runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, klasse, testObject);
+            TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, klasse, testObject);
             return runnables;
          } else {
             return null;
@@ -210,7 +211,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
     */
    protected Statement createPerformanceStatementFromMethod(final FrameworkMethod currentMethod) {
       try {
-         final TestRunnables callee = getStatement(currentMethod);
+         final TestRunnable callee = getStatement(currentMethod);
 
          LOG.trace("Im methodBlock für " + currentMethod.getName());
 
