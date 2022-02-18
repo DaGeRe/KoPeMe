@@ -2,6 +2,8 @@ package de.dagere.kopeme.junit5.rule;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -153,7 +155,12 @@ public class KoPeMeJUnit5Starter {
 
    private int getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
       String displayName = testTemplateDescriptor.getDisplayName();
-      String index = displayName.substring(1, displayName.indexOf(" ") - 1);
+      String index="0";
+      Pattern pattern= Pattern.compile("^[^\\d]*(\\d+)");
+      Matcher matcher = pattern.matcher(displayName);
+      if(matcher.lookingAt()) {
+         index = matcher.group(1);
+      }
       return Integer.parseInt(index);
    }
 
