@@ -50,29 +50,30 @@ public class KoPeMeJUnit5Starter {
    public void start() throws Exception {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, instance.getClass(), method, configuration);
 
-      final JupiterEngineExecutionContext jupiterContext = prepareJUnit5(descriptor);
+      
 
       if (enabled) {
-         executeTest(descriptor, jupiterContext);
+         executeTest(descriptor);
       } else {
          System.out.println("Test has been disabled by chosenIndex");
       }
    }
 
-   private void executeTest(TestMethodTestDescriptor descriptor, final JupiterEngineExecutionContext jupiterContext) {
+   private void executeTest(TestMethodTestDescriptor descriptor) {
+      final JupiterEngineExecutionContext clazzContext = prepareJUnit5Class(descriptor);
       try {
          final ThrowingRunnable throwingRunnable = new ThrowingRunnable() {
 
             @Override
             public void run() throws Throwable {
-               JupiterEngineExecutionContext methodContext = descriptor.prepare(jupiterContext);
+               JupiterEngineExecutionContext methodContext = descriptor.prepare(clazzContext);
 
                descriptor.execute(methodContext, null);
                methodContext.close();
                if (!methodContext.getThrowableCollector().isEmpty()) {
                   Method addMethod = ThrowableCollector.class.getDeclaredMethod("add", Throwable.class);
                   addMethod.setAccessible(true);
-                  addMethod.invoke(jupiterContext.getThrowableCollector(), methodContext.getThrowableCollector().getThrowable());
+                  addMethod.invoke(clazzContext.getThrowableCollector(), methodContext.getThrowableCollector().getThrowable());
                }
             }
          };
@@ -80,7 +81,7 @@ public class KoPeMeJUnit5Starter {
          final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
          final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName(), params);
          statement.evaluate();
-         ThrowableCollector collector = jupiterContext.getThrowableCollector();
+         ThrowableCollector collector = clazzContext.getThrowableCollector();
          if (!collector.isEmpty()) {
             throw new RuntimeException("Test caused exception", collector.getThrowable());
          }
@@ -89,7 +90,7 @@ public class KoPeMeJUnit5Starter {
       }
    }
 
-   private JupiterEngineExecutionContext prepareJUnit5(final TestMethodTestDescriptor descriptor) {
+   private JupiterEngineExecutionContext prepareJUnit5Class(final TestMethodTestDescriptor descriptor) {
       MutableExtensionRegistry extensionRegistry = MutableExtensionRegistry.createRegistryWithDefaultExtensions(configuration);
 
       final JupiterEngineExecutionContext kopemeContext = new JupiterEngineExecutionContext(null, configuration)
