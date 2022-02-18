@@ -1,5 +1,7 @@
 package de.dagere.kopeme.junit5.rule;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
@@ -28,13 +30,14 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
+import de.dagere.kopeme.junit.rule.PreparableTestRunnables;
 import de.dagere.kopeme.junit.rule.TestRunnables;
 
 public class KoPeMeJUnit5Starter {
 
    private final ExtensionContext context;
    private final UniqueId currentId = UniqueId.forEngine(JupiterEngineDescriptor.ENGINE_ID);
-   private final Object instance;
+   private final Object outerInstance;
    private final Method method;
    private final JupiterConfiguration configuration;
    private Params params = null;
@@ -42,44 +45,78 @@ public class KoPeMeJUnit5Starter {
 
    public KoPeMeJUnit5Starter(final ExtensionContext context) {
       this.context = context;
-      instance = context.getTestInstance().get();
+      outerInstance = context.getTestInstance().get();
       method = context.getTestMethod().get();
       configuration = getDummyConfiguration();
    }
 
    public void start() throws Exception {
-      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, instance.getClass(), method, configuration);
+      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
 
+      boolean reinitialize = needsReinitialization();
       
-
       if (enabled) {
-         executeTest(descriptor);
+         if (reinitialize) {
+            executeMethodReinitializationTest(descriptor);
+         } else {
+            executeTest(descriptor);
+         }
       } else {
          System.out.println("Test has been disabled by chosenIndex");
       }
    }
 
+   /**
+    * Some test cases require reinitialization, e.g. if InjectMocks is used (cause if the field in an injected mock is already set, it will not be set again).
+    * 
+    * This cases are defined here (and should be extended if necessary).
+    * @return
+    */
+   private boolean needsReinitialization() {
+      boolean reinitialize = false;
+      for (Field field : outerInstance.getClass().getDeclaredFields()) {
+         for (Annotation annotation : field.getAnnotations()) {
+            if (annotation.toString().startsWith("@org.mockito.InjectMocks")){
+               reinitialize = true;
+            }
+         }
+      }
+      return reinitialize;
+   }
+
+   private void executeMethodReinitializationTest(TestMethodTestDescriptor descriptor) {
+      final JupiterEngineExecutionContext jupiterContext = prepareJUnit5Class(descriptor);
+      final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
+
+      final PreparableTestRunnables runnables = new PreparableTestRunnables(runConfiguration, outerInstance.getClass(), descriptor, jupiterContext);
+
+      try {
+         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
+         statement.evaluate();
+         ThrowableCollector collector = jupiterContext.getThrowableCollector();
+         if (!collector.isEmpty()) {
+            throw new RuntimeException("Test caused exception", collector.getThrowable());
+         }
+      } catch (Throwable t) {
+         throw new RuntimeException("Test caused exception", t);
+      }
+   }
+
    private void executeTest(TestMethodTestDescriptor descriptor) {
-      final JupiterEngineExecutionContext clazzContext = prepareJUnit5Class(descriptor);
+      final JupiterEngineExecutionContext clazzContext = prepareJUnit5Method(descriptor);
       try {
          final ThrowingRunnable throwingRunnable = new ThrowingRunnable() {
 
             @Override
             public void run() throws Throwable {
-               JupiterEngineExecutionContext methodContext = descriptor.prepare(clazzContext);
-
-               descriptor.execute(methodContext, null);
-               methodContext.close();
-               if (!methodContext.getThrowableCollector().isEmpty()) {
-                  Method addMethod = ThrowableCollector.class.getDeclaredMethod("add", Throwable.class);
-                  addMethod.setAccessible(true);
-                  addMethod.invoke(clazzContext.getThrowableCollector(), methodContext.getThrowableCollector().getThrowable());
-               }
+               descriptor.execute(clazzContext, null);
             }
          };
+         final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
+
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
-         final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, instance.getClass(), instance);
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, instance.getClass().getName(), params);
+         final TestRunnables runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance);
+         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = clazzContext.getThrowableCollector();
          if (!collector.isEmpty()) {
@@ -100,12 +137,18 @@ public class KoPeMeJUnit5Starter {
             .withThrowableCollector(JupiterThrowableCollectorFactory.createThrowableCollector())
             .build();
 
-      ClassBasedTestDescriptor classDescriptor = new ClassTestDescriptor(currentId, instance.getClass(), configuration);
+      ClassBasedTestDescriptor classDescriptor = new ClassTestDescriptor(currentId, outerInstance.getClass(), configuration);
       JupiterEngineExecutionContext clazzContext = classDescriptor.prepare(kopemeContext);
 
       clazzContext = eventuallyAddParameterContext(descriptor, clazzContext);
-
       return clazzContext;
+   }
+
+   private JupiterEngineExecutionContext prepareJUnit5Method(final TestMethodTestDescriptor descriptor) {
+      JupiterEngineExecutionContext clazzContext = prepareJUnit5Class(descriptor);
+      JupiterEngineExecutionContext methodContext = descriptor.prepare(clazzContext);
+
+      return methodContext;
    }
 
    private static Method getTestDescriptorMethod;
