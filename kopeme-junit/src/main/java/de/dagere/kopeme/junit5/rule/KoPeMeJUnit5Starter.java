@@ -130,12 +130,13 @@ public class KoPeMeJUnit5Starter {
                try {
                   TestDescriptor testDescriptor = (TestDescriptor) getTestDescriptorMethod.invoke(context);
 
-                  TestTemplateInvocationTestDescriptor testTemplateDescriptor = (TestTemplateInvocationTestDescriptor) testDescriptor;
-                  clazzContext = testTemplateDescriptor.prepare(clazzContext);
+                  if (testDescriptor instanceof TestTemplateInvocationTestDescriptor) {
+                     TestTemplateInvocationTestDescriptor testTemplateDescriptor = (TestTemplateInvocationTestDescriptor) testDescriptor;
+                     clazzContext = testTemplateDescriptor.prepare(clazzContext);
 
-                  int index = getIndex(testTemplateDescriptor);
-                  createParams(index);
-
+                     int index = getIndex(testTemplateDescriptor);
+                     createParams(index);
+                  }
                } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                   e.printStackTrace();
                }
