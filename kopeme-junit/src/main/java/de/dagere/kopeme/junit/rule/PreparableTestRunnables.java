@@ -17,8 +17,9 @@ public class PreparableTestRunnables extends TestRunnables {
    private final List<Method> afterMethods;
    private final RunConfiguration config;
    private final Class<?> testClass;
-   TestMethodTestDescriptor descriptor;
-   JupiterEngineExecutionContext jupiterContext;
+   private final TestMethodTestDescriptor descriptor;
+   private final  JupiterEngineExecutionContext jupiterContext;
+   private ThrowingRunnable innerRunnable;
    
    public PreparableTestRunnables(RunConfiguration config, Class<?> testClass, TestMethodTestDescriptor descriptor, JupiterEngineExecutionContext jupiterContext) {
       super(config, null, testClass, null);
@@ -32,11 +33,11 @@ public class PreparableTestRunnables extends TestRunnables {
       this.jupiterContext = jupiterContext;
    }
    
-   public ThrowingRunnable prepare() {
+   public void prepare() {
       final JupiterEngineExecutionContext methodContext = descriptor.prepare(jupiterContext);
       instance = methodContext.getExtensionContext().getTestInstance().get();
       
-      return new ThrowingRunnable() {
+      innerRunnable = new ThrowingRunnable() {
          
          @Override
          public void run() throws Throwable {
@@ -54,8 +55,8 @@ public class PreparableTestRunnables extends TestRunnables {
    
    @Override
    public ThrowingRunnable getTestRunnable() {
-      ThrowingRunnable innerRunnable = prepare();
-      ThrowingRunnable runnable = prepare();
+      
+      ThrowingRunnable runnable;
       if (config.isExecuteBeforeClassInMeasurement()) {
          List<Method> beforeClassMethod = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClass);
          List<Method> afterClassMethod = BeforeAfterMethodFinder.getAfterWithMeasurements(testClass);
@@ -69,6 +70,7 @@ public class PreparableTestRunnables extends TestRunnables {
    
    @Override
    public ThrowingRunnable getBeforeRunnable() {
+      prepare();
       ThrowingRunnable beforeRunnable = new ListOfMethodRunnable(beforeMethods, instance);
       return beforeRunnable;
    }
