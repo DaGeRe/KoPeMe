@@ -51,10 +51,10 @@ public class KoPeMeJUnit5Starter {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, instance.getClass(), method, configuration);
 
       final JupiterEngineExecutionContext jupiterContext = prepareJUnit5(descriptor);
-      
+
       if (enabled) {
          executeTest(descriptor, jupiterContext);
-      }else {
+      } else {
          System.out.println("Test has been disabled by chosenIndex");
       }
    }
@@ -108,7 +108,7 @@ public class KoPeMeJUnit5Starter {
    }
 
    private static Method getTestDescriptorMethod;
-   
+
    static {
       try {
          Class<?> abstractExtensionContextClass = Class.forName("org.junit.jupiter.engine.descriptor.AbstractExtensionContext");
@@ -117,9 +117,9 @@ public class KoPeMeJUnit5Starter {
       } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException e) {
          e.printStackTrace();
       }
-      
+
    }
-   
+
    private JupiterEngineExecutionContext eventuallyAddParameterContext(final TestMethodTestDescriptor descriptor, JupiterEngineExecutionContext clazzContext) {
       if (descriptor.getSource().isPresent()) {
          TestSource testSource = descriptor.getSource().get();
@@ -135,7 +135,7 @@ public class KoPeMeJUnit5Starter {
 
                   int index = getIndex(testTemplateDescriptor);
                   createParams(index);
-                  
+
                } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                   e.printStackTrace();
                }
@@ -153,12 +153,17 @@ public class KoPeMeJUnit5Starter {
       params.getParam().add(param);
    }
 
-   private int getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
+   private static final Pattern PATTERN = Pattern.compile("^[^\\d]*(\\d+)");
+
+   public static int getIndex(TestTemplateInvocationTestDescriptor testTemplateDescriptor) {
       String displayName = testTemplateDescriptor.getDisplayName();
-      String index="0";
-      Pattern pattern= Pattern.compile("^[^\\d]*(\\d+)");
-      Matcher matcher = pattern.matcher(displayName);
-      if(matcher.lookingAt()) {
+      return getIndexFromName(displayName);
+   }
+
+   public static int getIndexFromName(String displayName) {
+      String index = "0";
+      Matcher matcher = PATTERN.matcher(displayName);
+      if (matcher.lookingAt()) {
          index = matcher.group(1);
       }
       return Integer.parseInt(index);
