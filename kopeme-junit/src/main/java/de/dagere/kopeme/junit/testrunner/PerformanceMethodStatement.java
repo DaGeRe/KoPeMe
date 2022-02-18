@@ -8,12 +8,12 @@ import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
+import de.dagere.kopeme.runnables.TestRunnable;
 
 public class PerformanceMethodStatement extends KoPeMeBasicStatement {
 

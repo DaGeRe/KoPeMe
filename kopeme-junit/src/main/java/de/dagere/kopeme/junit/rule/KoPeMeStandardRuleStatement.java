@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.Finishable;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -18,6 +17,7 @@ import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.runnables.TestRunnable;
 import junit.framework.AssertionFailedError;
 
 /**

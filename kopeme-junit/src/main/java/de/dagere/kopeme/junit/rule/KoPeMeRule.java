@@ -9,11 +9,12 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.runnables.TestRunnable;
+import de.dagere.kopeme.runnables.TestRunnables;
 
 /**
  * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution

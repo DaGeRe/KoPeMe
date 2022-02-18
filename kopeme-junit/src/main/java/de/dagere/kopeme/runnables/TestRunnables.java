@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.rule;
+package de.dagere.kopeme.runnables;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.function.ThrowingRunnable;
 
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinder;
 
 /**
  * Saves all test runnables, i.e. the runnables that should be executed before and after the test and the test itself.

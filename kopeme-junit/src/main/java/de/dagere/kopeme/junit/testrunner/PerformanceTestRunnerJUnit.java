@@ -19,7 +19,6 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.Finishable;
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
@@ -27,7 +26,8 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.junit.rule.TestRunnables;
+import de.dagere.kopeme.runnables.TestRunnable;
+import de.dagere.kopeme.runnables.TestRunnables;
 
 /**
  * Runs a Performance Test with JUnit. The method which should be tested has to got the parameter TestResult. This does not work without another runner, e.g. the TheorieRunner. An

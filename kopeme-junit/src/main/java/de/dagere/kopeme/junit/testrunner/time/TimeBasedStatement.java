@@ -9,12 +9,12 @@ import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.FrameworkMethod;
 
 import de.dagere.kopeme.Finishable;
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.junit.testrunner.PerformanceMethodStatement;
+import de.dagere.kopeme.runnables.TestRunnable;
 
 /**
  * Statement for executing a timebased test

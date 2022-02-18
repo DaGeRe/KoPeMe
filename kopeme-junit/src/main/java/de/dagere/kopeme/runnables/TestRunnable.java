@@ -1,4 +1,4 @@
-package de.dagere.kopeme;
+package de.dagere.kopeme.runnables;
 
 import org.junit.function.ThrowingRunnable;
 

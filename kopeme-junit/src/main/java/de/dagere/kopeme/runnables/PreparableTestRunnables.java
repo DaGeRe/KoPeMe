@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.rule;
+package de.dagere.kopeme.runnables;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinder;
 
 public class PreparableTestRunnables extends TestRunnables {
 

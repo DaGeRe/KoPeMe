@@ -24,15 +24,15 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
-import de.dagere.kopeme.junit.rule.PreparableTestRunnables;
-import de.dagere.kopeme.junit.rule.TestRunnables;
+import de.dagere.kopeme.runnables.PreparableTestRunnables;
+import de.dagere.kopeme.runnables.TestRunnable;
+import de.dagere.kopeme.runnables.TestRunnables;
 
 public class KoPeMeJUnit5Starter {
 

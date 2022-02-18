@@ -8,10 +8,10 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.AnnotationDefaults;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit;
+import de.dagere.kopeme.runnables.TestRunnable;
 import junit.framework.AssertionFailedError;
 
 /**

@@ -15,7 +15,6 @@ import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.OutputStreamUtil;
 import de.dagere.kopeme.PerformanceTestUtils;
-import de.dagere.kopeme.TestRunnable;
 import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
@@ -23,6 +22,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
+import de.dagere.kopeme.runnables.TestRunnable;
 
 /**
  * A statement for running performance tests.

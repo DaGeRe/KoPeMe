@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.rule;
+package de.dagere.kopeme.runnables;
 
 import java.lang.reflect.Method;
 import java.util.List;
