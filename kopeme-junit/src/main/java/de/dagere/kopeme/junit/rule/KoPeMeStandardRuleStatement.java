@@ -101,6 +101,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       int chosenParameterIndex = annotation.chosenParameterIndex();
       if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
          System.out.println("Test was disabled because of chosen parameter index (parameter) " + chosenParameterIndex);
+         System.out.println("Current index: " + params.getParam().get(0).getValue());
          return true;
       }
       String chosenParameterIndexEnvironment = System.getenv(KOPEME_CHOSEN_PARAMETER_INDEX);
@@ -108,6 +109,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          int environmentChosenIndex = Integer.parseInt(chosenParameterIndexEnvironment);
          if (environmentChosenIndex != -1 && environmentChosenIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
             System.out.println("Test was disabled because of chosen parameter index (environment variable) " + environmentChosenIndex);
+            System.out.println("Current index: " + params.getParam().get(0).getValue());
             return true;
          }
       }
