@@ -41,6 +41,8 @@ import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
 @RunWith(Parameterized.class)
 public class TestBeforeExecution {
 
+   public static final long TO_MILLISECONDS = 1000 * 1000;
+   
    private static final String TEST_NAME = "spendTime";
 
    @Parameters(name = "{0}")
@@ -84,9 +86,9 @@ public class TestBeforeExecution {
        * Since threads will tend to oversleep rather than undersleep, there is more room up.
        */
       if (!System.getProperty("os.name").startsWith("Mac")) {
-         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TimeDataCollector.TO_MILLISECONDS));
+         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TO_MILLISECONDS));
       }
-      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TimeDataCollector.TO_MILLISECONDS));
+      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TO_MILLISECONDS));
    }
 
    public static Long getTimeResult(final File measurementFile, final String methodName) throws JAXBException {

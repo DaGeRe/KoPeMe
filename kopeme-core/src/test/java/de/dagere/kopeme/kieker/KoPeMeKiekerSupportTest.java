@@ -17,6 +17,8 @@ import kieker.monitoring.writer.MonitoringWriterThread;
 
 public class KoPeMeKiekerSupportTest {
 
+   private static final int TO_MILLISECONDS = 1000000;
+
    @Test
    public void testStartAndEnd() throws Exception {
       KoPeMeKiekerSupport.INSTANCE.useKieker(true, "MyTest", "test");
@@ -43,7 +45,7 @@ public class KoPeMeKiekerSupportTest {
 
       KoPeMeKiekerSupport.INSTANCE.waitForEnd();
       long endTime = System.nanoTime();
-      long duration = (endTime - startTime) / 1000000;
+      long duration = (endTime - startTime) / TO_MILLISECONDS;
       
       MatcherAssert.assertThat(duration, Matchers.lessThan(4000l));
       MatcherAssert.assertThat(duration, Matchers.greaterThan(2000l));

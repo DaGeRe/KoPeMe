@@ -8,8 +8,6 @@ package de.dagere.kopeme.datacollection;
  */
 public final class TimeDataCollector extends DataCollector {
 
-   public static long TO_MILLISECONDS = 1000 * 1000;
-
    private long start;
    private long stop;
    private long summarizedValue = 0;
