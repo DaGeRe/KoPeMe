@@ -27,7 +27,7 @@ public class BeforeAfterMethodFinder {
          
          AfterWithMeasurement afterAnnotation = classMethod.getAnnotation(AfterWithMeasurement.class);
          
-         if (beforeAnnotation != null) {
+         if (afterAnnotation != null) {
             throw new RuntimeException("No @AfterWithMeasurement is allowed if executeBeforeClassInMeasurement is disabled");
          }
       }
