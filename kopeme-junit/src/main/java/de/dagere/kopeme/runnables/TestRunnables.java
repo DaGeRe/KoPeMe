@@ -40,6 +40,8 @@ public class TestRunnables implements TestRunnable {
 
          this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
       } else {
+         BeforeAfterMethodFinder.checkNoBeforeWithMeasurement(testClass);
+         
          this.testRunnable = testRunnable;
       }
 

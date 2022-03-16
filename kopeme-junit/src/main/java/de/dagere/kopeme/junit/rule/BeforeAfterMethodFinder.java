@@ -18,6 +18,21 @@ import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
 
 public class BeforeAfterMethodFinder {
 
+   public static void checkNoBeforeWithMeasurement(final Class<?> testClazz) {
+      for (final Method classMethod : testClazz.getDeclaredMethods()) {
+         BeforeWithMeasurement beforeAnnotation = classMethod.getAnnotation(BeforeWithMeasurement.class);
+         if (beforeAnnotation != null) {
+            throw new RuntimeException("No @BeforeWithMeasurement is allowed if executeBeforeClassInMeasurement is disabled");
+         }
+         
+         AfterWithMeasurement afterAnnotation = classMethod.getAnnotation(AfterWithMeasurement.class);
+         
+         if (beforeAnnotation != null) {
+            throw new RuntimeException("No @AfterWithMeasurement is allowed if executeBeforeClassInMeasurement is disabled");
+         }
+      }
+   }
+   
    public static List<Method> getBeforeWithMeasurements(final Class<?> testClazz){
       Map<Integer, List<Method>> beforePriorityMethods = new TreeMap<>();
       for (final Method classMethod : testClazz.getDeclaredMethods()) {
