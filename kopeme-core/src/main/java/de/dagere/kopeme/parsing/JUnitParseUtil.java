@@ -62,10 +62,30 @@ public class JUnitParseUtil {
                found = true;
             }
          }
-         if (found) {
+
+         boolean testIsDeactivated = isDeactivated(method);
+         
+         if (found && !testIsDeactivated) {
             methods.add(method.getNameAsString());
          }
       }
       return methods;
+   }
+   
+   public static boolean isDeactivated(final MethodDeclaration method) {
+      boolean testIsDeactivated = false;
+      for (final AnnotationExpr annotation : method.getAnnotations()) {
+         final String currentName = annotation.getNameAsString();
+         if (currentName.equals("org.junit.jupiter.api.Disabled") || currentName.equals("Disabled")) {
+            testIsDeactivated = true;
+         }
+         if (currentName.equals("org.junit.Ignore") || currentName.equals("Ignore")) {
+            testIsDeactivated = true;
+         }
+         if (currentName.equals("de.dagere.kopeme.annotations.Disabled") || currentName.equals("KoPeMeIgnore")) {
+            testIsDeactivated = true;
+         }
+      }
+      return testIsDeactivated;
    }
 }
