@@ -13,8 +13,8 @@ import java.util.Set;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
@@ -133,7 +133,7 @@ public final class TestResult {
             LOG.debug("Collector: {} Collector 2:{}", dc.getName(), entry.getKey());
             if (dc.getName().equals(entry.getKey())) {
                LOG.debug("Collector: {} Value: {} Aim: {}", dc.getName(), dc.getValue(), entry.getValue());
-               Assert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
+               MatcherAssert.assertThat("Kollektor " + dc.getName() + " besitzt Wert " + dc.getValue() + ", Wert sollte aber unter " + entry.getValue()
                      + " liegen.", dc.getValue(), Matchers.lessThan(entry.getValue()));
             }
          }

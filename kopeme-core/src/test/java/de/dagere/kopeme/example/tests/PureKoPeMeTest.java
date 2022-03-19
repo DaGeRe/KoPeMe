@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -66,6 +67,6 @@ public class PureKoPeMeTest {
 
       final long milisecondTime = (long) ((timeConsumption * 40l) / (1000l * 1000l));
 
-      Assert.assertThat(milisecondTime, Matchers.lessThan(duration));
+      MatcherAssert.assertThat(milisecondTime, Matchers.lessThan(duration));
    }
 }
