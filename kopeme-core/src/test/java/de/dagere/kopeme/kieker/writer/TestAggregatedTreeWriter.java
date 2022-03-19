@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.number.IsNaN;
 import org.junit.Assert;
@@ -162,7 +163,7 @@ public class TestAggregatedTreeWriter {
       final AggregatedData summaryStatistics = data.get(expectedNode);
       Assert.assertNotNull(summaryStatistics);
       summaryStatistics.getStatistic().forEach((time, statistic) -> {
-         Assert.assertThat(statistic.getMean(), Matchers.not(IsNaN.notANumber()));
+         MatcherAssert.assertThat(statistic.getMean(), Matchers.not(IsNaN.notANumber()));
       });
    }
 

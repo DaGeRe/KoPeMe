@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
-import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
 
 public class TestAggregatedMultifileWriting {
 

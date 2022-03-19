@@ -3,6 +3,7 @@ package de.dagere.kopeme.kieker.writer;
 import java.io.IOException;
 import java.util.Map;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class TestAggregatedTreeWriterSplitted {
          System.out.println(method.getKey() + " " + method.getValue().getStatistic());
          final long measurements = method.getValue().getStatistic().values().stream().mapToLong(statistic -> statistic.getN()).sum();
          Assert.assertEquals(30, measurements);
-         Assert.assertThat(method.getValue().getStatistic().size(), Matchers.greaterThanOrEqualTo(2));
+         MatcherAssert.assertThat(method.getValue().getStatistic().size(), Matchers.greaterThanOrEqualTo(2));
       }
    }
 }

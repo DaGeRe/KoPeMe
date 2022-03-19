@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Assert;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Kopemedata;
@@ -48,10 +48,10 @@ public class TestEmptySerialization {
          System.out.println(line);
       }
 
-      Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(Matchers.containsString("value")));
-      Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(Matchers.containsString("deviation")));
-      Assert.assertThat(gradleFileContents, Matchers.not(IsCollectionContaining.hasItem(Matchers.containsString("min"))));
-      Assert.assertThat(gradleFileContents, Matchers.not(IsCollectionContaining.hasItem(Matchers.containsString("max"))));
-      Assert.assertThat(gradleFileContents, Matchers.not(IsCollectionContaining.hasItem(Matchers.containsString("fulldata"))));
+      MatcherAssert.assertThat(gradleFileContents, IsIterableContaining.hasItem(Matchers.containsString("value")));
+      MatcherAssert.assertThat(gradleFileContents, IsIterableContaining.hasItem(Matchers.containsString("deviation")));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("min"))));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("max"))));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("fulldata"))));
    }
 }
