@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
-import de.dagere.kopeme.runnables.BeforeAfterMethodFinder;
 
 public class TestBeforeAfterMethodFinder {
    
@@ -15,7 +15,7 @@ public class TestBeforeAfterMethodFinder {
    public void testFindingOrder() {
       Class<?> testClazz = ExampleBeforeWithMeasurementOrderTest.class;
       
-      List<Method> methods = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClazz);
+      List<Method> methods = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(testClazz);
       
       Assert.assertEquals("someClassicBefore", methods.get(0).getName());
       Assert.assertEquals("highPriorityStuff", methods.get(1).getName());

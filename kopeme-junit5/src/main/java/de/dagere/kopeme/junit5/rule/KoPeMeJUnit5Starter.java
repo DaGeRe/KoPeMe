@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
@@ -116,7 +118,10 @@ public class KoPeMeJUnit5Starter {
          final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
 
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
-         final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance);
+         List<Method> beforeClassMethod = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(outerInstance.getClass());
+         List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(outerInstance.getClass());
+         final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance,
+               beforeClassMethod, afterClassMethod);
          final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = clazzContext.getThrowableCollector();

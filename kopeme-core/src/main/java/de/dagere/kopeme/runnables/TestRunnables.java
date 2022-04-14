@@ -1,6 +1,7 @@
 package de.dagere.kopeme.runnables;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,22 +21,13 @@ public class TestRunnables implements TestRunnable {
 
    private final KoPeMeThrowingRunnable testRunnable, beforeRunnable, afterRunnable;
 
-   /**
-    * Initializes the TestRunnables
-    * 
-    * @param testRunnable Runnable for the test itself
-    * @param testClass Class that should be tested
-    * @param testObject Object that should be tested
-    */
-   public TestRunnables(final RunConfiguration config, final KoPeMeThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
+   public TestRunnables(final RunConfiguration config, final KoPeMeThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject,
+         List<Method> beforeClassMethod, List<Method> afterClassMethod) {
       final List<Method> beforeMethods = BeforeAfterMethodFinder.getBeforeNoMeasurements(testClass);
       final List<Method> afterMethods = BeforeAfterMethodFinder.getAfterNoMeasurements(testClass);
       LOG.debug("Klasse: {}", testClass);
 
       if (config.isExecuteBeforeClassInMeasurement()) {
-         List<Method> beforeClassMethod = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClass);
-         List<Method> afterClassMethod = BeforeAfterMethodFinder.getAfterWithMeasurements(testClass);
-
          this.testRunnable = new BeforeAfterMethodRunnable(beforeClassMethod, testRunnable, afterClassMethod, testObject);
       } else {
          BeforeAfterMethodFinder.checkNoBeforeWithMeasurement(testClass);

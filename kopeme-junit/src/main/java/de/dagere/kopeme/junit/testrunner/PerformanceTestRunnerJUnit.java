@@ -3,6 +3,7 @@ package de.dagere.kopeme.junit.testrunner;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -176,7 +177,10 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
                   withRuleStatement.evaluate();
                }
             };
-            TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, klasse, testObject);
+            List<Method> beforeClassMethod = new LinkedList<>();
+            List<Method> afterClassMethod = new LinkedList<>();
+            TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, klasse, testObject, 
+                  beforeClassMethod, afterClassMethod);
             return runnables;
          } else {
             return null;

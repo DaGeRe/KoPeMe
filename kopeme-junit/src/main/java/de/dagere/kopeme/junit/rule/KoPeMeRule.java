@@ -1,6 +1,8 @@
 package de.dagere.kopeme.junit.rule;
 
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +69,12 @@ public class KoPeMeRule implements TestRule {
                      stmt.evaluate();
                   }
                };
-               final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject);
+               
+               List<Method> beforeClassMethod = BeforeAfterMethodFinderJUnit4.getBeforeWithMeasurements(testClass);
+               List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit4.getAfterWithMeasurements(testClass);
+               
+               final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject,
+                     beforeClassMethod, afterClassMethod);
 
                koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), params);
                return koPeMeStandardRuleStatement;

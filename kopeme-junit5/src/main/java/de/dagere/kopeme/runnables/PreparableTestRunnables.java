@@ -8,6 +8,7 @@ import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
 
 public class PreparableTestRunnables implements TestRunnable {
    
@@ -55,8 +56,8 @@ public class PreparableTestRunnables implements TestRunnable {
    public KoPeMeThrowingRunnable getTestRunnable() {
       final KoPeMeThrowingRunnable runnable;
       if (config.isExecuteBeforeClassInMeasurement()) {
-         List<Method> beforeClassMethod = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClass);
-         List<Method> afterClassMethod = BeforeAfterMethodFinder.getAfterWithMeasurements(testClass);
+         List<Method> beforeClassMethod = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(testClass);
+         List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(testClass);
 
          runnable = new BeforeAfterMethodRunnable(beforeClassMethod, innerRunnable, afterClassMethod, instance);
       } else {
