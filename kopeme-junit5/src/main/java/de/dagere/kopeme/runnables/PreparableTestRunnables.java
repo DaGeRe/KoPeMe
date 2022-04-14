@@ -3,7 +3,6 @@ package de.dagere.kopeme.runnables;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.junit.function.ThrowingRunnable;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;

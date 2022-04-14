@@ -19,7 +19,6 @@ import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.TestRunnable;
-import junit.framework.AssertionFailedError;
 
 /**
  * Represents an execution of all runs of one test
@@ -126,10 +125,6 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
          if (!isFinished) {
             runMainExecution(finalResult, "execution ", annotation.iterations(), annotation.repetitions());
          }
-      } catch (final AssertionFailedError t) {
-         finalResult.finalizeCollection(t);
-         saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
-         throw t;
       } catch (final Throwable t) {
          t.printStackTrace();
          finalResult.finalizeCollection(t);
