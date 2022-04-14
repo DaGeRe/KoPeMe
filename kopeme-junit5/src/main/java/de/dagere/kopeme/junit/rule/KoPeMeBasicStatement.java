@@ -32,7 +32,7 @@ import de.dagere.kopeme.runnables.TestRunnable;
  * @author reichelt
  *
  */
-public abstract class KoPeMeBasicStatement extends Statement {
+public abstract class KoPeMeBasicStatement {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeBasicStatement.class);
 

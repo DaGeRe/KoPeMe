@@ -10,8 +10,8 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>KoPeMe - JUnit5</name>
-  <description>KoPeMe-JUnit integration module</description>
+  <name>KoPeMe - JUnit 5</name>
+  <description>KoPeMe-JUnit 5 integration module</description>
   <url>http://dagere.de/KoPeMe</url>
 
   <properties />
@@ -80,6 +80,7 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>5.8.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
