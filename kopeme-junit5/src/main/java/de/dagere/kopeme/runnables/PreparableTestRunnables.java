@@ -20,7 +20,7 @@ public class PreparableTestRunnables implements TestRunnable {
    private final JupiterEngineExecutionContext jupiterContext;
    
    private Object instance;
-   private ThrowingRunnable innerRunnable;
+   private KoPeMeThrowingRunnable innerRunnable;
 
    public PreparableTestRunnables(RunConfiguration config, Class<?> testClass, TestMethodTestDescriptor descriptor, JupiterEngineExecutionContext jupiterContext) {
       this.config = config;
@@ -36,7 +36,7 @@ public class PreparableTestRunnables implements TestRunnable {
       final JupiterEngineExecutionContext methodContext = descriptor.prepare(jupiterContext);
       instance = methodContext.getExtensionContext().getTestInstance().get();
 
-      innerRunnable = new ThrowingRunnable() {
+      innerRunnable = new KoPeMeThrowingRunnable() {
 
          @Override
          public void run() throws Throwable {
@@ -53,8 +53,8 @@ public class PreparableTestRunnables implements TestRunnable {
    }
 
    @Override
-   public ThrowingRunnable getTestRunnable() {
-      final ThrowingRunnable runnable;
+   public KoPeMeThrowingRunnable getTestRunnable() {
+      final KoPeMeThrowingRunnable runnable;
       if (config.isExecuteBeforeClassInMeasurement()) {
          List<Method> beforeClassMethod = BeforeAfterMethodFinder.getBeforeWithMeasurements(testClass);
          List<Method> afterClassMethod = BeforeAfterMethodFinder.getAfterWithMeasurements(testClass);
@@ -67,15 +67,15 @@ public class PreparableTestRunnables implements TestRunnable {
    }
 
    @Override
-   public ThrowingRunnable getBeforeRunnable() {
+   public KoPeMeThrowingRunnable getBeforeRunnable() {
       prepare();
-      ThrowingRunnable beforeRunnable = new ListOfMethodRunnable(beforeMethods, instance);
+      KoPeMeThrowingRunnable beforeRunnable = new ListOfMethodRunnable(beforeMethods, instance);
       return beforeRunnable;
    }
 
    @Override
-   public ThrowingRunnable getAfterRunnable() {
-      ThrowingRunnable afterRunnable = new ListOfMethodRunnable(afterMethods, instance);
+   public KoPeMeThrowingRunnable getAfterRunnable() {
+      KoPeMeThrowingRunnable afterRunnable = new ListOfMethodRunnable(afterMethods, instance);
       return afterRunnable;
    }
 

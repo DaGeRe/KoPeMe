@@ -1,6 +1,5 @@
 package de.dagere.kopeme.runnables;
 
-import org.junit.function.ThrowingRunnable;
 
 public interface TestRunnable {
 
@@ -9,20 +8,20 @@ public interface TestRunnable {
     * 
     * @return Test-Runnable
     */
-   public ThrowingRunnable getTestRunnable();
+   public KoPeMeThrowingRunnable getTestRunnable();
 
    /**
     * Returns the runnable, that should be run before the test
     * 
     * @return Before-Runnable
     */
-   public ThrowingRunnable getBeforeRunnable();
+   public KoPeMeThrowingRunnable getBeforeRunnable();
 
    /**
     * Returns the runnable, that should be run after the test
     * 
     * @return After-Runnable
     */
-   public ThrowingRunnable getAfterRunnable();
+   public KoPeMeThrowingRunnable getAfterRunnable();
 
 }

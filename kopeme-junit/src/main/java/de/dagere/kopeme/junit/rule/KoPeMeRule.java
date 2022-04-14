@@ -14,6 +14,7 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
 
@@ -60,7 +61,7 @@ public class KoPeMeRule implements TestRule {
 
             final PerformanceTest annotation = testMethod.getAnnotation(PerformanceTest.class);
             if (annotation != null) {
-               ThrowingRunnable testRunnable = new ThrowingRunnable() {
+               KoPeMeThrowingRunnable testRunnable = new KoPeMeThrowingRunnable() {
                   @Override
                   public void run() throws Throwable {
                      stmt.evaluate();

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.function.ThrowingRunnable;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
 
@@ -19,7 +18,7 @@ public class TestRunnables implements TestRunnable {
 
    private static final Logger LOG = LogManager.getLogger(TestRunnables.class);
 
-   private final ThrowingRunnable testRunnable, beforeRunnable, afterRunnable;
+   private final KoPeMeThrowingRunnable testRunnable, beforeRunnable, afterRunnable;
 
    /**
     * Initializes the TestRunnables
@@ -28,7 +27,7 @@ public class TestRunnables implements TestRunnable {
     * @param testClass Class that should be tested
     * @param testObject Object that should be tested
     */
-   public TestRunnables(final RunConfiguration config, final ThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
+   public TestRunnables(final RunConfiguration config, final KoPeMeThrowingRunnable testRunnable, final Class<?> testClass, final Object testObject) {
       final List<Method> beforeMethods = BeforeAfterMethodFinder.getBeforeNoMeasurements(testClass);
       final List<Method> afterMethods = BeforeAfterMethodFinder.getAfterNoMeasurements(testClass);
       LOG.debug("Klasse: {}", testClass);
@@ -54,7 +53,7 @@ public class TestRunnables implements TestRunnable {
     * @return Test-Runnable
     */
    @Override
-   public ThrowingRunnable getTestRunnable() {
+   public KoPeMeThrowingRunnable getTestRunnable() {
       return testRunnable;
    }
 
@@ -64,7 +63,7 @@ public class TestRunnables implements TestRunnable {
     * @return Before-Runnable
     */
    @Override
-   public ThrowingRunnable getBeforeRunnable() {
+   public KoPeMeThrowingRunnable getBeforeRunnable() {
       return beforeRunnable;
    }
 
@@ -74,7 +73,7 @@ public class TestRunnables implements TestRunnable {
     * @return After-Runnable
     */
    @Override
-   public ThrowingRunnable getAfterRunnable() {
+   public KoPeMeThrowingRunnable getAfterRunnable() {
       return afterRunnable;
    }
 }

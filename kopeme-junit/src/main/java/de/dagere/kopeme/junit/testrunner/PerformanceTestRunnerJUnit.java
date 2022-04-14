@@ -26,6 +26,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.annotations.PerformanceTestingClass;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.RunConfiguration;
+import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
 
@@ -170,7 +171,7 @@ public class PerformanceTestRunnerJUnit extends BlockJUnit4ClassRunner {
 
          PerformanceTest annotation = currentMethod.getAnnotation(PerformanceTest.class);
          if (annotation != null) {
-            ThrowingRunnable testRunnable = new ThrowingRunnable() {
+            KoPeMeThrowingRunnable testRunnable = new KoPeMeThrowingRunnable() {
                @Override
                public void run() throws Throwable {
                   withRuleStatement.evaluate();

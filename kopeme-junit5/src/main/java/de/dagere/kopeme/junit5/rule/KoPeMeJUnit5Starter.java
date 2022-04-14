@@ -30,6 +30,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.PreparableTestRunnables;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
@@ -106,7 +107,7 @@ public class KoPeMeJUnit5Starter {
    private void executeTest(TestMethodTestDescriptor descriptor) {
       final JupiterEngineExecutionContext clazzContext = prepareJUnit5Method(descriptor);
       try {
-         final ThrowingRunnable throwingRunnable = new ThrowingRunnable() {
+         final KoPeMeThrowingRunnable throwingRunnable = new KoPeMeThrowingRunnable() {
 
             @Override
             public void run() throws Throwable {
