@@ -13,6 +13,7 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
 
@@ -25,8 +26,6 @@ import de.dagere.kopeme.runnables.TestRunnables;
  */
 public class KoPeMeRule implements TestRule {
    
-   public static final String JUNIT_PARAMETERIZED = "JUNIT_PARAMETERIZED";
-
    private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
 
    private final Object testObject;
@@ -88,7 +87,7 @@ public class KoPeMeRule implements TestRule {
       String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
       params = new Params();
       Result.Params.Param param = new Result.Params.Param();
-      param.setKey(JUNIT_PARAMETERIZED);
+      param.setKey(KoPeMeConstants.JUNIT_PARAMETERIZED);
       param.setValue(indexString);
       params.getParam().add(param);
       return params;

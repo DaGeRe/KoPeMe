@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinder;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
+import de.dagere.kopeme.runnables.BeforeAfterMethodFinder;
 
 public class TestBeforeAfterMethodFinder {
    

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.function.ThrowingRunnable;
 
-class BeforeAfterMethodRunnable implements ThrowingRunnable {
+public class BeforeAfterMethodRunnable implements ThrowingRunnable {
    private final List<Method> beforeMethods;
    private final ThrowingRunnable runnable;
    private final List<Method> afterMethods;

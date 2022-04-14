@@ -28,8 +28,8 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.PreparableTestRunnables;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
@@ -193,7 +193,7 @@ public class KoPeMeJUnit5Starter {
 
    private void createParams(int index) {
       Result.Params.Param param = new Result.Params.Param();
-      param.setKey(KoPeMeRule.JUNIT_PARAMETERIZED);
+      param.setKey(KoPeMeConstants.JUNIT_PARAMETERIZED);
       param.setValue(Integer.toString(index));
       params = new Params();
       params.getParam().add(param);

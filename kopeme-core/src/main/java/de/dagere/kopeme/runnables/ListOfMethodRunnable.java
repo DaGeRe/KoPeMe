@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.function.ThrowingRunnable;
 
-class ListOfMethodRunnable implements ThrowingRunnable {
+public class ListOfMethodRunnable implements ThrowingRunnable {
    private final List<Method> currentMethods;
    private final Object testObject;
 

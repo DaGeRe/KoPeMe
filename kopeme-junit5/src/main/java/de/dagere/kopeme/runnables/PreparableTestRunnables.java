@@ -9,7 +9,6 @@ import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinder;
 
 public class PreparableTestRunnables implements TestRunnable {
    

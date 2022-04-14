@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class DurationRecordAspectIT {
 
    public static final String ASPECTJ_VERSION = "1.9.7";
-   public static final String KIEKER_VERSION = "1.15";
+   public static final String KIEKER_VERSION = "1.15.1";
 
    @Test
    public void testAspect() throws IOException {

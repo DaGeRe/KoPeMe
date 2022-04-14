@@ -24,6 +24,7 @@ import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestChosenParameter;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 
 public class TestJUnit4Parameterized {
 
@@ -82,7 +83,7 @@ public class TestJUnit4Parameterized {
       
       Params params = results.get(0).getParams();
       
-      Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeRule.JUNIT_PARAMETERIZED);
+      Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
       Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
    }
 }

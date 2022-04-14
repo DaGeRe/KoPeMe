@@ -33,6 +33,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
    
+
    private final TestResult finalResult;
    private final Params params;
 

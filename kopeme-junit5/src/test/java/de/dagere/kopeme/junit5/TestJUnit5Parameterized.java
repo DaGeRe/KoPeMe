@@ -16,7 +16,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTestChosenParameter;
 
@@ -41,7 +41,7 @@ public class TestJUnit5Parameterized {
          
          Params params = results.get(0).getParams();
          
-         Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeRule.JUNIT_PARAMETERIZED);
+         Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
          Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
       }
    }
