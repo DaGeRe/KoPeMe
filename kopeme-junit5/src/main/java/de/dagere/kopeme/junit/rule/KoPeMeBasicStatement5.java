@@ -31,9 +31,9 @@ import de.dagere.kopeme.runnables.TestRunnable;
  * @author reichelt
  *
  */
-public abstract class KoPeMeBasicStatement {
+public abstract class KoPeMeBasicStatement5 {
 
-   private static final Logger LOG = LogManager.getLogger(KoPeMeBasicStatement.class);
+   private static final Logger LOG = LogManager.getLogger(KoPeMeBasicStatement5.class);
 
    protected Map<String, Double> maximalRelativeStandardDeviation;
    protected Map<String, Long> assertationvalues;
@@ -53,7 +53,7 @@ public abstract class KoPeMeBasicStatement {
     * @param method Method that should be executed
     * @param clazzname Name of the
     */
-   public KoPeMeBasicStatement(final TestRunnable runnables, final Method method, final String clazzname, final String methodFileName) {
+   public KoPeMeBasicStatement5(final TestRunnable runnables, final Method method, final String clazzname, final String methodFileName) {
       this.runnables = runnables;
       this.clazzname = clazzname;
       this.method = method;

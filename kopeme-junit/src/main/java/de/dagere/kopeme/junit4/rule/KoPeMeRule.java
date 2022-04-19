@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit.rule;
+package de.dagere.kopeme.junit4.rule;
 
 import java.lang.reflect.Method;
 import java.util.LinkedList;
@@ -15,6 +15,8 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit4;
+import de.dagere.kopeme.junit.rule.KoPeMeRuleStatement4;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.TestRunnable;
@@ -37,7 +39,7 @@ public class KoPeMeRule implements TestRule {
       this.testObject = testObject;
    }
 
-   private KoPeMeStandardRuleStatement koPeMeStandardRuleStatement;
+   private KoPeMeRuleStatement4 koPeMeStandardRuleStatement;
 
    @Override
    public Statement apply(final Statement stmt, final Description descr) {
@@ -76,7 +78,7 @@ public class KoPeMeRule implements TestRule {
                final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject,
                      beforeClassMethod, afterClassMethod);
 
-               koPeMeStandardRuleStatement = new KoPeMeStandardRuleStatement(runnables, testMethod, testClass.getName(), params);
+               koPeMeStandardRuleStatement = new KoPeMeRuleStatement4(runnables, testMethod, testClass.getName(), params);
                return koPeMeStandardRuleStatement;
             } else {
                return stmt;

@@ -23,7 +23,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestChosenParameter;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit4.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 
 public class TestJUnit4Parameterized {

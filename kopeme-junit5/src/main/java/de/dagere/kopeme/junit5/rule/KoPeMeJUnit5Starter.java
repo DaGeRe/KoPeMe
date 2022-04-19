@@ -29,7 +29,7 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
-import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
+import de.dagere.kopeme.junit.rule.KoPeMeRuleStatement5;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.PreparableTestRunnables;
@@ -94,7 +94,7 @@ public class KoPeMeJUnit5Starter {
       final PreparableTestRunnables runnables = new PreparableTestRunnables(runConfiguration, outerInstance.getClass(), descriptor, jupiterContext);
 
       try {
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
+         final KoPeMeRuleStatement5 statement = new KoPeMeRuleStatement5(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = jupiterContext.getThrowableCollector();
          if (!collector.isEmpty()) {
@@ -122,7 +122,7 @@ public class KoPeMeJUnit5Starter {
          List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(outerInstance.getClass());
          final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance,
                beforeClassMethod, afterClassMethod);
-         final KoPeMeStandardRuleStatement statement = new KoPeMeStandardRuleStatement(runnables, method, outerInstance.getClass().getName(), params);
+         final KoPeMeRuleStatement5 statement = new KoPeMeRuleStatement5(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = clazzContext.getThrowableCollector();
          if (!collector.isEmpty()) {

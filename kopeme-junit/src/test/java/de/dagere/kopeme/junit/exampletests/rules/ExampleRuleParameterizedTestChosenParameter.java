@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit4.rule.KoPeMeRule;
 
 @RunWith(Parameterized.class)
 public class ExampleRuleParameterizedTestChosenParameter {

@@ -12,10 +12,10 @@ import de.dagere.kopeme.TimeBoundExecution;
 import de.dagere.kopeme.TimeBoundExecution.Type;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement;
+import de.dagere.kopeme.junit.rule.KoPeMeBasicStatement4;
 import de.dagere.kopeme.runnables.TestRunnable;
 
-public class PerformanceMethodStatement extends KoPeMeBasicStatement {
+public class PerformanceMethodStatement extends KoPeMeBasicStatement4 {
 
    private static final Logger LOG = LogManager.getLogger(PerformanceMethodStatement.class);
 

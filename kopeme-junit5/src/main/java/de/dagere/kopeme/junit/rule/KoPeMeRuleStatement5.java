@@ -28,15 +28,15 @@ import de.dagere.kopeme.runnables.TestRunnable;
  * @author dagere
  * 
  */
-public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
+public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
 
-   private static final Logger LOG = LogManager.getLogger(KoPeMeStandardRuleStatement.class);
+   private static final Logger LOG = LogManager.getLogger(KoPeMeRuleStatement5.class);
    
 
    private final TestResult finalResult;
    private final Params params;
 
-   public KoPeMeStandardRuleStatement(final TestRunnable runnables, final Method method, final String filename) {
+   public KoPeMeRuleStatement5(final TestRunnable runnables, final Method method, final String filename) {
       super(runnables, method, filename, method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
       
@@ -44,7 +44,7 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
       initializeKieker(clazzname, method.getName());
    }
 
-   public KoPeMeStandardRuleStatement(final TestRunnable runnables, final Method method, final String filename, final Params params) {
+   public KoPeMeRuleStatement5(final TestRunnable runnables, final Method method, final String filename, final Params params) {
       super(runnables,
             method,
             filename,
@@ -81,12 +81,12 @@ public class KoPeMeStandardRuleStatement extends KoPeMeBasicStatement {
 
          @Override
          public boolean isFinished() {
-            return KoPeMeStandardRuleStatement.this.isFinished;
+            return KoPeMeRuleStatement5.this.isFinished;
          }
 
          @Override
          public void setFinished(final boolean isFinished) {
-            KoPeMeStandardRuleStatement.this.isFinished = isFinished;
+            KoPeMeRuleStatement5.this.isFinished = isFinished;
          }
       };
 
