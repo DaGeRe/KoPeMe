@@ -26,7 +26,7 @@
   <modules>
     <module>build-tools</module>
     <module>kopeme-core</module>
-    <module>kopeme-junit</module>
+    <module>kopeme-junit4</module>
     <module>kopeme-junit5</module>
     <module>kopeme-junit3</module>
     <!-- <module>kopeme-mojo</module> -->
