@@ -2,7 +2,7 @@ package de.dagere.kopeme.junit5;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
