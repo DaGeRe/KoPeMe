@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>kopeme-core</artifactId>
   <packaging>jar</packaging>
@@ -71,48 +72,20 @@
         <artifactId>maven-gpg-plugin</artifactId>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>${jaxb.version}</version>
-          </dependency>
-        </dependencies>
+        <groupId>com.evolvedbinary.maven.jvnet</groupId>
+        <artifactId>jaxb30-maven-plugin</artifactId>
+        <version>0.15.0</version>
         <executions>
           <execution>
-            <id>xjc_v1</id>
             <goals>
-              <goal>xjc</goal>
+              <goal>generate</goal>
             </goals>
-            <configuration>
-              <sources>
-                <source>src/main/xsd/v1</source>
-              </sources>
-              <packageName>de.dagere.kopeme.generated</packageName>
-            </configuration>
-          </execution>
-          <execution>
-            <id>xjc_v2</id>
-            <goals>
-              <goal>xjc</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/main/xsd/v2</source>
-              </sources>
-              <packageName>de.dagere.kopeme.generated2</packageName>
-              <clearOutputDir>false</clearOutputDir>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <schemaDirectory>src/main/xsd/v1</schemaDirectory>
+          <generatePackage>de.dagere.kopeme.generated</generatePackage>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
