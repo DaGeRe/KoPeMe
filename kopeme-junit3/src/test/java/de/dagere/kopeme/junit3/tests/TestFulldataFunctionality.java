@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit3.tests;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -13,6 +12,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
+import jakarta.xml.bind.JAXBException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;

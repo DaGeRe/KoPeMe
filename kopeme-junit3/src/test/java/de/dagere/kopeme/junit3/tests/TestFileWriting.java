@@ -3,7 +3,8 @@ package de.dagere.kopeme.junit3.tests;
 import java.io.File;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
+import org.junit.Assert;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
@@ -11,7 +12,6 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.junit.exampletests.runner.ExampleAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestOnlyTime;
-import junit.framework.Assert;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 

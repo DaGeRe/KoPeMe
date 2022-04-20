@@ -27,6 +27,8 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
+    - name: Install jaxb plugin
+      run: cd .. && git clone git@github.com:mojohaus/jaxb2-maven-plugin.git && cd jaxb2-maven-plugin/ && git checkout jaxb2-maven-plugin-3.0.0 && mvn clean install -DskipTests
     - name: Build with Maven
       run: ./mvnw -B verify --file pom.xml 
     - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}

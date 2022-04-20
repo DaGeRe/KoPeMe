@@ -3,7 +3,7 @@ package de.dagere.kopeme.junit5;
 import java.io.File;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
