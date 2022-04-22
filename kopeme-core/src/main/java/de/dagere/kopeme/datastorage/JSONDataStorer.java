@@ -8,8 +8,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestClazz;
+import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 
 
 public class JSONDataStorer implements DataStorer {
@@ -31,7 +35,7 @@ public class JSONDataStorer implements DataStorer {
    
    private void createJSONData(final String classname) {
       data = new Kopemedata();
-      data.getTestclazzes().get(0).setClazz(classname);
+      data.getTestclazzes().add(new TestClazz(classname));
       storeData();
    }
    
@@ -44,9 +48,80 @@ public class JSONDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(VMResult performanceDataMeasure, String testcase, String collectorName) {
+   public void storeValue(VMResult result, String testcase, String collectorName) {
+      final TestMethod test = getOrCreateTestcase(result, testcase);
+
+      final DatacollectorResult dc = getOrCreateDatacollector(collectorName, test);
+
+      if (System.getenv("KOPEME_CHUNKSTARTTIME") != null) {
+         final VMResultChunk current = findChunk(dc);
+         current.getResults().add(result);
+      } else {
+         dc.getResults().add(result);
+      }
+      if (result.getFulldata() != null && result.getFulldata().getFileName() != null) {
+         saveFulldata(result);
+      }
+      result.setCpu(EnvironmentUtil.getCPU());
+      result.setMemory(EnvironmentUtil.getMemory());
+      storeData();
+   }
+
+   private void saveFulldata(VMResult result) {
       // TODO Auto-generated method stub
       
+   }
+
+   private VMResultChunk findChunk(DatacollectorResult dc) {
+      final long start = Long.parseLong(System.getenv("KOPEME_CHUNKSTARTTIME"));
+      VMResultChunk current = null;
+      for (final VMResultChunk chunk : dc.getChunks()) {
+         if (chunk.getChunkStartTime() == start) {
+            current = chunk;
+         }
+      }
+      if (current == null) {
+         current = new VMResultChunk();
+         current.setChunkStartTime(start);
+         dc.getChunks().add(current);
+      }
+      return current;
+   }
+
+   private DatacollectorResult getOrCreateDatacollector(String collectorName, TestMethod test) {
+      DatacollectorResult collectorResult = findCollector(collectorName, test);
+      if (collectorResult == null) {
+         collectorResult = new DatacollectorResult(collectorName);
+         test.getDatacollectorResults().add(collectorResult);
+      }
+      
+      return collectorResult;
+   }
+
+   public static DatacollectorResult findCollector(String collectorName, TestMethod test) {
+      DatacollectorResult collectorResult = null;
+      for (final DatacollectorResult currentCollectorResult : test.getDatacollectorResults()) {
+         LOG.trace("Name: {} Collectorname: {}", currentCollectorResult.getName(), collectorName);
+         if (currentCollectorResult.getName().equals(collectorName)) {
+            collectorResult = currentCollectorResult;
+         }
+      }
+      return collectorResult;
+   }
+
+   private TestMethod getOrCreateTestcase(VMResult performanceDataMeasure, String testcase) {
+      TestMethod testMethod = null;
+      for (TestMethod currentMethod : data.getTestclazzes().get(0).getMethods()) {
+         if (currentMethod.getMethod().equals(testcase)) {
+            testMethod = currentMethod;
+            break;
+         }
+      }
+      if (testMethod == null) {
+         testMethod = new TestMethod(testcase);
+         data.getTestclazzes().get(0).getMethods().add(testMethod);
+      }
+      return testMethod;
    }
 
 }

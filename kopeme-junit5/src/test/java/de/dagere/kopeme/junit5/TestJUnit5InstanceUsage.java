@@ -15,7 +15,7 @@ public class TestJUnit5InstanceUsage {
 
    @Test
    public void testInstanceUsage() throws JAXBException {
-      final File file = TestUtils.xmlFileForKoPeMeTest(ExampleJUnit5InstanceUsageTest.class.getName(), "testNormal");
+      final File file = TestUtils.jsonFileForKoPeMeTest(ExampleJUnit5InstanceUsageTest.class.getName(), "testNormal");
       file.delete();
       
       ExampleJUnit5InstanceUsageTest.finished = 0;
@@ -29,7 +29,7 @@ public class TestJUnit5InstanceUsage {
    
    @Test
    public void testInstanceUsageWithMockito() throws JAXBException {
-      final File file = TestUtils.xmlFileForKoPeMeTest(ExampleJUnit5InstanceUsageTestWithMockito.class.getName(), "testNormal");
+      final File file = TestUtils.jsonFileForKoPeMeTest(ExampleJUnit5InstanceUsageTestWithMockito.class.getName(), "testNormal");
       file.delete();
       
       ExampleJUnit5InstanceUsageTestWithMockito.finished = 0;

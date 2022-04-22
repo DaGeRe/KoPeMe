@@ -40,9 +40,9 @@ public class TestUtils {
     * @param testCaseName name of the test method
     * @return File containing the test result
     */
-   public static File xmlFileForKoPeMeTest(final String canonicalName, final String testCaseName) {
+   public static File jsonFileForKoPeMeTest(final String canonicalName, final String testCaseName) {
       final String folder = provider.getFolderFor("");
-      return Paths.get(folder, canonicalName, testCaseName + ".xml").toFile();
+      return Paths.get(folder, canonicalName, testCaseName + ".json").toFile();
    }
 
 }

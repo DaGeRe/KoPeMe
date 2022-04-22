@@ -8,7 +8,7 @@ import java.util.List;
  * @author DaGeRe
  *
  */
-class VMResultChunk {
+public class VMResultChunk {
    private long chunkStartTime;
 
    private List<VMResult> results;

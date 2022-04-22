@@ -19,106 +19,94 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.datastorage.EnvironmentUtil;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullDataBig;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 public class TestFulldataFunctionality {
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+   @Rule
+   public TemporaryFolder folder = new TemporaryFolder();
 
-	@BeforeClass
-	public static void cleanResult() throws IOException {
-		TestUtils.cleanAndSetKoPeMeOutputFolder();
-	}
-	
-	@Test
-	public void testNoFullWriting() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(JUnitAdditionTest.class);
-		jc.run(JUnitAdditionTest.class);
-		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TestUtils.TEST_ADDITION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		XMLDataLoader xdl;
-		try {
-			xdl = new XMLDataLoader(f);
-			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-			for (final Datacollector dc : testcase.getDatacollector()) {
-				for (final Result r : dc.getResult()) {
-				   System.out.println(r.getCpu());
-				   System.out.println(EnvironmentUtil.getCPU());
-				   Assert.assertEquals(r.getCpu(), EnvironmentUtil.getCPU());
-				   Assert.assertEquals(r.getMemory(), EnvironmentUtil.getMemory());
-					final Fulldata fd = r.getFulldata();
-					if (fd != null) {
-						Assert.assertEquals(0, fd.getValue().size());
-					}
-				}
-			}
-		} catch (final JAXBException e) {
-			e.printStackTrace();
-		}
+   @BeforeClass
+   public static void cleanResult() throws IOException {
+      TestUtils.cleanAndSetKoPeMeOutputFolder();
+   }
 
-		f.delete();
-	}
+   @Test
+   public void testNoFullWriting() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitAdditionTest.class);
+      jc.run(JUnitAdditionTest.class);
+      final File f = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+      JSONDataLoader xdl = new JSONDataLoader(f);
 
-	@Test
-	public void testFullWriting() {
-		final JUnitCore jc = new JUnitCore();
-		jc.run(JUnitAdditionTestFullData.class);
-		final File f = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
-		Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
-		try {
-		   XMLDataLoader xdl = new XMLDataLoader(f);
-			final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-			for (final Datacollector dc : testcase.getDatacollector()) {
-				for (final Result r : dc.getResult()) {
-					final Fulldata fd = r.getFulldata();
-					Assert.assertNotNull(fd);
-					Assert.assertEquals(900, fd.getValue().size());
-				}
-			}
-		} catch (final JAXBException e) {
-			e.printStackTrace();
-		}
+      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
+         for (final VMResult r : dc.getResults()) {
+            System.out.println(r.getCpu());
+            System.out.println(EnvironmentUtil.getCPU());
+            Assert.assertEquals(r.getCpu(), EnvironmentUtil.getCPU());
+            Assert.assertEquals(r.getMemory(), EnvironmentUtil.getMemory());
+            final Fulldata fd = r.getFulldata();
+            if (fd != null) {
+               Assert.assertEquals(0, fd.getValues().size());
+            }
+         }
+      }
 
-		f.delete();
-	}
-	
-	@Test
+      f.delete();
+   }
+
+   @Test
+   public void testFullWriting() {
+      final JUnitCore jc = new JUnitCore();
+      jc.run(JUnitAdditionTestFullData.class);
+      final File f = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+      Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
+      JSONDataLoader xdl = new JSONDataLoader(f);
+      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
+         for (final VMResult r : dc.getResults()) {
+            final Fulldata fd = r.getFulldata();
+            Assert.assertNotNull(fd);
+            Assert.assertEquals(900, fd.getValues().size());
+         }
+      }
+
+      f.delete();
+   }
+
+   @Test
    public void testFullWritingSeparateFile() {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTestFullDataBig.class);
-      final File expectedKoPemeXML = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
-      Assert.assertTrue("Datei " + expectedKoPemeXML + " sollte existieren", expectedKoPemeXML.exists());
-      try {
-         XMLDataLoader xdl = new XMLDataLoader(expectedKoPemeXML);
-         final TestcaseType testcase = xdl.getFullData().getTestcases().getTestcase().get(0);
-         for (final Datacollector dc : testcase.getDatacollector()) {
-            for (final Result r : dc.getResult()) {
-               final Fulldata fd = r.getFulldata();
-               Assert.assertNotNull(fd);
-               final File fulldataFile = new File(expectedKoPemeXML.getParentFile(), fd.getFileName());
-               Assert.assertTrue(fulldataFile.exists());
-               WrittenResultReader reader = new WrittenResultReader(fulldataFile);
-               final Set<String> collectors = new HashSet<>();
-               collectors.add(TimeDataCollectorNoGC.class.getCanonicalName());
-               reader.read(null, collectors);
-               Assert.assertEquals(TestResult.BOUNDARY_SAVE_FILE * 2, reader.getRealValues().size());
-            }
+      final File expectedKoPemeJSON = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
+      Assert.assertTrue("Datei " + expectedKoPemeJSON + " sollte existieren", expectedKoPemeJSON.exists());
+      JSONDataLoader xdl = new JSONDataLoader(expectedKoPemeJSON);
+      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
+         for (final VMResult r : dc.getResults()) {
+            final Fulldata fd = r.getFulldata();
+            Assert.assertNotNull(fd);
+            final File fulldataFile = new File(expectedKoPemeJSON.getParentFile(), fd.getFileName());
+            Assert.assertTrue(fulldataFile.exists());
+            WrittenResultReader reader = new WrittenResultReader(fulldataFile);
+            final Set<String> collectors = new HashSet<>();
+            collectors.add(TimeDataCollectorNoGC.class.getCanonicalName());
+            reader.read(null, collectors);
+            Assert.assertEquals(TestResult.BOUNDARY_SAVE_FILE * 2, reader.getRealValues().size());
          }
-      } catch (final JAXBException e) {
-         e.printStackTrace();
       }
 
-      expectedKoPemeXML.delete();
+      expectedKoPemeJSON.delete();
    }
-
 
 }

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.DataStorer;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
@@ -109,7 +110,7 @@ public final class PerformanceTestUtils {
       if (data.getTr().getParams() != null) {
          testcasename += "(" + ParamNameHelper.paramsToString(data.getTr().getParams()) + ")";
       }
-      return new XMLDataStorer(folder, data.getFilename(), testcasename);
+      return new JSONDataStorer(folder, data.getFilename(), testcasename);
    }
 
    private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String datacollector) {

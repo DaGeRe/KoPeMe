@@ -25,7 +25,7 @@ public class TestJUnit5Parameterized {
    @Test
    public void testParameterizedExecution() throws JAXBException {
       for (int i : new int[] {1, 2}) {
-         final File file = TestUtils.xmlFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         final File file = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          file.delete();
       }
       
@@ -33,7 +33,7 @@ public class TestJUnit5Parameterized {
       
       // JUnit 5 starts counting with 1 - whyever
       for (int i : new int[] {1, 2}) {
-         final File file = TestUtils.xmlFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         final File file = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
          Kopemedata kopemedata = XMLDataLoader.loadData(file);
          
@@ -48,8 +48,8 @@ public class TestJUnit5Parameterized {
    
    @Test
    public void testParameterizedExecutionChosenParameter() throws JAXBException {
-      final File file1 = TestUtils.xmlFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-1)");
-      final File file2 = TestUtils.xmlFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-2)");
+      final File file1 = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-1)");
+      final File file2 = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-2)");
       file1.delete();
       file2.delete();
       

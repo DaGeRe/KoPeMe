@@ -25,7 +25,7 @@ public class JSON2XML {
       xmlResult.setCpu(jsonResult.getCpu());
       xmlResult.setMemory(jsonResult.getMemory());
       
-      xmlResult.setCputemperature(jsonResult.getCputemperature());
+      xmlResult.setCputemperature(jsonResult.getCpuTemperature());
       xmlResult.setDate(jsonResult.getDate());
       xmlResult.setError(jsonResult.isError());
       xmlResult.setFailure(jsonResult.isFailure());

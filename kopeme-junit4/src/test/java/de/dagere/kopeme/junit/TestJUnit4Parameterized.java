@@ -3,6 +3,7 @@ package de.dagere.kopeme.junit;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map.Entry;
 
 import jakarta.xml.bind.JAXBException;
 
@@ -17,13 +18,13 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestChosenParameter;
 import de.dagere.kopeme.junit4.rule.KoPeMeRule;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 
 public class TestJUnit4Parameterized {
@@ -62,28 +63,28 @@ public class TestJUnit4Parameterized {
       checkExistingAndCorrect(testClass, 1);
       
       for (int i : new int[] {0, 2}) {
-         final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         final File file = TestUtils.jsonFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          MatcherAssert.assertThat(file, Matchers.not(FileMatchers.anExistingFile()));
       }
    }
 
    private void cleanup(final String testClass) {
       for (int i : new int[] {0, 1, 2}) {
-         final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+         final File file = TestUtils.jsonFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          file.delete();
       }
    }
    
    private void checkExistingAndCorrect(final String testClass, int i) throws JAXBException {
-      final File file = TestUtils.xmlFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
+      final File file = TestUtils.jsonFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
       MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
-      Kopemedata kopemedata = XMLDataLoader.loadData(file);
+      Kopemedata kopemedata = JSONDataLoader.loadData(file);
       
-      List<Result> results = kopemedata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = kopemedata.getTestclazzes().get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults();
       
-      Params params = results.get(0).getParams();
+      Entry<String, String> params = results.get(0).getParameters().entrySet().iterator().next();
       
-      Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
-      Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
+      Assert.assertEquals(params.getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
+      Assert.assertEquals(params.getValue(), Integer.toString(i));
    }
 }

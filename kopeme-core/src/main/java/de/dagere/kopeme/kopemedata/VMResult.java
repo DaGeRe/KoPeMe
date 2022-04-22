@@ -24,7 +24,7 @@ public class VMResult {
    private String cpu;
    private String memory;
    private long date;
-   private long cputemperature;
+   private long cpuTemperature;
 
    private boolean failure;
    private boolean error;
@@ -143,12 +143,12 @@ public class VMResult {
       this.date = date;
    }
 
-   public long getCputemperature() {
-      return cputemperature;
+   public long getCpuTemperature() {
+      return cpuTemperature;
    }
 
-   public void setCputemperature(long cputemperature) {
-      this.cputemperature = cputemperature;
+   public void setCpuTemperature(long cpuTemperature) {
+      this.cpuTemperature = cpuTemperature;
    }
 
    public boolean isFailure() {

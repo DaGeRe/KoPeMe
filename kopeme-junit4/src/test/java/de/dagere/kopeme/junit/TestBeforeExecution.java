@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
@@ -24,12 +23,14 @@ import org.junit.runners.Parameterized.Parameters;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassMeasurement;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import jakarta.xml.bind.JAXBException;
 
 /**
@@ -42,7 +43,7 @@ import jakarta.xml.bind.JAXBException;
 public class TestBeforeExecution {
 
    public static final long TO_MILLISECONDS = 1000 * 1000;
-   
+
    private static final String TEST_NAME = "spendTime";
 
    @Parameters(name = "{0}")
@@ -78,25 +79,24 @@ public class TestBeforeExecution {
          System.out.println(failure.toString());
       }
       final String canonicalName = junitTestClass.getCanonicalName();
-      final File resultFile = TestUtils.xmlFileForKoPeMeTest(canonicalName, testname);
+      final File resultFile = TestUtils.jsonFileForKoPeMeTest(canonicalName, testname);
       LOG.debug("Searching: {} Existing: {}", resultFile.getAbsolutePath(), resultFile.exists());
       MatcherAssert.assertThat(resultFile.exists(), Matchers.equalTo(true));
-      final Long time = getTimeResult(resultFile, testname);
+      final double time = getTimeResult(resultFile, testname);
       /*
-       * Executiontimes vary between 100 and 130 ms. Because Thread.sleep is sometimes slightly inaccurate, there is a tolerance.
-       * Since threads will tend to oversleep rather than undersleep, there is more room up.
+       * Executiontimes vary between 100 and 130 ms. Because Thread.sleep is sometimes slightly inaccurate, there is a tolerance. Since threads will tend to oversleep rather than
+       * undersleep, there is more room up.
        */
       if (!System.getProperty("os.name").startsWith("Mac")) {
-         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150 * TO_MILLISECONDS));
+         MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(150d * TO_MILLISECONDS));
       }
-      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99 * TO_MILLISECONDS));
+      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99d * TO_MILLISECONDS));
    }
 
-   public static Long getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
-      final Map<String, Map<Date, Long>> collectorData = new XMLDataLoader(measurementFile).getData(TimeDataCollector.class.getCanonicalName());
-      final Map<Date, Long> data = collectorData.get(methodName);
-      Assert.assertNotNull(data);
-      final Long time = data.entrySet().iterator().next().getValue().longValue();
+   public static double getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
+      final DatacollectorResult collectorData = new JSONDataLoader(measurementFile).getData(TimeDataCollector.class.getCanonicalName());
+      Assert.assertNotNull(collectorData);
+      final double time = collectorData.getResults().get(0).getValue();
       return time;
    }
 

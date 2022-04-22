@@ -47,7 +47,7 @@ public class TestFileWriting {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTest.class);
       final String testClass = JUnitAdditionTest.class.getName();
-      final File file = TestUtils.xmlFileForKoPeMeTest(testClass, TEST_ADDITION);
+      final File file = TestUtils.jsonFileForKoPeMeTest(testClass, TEST_ADDITION);
       Assert.assertTrue("Datei " + file + " sollte existieren", file.exists());
       file.delete();
    }
@@ -57,7 +57,7 @@ public class TestFileWriting {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitAdditionTest.class);
       jc.run(JUnitAdditionTest.class);
-      final File file = TestUtils.xmlFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
+      final File file = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTest.class.getCanonicalName(), TEST_ADDITION);
       Assert.assertTrue("Datei " + file + " sollte existieren", file.exists());
       file.delete();
    }
@@ -66,7 +66,7 @@ public class TestFileWriting {
    public void testResults() {
       final JUnitCore jc = new JUnitCore();
       jc.run(JUnitMultiplicationTest.class);
-      final File f = TestUtils.xmlFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
+      final File f = TestUtils.jsonFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
       try {

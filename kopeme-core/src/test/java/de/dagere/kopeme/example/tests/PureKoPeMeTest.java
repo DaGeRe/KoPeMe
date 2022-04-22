@@ -14,12 +14,14 @@ import org.junit.Test;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.FolderProvider;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.exampletests.pure.ExamplePurePerformanceTests;
 import de.dagere.kopeme.exampletests.pure.TestTimeTest;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestClazz;
+import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.testrunner.PerformanceTestRunnerKoPeMe;
 
 public class PureKoPeMeTest {
@@ -45,22 +47,22 @@ public class PureKoPeMeTest {
       log.debug("Overall Duration: " + duration);
       final String className = TestTimeTest.class.getCanonicalName();
       final String folderName = FolderProvider.getInstance().getFolderFor(className);
-      final String filename = "simpleTest.xml";
+      final String filename = "simpleTest.json";
       log.info("Suche in: {}", folderName);
-      final XMLDataLoader xdl = new XMLDataLoader(new File(folderName, filename));
+      final JSONDataLoader xdl = new JSONDataLoader(new File(folderName, filename));
       final Kopemedata kd = xdl.getFullData();
-      List<Datacollector> collectors = null;
-      for (final TestcaseType tct : kd.getTestcases().getTestcase()) {
-         if (tct.getName().contains("simpleTest")) {
-            collectors = tct.getDatacollector();
+      List<DatacollectorResult> collectors = null;
+      for (final TestMethod tct : kd.getTestclazzes().get(0).getMethods()) {
+         if (tct.getMethod().contains("simpleTest")) {
+            collectors = tct.getDatacollectorResults();
          }
       }
       Assert.assertNotNull(collectors);
 
       double timeConsumption = 0.0;
-      for (final Datacollector collector : collectors) {
+      for (final DatacollectorResult collector : collectors) {
          if (collector.getName().contains("TimeData")) {
-            timeConsumption = collector.getResult().get(collector.getResult().size() - 1).getValue();
+            timeConsumption = collector.getResults().get(collector.getResults().size() - 1).getValue();
          }
       }
       Assert.assertNotEquals(timeConsumption, 0.0);
