@@ -11,11 +11,12 @@ import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExamplePackageVisibilityTest;
 import de.dagere.kopeme.junit5.exampletests.rules.JUnit5SetupTest;
+import de.dagere.kopeme.kopemedata.Kopemedata;
 
 /**
  * Tests just whether JUnit 5 execution works
@@ -28,13 +29,13 @@ public class TestJUnit5SetupExecution {
    public static Logger log = LogManager.getLogger(TestJUnit5SetupExecution.class);
 
    @Test
-   public void testRegularExecution() throws JAXBException {
+   public void testRegularExecution() {
       File file = JUnit5RunUtil.runJUnit5Test(JUnit5SetupTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
-      Kopemedata data = XMLDataLoader.loadData(file);
-      double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
+      Kopemedata data = JSONDataLoader.loadData(file);
+      double averageDurationInMs = data.getFirstResult().getValue() / 1000000;
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(900));
@@ -42,26 +43,26 @@ public class TestJUnit5SetupExecution {
    }
    
    @Test
-   public void testPackageVisibleExecution() throws JAXBException {
+   public void testPackageVisibleExecution()  {
       File file = JUnit5RunUtil.runJUnit5Test(ExamplePackageVisibilityTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
-      Kopemedata data = XMLDataLoader.loadData(file);
-      double averageDurationInMus = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000;
+      Kopemedata data = JSONDataLoader.loadData(file);
+      double averageDurationInMus = data.getFirstResult().getValue() / 1000;
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMus);
 
       MatcherAssert.assertThat((int) averageDurationInMus, Matchers.greaterThan(90));
    }
 
    @Test
-   public void testBeforeWithMeasurement() throws JAXBException {
+   public void testBeforeWithMeasurement() {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleBeforeWithMeasurementOrderTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
-      Kopemedata data = XMLDataLoader.loadData(file);
-      double averageDurationInMs = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getValue() / 1000000;
+      Kopemedata data = JSONDataLoader.loadData(file);
+      double averageDurationInMs = data.getFirstResult().getValue() / 1000000;
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(50));

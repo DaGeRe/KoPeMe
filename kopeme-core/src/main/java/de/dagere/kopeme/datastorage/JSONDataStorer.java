@@ -2,6 +2,7 @@ package de.dagere.kopeme.datastorage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,8 +69,14 @@ public class JSONDataStorer implements DataStorer {
    }
 
    private void saveFulldata(VMResult result) {
-      // TODO Auto-generated method stub
-      
+      File fulldataFile = new File(result.getFulldata().getFileName());
+      final File targetFile = new File(file.getParentFile(), fulldataFile.getName());
+      try {
+         Files.move(fulldataFile.toPath(), targetFile.toPath());
+         result.getFulldata().setFileName(targetFile.getName());
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private VMResultChunk findChunk(DatacollectorResult dc) {

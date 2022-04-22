@@ -17,7 +17,7 @@ import de.dagere.kopeme.datastorage.FolderProvider;
 public class JUnit5RunUtil {
    public static File runJUnit5Test(final Class<?> testedClass) {
       String folder = FolderProvider.getInstance().getFolderFor(testedClass.getCanonicalName());
-      File file = new File(folder, "testNormal.xml");
+      File file = new File(folder, "testNormal.json");
       if (file.exists()) {
          System.out.println("Deleting " + file.getAbsolutePath());
          file.delete();

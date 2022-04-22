@@ -2,6 +2,7 @@ package de.dagere.kopeme.junit5;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map.Entry;
 
 import jakarta.xml.bind.JAXBException;
 
@@ -12,18 +13,18 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.TestUtils;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTestChosenParameter;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 public class TestJUnit5Parameterized {
    
    @Test
-   public void testParameterizedExecution() throws JAXBException {
+   public void testParameterizedExecution() {
       for (int i : new int[] {1, 2}) {
          final File file = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          file.delete();
@@ -35,19 +36,19 @@ public class TestJUnit5Parameterized {
       for (int i : new int[] {1, 2}) {
          final File file = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-"+i+")");
          MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
-         Kopemedata kopemedata = XMLDataLoader.loadData(file);
+         Kopemedata kopemedata = JSONDataLoader.loadData(file);
          
-         List<Result> results = kopemedata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+         List<VMResult> results = kopemedata.getTestclazzes().get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults();
          
-         Params params = results.get(0).getParams();
+         Entry<String, String> params = results.get(0).getFirstParameter();
          
-         Assert.assertEquals(params.getParam().get(0).getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
-         Assert.assertEquals(params.getParam().get(0).getValue(), Integer.toString(i));
+         Assert.assertEquals(params.getKey(), KoPeMeConstants.JUNIT_PARAMETERIZED);
+         Assert.assertEquals(params.getValue(), Integer.toString(i));
       }
    }
    
    @Test
-   public void testParameterizedExecutionChosenParameter() throws JAXBException {
+   public void testParameterizedExecutionChosenParameter() {
       final File file1 = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-1)");
       final File file2 = TestUtils.jsonFileForKoPeMeTest(ExampleExtension5ParameterizedTest.class.getName(), "testNormal(JUNIT_PARAMETERIZED-2)");
       file1.delete();

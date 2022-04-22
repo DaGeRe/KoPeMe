@@ -1,6 +1,9 @@
 package de.dagere.kopeme.kopemedata;
 
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class VMResult {
    private double value;
@@ -109,6 +112,11 @@ public class VMResult {
 
    public void setParameters(LinkedHashMap<String, String> parameters) {
       this.parameters = parameters;
+   }
+   
+   @JsonIgnore
+   public Entry<String, String> getFirstParameter(){
+      return parameters.entrySet().iterator().next();
    }
 
    public String getJavaVersion() {
