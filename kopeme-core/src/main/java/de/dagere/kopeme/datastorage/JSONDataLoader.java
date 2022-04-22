@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 
@@ -40,7 +42,13 @@ public class JSONDataLoader implements DataLoader {
 
    public static Kopemedata loadData(File file2) {
       try {
-         return new ObjectMapper().readValue(file2, Kopemedata.class);
+         if (file2.getName().endsWith(".json")) {
+            return new ObjectMapper().readValue(file2, Kopemedata.class);
+         } else if (file2.getName().endsWith(".xml")) {
+            return XMLConversionLoader.loadData(file2);
+         } else {
+            return null;
+         }
       } catch (IOException e) {
          throw new RuntimeException(e);
       }

@@ -1,5 +1,6 @@
 package de.dagere.kopeme.kopemedata;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
 public class VMResultChunk {
    private long chunkStartTime;
 
-   private List<VMResult> results;
+   private List<VMResult> results = new LinkedList<>();
 
    public long getChunkStartTime() {
       return chunkStartTime;
