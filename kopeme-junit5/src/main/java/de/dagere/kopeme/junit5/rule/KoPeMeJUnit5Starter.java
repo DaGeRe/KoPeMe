@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,8 +27,6 @@ import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
 import de.dagere.kopeme.junit.rule.KoPeMeRuleStatement5;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
@@ -43,7 +42,7 @@ public class KoPeMeJUnit5Starter {
    private final Object outerInstance;
    private final Method method;
    private final JupiterConfiguration configuration;
-   private Params params = null;
+   private LinkedHashMap<String, String> params = null;
    private boolean enabled = true;
 
    public KoPeMeJUnit5Starter(final ExtensionContext context) {
@@ -197,11 +196,8 @@ public class KoPeMeJUnit5Starter {
    }
 
    private void createParams(int index) {
-      Result.Params.Param param = new Result.Params.Param();
-      param.setKey(KoPeMeConstants.JUNIT_PARAMETERIZED);
-      param.setValue(Integer.toString(index));
-      params = new Params();
-      params.getParam().add(param);
+      params = new LinkedHashMap<String, String>();
+      params.put(KoPeMeConstants.JUNIT_PARAMETERIZED, Integer.toString(index));
    }
 
    private static final Pattern PATTERN = Pattern.compile("^[^\\d]*(\\d+)");

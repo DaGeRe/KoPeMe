@@ -1,17 +1,17 @@
 package de.dagere.kopeme.datastorage;
 
-import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.generated.Result.Params.Param;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ParamNameHelper {
    
    public static final String PARAM_VALUE_SEPARATOR = "-";
    
-   public static String paramsToString(final Params params) {
+   public static String paramsToString(final LinkedHashMap<String, String> parameters) {
       String result;
-      if (params != null) {
+      if (parameters != null) {
          result = "";
-         for (Param param : params.getParam()) {
+         for (Map.Entry<String, String> param : parameters.entrySet()) {
             result += param.getKey() + PARAM_VALUE_SEPARATOR + param.getValue() + " ";
          }
          result = result.substring(0, result.length() - 1);

@@ -74,6 +74,7 @@ public class TestBeforeExecution {
       final JUnitCore jc = new JUnitCore();
       final Result result = jc.run(junitTestClass);
       for (final Failure failure : result.getFailures()) {
+         System.out.println("A failure occured");
          System.out.println(failure.toString());
       }
       final String canonicalName = junitTestClass.getCanonicalName();

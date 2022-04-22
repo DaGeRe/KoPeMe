@@ -10,12 +10,14 @@ import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.xml.JSON2XML;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.kopemedata.VMResult;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.PropertyException;
@@ -66,7 +68,9 @@ public final class XMLDataStorer implements DataStorer {
    }
 
    @Override
-   public void storeValue(final Result result, final String testcase, final String collectorName) {
+   public void storeValue(final VMResult vmResult, final String testcase, final String collectorName) {
+      Result result = JSON2XML.toXMLResult(vmResult);
+      
       if (data.getTestcases() == null) {
          data.setTestcases(new Testcases());
       }

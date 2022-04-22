@@ -4,6 +4,8 @@ import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,8 +18,8 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+import de.dagere.kopeme.junit.rule.annotations.ParameterChecker;
 import de.dagere.kopeme.runnables.TestRunnable;
 import junit.framework.AssertionFailedError;
 
@@ -34,7 +36,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
    private static final Logger LOG = LogManager.getLogger(KoPeMeRuleStatement4.class);
    
    private final TestResult finalResult;
-   private final Params params;
+   private final LinkedHashMap<String, String> params;
 
    public KoPeMeRuleStatement4(final TestRunnable runnables, final Method method, final String filename) {
       super(runnables, method, filename, method.getName());
@@ -44,7 +46,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       initializeKieker(clazzname, method.getName());
    }
 
-   public KoPeMeRuleStatement4(final TestRunnable runnables, final Method method, final String filename, final Params params) {
+   public KoPeMeRuleStatement4(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
       super(runnables,
             method,
             filename,
@@ -52,7 +54,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
       this.params = params;
       
-      if (!parameterIndexInvalid()) {
+      if (!ParameterChecker.parameterIndexInvalid(annotation, params)) {
          String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
          initializeKieker(clazzname, methodFileName);
       }
@@ -60,7 +62,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
 
    @Override
    public void evaluate() throws Throwable {
-      boolean parameterIndexInvalid = parameterIndexInvalid();
+      boolean parameterIndexInvalid = ParameterChecker.parameterIndexInvalid(annotation, params);
       if (parameterIndexInvalid) {
          return;
       }
@@ -94,25 +96,6 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), Type.METHOD, annotation.useKieker());
       tbe.execute();
       LOG.info("Test {} beendet", clazzname);
-   }
-
-   private boolean parameterIndexInvalid() {
-      int chosenParameterIndex = annotation.chosenParameterIndex();
-      if (chosenParameterIndex != -1 && chosenParameterIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
-         System.out.println("Test was disabled because of chosen parameter index (parameter) " + chosenParameterIndex);
-         System.out.println("Current index: " + params.getParam().get(0).getValue());
-         return true;
-      }
-      String chosenParameterIndexEnvironment = System.getenv(KoPeMeConstants.KOPEME_CHOSEN_PARAMETER_INDEX);
-      if (chosenParameterIndexEnvironment != null) {
-         int environmentChosenIndex = Integer.parseInt(chosenParameterIndexEnvironment);
-         if (environmentChosenIndex != -1 && environmentChosenIndex != Integer.parseInt(params.getParam().get(0).getValue())) {
-            System.out.println("Test was disabled because of chosen parameter index (environment variable) " + environmentChosenIndex);
-            System.out.println("Current index: " + params.getParam().get(0).getValue());
-            return true;
-         }
-      }
-      return false;
    }
 
    private void executeSimpleTest() throws Throwable {

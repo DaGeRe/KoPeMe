@@ -1,6 +1,7 @@
 package de.dagere.kopeme.datastorage;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
  * Interface for storing KoPeMe-data.
@@ -10,5 +11,5 @@ import de.dagere.kopeme.generated.Result;
  */
 public interface DataStorer {
 
-   void storeValue(Result performanceDataMeasure, String testcase, String collectorName);
+   void storeValue(VMResult performanceDataMeasure, String testcase, String collectorName);
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,9 +20,8 @@ import org.hamcrest.Matchers;
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
 
 /**
  * Saves the Data Collectors, and therefore has access to the current results of the tests. Furthermore, by invoking stopCollection, the historical values are inserted into the
@@ -42,7 +42,7 @@ public final class TestResult {
    private ResultTempWriter writer;
    private int iterations;
    private final DataCollector[] sortedCollectors;
-   private final Params params;
+   private final LinkedHashMap<String, String> params;
 
    /**
     * Initializes the TestResult with a Testcase-Name and the executionTimes.
@@ -54,7 +54,7 @@ public final class TestResult {
       this(methodName, iterations, collectors, warmup, null);
    }
    
-   public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup, final Params params) {
+   public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup, final LinkedHashMap<String, String> params) {
       this.methodName = methodName;
       this.iterations = iterations;
 
@@ -78,7 +78,7 @@ public final class TestResult {
       }
    }
    
-   public Params getParams() {
+   public LinkedHashMap<String, String> getParams() {
       return params;
    }
 
@@ -228,10 +228,10 @@ public final class TestResult {
       final Fulldata fd = new Fulldata();
       if (iterations < BOUNDARY_SAVE_FILE) {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
-            final Value v = new Value();
-            v.setStart(reader.getExecutionStartTimes().get(i));
+            final MeasuredValue v = new MeasuredValue();
+            v.setStartTime(reader.getExecutionStartTimes().get(i));
             v.setValue(reader.getRealValues().get(i).get(key));
-            fd.getValue().add(v);
+            fd.getValues().add(v);
          }
       } else {
          fd.setFileName(writer.getTempFile().getAbsolutePath());

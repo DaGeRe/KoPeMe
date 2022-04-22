@@ -1,20 +1,17 @@
 package de.dagere.kopeme.junit4.rule;
 
 import java.lang.reflect.Method;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.function.ThrowingRunnable;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit4;
 import de.dagere.kopeme.junit.rule.KoPeMeRuleStatement4;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
@@ -52,7 +49,7 @@ public class KoPeMeRule implements TestRule {
             // testClass = Class.forName(descr.getClassName());
             testClass = testObject.getClass();
             final String methodDescription = descr.getMethodName();
-            final Params params;
+            final LinkedHashMap<String, String> params;
             int squaredBracketIndex = methodDescription.indexOf('[');
             if (squaredBracketIndex != -1) {
                String methodName = methodDescription.substring(0, squaredBracketIndex);
@@ -92,14 +89,11 @@ public class KoPeMeRule implements TestRule {
       }
    }
 
-   private Params parseParams(final String methodDescription, final int squaredBracketIndex) {
-      final Params params;
+   private LinkedHashMap<String, String> parseParams(final String methodDescription, final int squaredBracketIndex) {
+      final LinkedHashMap<String, String> params;
       String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
-      params = new Params();
-      Result.Params.Param param = new Result.Params.Param();
-      param.setKey(KoPeMeConstants.JUNIT_PARAMETERIZED);
-      param.setValue(indexString);
-      params.getParam().add(param);
+      params = new LinkedHashMap<String, String>();
+      params.put(KoPeMeConstants.JUNIT_PARAMETERIZED, indexString);
       return params;
    }
 }

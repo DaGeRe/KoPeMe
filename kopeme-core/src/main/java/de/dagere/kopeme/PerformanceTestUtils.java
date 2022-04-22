@@ -17,8 +17,8 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
  * Some utils for performance testing.
@@ -114,20 +114,20 @@ public final class PerformanceTestUtils {
 
    private static void buildKeyData(final SaveableTestData data, final DataStorer xds, final TestResult tr, final String datacollector) {
       LOG.trace("Collector Key: {}", datacollector);
-      final Result result = getMeasureFromTR(data, tr, datacollector);
+      final VMResult result = getMeasureFromTR(data, tr, datacollector);
       final Fulldata fulldata = data.getConfiguration().isSaveValues() ? tr.getFulldata(datacollector) : null;
       tr.clearFulldata(datacollector);
       result.setFulldata(fulldata);
       xds.storeValue(result, data.getTestcasename(), datacollector);
    }
 
-   private static Result getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {
+   private static VMResult getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {
       final double relativeStandardDeviation = tr.getRelativeStandardDeviation(additionalKey);
       final double value = tr.getValue(additionalKey).doubleValue();
       final double min = tr.getMinumumCurrentValue(additionalKey);
       final double max = tr.getMaximumCurrentValue(additionalKey);
-      Result result = new Result();
-      result.setParams(tr.getParams());
+      VMResult result = new VMResult();
+      result.setParameters(tr.getParams());
       result.setValue(value);
       result.setDeviation(relativeStandardDeviation);
       result.setMin(min);
@@ -135,10 +135,10 @@ public final class PerformanceTestUtils {
       result.setWarmup(data.getConfiguration().getWarmupExecutions());
       result.setIterations(tr.getRealExecutions());
       result.setRepetitions(data.getConfiguration().getRepetitions());
-      result.setRedirectToNull(data.getConfiguration().isRedirectToNull());
-      result.setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
-      result.setShowStart(data.getConfiguration().isShowStart());
-      result.setExecuteBeforeClassInMeasurement(data.getConfiguration().isExecuteBeforeClassInMeasurement());
+      result.getVmRunConfiguration().setRedirectToNull(data.getConfiguration().isRedirectToNull());
+      result.getVmRunConfiguration().setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
+      result.getVmRunConfiguration().setShowStart(data.getConfiguration().isShowStart());
+      result.getVmRunConfiguration().setExecuteBeforeClassInMeasurement(data.getConfiguration().isExecuteBeforeClassInMeasurement());
       result.setDate(new Date().getTime());
       result.setJavaVersion(System.getProperty("java.version"));
       return result;
