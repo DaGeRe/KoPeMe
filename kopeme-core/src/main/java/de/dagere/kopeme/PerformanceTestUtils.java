@@ -17,7 +17,7 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
+import de.dagere.kopeme.datastorage.xml.XMLDataStorer;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.VMResult;
 

@@ -1,6 +1,5 @@
 package de.dagere.kopeme.datastorage;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 
 /**

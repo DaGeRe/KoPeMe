@@ -12,7 +12,7 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExamplePackageVisibilityTest;
 import de.dagere.kopeme.junit5.exampletests.rules.JUnit5SetupTest;

@@ -8,6 +8,8 @@ import jakarta.xml.bind.JAXBException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result;

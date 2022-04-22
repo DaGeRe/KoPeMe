@@ -15,7 +15,7 @@ import org.junit.Test;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.exampletests.pure.ExamplePurePerformanceTests;
 import de.dagere.kopeme.exampletests.pure.TestTimeTest;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;

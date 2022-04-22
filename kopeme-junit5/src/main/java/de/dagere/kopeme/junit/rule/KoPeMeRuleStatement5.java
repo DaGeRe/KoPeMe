@@ -17,8 +17,6 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit.rule.annotations.ParameterChecker;
 import de.dagere.kopeme.runnables.TestRunnable;
 

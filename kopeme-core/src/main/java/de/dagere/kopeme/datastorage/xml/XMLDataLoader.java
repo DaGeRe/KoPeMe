@@ -1,4 +1,4 @@
-package de.dagere.kopeme.datastorage;
+package de.dagere.kopeme.datastorage.xml;
 
 import java.io.File;
 import java.util.Date;
@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jaxb.runtime.v2.ContextFactory;
 
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datastorage.DataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.ObjectFactory;
@@ -27,7 +28,9 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 /**
- * Loads XML-Performance-Data.
+ * Loads XML-Performance-Data
+ * 
+ * This is only for converting old XML data and should not be used anymore!
  * 
  * @author reichelt
  *

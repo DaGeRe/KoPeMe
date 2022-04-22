@@ -15,17 +15,18 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Kopemedata.Testcases;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestClazz;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
- * Testet das Schreiben in Dateien
+ * Tests writing of data
  * 
  * @author reichelt
  *
@@ -69,42 +70,38 @@ public class TestFileWriting {
       final File f = TestUtils.jsonFileForKoPeMeTest(JUnitMultiplicationTest.class.getCanonicalName(), TEST_MULTIPLICATION);
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
-      try {
-         final Kopemedata kd = new XMLDataLoader(f).getFullData();
-         final Testcases tc = kd.getTestcases();
-         Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
+      final Kopemedata kd = new JSONDataLoader(f).getFullData();
+      final TestClazz tc = kd.getTestclazzes().get(0);
+      Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
 
-         TestcaseType tct = null;
-         for (final TestcaseType t : tc.getTestcase()) {
-            if (t.getName().equals(TEST_MULTIPLICATION)) {
-               tct = t;
-               break;
-            }
+      TestMethod tct = null;
+      for (final TestMethod t : tc.getMethods()) {
+         if (t.getMethod().equals(TEST_MULTIPLICATION)) {
+            tct = t;
+            break;
          }
-         Assert.assertNotNull(tct);
-
-         Datacollector timeCollector = null;
-         for (final Datacollector dc : tct.getDatacollector()) {
-            if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
-               timeCollector = dc;
-               break;
-            }
-         }
-         Assert.assertNotNull(timeCollector);
-
-         for (final Result r : timeCollector.getResult()) {
-            final int val = (int) r.getValue();
-            final int min = r.getMin().intValue();
-            final int max = r.getMax().intValue();
-            MatcherAssert.assertThat(val, Matchers.greaterThan(0));
-            MatcherAssert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
-            MatcherAssert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
-            Assert.assertEquals(r.getIterations(), 5);
-         }
-
-      } catch (final JAXBException e1) {
-         e1.printStackTrace();
       }
+      Assert.assertNotNull(tct);
+
+      DatacollectorResult timeCollector = null;
+      for (final DatacollectorResult dc : tct.getDatacollectorResults()) {
+         if (dc.getName().equals("de.dagere.kopeme.datacollection.TimeDataCollector")) {
+            timeCollector = dc;
+            break;
+         }
+      }
+      Assert.assertNotNull(timeCollector);
+
+      for (final VMResult r : timeCollector.getResults()) {
+         final int val = (int) r.getValue();
+         final int min = (int) r.getMin();
+         final int max = (int) r.getMax();
+         MatcherAssert.assertThat(val, Matchers.greaterThan(0));
+         MatcherAssert.assertThat(max, Matchers.greaterThanOrEqualTo(val));
+         MatcherAssert.assertThat(val, Matchers.greaterThanOrEqualTo(min));
+         Assert.assertEquals(r.getIterations(), 5);
+      }
+
    }
 
    @Test

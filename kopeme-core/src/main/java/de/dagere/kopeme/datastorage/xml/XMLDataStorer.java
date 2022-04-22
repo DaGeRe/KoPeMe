@@ -1,4 +1,4 @@
-package de.dagere.kopeme.datastorage;
+package de.dagere.kopeme.datastorage.xml;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.xml.JSON2XML;
+import de.dagere.kopeme.datastorage.DataStorer;
+import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result;
@@ -25,6 +26,8 @@ import jakarta.xml.bind.Unmarshaller;
 
 /**
  * Manages the storing of resultdata of KoPeMe-tests in the KoPeMe-XML-format.
+ * 
+ * This is only for converting old XML data and should not be used anymore!
  * 
  * @author reichelt
  *
