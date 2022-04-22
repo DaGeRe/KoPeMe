@@ -31,7 +31,7 @@ public class TestFulldataFunctionality extends TestCase {
       Assert.assertTrue("File " + file + " should exist.", file.exists());
 
       final JSONDataLoader xdl = new JSONDataLoader(file);
-      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      final TestMethod testcase = xdl.getFullData().getMethods().get(0);
       for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
          for (final VMResult r : dc.getResults()) {
             Assert.assertEquals(2, r.getRepetitions());

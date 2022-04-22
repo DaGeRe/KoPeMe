@@ -28,7 +28,7 @@ public class TestFileWriting extends TestCase {
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
       JSONDataLoader xdl = new JSONDataLoader(f);
-      for (TestMethod tct : xdl.getFullData().getTestclazzes().get(0).getMethods()) {
+      for (TestMethod tct : xdl.getFullData().getMethods()) {
          List<DatacollectorResult> dcl = tct.getDatacollectorResults();
          Assert.assertEquals(dcl.size(), 1);
       }
@@ -41,7 +41,7 @@ public class TestFileWriting extends TestCase {
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
       JSONDataLoader xdl = new JSONDataLoader(f);
-      for (TestMethod tct : xdl.getFullData().getTestclazzes().get(0).getMethods()) {
+      for (TestMethod tct : xdl.getFullData().getMethods()) {
          List<DatacollectorResult> dcl = tct.getDatacollectorResults();
          Assert.assertEquals(dcl.size(), 3);
       }
