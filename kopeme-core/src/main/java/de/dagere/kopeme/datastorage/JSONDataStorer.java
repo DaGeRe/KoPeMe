@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.kopeme.kopemedata.TestClazz;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
@@ -35,14 +34,21 @@ public class JSONDataStorer implements DataStorer {
    }
    
    private void createJSONData(final String classname) {
-      data = new Kopemedata();
-      data.getTestclazzes().add(new TestClazz(classname));
+      data = new Kopemedata(classname);
       storeData();
    }
    
    private void storeData() {
       try {
          new ObjectMapper().writeValue(file, data);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+   
+   public static void storeData(final File file, final Kopemedata currentdata) {
+      try {
+         new ObjectMapper().writeValue(file, currentdata);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -118,7 +124,7 @@ public class JSONDataStorer implements DataStorer {
 
    private TestMethod getOrCreateTestcase(VMResult performanceDataMeasure, String testcase) {
       TestMethod testMethod = null;
-      for (TestMethod currentMethod : data.getTestclazzes().get(0).getMethods()) {
+      for (TestMethod currentMethod : data.getMethods()) {
          if (currentMethod.getMethod().equals(testcase)) {
             testMethod = currentMethod;
             break;
@@ -126,7 +132,7 @@ public class JSONDataStorer implements DataStorer {
       }
       if (testMethod == null) {
          testMethod = new TestMethod(testcase);
-         data.getTestclazzes().get(0).getMethods().add(testMethod);
+         data.getMethods().add(testMethod);
       }
       return testMethod;
    }

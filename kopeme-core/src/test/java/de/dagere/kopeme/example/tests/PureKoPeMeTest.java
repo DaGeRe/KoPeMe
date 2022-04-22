@@ -50,7 +50,7 @@ public class PureKoPeMeTest {
       final JSONDataLoader xdl = new JSONDataLoader(new File(folderName, filename));
       final Kopemedata kd = xdl.getFullData();
       List<DatacollectorResult> collectors = null;
-      for (final TestMethod tct : kd.getTestclazzes().get(0).getMethods()) {
+      for (final TestMethod tct : kd.getMethods()) {
          if (tct.getMethod().contains("simpleTest")) {
             collectors = tct.getDatacollectorResults();
          }

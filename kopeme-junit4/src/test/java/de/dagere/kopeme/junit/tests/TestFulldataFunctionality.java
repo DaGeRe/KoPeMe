@@ -45,7 +45,7 @@ public class TestFulldataFunctionality {
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
       JSONDataLoader xdl = new JSONDataLoader(f);
 
-      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      final TestMethod testcase = xdl.getFullData().getMethods().get(0);
       for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
          for (final VMResult r : dc.getResults()) {
             System.out.println(r.getCpu());
@@ -69,7 +69,7 @@ public class TestFulldataFunctionality {
       final File f = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTestFullData.class.getCanonicalName(), TestUtils.TEST_ADDITION);
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
       JSONDataLoader xdl = new JSONDataLoader(f);
-      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      final TestMethod testcase = xdl.getFullData().getMethods().get(0);
       for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
          for (final VMResult r : dc.getResults()) {
             final Fulldata fd = r.getFulldata();
@@ -88,7 +88,7 @@ public class TestFulldataFunctionality {
       final File expectedKoPemeJSON = TestUtils.jsonFileForKoPeMeTest(JUnitAdditionTestFullDataBig.class.getCanonicalName(), TestUtils.TEST_ADDITION);
       Assert.assertTrue("Datei " + expectedKoPemeJSON + " sollte existieren", expectedKoPemeJSON.exists());
       JSONDataLoader xdl = new JSONDataLoader(expectedKoPemeJSON);
-      final TestMethod testcase = xdl.getFullData().getTestclazzes().get(0).getMethods().get(0);
+      final TestMethod testcase = xdl.getFullData().getMethods().get(0);
       for (final DatacollectorResult dc : testcase.getDatacollectorResults()) {
          for (final VMResult r : dc.getResults()) {
             final Fulldata fd = r.getFulldata();

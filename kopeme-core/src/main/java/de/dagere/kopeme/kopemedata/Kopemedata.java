@@ -4,16 +4,30 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 
 public class Kopemedata {
-   private List<TestClazz> testclazzes = new LinkedList<>();
+   
+   private final String clazz;
+   private List<TestMethod> methods = new LinkedList<>();
 
-   public List<TestClazz> getTestclazzes() {
-      return testclazzes;
+   public Kopemedata(@JsonProperty("clazz") String clazz) {
+      this.clazz = clazz;
+   }
+   
+   public String getClazz() {
+      return clazz;
    }
 
-   public void setTestclazzes(List<TestClazz> testclazzes) {
-      this.testclazzes = testclazzes;
+   public List<TestMethod> getMethods() {
+      return methods;
+   }
+
+   public void setMethods(List<TestMethod> methods) {
+      this.methods = methods;
    }
    
    /**
@@ -22,6 +36,28 @@ public class Kopemedata {
     */
    @JsonIgnore
    public VMResult getFirstResult() {
-      return testclazzes.get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0);
+      return methods.get(0).getDatacollectorResults().get(0).getResults().get(0);
+   }
+   
+   @JsonIgnore
+   public TestMethod getFirstMethodResult() {
+      return methods.get(0);
+   }
+   
+   @JsonIgnore
+   public DatacollectorResult getFirstTimeDataCollector() {
+      DatacollectorResult oneRunDatacollector = null;
+      
+      TestMethod firstMethod = getFirstMethodResult();
+      
+      for (final DatacollectorResult collector : firstMethod.getDatacollectorResults()) {
+         if (collector.getName().equals(TimeDataCollector.class.getName()) || collector.getName().equals(TimeDataCollectorNoGC.class.getName())) {
+            oneRunDatacollector = collector;
+         }
+      }
+      if (oneRunDatacollector == null) {
+         throw new RuntimeException("Did not find " + TimeDataCollector.class.getName() + " or " + TimeDataCollectorNoGC.class);
+      }
+      return oneRunDatacollector;
    }
 }

@@ -34,7 +34,7 @@ public class JSONDataLoader implements DataLoader {
 
    public DatacollectorResult getData(String collectorName) {
       Kopemedata data = getFullData();
-      DatacollectorResult result = JSONDataStorer.findCollector(collectorName, data.getTestclazzes().get(0).getMethods().get(0));
+      DatacollectorResult result = JSONDataStorer.findCollector(collectorName, data.getMethods().get(0));
       return result;
    }
 

@@ -35,7 +35,7 @@ public class TestJUnit5Parameterized {
          MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
          Kopemedata kopemedata = JSONDataLoader.loadData(file);
          
-         List<VMResult> results = kopemedata.getTestclazzes().get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults();
+         List<VMResult> results = kopemedata.getMethods().get(0).getDatacollectorResults().get(0).getResults();
          
          Entry<String, String> params = results.get(0).getFirstParameter();
          

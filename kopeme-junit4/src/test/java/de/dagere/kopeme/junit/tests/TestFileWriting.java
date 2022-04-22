@@ -18,7 +18,6 @@ import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.kopeme.kopemedata.TestClazz;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 
@@ -68,11 +67,10 @@ public class TestFileWriting {
       Assert.assertTrue("Datei " + f + " sollte existieren", f.exists());
 
       final Kopemedata kd = new JSONDataLoader(f).getFullData();
-      final TestClazz tc = kd.getTestclazzes().get(0);
-      Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), tc.getClazz());
+      Assert.assertEquals(JUnitMultiplicationTest.class.getCanonicalName(), kd.getClazz());
 
       TestMethod tct = null;
-      for (final TestMethod t : tc.getMethods()) {
+      for (final TestMethod t : kd.getMethods()) {
          if (t.getMethod().equals(TEST_MULTIPLICATION)) {
             tct = t;
             break;

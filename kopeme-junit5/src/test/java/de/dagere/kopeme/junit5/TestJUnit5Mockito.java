@@ -32,7 +32,7 @@ public class TestJUnit5Mockito {
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
       Kopemedata data = JSONDataLoader.loadData(file);
-      double averageDurationInMs = data.getTestclazzes().get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).getValue() /1000000;  
+      double averageDurationInMs = data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).getValue() /1000000;  
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(20));
@@ -46,7 +46,7 @@ public class TestJUnit5Mockito {
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
       Kopemedata data = JSONDataLoader.loadData(file);
-      double averageDurationInMs = data.getTestclazzes().get(0).getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).getValue() /1000000;  
+      double averageDurationInMs = data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).getValue() /1000000;  
       System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       
