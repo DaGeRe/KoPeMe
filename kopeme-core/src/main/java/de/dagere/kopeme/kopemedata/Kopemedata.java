@@ -53,6 +53,7 @@ public class Kopemedata {
       return methods.get(0);
    }
    
+   @JsonIgnore
    public List<VMResult> getFirstDatacollectorContent(){
       return getFirstMethodResult().getDatacollectorResults().get(0).getResults();
    }
