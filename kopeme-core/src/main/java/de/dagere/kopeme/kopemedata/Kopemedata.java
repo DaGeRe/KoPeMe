@@ -44,6 +44,11 @@ public class Kopemedata {
    }
    
    @JsonIgnore
+   public List<VMResultChunk> getChunks() {
+      return methods.get(0).getDatacollectorResults().get(0).getChunks();
+   }
+   
+   @JsonIgnore
    public TestMethod getFirstMethodResult() {
       return methods.get(0);
    }
