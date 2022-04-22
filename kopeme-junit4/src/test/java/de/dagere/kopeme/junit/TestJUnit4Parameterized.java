@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
@@ -19,13 +17,12 @@ import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestChosenParameter;
-import de.dagere.kopeme.junit4.rule.KoPeMeRule;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
-import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+import jakarta.xml.bind.JAXBException;
 
 public class TestJUnit4Parameterized {
 

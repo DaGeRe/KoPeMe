@@ -3,8 +3,6 @@ package de.dagere.kopeme.datastorage;
 import java.io.File;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,6 +15,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import jakarta.xml.bind.JAXBException;
 
 public class TestDataSaving {
 

@@ -3,8 +3,6 @@ package de.dagere.kopeme.junit.tests;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -16,7 +14,6 @@ import org.junit.runner.JUnitCore;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitMultiplicationTest;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;

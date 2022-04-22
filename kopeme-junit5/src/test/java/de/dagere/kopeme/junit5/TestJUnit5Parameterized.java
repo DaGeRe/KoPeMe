@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
@@ -14,7 +12,6 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTestChosenParameter;

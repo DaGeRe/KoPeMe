@@ -15,12 +15,10 @@ import org.junit.Test;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.FolderProvider;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.exampletests.pure.ExamplePurePerformanceTests;
 import de.dagere.kopeme.exampletests.pure.TestTimeTest;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import de.dagere.kopeme.kopemedata.TestClazz;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.testrunner.PerformanceTestRunnerKoPeMe;
 

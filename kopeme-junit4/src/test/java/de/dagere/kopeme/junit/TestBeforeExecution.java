@@ -3,8 +3,6 @@ package de.dagere.kopeme.junit;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +22,6 @@ import org.junit.runners.Parameterized.Parameters;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassMeasurement;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeClassTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;

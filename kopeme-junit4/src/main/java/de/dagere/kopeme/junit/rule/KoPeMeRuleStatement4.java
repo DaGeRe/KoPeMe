@@ -5,7 +5,6 @@ import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +17,6 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit.rule.annotations.ParameterChecker;
 import de.dagere.kopeme.runnables.TestRunnable;
 import junit.framework.AssertionFailedError;

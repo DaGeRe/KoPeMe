@@ -2,8 +2,6 @@ package de.dagere.kopeme.junit5;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
@@ -12,10 +10,10 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5MockitoTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtensionInjectMockJUnit5Test;
 import de.dagere.kopeme.kopemedata.Kopemedata;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Tests just whether JUnit 5 execution works

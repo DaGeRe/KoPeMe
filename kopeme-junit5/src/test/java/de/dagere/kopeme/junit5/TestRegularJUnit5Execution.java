@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit5;
 
 import java.io.File;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;

@@ -6,7 +6,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

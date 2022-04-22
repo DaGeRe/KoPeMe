@@ -3,9 +3,9 @@ package de.dagere.kopeme.datastorage.xml;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
 

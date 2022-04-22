@@ -2,14 +2,13 @@ package de.dagere.kopeme.junit5;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleJUnit5InstanceUsageTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleJUnit5InstanceUsageTestWithMockito;
+import jakarta.xml.bind.JAXBException;
 
 public class TestJUnit5InstanceUsage {
 

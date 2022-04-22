@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,9 +15,9 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.datastorage.xml.XMLDataStorer;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.VMResult;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Some utils for performance testing.

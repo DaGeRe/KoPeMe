@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -20,7 +18,6 @@ import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullData;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTestFullDataBig;
