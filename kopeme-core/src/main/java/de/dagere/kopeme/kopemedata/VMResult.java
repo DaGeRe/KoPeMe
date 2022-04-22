@@ -4,13 +4,16 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class VMResult {
    private double value;
    private double deviation;
 
-   private double min;
-   private double max;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Double min = null;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Double max = null;
 
    private long warmup;
    private long iterations;
@@ -50,19 +53,19 @@ public class VMResult {
       this.deviation = deviation;
    }
 
-   public double getMin() {
+   public Double getMin() {
       return min;
    }
 
-   public void setMin(double min) {
+   public void setMin(Double min) {
       this.min = min;
    }
 
-   public double getMax() {
+   public Double getMax() {
       return max;
    }
 
-   public void setMax(double max) {
+   public void setMax(Double max) {
       this.max = max;
    }
 

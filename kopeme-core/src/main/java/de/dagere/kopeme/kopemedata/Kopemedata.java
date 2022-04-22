@@ -11,7 +11,7 @@ import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 
 public class Kopemedata {
    
-   private final String clazz;
+   private String clazz;
    private List<TestMethod> methods = new LinkedList<>();
 
    public Kopemedata(@JsonProperty("clazz") String clazz) {
@@ -20,6 +20,10 @@ public class Kopemedata {
    
    public String getClazz() {
       return clazz;
+   }
+   
+   public void setClazz(String clazz) {
+      this.clazz = clazz;
    }
 
    public List<TestMethod> getMethods() {
@@ -42,6 +46,10 @@ public class Kopemedata {
    @JsonIgnore
    public TestMethod getFirstMethodResult() {
       return methods.get(0);
+   }
+   
+   public List<VMResult> getFirstDatacollectorContent(){
+      return getFirstMethodResult().getDatacollectorResults().get(0).getResults();
    }
    
    @JsonIgnore

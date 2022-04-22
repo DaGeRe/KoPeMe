@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
@@ -135,6 +136,17 @@ public class JSONDataStorer implements DataStorer {
          data.getMethods().add(testMethod);
       }
       return testMethod;
+   }
+
+   public static Kopemedata clone(Kopemedata oneResultData) {
+      ObjectMapper mapper = new ObjectMapper();
+      try {
+         Kopemedata copiedResult = mapper.treeToValue(mapper.valueToTree(oneResultData), Kopemedata.class);
+         return copiedResult;
+      } catch (JsonProcessingException | IllegalArgumentException e) {
+         throw new RuntimeException(e);
+      }
+      
    }
 
 }
