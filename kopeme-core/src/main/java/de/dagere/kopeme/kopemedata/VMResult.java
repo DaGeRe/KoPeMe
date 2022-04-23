@@ -41,6 +41,7 @@ public class VMResult {
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private Boolean error = false;
    
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    private Fulldata fulldata;
 
    public double getValue() {

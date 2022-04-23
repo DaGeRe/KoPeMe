@@ -10,49 +10,48 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Test;
 
-import de.dagere.kopeme.datastorage.xml.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Kopemedata.Testcases;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
+
 
 public class TestEmptySerialization {
 
    @Test
    public void testSerialization() throws IOException {
-      final TestcaseType testcase = new TestcaseType();
 
-      final Kopemedata data = new Kopemedata();
-      data.setTestcases(new Testcases());
-      data.getTestcases().getTestcase().add(testcase);
+      final Kopemedata data = new Kopemedata("de.Test");
+      TestMethod testcase = new TestMethod("test");
+      data.getMethods().add(testcase);
 
-      final Datacollector datacollector = new Datacollector();
-      testcase.getDatacollector().add(datacollector);
+      final DatacollectorResult datacollector = new DatacollectorResult(TimeDataCollectorNoGC.class.getCanonicalName());
+      testcase.getDatacollectorResults().add(datacollector);
 
-      final Chunk chunk = new Chunk();
-      datacollector.getChunk().add(chunk);
+      final VMResultChunk chunk = new VMResultChunk();
+      datacollector.getChunks().add(chunk);
 
-      final Result result = new Result();
-      chunk.getResult().add(result);
+      final VMResult result = new VMResult();
+      chunk.getResults().add(result);
 
       result.setMin(null);
 
       final File tempFile = Files.createTempFile("start", "end").toFile();
       System.out.println("File: " + tempFile.getAbsolutePath());
-      XMLDataStorer.storeData(tempFile, data);
+      JSONDataStorer.storeData(tempFile, data);
 
-      final List<String> gradleFileContents = Files.readAllLines(tempFile.toPath());
+      final List<String> jsonFileContents = Files.readAllLines(tempFile.toPath());
 
-      for (final String line : gradleFileContents) {
+      for (final String line : jsonFileContents) {
          System.out.println(line);
       }
 
-      MatcherAssert.assertThat(gradleFileContents, IsIterableContaining.hasItem(Matchers.containsString("value")));
-      MatcherAssert.assertThat(gradleFileContents, IsIterableContaining.hasItem(Matchers.containsString("deviation")));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("min"))));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("max"))));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("fulldata"))));
+      MatcherAssert.assertThat(jsonFileContents, IsIterableContaining.hasItem(Matchers.containsString("value")));
+      MatcherAssert.assertThat(jsonFileContents, IsIterableContaining.hasItem(Matchers.containsString("deviation")));
+      MatcherAssert.assertThat(jsonFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("min"))));
+      MatcherAssert.assertThat(jsonFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("max"))));
+      MatcherAssert.assertThat(jsonFileContents, Matchers.not(IsIterableContaining.hasItem(Matchers.containsString("fulldata"))));
    }
 }
