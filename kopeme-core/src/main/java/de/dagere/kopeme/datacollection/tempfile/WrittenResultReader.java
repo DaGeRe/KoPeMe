@@ -15,8 +15,9 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+
 
 public class WrittenResultReader {
 
@@ -135,10 +136,10 @@ public class WrittenResultReader {
       for (int i = warmup; i < realValues.size(); i++) {
          final Long executionStartTime = executionStartTimes.get(i);
          final Long value = realValues.get(i).get(currentDatacollector);
-         final Value fulldataValue = new Value();
-         fulldataValue.setStart(executionStartTime);
+         final MeasuredValue fulldataValue = new MeasuredValue();
+         fulldataValue.setStartTime(executionStartTime);
          fulldataValue.setValue(value);
-         result.getValue().add(fulldataValue);
+         result.getValues().add(fulldataValue);
       }
       return result;
    }
