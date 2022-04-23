@@ -26,14 +26,20 @@ public class VMResult {
    // Should persist input order, therefore sorted map
    private LinkedHashMap<String, String> parameters;
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    private String javaVersion;
    private String cpu;
    private String memory;
    private long date;
-   private long cpuTemperature;
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Long cpuTemperature;
 
-   private boolean failure;
-   private boolean error;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean failure = false;
+   
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean error = false;
    
    private Fulldata fulldata;
 
@@ -154,27 +160,27 @@ public class VMResult {
       this.date = date;
    }
 
-   public long getCpuTemperature() {
+   public Long getCpuTemperature() {
       return cpuTemperature;
    }
 
-   public void setCpuTemperature(long cpuTemperature) {
+   public void setCpuTemperature(Long cpuTemperature) {
       this.cpuTemperature = cpuTemperature;
    }
 
-   public boolean isFailure() {
+   public Boolean isFailure() {
       return failure;
    }
 
-   public void setFailure(boolean failure) {
+   public void setFailure(Boolean failure) {
       this.failure = failure;
    }
 
-   public boolean isError() {
+   public Boolean isError() {
       return error;
    }
 
-   public void setError(boolean error) {
+   public void setError(Boolean error) {
       this.error = error;
    }
 

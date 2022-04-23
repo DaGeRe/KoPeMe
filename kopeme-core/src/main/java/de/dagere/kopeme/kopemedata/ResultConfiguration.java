@@ -1,49 +1,56 @@
 package de.dagere.kopeme.kopemedata;
 
-public class ResultConfiguration {
-   private boolean showStart;
-   private boolean executeBeforeClassInMeasurement;
-   private boolean redirectToTemp;
-   private boolean redirectToNull;
-   private boolean useKieker;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-   public boolean isShowStart() {
+public class ResultConfiguration {
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean showStart;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean executeBeforeClassInMeasurement;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean redirectToTemp;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean redirectToNull;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private Boolean useKieker;
+
+   public Boolean isShowStart() {
       return showStart;
    }
 
-   public void setShowStart(boolean showStart) {
+   public void setShowStart(Boolean showStart) {
       this.showStart = showStart;
    }
 
-   public boolean isExecuteBeforeClassInMeasurement() {
+   public Boolean isExecuteBeforeClassInMeasurement() {
       return executeBeforeClassInMeasurement;
    }
 
-   public void setExecuteBeforeClassInMeasurement(boolean executeBeforeClassInMeasurement) {
+   public void setExecuteBeforeClassInMeasurement(Boolean executeBeforeClassInMeasurement) {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
 
-   public boolean isRedirectToTemp() {
+   public Boolean isRedirectToTemp() {
       return redirectToTemp;
    }
 
-   public void setRedirectToTemp(boolean redirectToTemp) {
+   public void setRedirectToTemp(Boolean redirectToTemp) {
       this.redirectToTemp = redirectToTemp;
    }
 
-   public boolean isRedirectToNull() {
+   public Boolean isRedirectToNull() {
       return redirectToNull;
    }
 
-   public void setRedirectToNull(boolean redirectToNull) {
+   public void setRedirectToNull(Boolean redirectToNull) {
       this.redirectToNull = redirectToNull;
    }
 
-   public boolean isUseKieker() {
+   public Boolean isUseKieker() {
       return useKieker;
    }
 
-   public void setUseKieker(boolean useKieker) {
+   public void setUseKieker(Boolean useKieker) {
       this.useKieker = useKieker;
    }
 
