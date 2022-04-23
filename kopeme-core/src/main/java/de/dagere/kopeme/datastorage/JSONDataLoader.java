@@ -17,11 +17,7 @@ public class JSONDataLoader implements DataLoader {
    }
 
    public Kopemedata getFullData() {
-      try {
-         return KoPeMeConstants.OBJECTMAPPER.readValue(file, Kopemedata.class);
-      } catch (IOException e) {
-         throw new RuntimeException(e);
-      }
+      return loadData(file);
    }
 
    public DatacollectorResult getData(String collectorName) {
