@@ -43,7 +43,11 @@ public class JSONDataLoader implements DataLoader {
    public static Kopemedata loadData(File file2) {
       try {
          if (file2.getName().endsWith(".json")) {
-            return new ObjectMapper().readValue(file2, Kopemedata.class);
+            if (file2.exists()) {
+               return new ObjectMapper().readValue(file2, Kopemedata.class);
+            } else {
+               return new Kopemedata("");
+            }
          } else if (file2.getName().endsWith(".xml")) {
             return XMLConversionLoader.loadData(file2);
          } else {
