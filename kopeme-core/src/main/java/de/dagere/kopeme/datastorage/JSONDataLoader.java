@@ -30,6 +30,14 @@ public class JSONDataLoader implements DataLoader {
       return result;
    }
 
+   public static Kopemedata loadData(File file, int warmup) {
+      throw new RuntimeException("Not implemented yet");
+   }
+   
+   public static Kopemedata loadWarmedupData(File file) {
+      throw new RuntimeException("Not implemented yet");
+   }
+   
    public static Kopemedata loadData(File file2) {
       try {
          if (file2.getName().endsWith(".json")) {
