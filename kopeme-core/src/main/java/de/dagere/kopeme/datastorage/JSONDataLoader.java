@@ -49,7 +49,12 @@ public class JSONDataLoader implements DataLoader {
                return new Kopemedata("");
             }
          } else if (file2.getName().endsWith(".xml")) {
-            return XMLConversionLoader.loadData(file2);
+            Kopemedata kopemedata = XMLConversionLoader.loadData(file2);
+            String pureFileName = file2.getName().substring(0, file2.getName().length()- ".xml".length());
+            File jsonFile = new File(file2.getParentFile(), pureFileName + ".json");
+            JSONDataStorer.storeData(jsonFile, kopemedata);
+            file2.delete();
+            return kopemedata;
          } else {
             return null;
          }
