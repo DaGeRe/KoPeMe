@@ -8,8 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
@@ -41,7 +42,7 @@ public class JSONDataStorer implements DataStorer {
    
    private void storeData() {
       try {
-         new ObjectMapper().writeValue(file, data);
+         KoPeMeConstants.OBJECTMAPPER.writeValue(file, data);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -49,7 +50,7 @@ public class JSONDataStorer implements DataStorer {
    
    public static void storeData(final File file, final Kopemedata currentdata) {
       try {
-         new ObjectMapper().writeValue(file, currentdata);
+         KoPeMeConstants.OBJECTMAPPER.writeValue(file, currentdata);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -139,9 +140,9 @@ public class JSONDataStorer implements DataStorer {
    }
 
    public static Kopemedata clone(Kopemedata oneResultData) {
-      ObjectMapper mapper = new ObjectMapper();
       try {
-         Kopemedata copiedResult = mapper.treeToValue(mapper.valueToTree(oneResultData), Kopemedata.class);
+         JsonNode value = KoPeMeConstants.OBJECTMAPPER.valueToTree(oneResultData);
+         Kopemedata copiedResult = KoPeMeConstants.OBJECTMAPPER.treeToValue(value, Kopemedata.class);
          return copiedResult;
       } catch (JsonProcessingException | IllegalArgumentException e) {
          throw new RuntimeException(e);
