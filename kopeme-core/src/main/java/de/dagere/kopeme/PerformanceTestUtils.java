@@ -17,7 +17,6 @@ import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.VMResult;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Some utils for performance testing.
@@ -80,26 +79,22 @@ public final class PerformanceTestUtils {
     * @param saveValues Weather values should be saved or only aggregates
     */
    public static void saveData(final SaveableTestData data) {
-      try {
-         final DataStorer xds = getDataStorer(data);
+      final DataStorer xds = getDataStorer(data);
 
-         final TestResult tr = data.getTr();
-         if (tr.getValue(TimeDataCollector.class.getName()) != null) {
-            final double timeValue = tr.getValue(TimeDataCollector.class.getName()).doubleValue();
-            if (timeValue != 0) {
-               LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
-            }
+      final TestResult tr = data.getTr();
+      if (tr.getValue(TimeDataCollector.class.getName()) != null) {
+         final double timeValue = tr.getValue(TimeDataCollector.class.getName()).doubleValue();
+         if (timeValue != 0) {
+            LOG.info("Execution Time: {} milliseconds", timeValue / 10E2);
          }
+      }
 
-         for (final String datacollector : tr.getDatacollectors()) {
-            buildKeyData(data, xds, tr, datacollector);
-         }
-      } catch (final JAXBException e) {
-         e.printStackTrace();
+      for (final String datacollector : tr.getDatacollectors()) {
+         buildKeyData(data, xds, tr, datacollector);
       }
    }
 
-   private static DataStorer getDataStorer(final SaveableTestData data) throws JAXBException {
+   private static DataStorer getDataStorer(final SaveableTestData data) {
       final File folder = data.getFolder();
       if (!folder.exists()) {
          folder.mkdirs();

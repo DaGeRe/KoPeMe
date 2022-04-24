@@ -2,17 +2,19 @@ package de.dagere.kopeme.datastorage.xml;
 
 import java.io.File;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.glassfish.jaxb.runtime.v2.ContextFactory;
+
+import com.sun.xml.bind.v2.ContextFactory;
 
 import de.dagere.kopeme.datastorage.DataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.ObjectFactory;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 
 /**
  * Loads XML-Performance-Data

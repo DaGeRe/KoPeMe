@@ -28,7 +28,6 @@ import de.dagere.kopeme.junit.exampletests.rules.ExampleBeforeTestRule;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNoBeforeTest;
 import de.dagere.kopeme.junit.exampletests.rules.ExampleNonMeasuringBefore;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Test for checking the behaviour of before and after for all runners (rule and junit runner).
@@ -68,7 +67,7 @@ public class TestBeforeExecution {
    }
 
    @Test
-   public void testBefore() throws JAXBException {
+   public void testBefore() {
       final JUnitCore jc = new JUnitCore();
       final Result result = jc.run(junitTestClass);
       for (final Failure failure : result.getFailures()) {
@@ -90,7 +89,7 @@ public class TestBeforeExecution {
       MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99d * TO_MILLISECONDS));
    }
 
-   public static double getTimeResult(final File measurementFile, final String methodName) throws JAXBException {
+   public static double getTimeResult(final File measurementFile, final String methodName) {
       final DatacollectorResult collectorData = new JSONDataLoader(measurementFile).getData(TimeDataCollector.class.getCanonicalName());
       Assert.assertNotNull(collectorData);
       final double time = collectorData.getResults().get(0).getValue();

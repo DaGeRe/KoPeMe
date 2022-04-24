@@ -13,7 +13,6 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
-import jakarta.xml.bind.JAXBException;
 
 public class TestDataSaving {
 
@@ -66,7 +65,7 @@ public class TestDataSaving {
       return result;
    }
 
-   private void testLoadedResults() throws JAXBException {
+   private void testLoadedResults() {
       Kopemedata data2 = JSONDataLoader.loadData(file);
       final List<VMResult> loadedResults = data2.getFirstDatacollectorContent();
       final VMResult result2 = loadedResults.get(0);

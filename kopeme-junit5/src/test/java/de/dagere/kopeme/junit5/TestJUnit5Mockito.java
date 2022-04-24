@@ -13,7 +13,6 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5MockitoTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtensionInjectMockJUnit5Test;
 import de.dagere.kopeme.kopemedata.Kopemedata;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Tests just whether JUnit 5 execution works
@@ -26,7 +25,7 @@ public class TestJUnit5Mockito {
    public static Logger log = LogManager.getLogger(TestJUnit5Mockito.class);
 
    @Test
-   public void testRegularExecution() throws JAXBException {
+   public void testRegularExecution() {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtension5MockitoTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
@@ -39,7 +38,7 @@ public class TestJUnit5Mockito {
    }
 
    @Test
-   public void testWithFinalInjectedField() throws JAXBException {
+   public void testWithFinalInjectedField() {
       ExampleExtensionInjectMockJUnit5Test.finishCount = 0;
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionInjectMockJUnit5Test.class);
 

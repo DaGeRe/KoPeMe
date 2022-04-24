@@ -8,12 +8,11 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleJUnit5InstanceUsageTest;
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleJUnit5InstanceUsageTestWithMockito;
-import jakarta.xml.bind.JAXBException;
 
 public class TestJUnit5InstanceUsage {
 
    @Test
-   public void testInstanceUsage() throws JAXBException {
+   public void testInstanceUsage() {
       final File file = TestUtils.jsonFileForKoPeMeTest(ExampleJUnit5InstanceUsageTest.class.getName(), "testNormal");
       file.delete();
       
@@ -27,7 +26,7 @@ public class TestJUnit5InstanceUsage {
    }
    
    @Test
-   public void testInstanceUsageWithMockito() throws JAXBException {
+   public void testInstanceUsageWithMockito() {
       final File file = TestUtils.jsonFileForKoPeMeTest(ExampleJUnit5InstanceUsageTestWithMockito.class.getName(), "testNormal");
       file.delete();
       

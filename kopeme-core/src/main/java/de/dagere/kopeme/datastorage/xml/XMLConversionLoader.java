@@ -3,6 +3,9 @@ package de.dagere.kopeme.datastorage.xml;
 import java.io.File;
 import java.util.LinkedHashMap;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
@@ -17,8 +20,6 @@ import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
 
 public class XMLConversionLoader {
    public static de.dagere.kopeme.kopemedata.Kopemedata loadData(final File dataFile) {

@@ -10,7 +10,6 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.junit5.exampletests.rules.ExampleUnallowedBeforeWithMeasurement;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Tests just whether JUnit 5 execution works
@@ -23,7 +22,7 @@ public class TestJUnit5BeforeWithMeasurementUnallowed {
    public static Logger log = LogManager.getLogger(TestJUnit5BeforeWithMeasurementUnallowed.class);
 
    @Test
-   public void testRegularExecution() throws JAXBException {
+   public void testRegularExecution() {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleUnallowedBeforeWithMeasurement.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, 

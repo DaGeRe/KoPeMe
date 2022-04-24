@@ -22,7 +22,6 @@ import de.dagere.kopeme.junit.exampletests.rules.ExampleRuleParameterizedTestCho
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
-import jakarta.xml.bind.JAXBException;
 
 public class TestJUnit4Parameterized {
 
@@ -35,7 +34,7 @@ public class TestJUnit4Parameterized {
    }
 
    @Test
-   public void testParameterized() throws JAXBException {
+   public void testParameterized() {
       final String testClass = ExampleRuleParameterizedTest.class.getName();
       cleanup(testClass);
       
@@ -49,7 +48,7 @@ public class TestJUnit4Parameterized {
    }
    
    @Test
-   public void testParameterizedChosenParameter() throws JAXBException {
+   public void testParameterizedChosenParameter() {
       final String testClass = ExampleRuleParameterizedTestChosenParameter.class.getName();
       cleanup(testClass);
       
@@ -72,7 +71,7 @@ public class TestJUnit4Parameterized {
       }
    }
    
-   private void checkExistingAndCorrect(final String testClass, int i) throws JAXBException {
+   private void checkExistingAndCorrect(final String testClass, int i) {
       final File file = TestUtils.jsonFileForKoPeMeTest(testClass, "testNormal(JUNIT_PARAMETERIZED-"+i+")");
       MatcherAssert.assertThat(file, FileMatchers.anExistingFile());
       Kopemedata kopemedata = JSONDataLoader.loadData(file);
