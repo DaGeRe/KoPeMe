@@ -36,7 +36,6 @@ public class PerformanceTestRunner {
    protected Map<String, Double> maximalRelativeStandardDeviation;
    protected Map<String, Long> assertationvalues;
    protected String filename;
-   private final boolean useKieker;
    private boolean isFinished = false;
    private final RunConfiguration configuration;
 
@@ -55,7 +54,6 @@ public class PerformanceTestRunner {
       final PerformanceTest annotation = method.getAnnotation(PerformanceTest.class);
 
       if (annotation != null) {
-         useKieker = annotation.useKieker();
          executionTimes = annotation.iterations();
          warmupExecutions = annotation.warmup();
          repetitions = annotation.repetitions();
@@ -73,8 +71,7 @@ public class PerformanceTestRunner {
          }
          configuration = new RunConfiguration(annotation);
       } else {
-         configuration = new RunConfiguration(5, 1, false, false, false, true, false);
-         useKieker = false;
+         configuration = new RunConfiguration(5, 1, false, false, false, true, false, false);
       }
 
       filename = klasse.getName();
@@ -117,7 +114,7 @@ public class PerformanceTestRunner {
 
       };
 
-      final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeout, Type.METHOD, useKieker);
+      final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeout, Type.METHOD, configuration.isUseKieker());
       tbe.execute();
 
       LOG.trace("Test {} beendet", filename);

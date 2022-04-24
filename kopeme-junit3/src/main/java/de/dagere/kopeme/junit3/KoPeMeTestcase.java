@@ -175,7 +175,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             return isFinished;
          }
       };
-      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData(), executeBeforeClassInMeasurement());
+      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData(), executeBeforeClassInMeasurement(), useKieker());
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
       try {
          final boolean finished = tbe.execute();

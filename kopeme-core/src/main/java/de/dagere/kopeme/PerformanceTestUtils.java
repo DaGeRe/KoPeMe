@@ -133,6 +133,7 @@ public final class PerformanceTestUtils {
       result.getVmRunConfiguration().setRedirectToTemp(data.getConfiguration().isRedirectToTemp());
       result.getVmRunConfiguration().setShowStart(data.getConfiguration().isShowStart());
       result.getVmRunConfiguration().setExecuteBeforeClassInMeasurement(data.getConfiguration().isExecuteBeforeClassInMeasurement());
+      result.getVmRunConfiguration().setUseKieker(data.getConfiguration().isUseKieker());
       result.setDate(new Date().getTime());
       result.setJavaVersion(System.getProperty("java.version"));
       return result;

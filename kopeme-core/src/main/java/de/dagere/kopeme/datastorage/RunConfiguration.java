@@ -5,11 +5,11 @@ import de.dagere.kopeme.annotations.PerformanceTest;
 
 public class RunConfiguration {
    private final int warmupExecutions, repetitions;
-   private final boolean showStart, redirectToTemp, redirectToNull;
+   private final boolean showStart, redirectToTemp, redirectToNull, useKieker;
    private boolean saveValues, executeBeforeClassInMeasurement;
 
    public RunConfiguration(final int warmupExecutions, final int repetitions, final boolean showStart, final boolean redirectToTemp,
-         final boolean redirectToNull, final boolean saveValues, final boolean executeBeforeClassInMeasurement) {
+         final boolean redirectToNull, final boolean saveValues, final boolean executeBeforeClassInMeasurement, boolean useKieker) {
       this.warmupExecutions = warmupExecutions;
       this.repetitions = repetitions;
       this.showStart = showStart;
@@ -17,6 +17,7 @@ public class RunConfiguration {
       this.redirectToNull = redirectToNull;
       this.saveValues = saveValues;
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+      this.useKieker = useKieker;
    }
 
    public RunConfiguration(final PerformanceTest annotation) {
@@ -27,6 +28,7 @@ public class RunConfiguration {
       redirectToNull = annotation.redirectToNull();
       saveValues = annotation.logFullData();
       executeBeforeClassInMeasurement = annotation.executeBeforeClassInMeasurement();
+      this.useKieker = annotation.useKieker();
       
       AnnotationChecker.check(annotation);
    }
@@ -61,5 +63,9 @@ public class RunConfiguration {
 
    public void setSaveValues(final boolean saveValues) {
       this.saveValues = saveValues;
+   }
+   
+   public boolean isUseKieker() {
+      return useKieker;
    }
 }
