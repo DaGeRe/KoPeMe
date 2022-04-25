@@ -185,7 +185,7 @@ public final class TestResult {
          reader.read(thrownException, getDatacollectors());
          reader.deleteTempFile();
       } else {
-         reader.readStreaming(thrownException, getDatacollectors());
+         reader.readStreaming(getDatacollectors());
       }
    }
 

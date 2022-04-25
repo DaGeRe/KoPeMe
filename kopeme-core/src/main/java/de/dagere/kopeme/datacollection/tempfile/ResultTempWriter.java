@@ -26,7 +26,7 @@ public class ResultTempWriter {
       tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
 
-   public void setDataCollectors(final DataCollector collectors[]) {
+   public void setDataCollectors(final DataCollector[] collectors) {
       try {
          for (int index = 0; index < collectors.length; index++) {
             DataCollector dc = collectors[index];

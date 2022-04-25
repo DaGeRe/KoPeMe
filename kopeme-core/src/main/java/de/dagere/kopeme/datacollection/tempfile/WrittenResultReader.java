@@ -52,7 +52,7 @@ public class WrittenResultReader {
       }
    }
 
-   public void readStreaming(final Throwable thrownException, final Set<String> keys) {
+   public void readStreaming(final Set<String> keys) {
       finalValues = new HashMap<>();
       collectorsIndexed = new HashMap<>();
       initSummaries(keys);
