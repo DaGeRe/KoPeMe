@@ -53,7 +53,6 @@ public class ResultTempWriter {
          longBuffer.putLong(0, System.currentTimeMillis());
          final byte[] byteArray = longBuffer.array();
          tempFileWriter.write(byteArray);
-         tempFileWriter.write('\n');
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -70,7 +69,6 @@ public class ResultTempWriter {
             longBuffer.putLong(0, dc.getValue());
             final byte[] byteArray = longBuffer.array();
             tempFileWriter.write(byteArray);
-            tempFileWriter.write('\n');
          }
       } catch (IOException e) {
          e.printStackTrace();

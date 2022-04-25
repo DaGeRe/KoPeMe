@@ -68,13 +68,9 @@ public class WrittenResultReader implements TempfileReader {
          while (reader.available() > 0) {
             // ignore executionstarts when streaming
             reader.read(executionStartLine);
-            readNewline(reader);
-            
             for (String collector : collectorsIndexed.values()) {
                long value = readLong(reader);
                collectorSummaries.get(collector).addValue(value);
-               
-               readNewline(reader);
             }
 
          }
@@ -112,13 +108,6 @@ public class WrittenResultReader implements TempfileReader {
       }
    }
 
-   private void readNewline(BufferedInputStream reader) throws IOException {
-      char newline = (char) reader.read();
-      if (newline != '\n') {
-         throw new RuntimeException("Broken format, expected line break but was " + newline);
-      }
-   }
-
    private void initSummaries(final Set<String> datacollectors) {
       collectorSummaries = new HashMap<>();
       for (String datacollector : datacollectors) {
@@ -144,14 +133,10 @@ public class WrittenResultReader implements TempfileReader {
             currentValues = finishIteration(currentValues);
             executionStartTimes.add(startTime);
             
-            readNewline(reader);
-            
             for (String collector : collectorsIndexed.values()) {
                long value = readLong(reader);
                currentValues.put(collector, value);
                collectorSummaries.get(collector).addValue(value);
-               
-               readNewline(reader);
             }
 
          }
