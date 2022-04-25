@@ -138,10 +138,6 @@ public class WrittenResultReader implements TempfileReader {
 
          readDataCollectors(reader);
 
-         byte[] executionStartLine = new byte[Long.BYTES];
-         byte[] collectorLine = new byte[Long.BYTES];
-         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-         
          while (reader.available() > 0) {
             // ignore executionstarts when streaming
             long startTime = readLong(reader);
