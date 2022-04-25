@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.dagere.kopeme.datacollection.tempfile.TempfileReader;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderTextFormat;
 import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
@@ -45,7 +47,7 @@ public class JSONDataLoader implements DataLoader {
 
       return data;
    }
-   
+
    public static Kopemedata loadWarmedupData(File dataFile) {
       final Kopemedata data = loadData(dataFile);
       for (TestMethod testcase : data.getMethods()) {
@@ -56,10 +58,10 @@ public class JSONDataLoader implements DataLoader {
             }
          }
       }
-      
+
       return data;
    }
-   
+
    private static Fulldata readFulldata(File jsonFile, int warmup, TestMethod testcase, VMResult result) {
       final File file = new File(result.getFulldata().getFileName());
       final File dataFile = new File(jsonFile.getParentFile(), file.getName());
@@ -69,7 +71,12 @@ public class JSONDataLoader implements DataLoader {
    }
 
    private static Fulldata executeReading(final String currentDatacollector, final File dataFile, final int warmup) {
-      final WrittenResultReader reader = new WrittenResultReader(dataFile);
+      final TempfileReader reader;
+      if (dataFile.getName().endsWith(".tmp")) {
+         reader = new WrittenResultReaderTextFormat(dataFile);
+      } else {
+         reader = new WrittenResultReader(dataFile);
+      }
       final Set<String> dataCollectors = new HashSet<>();
       dataCollectors.add(currentDatacollector);
       reader.read(null, dataCollectors);
@@ -77,7 +84,7 @@ public class JSONDataLoader implements DataLoader {
       Fulldata replacedFulldata = reader.createFulldata(warmup, currentDatacollector);
       return replacedFulldata;
    }
-   
+
    public static Kopemedata loadData(File file2) {
       try {
          if (file2.getName().endsWith(".json")) {
@@ -88,7 +95,7 @@ public class JSONDataLoader implements DataLoader {
             }
          } else if (file2.getName().endsWith(".xml")) {
             Kopemedata kopemedata = XMLConversionLoader.loadData(file2);
-            String pureFileName = file2.getName().substring(0, file2.getName().length()- ".xml".length());
+            String pureFileName = file2.getName().substring(0, file2.getName().length() - ".xml".length());
             File jsonFile = new File(file2.getParentFile(), pureFileName + ".json");
             JSONDataStorer.storeData(jsonFile, kopemedata);
             file2.delete();

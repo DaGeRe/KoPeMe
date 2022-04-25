@@ -1,20 +1,16 @@
 package de.dagere.kopeme.datacollection.tempfile;
 
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,9 +18,15 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 
-public class WrittenResultReader implements TempfileReader {
+
+public class WrittenResultReaderTextFormat implements TempfileReader {
 
    private static final Logger LOG = LogManager.getLogger(WrittenResultReader.class);
+
+   public static final String EXECUTIONSTART = "e:";
+   public static final String COLLECTOR = "c:";
+   public static final String FINAL_VALUE = "f:";
+   public static final String COLLECTOR_INDEX = "i:";
 
    private File file;
    protected List<Map<String, Long>> realValues = null;
@@ -33,11 +35,10 @@ public class WrittenResultReader implements TempfileReader {
    protected Map<String, SummaryStatistics> collectorSummaries = null;
    private Map<Integer, String> collectorsIndexed;
 
-   public WrittenResultReader(final File file) {
+   public WrittenResultReaderTextFormat(final File file) {
       this.file = file;
    }
 
-   @Override
    public void read(final Throwable exception, final Set<String> datacollectors) {
       initSummaries(datacollectors);
       readValues();
@@ -51,34 +52,28 @@ public class WrittenResultReader implements TempfileReader {
       }
    }
 
-   @Override
    public void readStreaming(final Set<String> keys) {
       finalValues = new HashMap<>();
-      collectorsIndexed = new LinkedHashMap<>();
+      collectorsIndexed = new HashMap<>();
       initSummaries(keys);
 
-      try (BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file))) {
-         // String line;
+      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+         String line;
          Map<String, Long> currentValues = new HashMap<>();
-
-         readDataCollectors(reader);
-
-         byte[] executionStartLine = new byte[Long.BYTES];
-         
-         while (reader.available() > 0) {
-            // ignore executionstarts when streaming
-            reader.read(executionStartLine);
-            readNewline(reader);
-            
-            for (String collector : collectorsIndexed.values()) {
-               long value = readLong(reader);
-               collectorSummaries.get(collector).addValue(value);
-               
-               readNewline(reader);
+         while ((line = reader.readLine()) != null) {
+            if (line.startsWith(COLLECTOR_INDEX)) {
+               String collectorString = line.substring(COLLECTOR_INDEX.length());
+               String[] values = collectorString.split("=");
+               collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
+            } else if (line.contains("=")) {
+               String[] values = line.split("=");
+               int collectorIndex = Integer.parseInt(values[0]);
+               String collector = collectorsIndexed.get(collectorIndex);
+               collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
+            } else {
+               // ignore executionstarts when streaming
             }
-
          }
-
          finishIteration(currentValues);
       } catch (FileNotFoundException e) {
          e.printStackTrace();
@@ -87,35 +82,6 @@ public class WrittenResultReader implements TempfileReader {
       }
       for (String key : keys) {
          finalValues.put(key, collectorSummaries.get(key).getMean());
-      }
-   }
-
-   private void readDataCollectors(BufferedInputStream reader) throws IOException {
-      int index = 0;
-      char firstByte = (char) reader.read();
-
-      while (firstByte != '\n') {
-         if (firstByte != '=') {
-            throw new RuntimeException("Broken format, expected = but was " + firstByte);
-         }
-
-         final List<Byte> bytes = new LinkedList<>();
-         byte current;
-         while ((current = (byte) reader.read()) != '\n') {
-            bytes.add(current);
-         }
-         final byte[] collectorNameBytes = ArrayUtils.toPrimitive(bytes.toArray(new Byte[0]));
-         String dataCollectorName = new String(collectorNameBytes);
-         collectorsIndexed.put(index++, dataCollectorName);
-         
-         firstByte = (char) reader.read();
-      }
-   }
-
-   private void readNewline(BufferedInputStream reader) throws IOException {
-      char newline = (char) reader.read();
-      if (newline != '\n') {
-         throw new RuntimeException("Broken format, expected line break but was " + newline);
       }
    }
 
@@ -132,34 +98,26 @@ public class WrittenResultReader implements TempfileReader {
       finalValues = new HashMap<>();
       collectorsIndexed = new HashMap<>();
 
-      try (BufferedInputStream reader = new BufferedInputStream(new FileInputStream(file))) {
-         // String line;
+      try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+         String line;
          Map<String, Long> currentValues = new HashMap<>();
-
-         readDataCollectors(reader);
-
-         byte[] executionStartLine = new byte[Long.BYTES];
-         byte[] collectorLine = new byte[Long.BYTES];
-         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-         
-         while (reader.available() > 0) {
-            // ignore executionstarts when streaming
-            long startTime = readLong(reader);
-            currentValues = finishIteration(currentValues);
-            executionStartTimes.add(startTime);
-            
-            readNewline(reader);
-            
-            for (String collector : collectorsIndexed.values()) {
-               long value = readLong(reader);
-               currentValues.put(collector, value);
-               collectorSummaries.get(collector).addValue(value);
-               
-               readNewline(reader);
+         while ((line = reader.readLine()) != null) {
+            if (line.startsWith(COLLECTOR_INDEX)) {
+               String collectorString = line.substring(COLLECTOR_INDEX.length());
+               String[] values = collectorString.split("=");
+               collectorsIndexed.put(Integer.parseInt(values[0]), values[1]);
+            } else if (line.contains("=")) {
+               String[] values = line.split("=");
+               int collectorIndex = Integer.parseInt(values[0]);
+               String collector = collectorsIndexed.get(collectorIndex);
+               currentValues.put(collector, Long.parseLong(values[1]));
+               collectorSummaries.get(collector).addValue(Long.parseLong(values[1]));
+            } else {
+               currentValues = finishIteration(currentValues);
+               Long start = Long.parseLong(line);
+               executionStartTimes.add(start);
             }
-
          }
-
          finishIteration(currentValues);
       } catch (FileNotFoundException e) {
          e.printStackTrace();
@@ -173,19 +131,6 @@ public class WrittenResultReader implements TempfileReader {
       }
    }
 
-   private final byte[] longBytes = new byte[Long.BYTES];
-   private final ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-   
-   private long readLong(BufferedInputStream reader) throws IOException {
-      buffer.clear();
-      reader.read(longBytes);
-      buffer.put(longBytes);
-      buffer.flip();
-      long value = buffer.getLong();
-      return value;
-   }
-
-   @Override
    public Fulldata createFulldata(final int warmup, final String currentDatacollector) {
       Fulldata result = new Fulldata();
       for (int i = warmup; i < realValues.size(); i++) {
@@ -207,27 +152,22 @@ public class WrittenResultReader implements TempfileReader {
       return currentValues;
    }
 
-   @Override
    public SummaryStatistics getCollectorSummary(final String collectorName) {
       return collectorSummaries.get(collectorName);
    }
 
-   @Override
    public List<Map<String, Long>> getRealValues() {
       return realValues;
    }
 
-   @Override
    public List<Long> getExecutionStartTimes() {
       return executionStartTimes;
    }
 
-   @Override
    public Map<String, Number> getFinalValues() {
       return finalValues;
    }
 
-   @Override
    public void clear(final String key) {
       if (realValues != null) {
          for (int i = 0; i < realValues.size(); i++) {
@@ -236,7 +176,6 @@ public class WrittenResultReader implements TempfileReader {
       }
    }
 
-   @Override
    public void deleteTempFile() {
       if (!file.delete()) {
          System.out.println("Warning: File " + file.getAbsolutePath() + " could not be deleted, existing: " + file.exists() + "!");

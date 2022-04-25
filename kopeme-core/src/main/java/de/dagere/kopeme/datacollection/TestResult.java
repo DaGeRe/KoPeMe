@@ -19,6 +19,7 @@ import org.hamcrest.Matchers;
 
 import de.dagere.kopeme.Checker;
 import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
+import de.dagere.kopeme.datacollection.tempfile.TempfileReader;
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
@@ -38,7 +39,7 @@ public final class TestResult {
    protected Checker checker;
    private int realExecutions;
    private final String methodName;
-   private WrittenResultReader reader;
+   private TempfileReader reader;
    private ResultTempWriter writer;
    private int iterations;
    private final DataCollector[] sortedCollectors;

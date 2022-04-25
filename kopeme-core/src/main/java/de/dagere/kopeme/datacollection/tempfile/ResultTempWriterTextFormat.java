@@ -1,43 +1,37 @@
 package de.dagere.kopeme.datacollection.tempfile;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollector;
 
-public class ResultTempWriter {
+public class ResultTempWriterTextFormat {
 
-   private static final Logger LOG = LogManager.getLogger(ResultTempWriter.class);
+   private static final Logger LOG = LogManager.getLogger(ResultTempWriterTextFormat.class);
+
+   public static final String EXECUTIONSTART = "\n" + WrittenResultReaderTextFormat.EXECUTIONSTART;
+   public static final String COLLECTOR = "\n" + WrittenResultReaderTextFormat.COLLECTOR;
 
    private final File tempFile;
-   private final BufferedOutputStream tempFileWriter;
+   private final BufferedWriter tempFileWriter;
 
-   public ResultTempWriter(final boolean warmup) throws IOException {
-      tempFile = Files.createTempFile(warmup ? "kopeme-warmup-" : "kopeme-", ".bin").toFile();
-      FileOutputStream tempFileStream = new FileOutputStream(tempFile);
-      tempFileWriter = new BufferedOutputStream(tempFileStream);
+   public ResultTempWriterTextFormat(final boolean warmup) throws IOException {
+      tempFile = Files.createTempFile(warmup ? "kopeme-warmup-" : "kopeme-", ".tmp").toFile();
+      tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
    }
 
    public void setDataCollectors(final DataCollector[] collectors) {
       try {
          for (int index = 0; index < collectors.length; index++) {
             DataCollector dc = collectors[index];
-//            tempFileWriter.write(WrittenResultReader.COLLECTOR_INDEX.getBytes());
-            tempFileWriter.write('=');
-            tempFileWriter.write(dc.getName().getBytes());
-            tempFileWriter.write('\n');
+            tempFileWriter.write(WrittenResultReaderTextFormat.COLLECTOR_INDEX + index + "=" + dc.getName() + "\n");
          }
-         tempFileWriter.write('\n'); // Mark end of collector information
       } catch (IOException e) {
          e.printStackTrace();
       }
@@ -49,27 +43,22 @@ public class ResultTempWriter {
 
    public final void executionStart(final long currentTimeMillis) {
       try {
-         longBuffer.clear();
-         longBuffer.putLong(0, System.currentTimeMillis());
-         final byte[] byteArray = longBuffer.array();
-         tempFileWriter.write(byteArray);
+         // tempFileWriter.write(EXECUTIONSTART);
+         tempFileWriter.write(Long.toString(System.currentTimeMillis()));
          tempFileWriter.write('\n');
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
 
-   private final ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
-   
    public final void writeValues(final DataCollector collectors[]) {
       try {
          for (int index = 0; index < collectors.length; index++) {
             DataCollector dc = collectors[index];
-            longBuffer.clear();
-            
-            longBuffer.putLong(0, dc.getValue());
-            final byte[] byteArray = longBuffer.array();
-            tempFileWriter.write(byteArray);
+            // tempFileWriter.write(COLLECTOR);
+            tempFileWriter.write(Integer.toString(index));
+            tempFileWriter.write('=');
+            tempFileWriter.write(Long.toString(dc.getValue()));
             tempFileWriter.write('\n');
          }
       } catch (IOException e) {
