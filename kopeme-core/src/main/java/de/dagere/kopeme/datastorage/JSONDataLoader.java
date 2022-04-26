@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.dagere.kopeme.datacollection.tempfile.TempfileReader;
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderTextFormat;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderCSV;
 import de.dagere.kopeme.datastorage.xml.XMLConversionLoader;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
@@ -73,9 +73,9 @@ public class JSONDataLoader implements DataLoader {
    private static Fulldata executeReading(final String currentDatacollector, final File dataFile, final int warmup) {
       final TempfileReader reader;
       if (dataFile.getName().endsWith(".tmp")) {
-         reader = new WrittenResultReaderTextFormat(dataFile);
+         reader = new WrittenResultReaderCSV(dataFile);
       } else {
-         reader = new WrittenResultReader(dataFile);
+         reader = new WrittenResultReaderBin(dataFile);
       }
       final Set<String> dataCollectors = new HashSet<>();
       dataCollectors.add(currentDatacollector);

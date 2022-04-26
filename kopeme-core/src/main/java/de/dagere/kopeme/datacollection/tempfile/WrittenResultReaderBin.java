@@ -22,9 +22,9 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 
-public class WrittenResultReader implements TempfileReader {
+public class WrittenResultReaderBin implements TempfileReader {
 
-   private static final Logger LOG = LogManager.getLogger(WrittenResultReader.class);
+   private static final Logger LOG = LogManager.getLogger(WrittenResultReaderBin.class);
 
    private File file;
    protected List<Map<String, Long>> realValues = null;
@@ -33,7 +33,7 @@ public class WrittenResultReader implements TempfileReader {
    protected Map<String, SummaryStatistics> collectorSummaries = null;
    private Map<Integer, String> collectorsIndexed;
 
-   public WrittenResultReader(final File file) {
+   public WrittenResultReaderBin(final File file) {
       this.file = file;
    }
 

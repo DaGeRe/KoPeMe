@@ -18,9 +18,9 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.dagere.kopeme.Checker;
-import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriterBin;
 import de.dagere.kopeme.datacollection.tempfile.TempfileReader;
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 
@@ -40,7 +40,7 @@ public final class TestResult {
    private int realExecutions;
    private final String methodName;
    private TempfileReader reader;
-   private ResultTempWriter writer;
+   private ResultTempWriterBin writer;
    private int iterations;
    private final DataCollector[] sortedCollectors;
    private final LinkedHashMap<String, String> params;
@@ -71,9 +71,9 @@ public final class TestResult {
       this.params = params;
       
       try {
-         writer = new ResultTempWriter(warmup);
+         writer = new ResultTempWriterBin(warmup);
          writer.setDataCollectors(sortedCollectors);
-         reader = new WrittenResultReader(writer.getTempFile());
+         reader = new WrittenResultReaderBin(writer.getTempFile());
       } catch (IOException e) {
          e.printStackTrace();
       }

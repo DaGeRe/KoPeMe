@@ -13,8 +13,8 @@ import org.junit.rules.TemporaryFolder;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.DataCollector;
-import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriterBin;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 
 public class TestWrittenResultReaderStreaming {
 
@@ -64,7 +64,7 @@ public class TestWrittenResultReaderStreaming {
    @Test
    public void testNoFullWriting() throws IOException {
       
-      ResultTempWriter writer = new ResultTempWriter(false);
+      ResultTempWriterBin writer = new ResultTempWriterBin(false);
       
       
       DataCollector[] collectors = new DataCollector[3];
@@ -80,7 +80,7 @@ public class TestWrittenResultReaderStreaming {
       }
       writer.finalizeCollection();
       
-      WrittenResultReader reader = new WrittenResultReader(writer.getTempFile());
+      WrittenResultReaderBin reader = new WrittenResultReaderBin(writer.getTempFile());
       
       Set<String> keys = new HashSet<>(Arrays.asList("myFirstFake", "mySecondFake", "myThirdFake"));
       reader.readStreaming(keys);

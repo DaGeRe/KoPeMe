@@ -16,7 +16,7 @@ import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datacollection.tempfile.TempfileReader;
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit.exampletests.runner.JUnitAdditionTest;
@@ -96,7 +96,7 @@ public class TestFulldataFunctionality {
             Assert.assertNotNull(fd);
             final File fulldataFile = new File(expectedKoPemeJSON.getParentFile(), fd.getFileName());
             Assert.assertTrue(fulldataFile.exists());
-            TempfileReader reader = new WrittenResultReader(fulldataFile);
+            TempfileReader reader = new WrittenResultReaderBin(fulldataFile);
             final Set<String> collectors = new HashSet<>();
             collectors.add(TimeDataCollectorNoGC.class.getCanonicalName());
             reader.read(null, collectors);

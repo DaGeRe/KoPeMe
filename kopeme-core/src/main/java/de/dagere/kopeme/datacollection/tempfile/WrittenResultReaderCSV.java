@@ -19,9 +19,9 @@ import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 
 
-public class WrittenResultReaderTextFormat implements TempfileReader {
+public class WrittenResultReaderCSV implements TempfileReader {
 
-   private static final Logger LOG = LogManager.getLogger(WrittenResultReader.class);
+   private static final Logger LOG = LogManager.getLogger(WrittenResultReaderBin.class);
 
    public static final String EXECUTIONSTART = "e:";
    public static final String COLLECTOR = "c:";
@@ -35,7 +35,7 @@ public class WrittenResultReaderTextFormat implements TempfileReader {
    protected Map<String, SummaryStatistics> collectorSummaries = null;
    private Map<Integer, String> collectorsIndexed;
 
-   public WrittenResultReaderTextFormat(final File file) {
+   public WrittenResultReaderCSV(final File file) {
       this.file = file;
    }
 

@@ -14,7 +14,7 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 
@@ -25,7 +25,7 @@ public class AggregatedDataReaderBin {
 
          System.out.println("test");
          while (reader.available() > 0) {
-            String call = WrittenResultReader.readUntilSign(reader, ';');
+            String call = WrittenResultReaderBin.readUntilSign(reader, ';');
             
             int eoi = readInt(reader);
             int ess = readInt(reader);
