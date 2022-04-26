@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
-public class FileDataManagerText implements Runnable, Closeable {
+public class FileDataManagerCSV implements Runnable, Closeable {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
@@ -27,7 +27,7 @@ public class FileDataManagerText implements Runnable, Closeable {
     * @param aggregatedTreeWriter
     * @throws IOException
     */
-   public FileDataManagerText(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
+   public FileDataManagerCSV(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
       this.destinationFolder = aggregatedTreeWriter.getResultFolder();
       currentDestination = new File(destinationFolder, "measurement-0.csv");
