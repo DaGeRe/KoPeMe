@@ -43,8 +43,8 @@ public class TestAggregatedMultifileWriting {
 
       for (final File file : measureFile) {
          final Map<AggregatedDataNode, AggregatedData> data = new HashMap<>();
-         AggregatedDataReader.readAggregatedDataFile(file, data);
-         if (!file.getName().equals("measurement-10.csv")) {
+         AggregatedDataReaderBin.readAggregatedDataFile(file, data);
+         if (!file.getName().equals("measurement-10.bin")) {
             Assert.assertEquals(3, data.size());
          }
       }

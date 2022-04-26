@@ -95,17 +95,22 @@ public class WrittenResultReader implements TempfileReader {
             throw new RuntimeException("Broken format, expected = but was " + firstByte);
          }
 
-         final List<Byte> bytes = new LinkedList<>();
-         byte current;
-         while ((current = (byte) reader.read()) != '\n') {
-            bytes.add(current);
-         }
-         final byte[] collectorNameBytes = ArrayUtils.toPrimitive(bytes.toArray(new Byte[0]));
-         String dataCollectorName = new String(collectorNameBytes);
+         String dataCollectorName = readUntilSign(reader, '\n');
          collectorsIndexed.put(index++, dataCollectorName);
          
          firstByte = (char) reader.read();
       }
+   }
+
+   public static final String readUntilSign(BufferedInputStream reader, char separationSign) throws IOException {
+      final List<Byte> bytes = new LinkedList<>();
+      byte current;
+      while ((current = (byte) reader.read()) != separationSign) {
+         bytes.add(current);
+      }
+      final byte[] collectorNameBytes = ArrayUtils.toPrimitive(bytes.toArray(new Byte[0]));
+      String dataCollectorName = new String(collectorNameBytes);
+      return dataCollectorName;
    }
 
    private void initSummaries(final Set<String> datacollectors) {

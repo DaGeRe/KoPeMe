@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataNode;
-import de.dagere.kopeme.kieker.aggregateddata.FileDataManager;
+import de.dagere.kopeme.kieker.aggregateddata.FileDataManagerBinary;
 import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -38,7 +38,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    private final int entriesPerFile;
    private final boolean ignoreEOIs;
    private File resultFolder;
-   private FileDataManager dataManager;
+   private FileDataManagerBinary dataManager;
 
    private Thread writerThread;
 
@@ -61,7 +61,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
       ignoreEOIs = configuration.getBooleanProperty(CONFIG_IGNORE_EOIS, true);
 
-      dataManager = new FileDataManager(this);
+      dataManager = new FileDataManagerBinary(this);
    }
 
    @Override
@@ -114,7 +114,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       final Path kiekerPath = WriterUtil.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
-      dataManager = new FileDataManager(this);
+      dataManager = new FileDataManagerBinary(this);
       onStarting();
    }
 

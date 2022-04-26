@@ -172,7 +172,7 @@ public class TestAggregatedTreeWriter {
       System.out.println("File: " + currentMeasureFile.getAbsolutePath());
 
       final Map<AggregatedDataNode, AggregatedData> data = new HashMap<>();
-      AggregatedDataReader.readAggregatedDataFile(currentMeasureFile, data);
+      AggregatedDataReaderBin.readAggregatedDataFile(currentMeasureFile, data);
       assertEquals(methods, data.keySet().size());
 
       return data;
