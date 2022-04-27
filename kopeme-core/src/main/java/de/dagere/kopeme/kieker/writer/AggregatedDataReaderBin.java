@@ -25,14 +25,7 @@ public class AggregatedDataReaderBin {
 
          System.out.println("test");
          while (reader.available() > 0) {
-            String call = WrittenResultReaderBin.readUntilSign(reader, ';');
-            
-            int eoi = readInt(reader);
-            int ess = readInt(reader);
-            
-            System.out.println("Read: " + call + " " + eoi + " " + ess);
-            
-            final AggregatedDataNode node = new AggregatedDataNode(eoi, ess, call);
+            final AggregatedDataNode node = readAggregatedDataNode(reader);
             
             AggregatedData data = datas.get(node);
             if (data == null) {
@@ -42,17 +35,34 @@ public class AggregatedDataReaderBin {
             
             long time = readLong(reader);
             
-            final double mean = readDouble(reader);
-            final double deviation = readDouble(reader);
-            final long n = readLong(reader);
-            final double min = readDouble(reader);
-            final double max = readDouble(reader);
-            final double sum = mean * n;
-            final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, sum);
+            final StatisticalSummary summary = readStatisticalSummary(reader);
             
             data.getStatistic().put(time, summary);
          }
       }
+   }
+
+   private static StatisticalSummary readStatisticalSummary(BufferedInputStream reader) throws IOException {
+      final double mean = readDouble(reader);
+      final double deviation = readDouble(reader);
+      final long n = readLong(reader);
+      final double min = readDouble(reader);
+      final double max = readDouble(reader);
+      final double sum = mean * n;
+      final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, sum);
+      return summary;
+   }
+
+   private static AggregatedDataNode readAggregatedDataNode(BufferedInputStream reader) throws IOException {
+      String call = WrittenResultReaderBin.readUntilSign(reader, ';');
+      
+      int eoi = readInt(reader);
+      int ess = readInt(reader);
+      
+      System.out.println("Read: " + call + " " + eoi + " " + ess);
+      
+      final AggregatedDataNode node = new AggregatedDataNode(eoi, ess, call);
+      return node;
    }
 
    private static final byte[] longBytes = new byte[Long.BYTES];
@@ -98,24 +108,5 @@ public class AggregatedDataReaderBin {
          double value = doubleBuffer.getDouble();
          return value;
       }
-   }
-
-   private static AggregatedDataNode readDataNode(final String[] parts) {
-      final String call = parts[0];
-      final int eoi = Integer.parseInt(parts[1]);
-      final int ess = Integer.parseInt(parts[2]);
-      final AggregatedDataNode node = new AggregatedDataNode(eoi, ess, call);
-      return node;
-   }
-
-   private static StatisticalSummary readStatistics(final String[] parts) {
-      final double mean = Double.parseDouble(parts[4]);
-      final double deviation = Double.parseDouble(parts[5]);
-      final long n = Long.parseLong(parts[6]);
-      final double min = Double.parseDouble(parts[7]);
-      final double max = Double.parseDouble(parts[8]);
-      final double sum = mean * n;
-      final StatisticalSummary summary = new StatisticalSummaryValues(mean, deviation * deviation, n, max, min, sum);
-      return summary;
    }
 }

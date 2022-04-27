@@ -46,7 +46,6 @@ public class KoPeMeRule implements TestRule {
          Class<?> testClass = null;
 
          try {
-            // testClass = Class.forName(descr.getClassName());
             testClass = testObject.getClass();
             final String methodDescription = descr.getMethodName();
             final LinkedHashMap<String, String> params;

@@ -60,7 +60,8 @@ public class KoPeMeKiekerSupport {
             fsWriter = OneCallWriter.getInstance();
             if (fsWriter == null) {
                System.err.println("Kieker is not used, although specified. The " +
-                     OneCallWriter.class.getCanonicalName() + ", " + ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName() + " have to be used!");
+                     OneCallWriter.class.getCanonicalName() + ", " + ChangeableFolderWriter.class.getCanonicalName() + " or " + AggregatedTreeWriter.class.getCanonicalName()
+                     + " have to be used!");
                final String tempdir = System.getProperty("java.io.tmpdir");
                final File tempDirFile = new File(tempdir);
                if (!tempDirFile.exists()) {
@@ -126,6 +127,7 @@ public class KoPeMeKiekerSupport {
       final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
       final Field queueField = WriterController.class.getDeclaredField("writerQueue");
       queueField.setAccessible(true);
+      @SuppressWarnings("unchecked")
       final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
       return writerQueue;
    }
