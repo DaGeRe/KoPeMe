@@ -35,7 +35,7 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
       return instance;
    }
 
-   private static final Logger LOG = Logger.getLogger(AggregatedTreeWriter.class.getName());
+   private static final Logger LOG = Logger.getLogger(OneCallWriter.class.getName());
 
    public OneCallWriter(final Configuration configuration) throws IOException {
       super(configuration);
