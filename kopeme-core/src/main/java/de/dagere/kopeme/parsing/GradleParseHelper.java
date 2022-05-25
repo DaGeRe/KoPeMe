@@ -1,6 +1,7 @@
 package de.dagere.kopeme.parsing;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 
 public enum GradleParseHelper {
@@ -20,10 +21,11 @@ public enum GradleParseHelper {
       if (!gradleFile.exists()) {
          File moduleNameCandidate = new File(projectFolder, projectFolder.getName() + ".gradle");
          if (!moduleNameCandidate.exists()) {
-            File[] gradleFiles = projectFolder.listFiles(new FilenameFilter() {
+            File[] gradleFiles = projectFolder.listFiles(new FileFilter() {
+               
                @Override
-               public boolean accept(final File dir, final String name) {
-                  return name.endsWith(".gradle") && !name.equals(ALTERNATIVE_NAME);
+               public boolean accept(File potentialBuildfile) {
+                  return potentialBuildfile.getName().endsWith(".gradle") && !potentialBuildfile.equals(ALTERNATIVE_NAME) && !potentialBuildfile.isDirectory();
                }
             });
             return gradleFiles;
