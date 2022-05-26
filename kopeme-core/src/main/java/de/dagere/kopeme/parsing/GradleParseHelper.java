@@ -25,7 +25,7 @@ public enum GradleParseHelper {
                
                @Override
                public boolean accept(File potentialBuildfile) {
-                  return potentialBuildfile.getName().endsWith(".gradle") && !potentialBuildfile.equals(ALTERNATIVE_NAME) && !potentialBuildfile.isDirectory();
+                  return potentialBuildfile.getName().endsWith(".gradle") && !potentialBuildfile.getName().equals(ALTERNATIVE_NAME) && !potentialBuildfile.isDirectory();
                }
             });
             return gradleFiles;
