@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.dagere.kopeme</groupId>
   <artifactId>kopeme-parent</artifactId>
-  <version>1.1.5</version>
+  <version>1.1.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>KoPeMe - Parent</name>
   <description>KoPeMe is a framework for enabling performance tests in Java. This makes it possible to live a software development process where performance measures are taken continously and therefore react continously to changes in performance. With continous performance testing, one avoids refactorings after performance problems occured in a big testing phase before releasing the software.</description>
