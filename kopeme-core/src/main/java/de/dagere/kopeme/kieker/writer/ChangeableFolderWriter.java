@@ -2,6 +2,8 @@ package de.dagere.kopeme.kieker.writer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
+import java.nio.channels.ClosedChannelException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,7 +103,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       if (record instanceof KiekerMetadataRecord && !full) {
          addMappingRecord(record);
       }
-//      LOG.info("Writing: " + record);
+      // LOG.info("Writing: " + record);
       if (currentWriter != null) {
          LOG.log(Level.FINEST, "Record: " + record);
          // LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
@@ -127,7 +129,12 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       if (currentWriter != null) {
          LOG.info("Terminating old writer");
          LOG.info("writer: " + currentWriter.getClass());
-         currentWriter.onTerminating();
+         try {
+            currentWriter.onTerminating();
+         } catch (BufferUnderflowException e) {
+            LOG.info("Kieker exeption occured during closing old writer; ignoring");
+            e.printStackTrace();
+         }
       }
       LOG.info("Writing to: " + writingFolder + " " + System.identityHashCode(currentWriter));
       final String absolutePath = writingFolder.getAbsolutePath();
