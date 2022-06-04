@@ -43,6 +43,9 @@ public class KoPeMeKiekerSupport {
    public void useKieker(final boolean useIt, final String testClassName, final String testCaseName) throws IOException {
       if (useIt) {
          final IMonitoringController kiekerController = MonitoringController.getInstance();
+
+         waitQueueToFinish();
+
          final ChangeableFolder fsWriter = getWriter();
          final File folderForCurrentPerformanceResult = fp.getFolderForCurrentPerformanceresults(testClassName, testCaseName);
          folderForCurrentPerformanceResult.mkdirs();
@@ -102,7 +105,7 @@ public class KoPeMeKiekerSupport {
       }
    }
 
-   private void waitQueueToFinish() throws NoSuchFieldException, IllegalAccessException {
+   private void waitQueueToFinish() {
       final BlockingQueue<IMonitoringRecord> writerQueue = getWriterQueue();
       int size = writerQueue.size();
       LOG.info("Waiting for Kieker writer queue to finish");
@@ -121,15 +124,20 @@ public class KoPeMeKiekerSupport {
       }
    }
 
-   BlockingQueue<IMonitoringRecord> getWriterQueue() throws NoSuchFieldException, IllegalAccessException {
-      final Field controllerField = MonitoringController.class.getDeclaredField("writerController");
-      controllerField.setAccessible(true);
-      final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
-      final Field queueField = WriterController.class.getDeclaredField("writerQueue");
-      queueField.setAccessible(true);
-      @SuppressWarnings("unchecked")
-      final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
-      return writerQueue;
+   BlockingQueue<IMonitoringRecord> getWriterQueue() {
+      try {
+         final Field controllerField = MonitoringController.class.getDeclaredField("writerController");
+         controllerField.setAccessible(true);
+         final WriterController writerController = (WriterController) controllerField.get(MonitoringController.getInstance());
+         final Field queueField = WriterController.class.getDeclaredField("writerQueue");
+         queueField.setAccessible(true);
+         @SuppressWarnings("unchecked")
+         final BlockingQueue<IMonitoringRecord> writerQueue = (BlockingQueue<IMonitoringRecord>) queueField.get(writerController);
+         return writerQueue;
+      } catch (NoSuchFieldException | IllegalAccessException e) {
+         throw new RuntimeException(e);
+      }
+
    }
 
    public static Field finishMonitoring(final IMonitoringController monitoringController)
