@@ -3,7 +3,6 @@ package de.dagere.kopeme.kieker.writer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
-import java.nio.channels.ClosedChannelException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

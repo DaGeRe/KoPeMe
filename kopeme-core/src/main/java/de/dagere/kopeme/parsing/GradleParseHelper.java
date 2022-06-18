@@ -2,7 +2,6 @@ package de.dagere.kopeme.parsing;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 
 public enum GradleParseHelper {
    ;
