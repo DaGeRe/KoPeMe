@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests.rules;
+package de.dagere.kopeme.junit5.exampletests;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 interface IMock {
 }

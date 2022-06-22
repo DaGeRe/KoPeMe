@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleBeforeWithMeasurementOrderTest;
+import de.dagere.kopeme.junit5.exampletests.ExampleBeforeWithMeasurementOrderTest;
 
 public class TestBeforeAfterMethodFinder {
    

@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTest;
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtension5ParameterizedTestChosenParameter;
+import de.dagere.kopeme.junit5.exampletests.ExampleExtension5ParameterizedTest;
+import de.dagere.kopeme.junit5.exampletests.ExampleExtension5ParameterizedTestChosenParameter;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 

@@ -3,7 +3,7 @@ package de.dagere.kopeme.junit5;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.junit5.rule.KoPeMeJUnit5Starter;
+import de.dagere.kopeme.junit5.extension.KoPeMeJUnit5Starter;
 
 public class TestIndexParsing {
    

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.rule;
+package de.dagere.kopeme.junit5.extension;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -28,7 +28,7 @@ import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
-import de.dagere.kopeme.junit.rule.KoPeMeRuleStatement5;
+import de.dagere.kopeme.junit.rule.KoPeMeExtensionStatement;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.PreparableTestRunnables;
@@ -93,7 +93,7 @@ public class KoPeMeJUnit5Starter {
       final PreparableTestRunnables runnables = new PreparableTestRunnables(runConfiguration, outerInstance.getClass(), descriptor, jupiterContext);
 
       try {
-         final KoPeMeRuleStatement5 statement = new KoPeMeRuleStatement5(runnables, method, outerInstance.getClass().getName(), params);
+         final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          ThrowableCollector collector = jupiterContext.getThrowableCollector();
          if (!collector.isEmpty()) {
@@ -121,7 +121,7 @@ public class KoPeMeJUnit5Starter {
          List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(outerInstance.getClass());
          final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance,
                beforeClassMethod, afterClassMethod);
-         final KoPeMeRuleStatement5 statement = new KoPeMeRuleStatement5(runnables, method, outerInstance.getClass().getName(), params);
+         final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          if (statement.getThrowable() != null) {
             throw statement.getThrowable();

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.rule;
+package de.dagere.kopeme.junit5.extension;
 
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests.rules;
+package de.dagere.kopeme.junit5.exampletests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 class MyMockClazz{
    @Mock

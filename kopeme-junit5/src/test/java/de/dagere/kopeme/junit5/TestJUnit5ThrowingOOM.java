@@ -1,7 +1,8 @@
 package de.dagere.kopeme.junit5;
 
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtensionTestThrowingOOM;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestThrowingOOM;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
+
 import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

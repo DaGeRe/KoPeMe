@@ -9,7 +9,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleUnallowedBeforeWithMeasurement;
+import de.dagere.kopeme.junit5.exampletests.ExampleUnallowedBeforeWithMeasurement;
 
 /**
  * Tests just whether JUnit 5 execution works

@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests.rules;
+package de.dagere.kopeme.junit5.exampletests;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 /**
  * An example test for testing whether the KoPeMe-Extension works correct together with Parameterized

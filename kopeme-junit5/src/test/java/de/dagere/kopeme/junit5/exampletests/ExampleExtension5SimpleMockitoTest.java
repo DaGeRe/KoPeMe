@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests.rules;
+package de.dagere.kopeme.junit5.exampletests;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 class Callee {
    int method1() {

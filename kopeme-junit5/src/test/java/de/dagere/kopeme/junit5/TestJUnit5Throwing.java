@@ -5,8 +5,8 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.junit5.exampletests.rules.ExampleExtensionTestThrowing;
-import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestThrowing;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 public class TestJUnit5Throwing {
    

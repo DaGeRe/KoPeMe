@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.rule;
+package de.dagere.kopeme.junit5.extension;
 
 import java.lang.reflect.Method;
 import java.util.Optional;

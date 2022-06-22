@@ -36,14 +36,6 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
    private final TestResult finalResult;
    private final LinkedHashMap<String, String> params;
 
-   public KoPeMeRuleStatement4(final TestRunnable runnables, final Method method, final String filename) {
-      super(runnables, method, filename, method.getName());
-      finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false);
-      
-      params = null;
-      initializeKieker(clazzname, method.getName());
-   }
-
    public KoPeMeRuleStatement4(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
       super(runnables,
             method,

@@ -28,15 +28,15 @@ import de.dagere.kopeme.runnables.TestRunnable;
  * @author dagere
  * 
  */
-public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
+public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
 
-   private static final Logger LOG = LogManager.getLogger(KoPeMeRuleStatement5.class);
+   private static final Logger LOG = LogManager.getLogger(KoPeMeExtensionStatement.class);
 
    private final TestResult finalResult;
    private final LinkedHashMap<String, String> params;
    private Throwable throwable = null;
 
-   public KoPeMeRuleStatement5(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
+   public KoPeMeExtensionStatement(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
       super(runnables,
             method,
             filename,
@@ -72,12 +72,12 @@ public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
 
          @Override
          public boolean isFinished() {
-            return KoPeMeRuleStatement5.this.isFinished;
+            return KoPeMeExtensionStatement.this.isFinished;
          }
 
          @Override
          public void setFinished(final boolean isFinished) {
-            KoPeMeRuleStatement5.this.isFinished = isFinished;
+            KoPeMeExtensionStatement.this.isFinished = isFinished;
          }
       };
 
