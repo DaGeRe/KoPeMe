@@ -1,0 +1,18 @@
+package de.dagere.kopeme.junit5.exampletests.rules;
+
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+@ExtendWith(KoPeMeExtension.class)
+public class ExampleExtensionTestThrowingOOM {
+
+	@Test
+	@PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME")
+	public void testNormal() {
+		System.out.println("Normal Execution");
+		//throw new OutOfMemoryError("OOM Error");
+		String[] array = new String[100000 * 100000];
+	}
+}
