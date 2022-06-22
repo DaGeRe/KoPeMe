@@ -14,7 +14,7 @@ public class KoPeMeExtension implements ExecutionCondition {
          try {
             final KoPeMeJUnit5Starter starter = new KoPeMeJUnit5Starter(context);
             starter.start();
-         } catch (Exception e) {
+         } catch (Throwable e) {
             e.printStackTrace();
             lastRunFailed = true;
          }

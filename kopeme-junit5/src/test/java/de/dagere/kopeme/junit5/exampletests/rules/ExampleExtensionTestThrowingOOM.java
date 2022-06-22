@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class ExampleExtensionTestThrowingOOM {
 
 	@Test
-	@PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME")
+	@PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME", useKieker = false)
 	public void testNormal() {
 		System.out.println("Normal Execution");
 		//throw new OutOfMemoryError("OOM Error");

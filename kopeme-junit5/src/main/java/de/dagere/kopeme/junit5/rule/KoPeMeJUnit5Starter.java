@@ -123,6 +123,9 @@ public class KoPeMeJUnit5Starter {
                beforeClassMethod, afterClassMethod);
          final KoPeMeRuleStatement5 statement = new KoPeMeRuleStatement5(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
+         if (statement.getThrowable() != null) {
+            throw statement.getThrowable();
+         }
          ThrowableCollector collector = clazzContext.getThrowableCollector();
          if (!collector.isEmpty()) {
             throw new RuntimeException("Test caused exception", collector.getThrowable());

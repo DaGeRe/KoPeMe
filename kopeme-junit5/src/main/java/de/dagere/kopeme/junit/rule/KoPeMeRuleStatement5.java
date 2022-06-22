@@ -34,6 +34,7 @@ public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
 
    private final TestResult finalResult;
    private final LinkedHashMap<String, String> params;
+   private Throwable throwable = null;
 
    public KoPeMeRuleStatement5(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
       super(runnables,
@@ -63,10 +64,9 @@ public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
                if (!assertationvalues.isEmpty()) {
                   finalResult.checkValues(assertationvalues);
                }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-               e.printStackTrace();
             } catch (final Throwable e) {
                e.printStackTrace();
+               throwable = e;
             }
          }
 
@@ -84,6 +84,10 @@ public class KoPeMeRuleStatement5 extends KoPeMeBasicStatement5 {
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, annotation.timeout(), Type.METHOD, annotation.useKieker());
       tbe.execute();
       LOG.info("Test {} beendet", clazzname);
+   }
+   
+   public Throwable getThrowable() {
+      return throwable;
    }
 
    private void executeSimpleTest() throws Throwable {
