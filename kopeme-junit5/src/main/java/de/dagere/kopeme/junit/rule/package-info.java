@@ -1,5 +1,7 @@
 /**
- * Contains all classes that are used for the JUnit-Rules for performance tests.
+ * Contains base classes that are used for JUnit 5 performance tests.
+ * 
+ * Since these classes are currently synchronized with the JUnit 4 classes (but, to keep the classpath clean, not equal), the name is still .rule.
  * 
  * 
  * @author reichelt
