@@ -89,9 +89,14 @@ public final class PerformanceTestUtils {
          }
       }
 
-      for (final String datacollector : tr.getDatacollectors()) {
-         buildKeyData(data, xds, tr, datacollector);
+      if (tr.getDatacollectors().size() != 0) {
+         for (final String datacollector : tr.getDatacollectors()) {
+            buildKeyData(data, xds, tr, datacollector);
+         }
+      } else {
+         xds.storeEmptyMethod(data.getTestcasename());
       }
+
    }
 
    private static DataStorer getDataStorer(final SaveableTestData data) {

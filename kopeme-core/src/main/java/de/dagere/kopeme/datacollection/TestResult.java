@@ -182,11 +182,13 @@ public final class TestResult {
 
    public void finalizeCollection(final Throwable thrownException) {
       writer.finalizeCollection();
-      if (iterations < BOUNDARY_SAVE_FILE) {
-         reader.read(thrownException, getDatacollectors());
-         reader.deleteTempFile();
-      } else {
-         reader.readStreaming(getDatacollectors());
+      if (sortedCollectors.length > 0) {
+         if (iterations < BOUNDARY_SAVE_FILE) {
+            reader.read(thrownException, getDatacollectors());
+            reader.deleteTempFile();
+         } else {
+            reader.readStreaming(getDatacollectors());
+         }
       }
    }
 
@@ -198,7 +200,7 @@ public final class TestResult {
     */
    public Number getValue(final String key) {
       final Map<String, Number> finalValues = reader.getFinalValues();
-      if (finalValues.get(key) != null) {
+      if (finalValues != null && finalValues.get(key) != null) {
          return finalValues.get(key);
       } else {
          return null;

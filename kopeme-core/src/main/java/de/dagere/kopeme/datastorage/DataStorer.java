@@ -11,4 +11,6 @@ import de.dagere.kopeme.kopemedata.VMResult;
 public interface DataStorer {
 
    void storeValue(VMResult performanceDataMeasure, String testcase, String collectorName);
+
+   void storeEmptyMethod(String testcasename);
 }

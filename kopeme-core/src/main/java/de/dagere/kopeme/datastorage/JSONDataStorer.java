@@ -58,7 +58,7 @@ public class JSONDataStorer implements DataStorer {
 
    @Override
    public void storeValue(VMResult result, String testcase, String collectorName) {
-      final TestMethod test = getOrCreateTestcase(result, testcase);
+      final TestMethod test = getOrCreateTestcase(testcase);
 
       final DatacollectorResult dc = getOrCreateDatacollector(collectorName, test);
 
@@ -124,7 +124,7 @@ public class JSONDataStorer implements DataStorer {
       return collectorResult;
    }
 
-   private TestMethod getOrCreateTestcase(VMResult performanceDataMeasure, String testcase) {
+   private TestMethod getOrCreateTestcase(String testcase) {
       TestMethod testMethod = null;
       for (TestMethod currentMethod : data.getMethods()) {
          if (currentMethod.getMethod().equals(testcase)) {
@@ -148,6 +148,12 @@ public class JSONDataStorer implements DataStorer {
          throw new RuntimeException(e);
       }
       
+   }
+
+   @Override
+   public void storeEmptyMethod(String testcasename) {
+      getOrCreateTestcase(testcasename);
+      storeData();
    }
 
 }
