@@ -95,6 +95,9 @@ public class KoPeMeJUnit5Starter {
       try {
          final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
+         if (statement.getThrowable() != null) {
+            throw statement.getThrowable();
+         }
          ThrowableCollector collector = jupiterContext.getThrowableCollector();
          if (!collector.isEmpty()) {
             throw new RuntimeException("Test caused exception", collector.getThrowable());
