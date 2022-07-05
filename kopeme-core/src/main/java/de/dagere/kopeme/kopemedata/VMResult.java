@@ -23,24 +23,26 @@ public class VMResult {
    private String commit;
 
    private ResultConfiguration vmRunConfiguration = new ResultConfiguration();
+
    // Should persist input order, therefore sorted map
-   private LinkedHashMap<String, String> parameters;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   private LinkedHashMap<String, String> parameters = null;
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private String javaVersion;
    private String cpu;
    private String memory;
    private long date;
-   
+
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private Long cpuTemperature;
 
-   @JsonInclude(JsonInclude.Include.NON_NULL)
-   private Boolean failure = false;
-   
-   @JsonInclude(JsonInclude.Include.NON_NULL)
-   private Boolean error = false;
-   
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = OnlyTrueFilter.class)
+   private boolean failure = false;
+
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = OnlyTrueFilter.class)
+   private boolean error = false;
+
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private Fulldata fulldata;
 
@@ -123,9 +125,9 @@ public class VMResult {
    public void setParameters(LinkedHashMap<String, String> parameters) {
       this.parameters = parameters;
    }
-   
+
    @JsonIgnore
-   public Entry<String, String> getFirstParameter(){
+   public Entry<String, String> getFirstParameter() {
       return parameters.entrySet().iterator().next();
    }
 
@@ -191,5 +193,16 @@ public class VMResult {
 
    public void setFulldata(Fulldata fulldata) {
       this.fulldata = fulldata;
+   }
+
+   public static final class OnlyTrueFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj == null || !(obj instanceof Boolean)) {
+            return false;
+         }
+         final Boolean v = (Boolean) obj;
+         return Boolean.FALSE.equals(v);
+      }
    }
 }
