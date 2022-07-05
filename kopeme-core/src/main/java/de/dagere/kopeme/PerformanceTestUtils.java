@@ -15,6 +15,7 @@ import de.dagere.kopeme.datastorage.DataStorer;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.SaveableTestData;
+import de.dagere.kopeme.datastorage.SaveableTestData.TestErrorTestData;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.VMResult;
 
@@ -141,6 +142,9 @@ public final class PerformanceTestUtils {
       result.getVmRunConfiguration().setUseKieker(data.getConfiguration().isUseKieker());
       result.setDate(new Date().getTime());
       result.setJavaVersion(System.getProperty("java.version"));
+      if (data instanceof TestErrorTestData) {
+         result.setError(true);
+      }
       return result;
    }
 

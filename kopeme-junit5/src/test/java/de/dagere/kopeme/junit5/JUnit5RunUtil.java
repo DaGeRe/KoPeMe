@@ -14,6 +14,11 @@ import org.junit.platform.launcher.listeners.TestExecutionSummary.Failure;
 
 import de.dagere.kopeme.datastorage.FolderProvider;
 
+/**
+ * A util for launching JUnit 5 and managing KoPeMe results; by convention, the KoPeMe test method should be named testNormal.
+ * @author DaGeRe
+ *
+ */
 public class JUnit5RunUtil {
    public static File runJUnit5Test(final Class<?> testedClass) {
       String folder = FolderProvider.getInstance().getFolderFor(testedClass.getCanonicalName());

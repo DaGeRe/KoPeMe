@@ -1,9 +1,11 @@
 package de.dagere.kopeme.junit5;
 
+import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5MockitoTestThrowingOOM;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5TestWithoutWarmUpThrowingOOM;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestThrowingOOM;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
+import de.dagere.kopeme.kopemedata.Kopemedata;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -31,5 +33,8 @@ public class TestJUnit5ThrowingOOM {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtension5TestWithoutWarmUpThrowingOOM.class);
 
       Assert.assertTrue(KoPeMeExtension.isLastRunFailed());
+      
+      Kopemedata data = JSONDataLoader.loadData(file);
+      Assert.assertTrue(data.getFirstResult().isError());
    }
 }
