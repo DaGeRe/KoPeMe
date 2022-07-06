@@ -96,8 +96,8 @@ public class XMLConversionLoader {
       jsonVMResult.setMemory(xmlResult.getMemory());
       jsonVMResult.setDate(xmlResult.getDate());
       jsonVMResult.setCpuTemperature(xmlResult.getCputemperature());
-      jsonVMResult.setFailure(xmlResult.isFailure());
-      jsonVMResult.setError(xmlResult.isError());
+      jsonVMResult.setFailure(xmlResult.isFailure() != null && xmlResult.isFailure() == false ? false : true);
+      jsonVMResult.setError(xmlResult.isError() != null && xmlResult.isError() == false ? false : true);
       
       transformFulldata(xmlResult, jsonVMResult);
       

@@ -171,19 +171,19 @@ public class VMResult {
       this.cpuTemperature = cpuTemperature;
    }
 
-   public Boolean isFailure() {
+   public boolean isFailure() {
       return failure;
    }
 
-   public void setFailure(Boolean failure) {
+   public void setFailure(boolean failure) {
       this.failure = failure;
    }
 
-   public Boolean isError() {
+   public boolean isError() {
       return error;
    }
 
-   public void setError(Boolean error) {
+   public void setError(boolean error) {
       this.error = error;
    }
 
