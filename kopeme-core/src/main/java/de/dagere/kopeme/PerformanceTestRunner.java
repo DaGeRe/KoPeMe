@@ -32,7 +32,8 @@ public class PerformanceTestRunner {
    protected final Class<?> klasse;
    protected final Object instanz;
    protected final Method method;
-   protected int executionTimes, warmupExecutions, repetitions, minEarlyStopExecutions, timeout;
+   protected int executionTimes, warmupExecutions, repetitions, minEarlyStopExecutions;
+   private long timeout;
    protected Map<String, Double> maximalRelativeStandardDeviation;
    protected Map<String, Long> assertationvalues;
    protected String filename;
