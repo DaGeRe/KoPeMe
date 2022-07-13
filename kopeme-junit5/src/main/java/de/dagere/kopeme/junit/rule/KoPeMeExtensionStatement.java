@@ -2,7 +2,6 @@ package de.dagere.kopeme.junit.rule;
 
 import static de.dagere.kopeme.PerformanceTestUtils.saveData;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 
