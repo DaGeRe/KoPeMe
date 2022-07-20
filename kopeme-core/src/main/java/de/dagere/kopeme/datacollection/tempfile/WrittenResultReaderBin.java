@@ -28,7 +28,7 @@ public class WrittenResultReaderBin implements TempfileReader {
 
    private File file;
    protected List<Map<String, Long>> realValues = null;
-   protected List<Long> executionStartTimes = null;
+   protected List<Long> iterationStartTimes = null;
    protected Map<String, Number> finalValues = null;
    protected Map<String, SummaryStatistics> collectorSummaries = null;
    private Map<Integer, String> collectorsIndexed;
@@ -45,9 +45,9 @@ public class WrittenResultReaderBin implements TempfileReader {
    }
 
    private void checkValues(final Throwable exception) {
-      LOG.debug("Count of executions: {}  Values: {}", executionStartTimes.size(), realValues.size());
-      if (executionStartTimes.size() != realValues.size()) {
-         throw new RuntimeException("Count of executions is wrong, expected: " + executionStartTimes.size() + " but got " + realValues.size(), exception);
+      LOG.debug("Count of iterations: {}  Values: {}", iterationStartTimes.size(), realValues.size());
+      if (iterationStartTimes.size() != realValues.size()) {
+         throw new RuntimeException("Count of iterations is wrong, expected: " + iterationStartTimes.size() + " but got " + realValues.size(), exception);
       }
    }
 
@@ -122,7 +122,7 @@ public class WrittenResultReaderBin implements TempfileReader {
 
    private void readValues() {
       realValues = new ArrayList<>();
-      executionStartTimes = new ArrayList<>();
+      iterationStartTimes = new ArrayList<>();
       finalValues = new HashMap<>();
       collectorsIndexed = new HashMap<>();
 
@@ -136,7 +136,7 @@ public class WrittenResultReaderBin implements TempfileReader {
             // ignore executionstarts when streaming
             long startTime = readLong(reader);
             currentValues = finishIteration(currentValues);
-            executionStartTimes.add(startTime);
+            iterationStartTimes.add(startTime);
             
             for (String collector : collectorsIndexed.values()) {
                long value = readLong(reader);
@@ -175,7 +175,7 @@ public class WrittenResultReaderBin implements TempfileReader {
    public Fulldata createFulldata(final int warmup, final String currentDatacollector) {
       Fulldata result = new Fulldata();
       for (int i = warmup; i < realValues.size(); i++) {
-         final Long executionStartTime = executionStartTimes.get(i);
+         final Long executionStartTime = iterationStartTimes.get(i);
          final Long value = realValues.get(i).get(currentDatacollector);
          final MeasuredValue fulldataValue = new MeasuredValue();
          fulldataValue.setStartTime(executionStartTime);
@@ -205,7 +205,7 @@ public class WrittenResultReaderBin implements TempfileReader {
 
    @Override
    public List<Long> getExecutionStartTimes() {
-      return executionStartTimes;
+      return iterationStartTimes;
    }
 
    @Override

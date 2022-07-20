@@ -157,7 +157,7 @@ public final class TestResult {
    }
 
    private void writeStartTime() {
-      writer.executionStart(System.currentTimeMillis());
+      writer.iterationStart(System.currentTimeMillis());
    }
 
    /**

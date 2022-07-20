@@ -97,7 +97,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       try {
          runWarmup();
          if (!isFinished) {
-            runMainExecution(finalResult, "execution ", annotation.iterations(), annotation.repetitions());
+            runMainExecution(finalResult, "iteration ", annotation.iterations(), annotation.repetitions());
          }
       } catch (final AssertionFailedError t) {
          finalResult.finalizeCollection(t);

@@ -44,7 +44,7 @@ public class ResultTempWriterBin {
       return tempFile;
    }
 
-   public final void executionStart(final long currentTimeMillis) {
+   public final void iterationStart(final long currentTimeMillis) {
       try {
          longBuffer.clear();
          longBuffer.putLong(0, System.currentTimeMillis());

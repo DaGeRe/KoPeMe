@@ -75,7 +75,7 @@ public class TestWrittenResultReaderStreaming {
       writer.setDataCollectors(collectors);
       
       for (int i = 0; i < 1000; i++) {
-         writer.executionStart(1000 + i);
+         writer.iterationStart(1000 + i);
          writer.writeValues(collectors);
       }
       writer.finalizeCollection();
