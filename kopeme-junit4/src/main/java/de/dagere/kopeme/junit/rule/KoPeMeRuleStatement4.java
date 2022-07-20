@@ -116,7 +116,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
    private void runWarmup() throws Throwable {
       if (annotation.warmup() > 0) {
          final TestResult deletableResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, true);
-         runMainExecution(deletableResult, "warmup execution ", annotation.warmup(), annotation.repetitions());
+         runMainExecution(deletableResult, "warmup iteration ", annotation.warmup(), annotation.repetitions());
          deletableResult.deleteTempFile();
       }
    }
