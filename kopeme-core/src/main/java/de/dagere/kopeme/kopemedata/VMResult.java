@@ -30,7 +30,9 @@ public class VMResult {
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private String javaVersion;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    private String cpu;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    private String memory;
    private long date;
 
