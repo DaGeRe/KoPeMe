@@ -112,31 +112,31 @@ public abstract class KoPeMeBasicStatement5 {
       return PerformanceTestUtils.checkCollectorValidity(tr, assertationvalues, maximalRelativeStandardDeviation);
    }
 
-   protected void runMainExecution(final TestResult tr, final String warmupString, final int executions, final int repetitions) throws Throwable {
+   protected void runMainExecution(final TestResult tr, final String warmupString, final int iterations, final int repetitions) throws Throwable {
       System.gc();
-      final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
-      final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
+      final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + iterations + " ---";
+      final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + iterations + " ---";
       tr.beforeRun();
-      int execution = 1;
+      int iteration = 1;
       try {
          if (annotation.redirectToTemp()) {
             redirectToTempFile();
          } else if (annotation.redirectToNull()) {
             OutputStreamUtil.redirectToNullStream();
          }
-         LOG.debug("Executing " + executions + " " + warmupString);
-         for (execution = 1; execution <= executions; execution++) {
+         LOG.debug("Executing " + iterations + " " + warmupString);
+         for (iteration = 1; iteration <= iterations; iteration++) {
             if (annotation.showStart()) {
-               LOG.debug(fullWarmupStart, execution);
+               LOG.debug(fullWarmupStart, iteration);
             }
             runnables.getBeforeRunnable().run();
             tr.startCollection();
             runAllRepetitions(repetitions);
             tr.stopCollection();
             runnables.getAfterRunnable().run();
-            tr.setRealExecutions(execution - 1);
+            tr.setRealExecutions(iteration - 1);
             if (annotation.showStart()) {
-               LOG.debug(fullWarmupStop, execution);
+               LOG.debug(fullWarmupStop, iteration);
             }
 //            if (execution >= annotation.minEarlyStopExecutions() && !maximalRelativeStandardDeviation.isEmpty()
 //                  && tr.isRelativeStandardDeviationBelow(maximalRelativeStandardDeviation)) {
@@ -151,8 +151,8 @@ public abstract class KoPeMeBasicStatement5 {
 
       System.gc();
       Thread.sleep(1);
-      LOG.debug("Executions: " + (execution - 1));
-      tr.setRealExecutions(execution - 1);
+      LOG.debug("Executions: " + (iteration - 1));
+      tr.setRealExecutions(iteration - 1);
    }
    
    private void redirectToTempFile() throws IOException, FileNotFoundException {

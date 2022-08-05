@@ -98,7 +98,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
       try {
          runWarmup();
          if (!isFinished) {
-            runMainExecution(finalResult, "execution ", annotation.iterations(), annotation.repetitions());
+            runMainExecution(finalResult, "iteration ", annotation.iterations(), annotation.repetitions());
          }
       } catch (final Throwable t) {
          t.printStackTrace();
@@ -113,7 +113,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
    private void runWarmup() throws Throwable {
       if (annotation.warmup() > 0) {
          final TestResult deletableResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, true);
-         runMainExecution(deletableResult, "warmup execution ", annotation.warmup(), annotation.repetitions());
+         runMainExecution(deletableResult, "warmup iteration ", annotation.warmup(), annotation.repetitions());
          deletableResult.deleteTempFile();
       }
    }
