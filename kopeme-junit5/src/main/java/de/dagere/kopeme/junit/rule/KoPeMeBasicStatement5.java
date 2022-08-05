@@ -151,7 +151,7 @@ public abstract class KoPeMeBasicStatement5 {
 
       System.gc();
       Thread.sleep(1);
-      LOG.debug("Executions: " + (iteration - 1));
+      LOG.debug("Finished iterations: " + (iteration - 1));
       tr.setRealExecutions(iteration - 1);
    }
    
