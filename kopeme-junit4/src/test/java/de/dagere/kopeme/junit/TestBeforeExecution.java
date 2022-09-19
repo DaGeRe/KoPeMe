@@ -86,7 +86,7 @@ public class TestBeforeExecution {
       if (!System.getProperty("os.name").startsWith("Mac")) {
          MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.lessThan(200d * TO_MILLISECONDS));
       }
-      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(99d * TO_MILLISECONDS));
+      MatcherAssert.assertThat("Test error in " + canonicalName, time, Matchers.greaterThan(90d * TO_MILLISECONDS));
    }
 
    public static double getTimeResult(final File measurementFile, final String methodName) {
