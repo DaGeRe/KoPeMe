@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExecutionCondition;
+import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 
@@ -93,6 +94,12 @@ final class DummyConfiguration implements JupiterConfiguration {
 
    @Override
    public Optional<ClassOrderer> getDefaultTestClassOrderer() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public CleanupMode getDefaultTempDirCleanupMode() {
       // TODO Auto-generated method stub
       return null;
    }
