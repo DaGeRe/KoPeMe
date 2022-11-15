@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
@@ -22,7 +22,7 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
             int priority = annotationValue.priority();
             addToPriority(beforePriorityMethods, classMethod, priority);
          }
-         if (classMethod.getAnnotation(BeforeAll.class) != null) {
+         if (classMethod.getAnnotation(BeforeEach.class) != null) {
             classMethod.setAccessible(true);
             addToPriority(beforePriorityMethods, classMethod, Integer.MAX_VALUE);
          }
