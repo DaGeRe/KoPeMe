@@ -115,6 +115,10 @@ public class KoPeMeJUnit5Starter {
             @Override
             public void run() throws Throwable {
                descriptor.execute(clazzContext, null);
+               
+               if (clazzContext.getThrowableCollector().getThrowable() != null) {
+                  throw clazzContext.getThrowableCollector().getThrowable();
+               }
             }
          };
          final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
