@@ -13,32 +13,32 @@ import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 @ExtendWith(KoPeMeExtension.class)
 public class ExampleExtensionMockitoBeforeTest {
-   
-   private static MockedStatic<Station> station;
-   
-   @BeforeAll
-   static void initializeMocks() {
-       station = Mockito.mockStatic(Station.class);
-   }
 
-   @BeforeEach
-   void init() {
-       station.when(() -> Station.getStation()).thenReturn("MockedStation");
-   }
+    private static MockedStatic<Station> station;
 
-   @PerformanceTest(warmup = 0, iterations = 2)
-   @Test
-   void test() {
-       final MockitoCallee exampleClazz = new MockitoCallee();
-       String result = exampleClazz.method1();
-       Assertions.assertEquals("MockedStation", result);
-   }
+    @de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement(priority = 2)
+    static void initializeMocks() {
+        station = Mockito.mockStatic(Station.class);
+    }
 
-   @PerformanceTest(warmup = 0, iterations = 2)
-   @Test
-   void test2() {
-       final MockitoCallee exampleClazz = new MockitoCallee();
-       String result = exampleClazz.method1();
-       Assertions.assertEquals("MockedStation", result);
-   }
+    @BeforeEach
+    void init() {
+        station.when(() -> Station.getStation()).thenReturn("MockedStation");
+    }
+
+    @PerformanceTest(warmup = 0, iterations = 2, executeBeforeClassInMeasurement = true)
+    @Test
+    void test() {
+        final MockitoCallee exampleClazz = new MockitoCallee();
+        String result = exampleClazz.method1();
+        Assertions.assertEquals("MockedStation", result);
+    }
+
+    @PerformanceTest(warmup = 0, iterations = 2, executeBeforeClassInMeasurement = true)
+    @Test
+    void test2() {
+        final MockitoCallee exampleClazz = new MockitoCallee();
+        String result = exampleClazz.method1();
+        Assertions.assertEquals("MockedStation", result);
+    }
 }
