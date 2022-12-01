@@ -124,10 +124,10 @@ public class KoPeMeJUnit5Starter {
          final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
 
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
-         List<Method> beforeClassMethod = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(outerInstance.getClass());
-         List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(outerInstance.getClass());
+         List<Method> beforeClassMethods = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(outerInstance.getClass());
+         List<Method> afterClassMethods = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(outerInstance.getClass());
          final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance,
-               beforeClassMethod, afterClassMethod);
+               beforeClassMethods, afterClassMethods);
          final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
          statement.evaluate();
          if (statement.getThrowable() != null) {
