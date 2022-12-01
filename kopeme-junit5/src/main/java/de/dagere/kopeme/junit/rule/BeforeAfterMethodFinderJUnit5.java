@@ -24,7 +24,7 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
          }
          if (classMethod.getAnnotation(BeforeEach.class) != null) {
             classMethod.setAccessible(true);
-            addToPriority(beforePriorityMethods, classMethod, Integer.MAX_VALUE);
+            addToPriority(beforePriorityMethods, classMethod, Integer.MIN_VALUE);
          }
       }
 

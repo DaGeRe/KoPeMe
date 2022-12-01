@@ -7,11 +7,13 @@ import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5MockitoTest;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionInjectMockJUnit5Test;
+import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionMockitoBeforeTest;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 
 /**
@@ -51,6 +53,16 @@ public class TestJUnit5Mockito {
       
       
       MatcherAssert.assertThat(ExampleExtensionInjectMockJUnit5Test.finishCount, Matchers.is(3));
+   }
+   
+   @Test
+   public void testBeforeBeforeWithMeasurementSplitted() {
+      File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionMockitoBeforeTest.class);
+
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = JSONDataLoader.loadData(file);
+      Assert.assertFalse(data.getFirstDatacollectorContent().get(0).isError());
    }
    
 }
