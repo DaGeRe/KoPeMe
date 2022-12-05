@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import de.dagere.kopeme.AndroidConfiguration;
 
 import de.dagere.kopeme.KoPeMeConfiguration;
 
@@ -12,6 +13,7 @@ public class FolderProvider {
    static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
 
    static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME")
+         : AndroidConfiguration.read("KOPEME_HOME") != null ? AndroidConfiguration.read("KOPEME_HOME")
          : System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator;
 
    private static FolderProvider INSTANCE;
