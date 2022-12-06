@@ -17,7 +17,6 @@ public class AndroidConfiguration {
         try {
             fieldValue = KoPeMeConstants.OBJECTMAPPER.readTree(inputStream).get(fieldName).asText();
         } catch (Exception e) {
-            System.err.println("Couldn't read Android configuration: "+e.getMessage());
             fieldValue = null;
         }
         return fieldValue;
