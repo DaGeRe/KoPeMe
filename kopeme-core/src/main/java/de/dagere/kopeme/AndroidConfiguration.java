@@ -1,6 +1,7 @@
 package de.dagere.kopeme;
 import java.io.InputStream;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Configuration class for Android projects to read environment variables, properties, etc
@@ -12,10 +13,14 @@ public class AndroidConfiguration {
     static final String ANDROID_CONFIG = "kopeme_config.json";
 
     public static String read(String fieldName) {
-        InputStream inputStream = AndroidConfiguration.class.getClassLoader().getResourceAsStream(ANDROID_CONFIG);
+        ClassLoader classLoader = AndroidConfiguration.class.getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(ANDROID_CONFIG);
         String fieldValue;
         try {
-            fieldValue = KoPeMeConstants.OBJECTMAPPER.readTree(inputStream).get(fieldName).asText();
+            JsonNode rootNode, fieldNode;
+            rootNode = KoPeMeConstants.OBJECTMAPPER.readTree(inputStream);
+            fieldNode = rootNode.get(fieldName);
+            fieldValue = fieldNode.asText();
         } catch (Exception e) {
             fieldValue = null;
         }
