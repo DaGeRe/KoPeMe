@@ -53,7 +53,7 @@ public class FolderProviderTest {
 
    @Test
    public void testDefaultFolderName() {
-      assertEquals(System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator, FolderProvider.KOPEME_DEFAULT_FOLDER);
+      assertEquals(System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator, FolderProvider.createDefautFolderPath());
    }
 
    @Test
