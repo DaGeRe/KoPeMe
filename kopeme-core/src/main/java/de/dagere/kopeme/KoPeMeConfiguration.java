@@ -66,7 +66,11 @@ public class KoPeMeConfiguration {
    }
 
    private String getWorkingDirAsString() {
-      return System.getProperty(KOPEME_WORKINGDIR_PROPNAME, new File(".").getAbsolutePath());
+      if (AndroidConfiguration.read(KOPEME_WORKINGDIR_PROPNAME) != null) {
+         return AndroidConfiguration.read(KOPEME_WORKINGDIR_PROPNAME);
+      } else {
+         return System.getProperty(KOPEME_WORKINGDIR_PROPNAME, new File(".").getAbsolutePath());
+      }
    }
 
    private int getIntSystemProperty(final String propName, final int defaultValue) {

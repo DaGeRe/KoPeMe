@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
+import de.dagere.kopeme.AndroidConfiguration;
 
 import de.dagere.kopeme.KoPeMeConfiguration;
 
@@ -11,18 +12,22 @@ public class FolderProvider {
 
    static final Long MEASURE_TIME = Long.valueOf(System.currentTimeMillis());
 
-   static final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME")
-         : System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator;
-
    private static FolderProvider INSTANCE;
 
    private final KoPeMeConfiguration config = KoPeMeConfiguration.getInstance();
 
    public static FolderProvider getInstance() {
       if (INSTANCE == null) {
-         INSTANCE = new FolderProvider(KOPEME_DEFAULT_FOLDER);
+         INSTANCE = new FolderProvider(createDefautFolderPath());
       }
       return INSTANCE;
+   }
+
+   public static String createDefautFolderPath() {
+      final String KOPEME_DEFAULT_FOLDER = System.getenv("KOPEME_HOME") != null ? System.getenv("KOPEME_HOME")
+         : AndroidConfiguration.read("KOPEME_HOME") != null ? AndroidConfiguration.read("KOPEME_HOME")
+         : System.getenv("HOME") + File.separator + ".KoPeMe" + File.separator;
+      return KOPEME_DEFAULT_FOLDER;
    }
 
    private String kopemeDefaultFolder;
@@ -85,4 +90,8 @@ public class FolderProvider {
       this.kopemeDefaultFolder = kopemeDefaultFolder;
    }
 
+   public void resetKopemeDefaultFolder() {
+      setKopemeDefaultFolder(createDefautFolderPath());
+   }
+   
 }
