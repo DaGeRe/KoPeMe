@@ -14,8 +14,8 @@ public class TestBeforeAfterMethodFinderJUnit5 {
       Class testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
       List<Method> beforeMethods = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(testedClazz);
 
-      Assert.assertEquals(1, beforeMethods.size());
-      Assert.assertEquals("beforeEachMethod", beforeMethods.get(0).getName());
+      Assert.assertEquals(0, beforeMethods.size());
+//      Assert.assertEquals("beforeEachMethod", beforeMethods.get(0).getName());
       
    }
 
@@ -24,7 +24,7 @@ public class TestBeforeAfterMethodFinderJUnit5 {
       Class testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
       List<Method> afterMethods = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(testedClazz);
 
-      Assert.assertEquals(1, afterMethods.size());
-      Assert.assertEquals("afterEachMethod", afterMethods.get(0).getName());
+      Assert.assertEquals(0, afterMethods.size());
+//      Assert.assertEquals("afterEachMethod", afterMethods.get(0).getName());
    }
 }

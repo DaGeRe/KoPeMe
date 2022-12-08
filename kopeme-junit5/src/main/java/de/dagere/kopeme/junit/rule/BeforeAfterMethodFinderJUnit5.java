@@ -22,10 +22,6 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
             int priority = annotationValue.priority();
             addToPriority(beforePriorityMethods, classMethod, priority);
          }
-         if (classMethod.getAnnotation(BeforeEach.class) != null) {
-            classMethod.setAccessible(true);
-            addToPriority(beforePriorityMethods, classMethod, Integer.MIN_VALUE);
-         }
       }
 
       List<Method> orderedMethodsMethod = BeforeAfterMethodFinder.buildOrderedList(beforePriorityMethods);
@@ -40,10 +36,6 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
             classMethod.setAccessible(true);
             int priority = annotationValue.priority();
             addToPriority(beforePriorityMethods, classMethod, priority);
-         }
-         if (classMethod.getAnnotation(AfterEach.class) != null) {
-            classMethod.setAccessible(true);
-            addToPriority(beforePriorityMethods, classMethod, Integer.MAX_VALUE);
          }
       }
 
