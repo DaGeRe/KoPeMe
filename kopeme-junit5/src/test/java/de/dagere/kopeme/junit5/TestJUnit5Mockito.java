@@ -14,6 +14,7 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5MockitoTest;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionInjectMockJUnit5Test;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionMockitoBeforeTest;
+import de.dagere.kopeme.junit5.exampletests.mockito.InitializeInBeforeEach;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 
 /**
@@ -58,6 +59,16 @@ public class TestJUnit5Mockito {
    @Test
    public void testBeforeBeforeWithMeasurementSplitted() {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionMockitoBeforeTest.class);
+
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = JSONDataLoader.loadData(file);
+      Assert.assertFalse(data.getFirstDatacollectorContent().get(0).isError());
+   }
+   
+   @Test
+   public void testBeforeEach() {
+      File file = JUnit5RunUtil.runJUnit5Test(InitializeInBeforeEach.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
