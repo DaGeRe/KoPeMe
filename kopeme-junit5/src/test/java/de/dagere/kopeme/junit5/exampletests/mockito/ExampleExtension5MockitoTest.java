@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests;
+package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

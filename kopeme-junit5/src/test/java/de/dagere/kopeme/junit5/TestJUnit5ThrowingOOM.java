@@ -1,9 +1,9 @@
 package de.dagere.kopeme.junit5;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.junit5.exampletests.ExampleExtension5MockitoTestThrowingOOM;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5TestWithoutWarmUpThrowingOOM;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestThrowingOOM;
+import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtension5MockitoTestThrowingOOM;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 

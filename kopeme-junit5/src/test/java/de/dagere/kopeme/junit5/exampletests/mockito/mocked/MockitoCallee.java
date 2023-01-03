@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests.mockito;
+package de.dagere.kopeme.junit5.exampletests.mockito.mocked;
 
 public class MockitoCallee {
 

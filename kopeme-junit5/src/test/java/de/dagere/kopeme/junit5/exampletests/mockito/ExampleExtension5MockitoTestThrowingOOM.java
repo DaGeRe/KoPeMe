@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests;
+package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;

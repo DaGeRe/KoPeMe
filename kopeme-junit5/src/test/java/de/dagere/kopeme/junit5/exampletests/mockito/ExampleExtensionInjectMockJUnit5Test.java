@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests;
+package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,31 +12,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.IMock;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.MockMapper;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.MockProcessor;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
-
-interface IMock {
-}
-
-class MockProcessor {
-   public List<String> processMock(final IMock mock) {
-      return null;
-   }
-}
-
-class MockMapper {
-   private final MockProcessor processor;
-
-   public MockMapper(final MockProcessor processor) {
-      this.processor = processor;
-   }
-
-   public List<String> createResponse(final IMock mock) {
-      List<String> stringList = processor.processMock(mock);
-      System.out.println("Returned " + System.identityHashCode(mock) + " from " + System.identityHashCode(processor));
-      return stringList;
-   }
-
-}
 
 @ExtendWith(KoPeMeExtension.class)
 @ExtendWith(MockitoExtension.class)

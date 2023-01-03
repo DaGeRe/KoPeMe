@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests;
+package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;

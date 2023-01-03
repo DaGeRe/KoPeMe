@@ -1,4 +1,4 @@
-package de.dagere.kopeme.junit5.exampletests;
+package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.MockMapper;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 @ExtendWith(KoPeMeExtension.class)

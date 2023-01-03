@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.Station;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 @ExtendWith(KoPeMeExtension.class)

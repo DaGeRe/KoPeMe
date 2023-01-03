@@ -2,6 +2,7 @@ package de.dagere.kopeme.junit5.exampletests.mockito;
 
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
+import de.dagere.kopeme.junit5.exampletests.mockito.mocked.Station;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

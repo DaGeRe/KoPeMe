@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.junit5.exampletests.ExampleJUnit5InstanceUsageTest;
-import de.dagere.kopeme.junit5.exampletests.ExampleJUnit5InstanceUsageTestWithMockito;
+import de.dagere.kopeme.junit5.exampletests.mockito.ExampleJUnit5InstanceUsageTestWithMockito;
 
 public class TestJUnit5InstanceUsage {
 
