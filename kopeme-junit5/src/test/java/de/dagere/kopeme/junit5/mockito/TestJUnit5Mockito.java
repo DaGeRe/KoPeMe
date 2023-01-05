@@ -16,6 +16,7 @@ import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtension5MockitoTest
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionInjectMockJUnit5Test;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionMockitoBeforeTest;
 import de.dagere.kopeme.junit5.exampletests.mockito.InitializeInBeforeEach;
+import de.dagere.kopeme.junit5.exampletests.mockito.ExampleCleanCachesByMockMethodTest;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 
 /**
@@ -76,5 +77,14 @@ public class TestJUnit5Mockito {
       Kopemedata data = JSONDataLoader.loadData(file);
       Assert.assertFalse(data.getFirstDatacollectorContent().get(0).isError());
    }
-   
+
+   @Test
+   public void testCleanCachesByMockMethod() {
+      File file = JUnit5RunUtil.runJUnit5Test(ExampleCleanCachesByMockMethodTest.class);
+
+      MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
+
+      Kopemedata data = JSONDataLoader.loadData(file);
+      Assert.assertFalse(data.getFirstDatacollectorContent().get(0).isError());
+   }
 }
