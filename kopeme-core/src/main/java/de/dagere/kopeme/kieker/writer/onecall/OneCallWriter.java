@@ -105,9 +105,13 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
    @Override
    public void onTerminating() {
       try {
+         /*
+          * Sometimes it was tried to terminate a writer which was not started yet
+          */
+         Thread.sleep(5);
          currentWriter.flush();
          currentWriter.close();
-      } catch (IOException e) {
+      } catch (IOException | InterruptedException e) {
          e.printStackTrace();
       }
    }
