@@ -7,8 +7,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -43,7 +44,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       return instance;
    }
 
-   private static final Logger LOG = Logger.getLogger(ChangeableFolderWriter.class.getName());
+   private static final Logger LOG = LogManager.getLogger(ChangeableFolderWriter.class);
 
    private final static List<KiekerMetadataRecord> mappingRecords = new LinkedList<>();
    private static boolean full = false;
@@ -67,7 +68,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
             FileWriter fsWriter = new FileWriter(newConfig);
             return fsWriter;
          } else {
-            System.out.println("Defined writer " + writerName + " not found - using default " + FileWriter.class.getSimpleName());
+            LOG.warn("Defined writer " + writerName + " not found - using default " + FileWriter.class.getSimpleName());
             final Configuration newConfig = toWriterConfiguration(configuration, FileWriter.class);
             final FileWriter syncFsWriter = new FileWriter(newConfig);
             return syncFsWriter;
@@ -102,9 +103,8 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
       if (record instanceof KiekerMetadataRecord && !full) {
          addMappingRecord(record);
       }
-      // LOG.info("Writing: " + record);
       if (currentWriter != null) {
-         LOG.log(Level.FINEST, "Record: " + record);
+         LOG.debug("Record: " + record);
          // LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
