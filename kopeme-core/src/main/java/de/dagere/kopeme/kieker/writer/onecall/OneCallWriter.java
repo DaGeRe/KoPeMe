@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.record.OneCallRecord;
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
@@ -28,14 +30,14 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
    private int index = 0, fileIndex = 0;
    private File resultFolder;
    private BufferedWriter currentWriter;
-   
+
    private final Set<String> writtenMethods = new HashSet<>();
 
    public static synchronized OneCallWriter getInstance() {
       return instance;
    }
 
-   private static final Logger LOG = Logger.getLogger(OneCallWriter.class.getName());
+   private static final Logger LOG = LogManager.getLogger(OneCallWriter.class);
 
    public OneCallWriter(final Configuration configuration) throws IOException {
       super(configuration);
@@ -85,7 +87,7 @@ public class OneCallWriter extends AbstractMonitoringWriter implements Changeabl
             }
          }
       }
-      
+
    }
 
    private void newWriter() {
