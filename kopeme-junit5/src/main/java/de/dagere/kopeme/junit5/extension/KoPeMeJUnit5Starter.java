@@ -43,7 +43,6 @@ public class KoPeMeJUnit5Starter {
    private final Method method;
    private final JupiterConfiguration configuration;
    private LinkedHashMap<String, String> params = null;
-   private boolean enabled = true;
 
    public KoPeMeJUnit5Starter(final ExtensionContext context) {
       this.context = context;
@@ -55,16 +54,10 @@ public class KoPeMeJUnit5Starter {
    public void start() {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
 
-      boolean reinitialize = needsReinitialization();
-
-      if (enabled) {
-         if (reinitialize) {
-            executeMethodReinitializationTest(descriptor);
-         } else {
-            executeTest(descriptor);
-         }
+      if (needsReinitialization()) {
+         executeMethodReinitializationTest(descriptor);
       } else {
-         System.out.println("Test has been disabled by chosenIndex");
+         executeTest(descriptor);
       }
    }
 
