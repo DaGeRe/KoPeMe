@@ -22,12 +22,11 @@ import de.dagere.kopeme.runnables.TestRunnables;
 /**
  * This Rule gives the possibility to test performance with a rule and without a testrunner; this makes it possible to use a different testrunner. Be aware that a rule-execution
  * does measure the time needed for @Before-Executions together with the main execution time, but not the @BeforeClass-Execution.
- * 
- * @author DaGeRe
  *
+ * @author DaGeRe
  */
 public class KoPeMeRule implements TestRule {
-   
+
    private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
 
    private final Object testObject;
@@ -67,10 +66,10 @@ public class KoPeMeRule implements TestRule {
                      stmt.evaluate();
                   }
                };
-               
+
                List<Method> beforeClassMethod = BeforeAfterMethodFinderJUnit4.getBeforeWithMeasurements(testClass);
                List<Method> afterClassMethod = BeforeAfterMethodFinderJUnit4.getAfterWithMeasurements(testClass);
-               
+
                final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject,
                      beforeClassMethod, afterClassMethod);
 
