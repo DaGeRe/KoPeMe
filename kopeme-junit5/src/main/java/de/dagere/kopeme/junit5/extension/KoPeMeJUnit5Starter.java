@@ -52,7 +52,7 @@ public class KoPeMeJUnit5Starter {
       configuration = getDummyConfiguration();
    }
 
-   public void start() throws Exception {
+   public void start() {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
 
       boolean reinitialize = needsReinitialization();
