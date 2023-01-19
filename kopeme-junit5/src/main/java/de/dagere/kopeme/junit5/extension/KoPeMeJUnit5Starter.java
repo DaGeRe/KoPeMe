@@ -161,9 +161,7 @@ public class KoPeMeJUnit5Starter {
 
    private JupiterEngineExecutionContext prepareJUnit5Method(final TestMethodTestDescriptor descriptor) {
       JupiterEngineExecutionContext clazzContext = prepareJUnit5Class(descriptor);
-      JupiterEngineExecutionContext methodContext = descriptor.prepare(clazzContext);
-
-      return methodContext;
+      return descriptor.prepare(clazzContext);
    }
 
    private static Method getTestDescriptorMethod;
@@ -227,7 +225,6 @@ public class KoPeMeJUnit5Starter {
    }
 
    private JupiterConfiguration getDummyConfiguration() {
-      final JupiterConfiguration configuration = new DummyConfiguration();
-      return configuration;
+      return new DummyConfiguration();
    }
 }
