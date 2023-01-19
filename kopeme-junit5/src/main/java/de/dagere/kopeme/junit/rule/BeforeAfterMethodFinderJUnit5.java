@@ -21,8 +21,7 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
          }
       }
 
-      List<Method> orderedMethodsMethod = BeforeAfterMethodFinder.buildOrderedList(beforePriorityMethods);
-      return orderedMethodsMethod;
+      return BeforeAfterMethodFinder.buildOrderedList(beforePriorityMethods);
    }
 
    public static List<Method> getAfterWithMeasurements(final Class<?> testClazz) {
@@ -36,7 +35,6 @@ public class BeforeAfterMethodFinderJUnit5 extends BeforeAfterMethodFinder {
          }
       }
 
-      List<Method> orderedMethodsMethod = BeforeAfterMethodFinder.buildOrderedList(beforePriorityMethods);
-      return orderedMethodsMethod;
+      return BeforeAfterMethodFinder.buildOrderedList(beforePriorityMethods);
    }
 }
