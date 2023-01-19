@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -27,15 +25,11 @@ import de.dagere.kopeme.runnables.TestRunnables;
  */
 public class KoPeMeRule implements TestRule {
 
-   private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
-
    private final Object testObject;
 
    public KoPeMeRule(final Object testObject) {
       this.testObject = testObject;
    }
-
-   private KoPeMeRuleStatement4 koPeMeStandardRuleStatement;
 
    @Override
    public Statement apply(final Statement stmt, final Description descr) {
@@ -73,8 +67,7 @@ public class KoPeMeRule implements TestRule {
                final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject,
                      beforeClassMethod, afterClassMethod);
 
-               koPeMeStandardRuleStatement = new KoPeMeRuleStatement4(runnables, testMethod, testClass.getName(), params);
-               return koPeMeStandardRuleStatement;
+               return new KoPeMeRuleStatement4(runnables, testMethod, testClass.getName(), params);
             } else {
                return stmt;
             }
@@ -88,9 +81,8 @@ public class KoPeMeRule implements TestRule {
    }
 
    private LinkedHashMap<String, String> parseParams(final String methodDescription, final int squaredBracketIndex) {
-      final LinkedHashMap<String, String> params;
-      String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
-      params = new LinkedHashMap<String, String>();
+      final String indexString = methodDescription.substring(squaredBracketIndex + 1, methodDescription.length() - 1);
+      final LinkedHashMap<String, String> params = new LinkedHashMap<>();
       params.put(KoPeMeConstants.JUNIT_PARAMETERIZED, indexString);
       return params;
    }
