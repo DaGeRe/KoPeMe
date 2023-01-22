@@ -22,7 +22,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
-import de.dagere.kopeme.datastorage.SaveableTestData.TestErrorTestData;
+import de.dagere.kopeme.datastorage.SaveableTestData.TestErrorData;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -93,19 +93,19 @@ public abstract class KoPeMeTestcase extends TestCase {
    protected boolean logFullData() {
       return annoTestcase.logFullData();
    }
-   
+
    protected boolean showStart() {
       return false;
    }
-   
+
    protected boolean redirectToTemp() {
       return false;
    }
-   
+
    protected boolean redirectToNull() {
       return false;
    }
-   
+
    protected boolean executeBeforeClassInMeasurement() {
       return false;
    }
@@ -175,15 +175,22 @@ public abstract class KoPeMeTestcase extends TestCase {
             return isFinished;
          }
       };
-      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData(), executeBeforeClassInMeasurement(), useKieker());
+      RunConfiguration configuration = new RunConfiguration(getWarmup(), getRepetitions(), showStart(), redirectToTemp(), redirectToNull(), logFullData(),
+            executeBeforeClassInMeasurement(), useKieker());
       final TimeBoundExecution tbe = new TimeBoundExecution(finishable, timeoutTime, Type.METHOD, useKieker());
       try {
          final boolean finished = tbe.execute();
          if (!finished) {
-            final TestErrorTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), finalResult, configuration);
-            LOG.debug("Data created");
-            PerformanceTestUtils.saveData(errorTestData);
-            fail("Test took too long.");
+            if (tbe.isTimeoutOccured()) {
+               final SaveableTestData errorTestData = SaveableTestData.createSubprocessTimeoutData(getName(), getClass().getName(), finalResult, configuration);
+               LOG.debug("Timeout data created");
+               PerformanceTestUtils.saveData(errorTestData);
+            } else {
+               final SaveableTestData errorTestData = SaveableTestData.createErrorTestData(getName(), getClass().getName(), finalResult, configuration);
+               LOG.debug("Error data created");
+               PerformanceTestUtils.saveData(errorTestData);
+               fail("Error occured");
+            }
          } else {
             PerformanceTestUtils.saveData(SaveableTestData.createFineTestData(getName(), getClass().getName(), finalResult, configuration));
          }
@@ -256,7 +263,7 @@ public abstract class KoPeMeTestcase extends TestCase {
             tr.startCollection();
             runAllRepetitions(repetitions);
             tr.stopCollection();
-//            tr.getValue(TimeDataCollector.class.getName());
+            // tr.getValue(TimeDataCollector.class.getName());
             tr.setRealExecutions(execution);
             if (showStart()) {
                LOG.debug(firstPartStop + execution + endPart);
@@ -271,7 +278,7 @@ public abstract class KoPeMeTestcase extends TestCase {
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
    }
-   
+
    private void redirectToTempFile() throws IOException, FileNotFoundException {
       File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
       PrintStream stream = new PrintStream(tempFile);

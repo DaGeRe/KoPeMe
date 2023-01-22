@@ -8,30 +8,20 @@ public abstract class SaveableTestData {
 
    private static FolderProvider PROVIDER = FolderProvider.getInstance();
 
-   private static class SaveableTestDataFactory<T extends SaveableTestData> {
-      private final Class<T> type;
+   static class SaveableTestDataFactory {
 
-      public SaveableTestDataFactory(final Class<T> type) {
-         this.type = type;
-      }
-
-      public T createTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
-         T returnable;
-         try {
-            returnable = type.newInstance();
-            returnable.setFolder(folder);
-            returnable.setTestcasename(testcasename);
-            returnable.setFilename(filename);
-            returnable.setTr(tr);
-            returnable.setConfiguration(configuration);
-            return returnable;
-         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e); // should never happen
-         }
+      public static SaveableTestData createTestData(SaveableTestData returnable, final File folder, final String testcasename,
+            final String filename, final TestResult tr, final RunConfiguration configuration) {
+         returnable.setFolder(folder);
+         returnable.setTestcasename(testcasename);
+         returnable.setFilename(filename);
+         returnable.setTr(tr);
+         returnable.setConfiguration(configuration);
+         return returnable;
       }
    }
 
-   public static FineTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+   public static SaveableTestData createFineTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
       return createFineTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
@@ -41,26 +31,35 @@ public abstract class SaveableTestData {
       return folder;
    }
 
-   public static AssertFailureTestData createAssertFailedTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+   public static SaveableTestData createAssertFailedTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
       return createAssertFailedTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
-   public static TestErrorTestData createErrorTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+   public static SaveableTestData createErrorTestData(final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
       return createErrorTestData(createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
-   public static FineTestData createFineTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
-      return new SaveableTestDataFactory<>(FineTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
+   public static SaveableTestData createFineTestData(final File folder, final String testcasename, final String filename, final TestResult tr, final RunConfiguration configuration) {
+      FineTestData testData = new FineTestData();
+      return SaveableTestDataFactory.createTestData(testData, folder, testcasename, filename, tr, configuration);
    }
 
-   public static AssertFailureTestData createAssertFailedTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
+   public static SaveableTestData createAssertFailedTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
          final RunConfiguration configuration) {
-      return new SaveableTestDataFactory<>(AssertFailureTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
+      TestErrorData errorData = new TestErrorData(false, false, true);
+      return SaveableTestDataFactory.createTestData(errorData, folder, testcasename, filename, tr, configuration);
    }
 
-   public static TestErrorTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
+   public static SaveableTestData createErrorTestData(final File folder, final String testcasename, final String filename, final TestResult tr,
          final RunConfiguration configuration) {
-      return new SaveableTestDataFactory<>(TestErrorTestData.class).createTestData(folder, testcasename, filename, tr, configuration);
+      TestErrorData errorData = new TestErrorData(true, false, false);
+      return SaveableTestDataFactory.createTestData(errorData, folder, testcasename, filename, tr, configuration);
+   }
+   
+   public static SaveableTestData createSubprocessTimeoutData(final String testcasename, final String filename, final TestResult tr,
+         final RunConfiguration configuration) {
+      TestErrorData errorData = new TestErrorData(false, true, false);
+      return SaveableTestDataFactory.createTestData(errorData, createDefaultFolder(filename), testcasename, filename, tr, configuration);
    }
 
    private File folder;
@@ -79,10 +78,28 @@ public abstract class SaveableTestData {
    public static class FineTestData extends SaveableTestData {
    }
 
-   public static class AssertFailureTestData extends SaveableTestData {
-   }
+   public static class TestErrorData extends SaveableTestData {
+      private final boolean error;
+      private final boolean subthreadTimeout;
+      private final boolean assertFailed;
 
-   public static class TestErrorTestData extends SaveableTestData {
+      public TestErrorData(boolean error, boolean subthreadTimeout, boolean assertFailed) {
+         this.error = error;
+         this.subthreadTimeout = subthreadTimeout;
+         this.assertFailed = assertFailed;
+      }
+
+      public boolean isAssertFailed() {
+         return assertFailed;
+      }
+
+      public boolean isError() {
+         return error;
+      }
+
+      public boolean isSubthreadTimeout() {
+         return subthreadTimeout;
+      }
    }
 
    public File getFolder() {

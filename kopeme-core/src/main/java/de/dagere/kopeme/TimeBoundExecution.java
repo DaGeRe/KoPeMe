@@ -29,6 +29,7 @@ public class TimeBoundExecution {
    private final Type type;
    private final long timeout;
    private boolean needToStopHart = false;
+   private boolean timeoutOccured = false;
    private final boolean useKieker;
    private Throwable testError;
 
@@ -107,8 +108,12 @@ public class TimeBoundExecution {
 
          if (experimentThreadGroup.activeCount() != 0 && type == Type.METHOD) {
             handleChildThreads();
+            finished = true;
+            
          } else if (type == Type.CLASS && experimentThread.isAlive()) {
             LOG.info("Class timed out.");
+            timeoutOccured = true;
+            finished = true;
          } else {
             finished = true;
          }
@@ -117,6 +122,10 @@ public class TimeBoundExecution {
          testError = e1;
       }
       return finished;
+   }
+   
+   public boolean isTimeoutOccured() {
+      return timeoutOccured;
    }
 
    private void rethrowError() throws Error {
@@ -147,6 +156,7 @@ public class TimeBoundExecution {
       if (experimentThreadGroup.activeCount() != 0) {
          LOG.error("Finishing all Threads was not successfull, still {} Threads active - finishing VM", experimentThreadGroup.activeCount());
          needToStopHart = true;
+         timeoutOccured = true;
          // testError = new TimeoutException("Test timed out because subthreads could not be finished: " + experimentThreadGroup.activeCount());
       }
    }

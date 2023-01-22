@@ -44,6 +44,9 @@ public class VMResult {
 
    @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = OnlyTrueFilter.class)
    private boolean error = false;
+   
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = OnlyTrueFilter.class)
+   private boolean subthreadTimeout = false;
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
    private Fulldata fulldata;
@@ -189,6 +192,14 @@ public class VMResult {
       this.error = error;
    }
 
+   public boolean isSubthreadTimeout() {
+      return subthreadTimeout;
+   }
+   
+   public void setSubthreadTimeout(boolean subthreadTimeout) {
+      this.subthreadTimeout = subthreadTimeout;
+   }
+   
    public Fulldata getFulldata() {
       return fulldata;
    }
