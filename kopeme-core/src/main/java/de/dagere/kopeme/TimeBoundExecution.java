@@ -53,8 +53,6 @@ public class TimeBoundExecution {
     * @throws Exception Thrown if an error occurs
     */
    public final boolean execute() {
-      boolean finished = false;
-
       experimentThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
          @Override
          public void uncaughtException(final Thread t, final Throwable e) {
@@ -68,7 +66,7 @@ public class TimeBoundExecution {
          }
       });
 
-      finished = tryExecution(finished);
+      boolean finished = tryExecution();
 
       if (needToStopHart == true && type != Type.CLASS) {
          LOG.error("Would normally stop " + type + " hard; omitted.");
@@ -94,7 +92,8 @@ public class TimeBoundExecution {
       }
    }
 
-   private boolean tryExecution(boolean finished) {
+   private boolean tryExecution() {
+      boolean finished = false;
       try {
          experimentThread.start();
          LOG.debug("Waiting: {}", timeout);
