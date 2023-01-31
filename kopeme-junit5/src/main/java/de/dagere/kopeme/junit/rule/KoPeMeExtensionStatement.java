@@ -17,6 +17,7 @@ import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.annotations.ParameterChecker;
+import de.dagere.kopeme.runnables.PreparableTestRunnables;
 import de.dagere.kopeme.runnables.TestRunnable;
 
 /**
@@ -42,7 +43,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
             (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
       this.params = params;
-      
+
       if (!ParameterChecker.parameterIndexInvalid(annotation, params)) {
          String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
          initializeKieker(clazzname, methodFileName);
@@ -56,7 +57,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
       if (parameterIndexInvalid) {
          return;
       }
-      
+
       final Finishable finishable = new Finishable() {
          @Override
          public void run() {
@@ -86,7 +87,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
       tbe.execute();
       LOG.info("Test {} beendet", clazzname);
    }
-   
+
    public Throwable getThrowable() {
       return throwable;
    }
@@ -108,8 +109,12 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
          saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
          throw t;
       }
-      finalResult.finalizeCollection();
-      saveData(SaveableTestData.createFineTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
+      if (runnables.getThrowable() != null) {
+         saveData(SaveableTestData.createErrorTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
+      } else {
+         finalResult.finalizeCollection();
+         saveData(SaveableTestData.createFineTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
+      }
    }
 
    private void runWarmup() throws Throwable {

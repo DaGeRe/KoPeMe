@@ -79,4 +79,8 @@ public class PreparableTestRunnables implements TestRunnable {
       return afterRunnable;
    }
 
+   @Override
+   public Throwable getThrowable() {
+      return jupiterContext.getThrowableCollector().getThrowable();
+   }
 }
