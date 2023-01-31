@@ -54,7 +54,7 @@ public final class TestResult {
    public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup) {
       this(methodName, iterations, collectors, warmup, null);
    }
-   
+
    public TestResult(final String methodName, final int iterations, final DataCollectorList collectors, final boolean warmup, final LinkedHashMap<String, String> params) {
       this.methodName = methodName;
       this.iterations = iterations;
@@ -67,9 +67,9 @@ public final class TestResult {
             return arg0.getPriority() - arg1.getPriority();
          }
       };
-      Arrays.sort(sortedCollectors, comparator);  
+      Arrays.sort(sortedCollectors, comparator);
       this.params = params;
-      
+
       try {
          writer = new ResultTempWriterBin(warmup);
          writer.setDataCollectors(sortedCollectors);
@@ -78,7 +78,7 @@ public final class TestResult {
          e.printStackTrace();
       }
    }
-   
+
    public LinkedHashMap<String, String> getParams() {
       return params;
    }
@@ -214,7 +214,8 @@ public final class TestResult {
     * @return Minimum of the currently measured values
     */
    public double getMinumumCurrentValue(final String key) {
-      return reader.getCollectorSummary(key).getMin();
+      SummaryStatistics collectorSummary = reader.getCollectorSummary(key);
+      return collectorSummary != null ? collectorSummary.getMin() : Double.NaN;
    }
 
    /**
@@ -224,7 +225,8 @@ public final class TestResult {
     * @return Maximum of the currently measured values
     */
    public double getMaximumCurrentValue(final String key) {
-      return reader.getCollectorSummary(key).getMax();
+      SummaryStatistics collectorSummary = reader.getCollectorSummary(key);
+      return collectorSummary != null ? collectorSummary.getMax() : Double.NaN;
    }
 
    public Fulldata getFulldata(final String key) {
@@ -279,7 +281,11 @@ public final class TestResult {
 
    public double getRelativeStandardDeviation(final String additionalKey) {
       final SummaryStatistics collectorSummary = reader.getCollectorSummary(additionalKey);
-      return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
+      if (collectorSummary != null) {
+         return collectorSummary.getStandardDeviation() / collectorSummary.getMean();
+      } else {
+         return Double.NaN;
+      }
    }
 
    public void deleteTempFile() {

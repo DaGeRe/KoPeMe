@@ -195,7 +195,7 @@ public class WrittenResultReaderBin implements TempfileReader {
 
    @Override
    public SummaryStatistics getCollectorSummary(final String collectorName) {
-      return collectorSummaries.get(collectorName);
+      return collectorSummaries != null ? collectorSummaries.get(collectorName) : null;
    }
 
    @Override
