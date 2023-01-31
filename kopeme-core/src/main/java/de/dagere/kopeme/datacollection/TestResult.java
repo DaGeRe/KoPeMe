@@ -231,7 +231,7 @@ public final class TestResult {
 
    public Fulldata getFulldata(final String key) {
       final Fulldata fd = new Fulldata();
-      if (iterations < BOUNDARY_SAVE_FILE) {
+      if (iterations < BOUNDARY_SAVE_FILE && reader.getRealValues() != null) {
          for (int i = 0; i < reader.getRealValues().size(); i++) {
             final MeasuredValue v = new MeasuredValue();
             v.setStartTime(reader.getExecutionStartTimes().get(i));
