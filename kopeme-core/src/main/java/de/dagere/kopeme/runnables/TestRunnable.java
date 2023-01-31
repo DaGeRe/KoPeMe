@@ -23,5 +23,11 @@ public interface TestRunnable {
     * @return After-Runnable
     */
    public KoPeMeThrowingRunnable getAfterRunnable();
+   
+   /**
+    * Returns an exception if one has been thrown (required for JUnit 5)
+    * 
+    */
+   public Throwable getThrowable();
 
 }
