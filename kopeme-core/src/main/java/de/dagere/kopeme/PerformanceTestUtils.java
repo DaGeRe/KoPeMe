@@ -123,7 +123,7 @@ public final class PerformanceTestUtils {
 
    private static VMResult getMeasureFromTR(final SaveableTestData data, final TestResult tr, final String additionalKey) {
       final double relativeStandardDeviation = tr.getRelativeStandardDeviation(additionalKey);
-      final double value = tr.getValue(additionalKey).doubleValue();
+      final double value = tr.getValue(additionalKey) != null ? tr.getValue(additionalKey).doubleValue() : Double.NaN;
       final double min = tr.getMinumumCurrentValue(additionalKey);
       final double max = tr.getMaximumCurrentValue(additionalKey);
       VMResult result = new VMResult();
