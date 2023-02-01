@@ -47,6 +47,8 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       if (!ParameterChecker.parameterIndexInvalid(annotation, params)) {
          String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
          initializeKieker(clazzname, methodFileName);
+      } else {
+         finalResult.deleteTempFile();
       }
    }
 
