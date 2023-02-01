@@ -46,6 +46,8 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
       if (!ParameterChecker.parameterIndexInvalid(annotation, params)) {
          String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
          initializeKieker(clazzname, methodFileName);
+      } else {
+         finalResult.deleteTempFile();
       }
    }
 
