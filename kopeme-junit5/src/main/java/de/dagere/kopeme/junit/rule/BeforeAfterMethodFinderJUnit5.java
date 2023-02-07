@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-
 import de.dagere.kopeme.junit.rule.annotations.AfterWithMeasurement;
 import de.dagere.kopeme.junit.rule.annotations.BeforeWithMeasurement;
 import de.dagere.kopeme.runnables.BeforeAfterMethodFinder;
