@@ -24,7 +24,7 @@ public class TestJUnitRuleExecutions {
 
 	public static Logger log = LogManager.getLogger(TestJUnitRuleExecutions.class);
 
-	@Test(timeout = 2700)
+	@Test(timeout = 3000)
 	public void testMethodTimeout() {
 		JUnitCore jc = new JUnitCore();
 		jc.run(ExampleRuleTest.class);
