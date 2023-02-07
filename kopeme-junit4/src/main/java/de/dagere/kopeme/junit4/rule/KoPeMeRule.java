@@ -36,8 +36,6 @@ public class KoPeMeRule implements TestRule {
       this.testObject = testObject;
    }
 
-   private KoPeMeRuleStatement4 koPeMeStandardRuleStatement;
-
    @Override
    public Statement apply(final Statement stmt, final Description descr) {
       if (descr.isTest()) {
@@ -74,7 +72,7 @@ public class KoPeMeRule implements TestRule {
                final TestRunnable runnables = new TestRunnables(new RunConfiguration(annotation), testRunnable, testClass, testObject,
                      beforeClassMethod, afterClassMethod);
 
-               koPeMeStandardRuleStatement = new KoPeMeRuleStatement4(runnables, testMethod, testClass.getName(), params);
+               KoPeMeRuleStatement4 koPeMeStandardRuleStatement = new KoPeMeRuleStatement4(runnables, testMethod, testClass.getName(), params);
                return koPeMeStandardRuleStatement;
             } else {
                return stmt;
