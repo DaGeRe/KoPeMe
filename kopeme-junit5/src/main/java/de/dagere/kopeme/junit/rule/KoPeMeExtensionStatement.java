@@ -102,10 +102,10 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
          if (!isFinished) {
             runMainExecution(finalResult, "iteration ", annotation.iterations(), annotation.repetitions());
          }
-      } catch (final AssertionFailedError t) {
-         finalResult.finalizeCollection(t);
+      } catch (final AssertionError ae) {
+         finalResult.finalizeCollection(ae);
          saveData(SaveableTestData.createAssertFailedTestData(finalResult.getMethodName(), clazzname, finalResult, configuration));
-         throw t;
+         throw ae;
       } catch (final Throwable t) {
          t.printStackTrace();
          finalResult.finalizeCollection(t);
