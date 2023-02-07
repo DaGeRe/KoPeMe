@@ -23,16 +23,15 @@ import junit.framework.AssertionFailedError;
 
 /**
  * Represents an execution of all runs of one test
- * 
+ *
  * TODO: Overthink weather directly configure test runs in KoPeMeRule would be more nice
- * 
+ *
  * @author dagere
- * 
  */
 public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeRuleStatement4.class);
-   
+
    private final TestResult finalResult;
    private final LinkedHashMap<String, String> params;
 
@@ -43,7 +42,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
             (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
       this.params = params;
-      
+
       if (!ParameterChecker.parameterIndexInvalid(annotation, params)) {
          String methodFileName = (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName();
          initializeKieker(clazzname, methodFileName);
@@ -58,7 +57,7 @@ public class KoPeMeRuleStatement4 extends KoPeMeBasicStatement4 {
       if (parameterIndexInvalid) {
          return;
       }
-      
+
       final Finishable finishable = new Finishable() {
          @Override
          public void run() {
