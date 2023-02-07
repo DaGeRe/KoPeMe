@@ -56,7 +56,7 @@ public class KoPeMeJUnit5Starter {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
 
       boolean reinitialize = needsReinitialization();
-      
+
       if (enabled) {
          if (reinitialize) {
             executeMethodReinitializationTest(descriptor);
@@ -70,15 +70,16 @@ public class KoPeMeJUnit5Starter {
 
    /**
     * Some test cases require reinitialization, e.g. if InjectMocks is used (cause if the field in an injected mock is already set, it will not be set again).
-    * 
+    *
     * This cases are defined here (and should be extended if necessary).
+    *
     * @return
     */
    private boolean needsReinitialization() {
       boolean reinitialize = false;
       for (Field field : outerInstance.getClass().getDeclaredFields()) {
          for (Annotation annotation : field.getAnnotations()) {
-            if (annotation.toString().startsWith("@org.mockito.InjectMocks")){
+            if (annotation.toString().startsWith("@org.mockito.InjectMocks")) {
                reinitialize = true;
             }
          }
@@ -115,7 +116,7 @@ public class KoPeMeJUnit5Starter {
             @Override
             public void run() throws Throwable {
                descriptor.execute(clazzContext, null);
-               
+
                if (clazzContext.getThrowableCollector().getThrowable() != null) {
                   throw clazzContext.getThrowableCollector().getThrowable();
                }
