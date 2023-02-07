@@ -4,8 +4,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -27,8 +25,6 @@ import de.dagere.kopeme.runnables.TestRunnables;
  *
  */
 public class KoPeMeRule implements TestRule {
-   
-   private static final Logger LOG = LogManager.getLogger(KoPeMeRule.class);
 
    private final Object testObject;
 
