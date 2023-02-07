@@ -51,7 +51,7 @@ public class KoPeMeJUnit5Starter {
       configuration = getDummyConfiguration();
    }
 
-   public void start() throws Exception {
+   public void start() {
       TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
 
       boolean reinitialize = needsReinitialization();
@@ -64,10 +64,7 @@ public class KoPeMeJUnit5Starter {
 
    /**
     * Some test cases require reinitialization, e.g. if InjectMocks is used (cause if the field in an injected mock is already set, it will not be set again).
-    *
-    * This cases are defined here (and should be extended if necessary).
-    *
-    * @return
+    * These cases are defined here (and should be extended if necessary).
     */
    private boolean needsReinitialization() {
       boolean reinitialize = false;
