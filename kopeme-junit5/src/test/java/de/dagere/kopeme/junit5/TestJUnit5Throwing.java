@@ -20,7 +20,7 @@ class TestJUnit5Throwing {
       Assertions.assertTrue(KoPeMeExtension.isLastRunFailed());
 
       Kopemedata data = JSONDataLoader.loadData(file);
-      Assertions.assertTrue(data.getMethods().isEmpty());
+      Assertions.assertTrue(data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).isError());
    }
 
    @Test
