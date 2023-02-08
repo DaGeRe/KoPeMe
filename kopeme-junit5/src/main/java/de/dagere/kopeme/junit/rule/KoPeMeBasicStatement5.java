@@ -1,7 +1,6 @@
 package de.dagere.kopeme.junit.rule;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -146,8 +145,8 @@ public abstract class KoPeMeBasicStatement5 {
       LOG.debug("Finished iterations: " + (iteration - 1));
       tr.setRealExecutions(iteration - 1);
    }
-   
-   private void redirectToTempFile() throws IOException, FileNotFoundException {
+
+   private void redirectToTempFile() throws IOException {
       File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
       PrintStream stream = new PrintStream(tempFile);
       System.setOut(stream);
