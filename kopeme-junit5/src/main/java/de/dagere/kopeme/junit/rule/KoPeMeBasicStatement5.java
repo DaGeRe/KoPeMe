@@ -19,7 +19,6 @@ import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.kieker.KoPeMeKiekerSupport;
 import de.dagere.kopeme.runnables.TestRunnable;
 
@@ -72,20 +71,17 @@ public abstract class KoPeMeBasicStatement5 {
          datacollectors = DataCollectorList.ONLYTIME;
          LOG.error("For Datacollectorlist, only STANDARD, ONLYTIME, ONLYTIME_NOGC and NONE are allowed");
       }
-
-      if (annotation != null) {
-         maximalRelativeStandardDeviation = new HashMap<>();
-         assertationvalues = new HashMap<>();
-         for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
-            maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
-         }
-
-         for (final Assertion a : annotation.assertions()) {
-            assertationvalues.put(a.collectorname(), a.maxvalue());
-         }
-      } else {
-         LOG.error("No @PerformanceTest-Annotation present!");
+      
+      maximalRelativeStandardDeviation = new HashMap<>();
+      assertationvalues = new HashMap<>();
+      for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
+         maximalRelativeStandardDeviation.put(maxDev.collectorname(), maxDev.maxvalue());
       }
+
+      for (final Assertion a : annotation.assertions()) {
+         assertationvalues.put(a.collectorname(), a.maxvalue());
+      }
+
    }
 
    protected void initializeKieker(final String clazzname, final String methodFileName) {
