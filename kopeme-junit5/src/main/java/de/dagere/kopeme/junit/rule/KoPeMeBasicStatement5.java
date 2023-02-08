@@ -60,7 +60,7 @@ public abstract class KoPeMeBasicStatement5 {
 
       if ("EXTENDED".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.EXTENDED;
-      } else if ("STANDARD".equals(annotation.dataCollectors()) || annotation == null) {
+      } else if ("STANDARD".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.STANDARD;
       } else if ("ONLYTIME".equals(annotation.dataCollectors())) {
          datacollectors = DataCollectorList.ONLYTIME;
