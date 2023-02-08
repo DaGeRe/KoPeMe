@@ -49,7 +49,7 @@ public abstract class KoPeMeBasicStatement5 {
     * @param method Method that should be executed
     * @param clazzname Name of the
     */
-   public KoPeMeBasicStatement5(final TestRunnable runnables, final Method method, final String clazzname, final String methodFileName) {
+   public KoPeMeBasicStatement5(final TestRunnable runnables, final Method method, final String clazzname) {
       this.runnables = runnables;
       this.clazzname = clazzname;
       this.method = method;

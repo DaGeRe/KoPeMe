@@ -38,8 +38,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
    public KoPeMeExtensionStatement(final TestRunnable runnables, final Method method, final String filename, final LinkedHashMap<String, String> params) {
       super(runnables,
             method,
-            filename,
-            (params != null) ? method.getName() + "(" + ParamNameHelper.paramsToString(params) + ")" : method.getName());
+            filename);
       finalResult = new TestResult(method.getName(), annotation.warmup(), datacollectors, false, params);
       this.params = params;
 
