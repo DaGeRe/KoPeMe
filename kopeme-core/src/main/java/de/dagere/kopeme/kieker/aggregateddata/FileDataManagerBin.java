@@ -17,7 +17,7 @@ public class FileDataManagerBin implements Runnable, Closeable {
 
    private final File destinationFolder;
    private File currentDestination;
-   private BufferedOutputStream currentWriter;
+   private StatisticsBinWriter binWriter;
    private final Map<DataNode, WritingData> nodeMap = new ConcurrentHashMap<>();
 
    private int currentEntries = 0;
@@ -32,8 +32,7 @@ public class FileDataManagerBin implements Runnable, Closeable {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
       this.destinationFolder = aggregatedTreeWriter.getResultFolder();
       currentDestination = new File(destinationFolder, "measurement-0.bin");
-      FileOutputStream tempFileStream = new FileOutputStream(currentDestination);
-      currentWriter = new BufferedOutputStream(tempFileStream);
+      binWriter = new StatisticsBinWriter(currentDestination);
    }
 
    public void finish() {
@@ -67,15 +66,15 @@ public class FileDataManagerBin implements Runnable, Closeable {
             startNextFile();
          }
       }
-      currentWriter.flush();
+      binWriter.flush();
    }
 
    private void writeLine(final Map.Entry<DataNode, WritingData> value) throws IOException {
       if (value.getValue().getCurrentStatistic() != null &&
             !Double.isNaN(value.getValue().getCurrentStatistic().getMean())
             && value.getValue().getCurrentStatistic().getN() != 0) {
-         writeHeader(value.getKey());
-         writeStatistics(value.getValue());
+         binWriter.writeHeader(value.getKey());
+         binWriter.writeStatistics(value.getValue());
          // currentWriter.write('\n');
          currentEntries++;
          value.getValue().persistStatistic();
@@ -85,61 +84,9 @@ public class FileDataManagerBin implements Runnable, Closeable {
    private void startNextFile() throws IOException {
       currentEntries = 0;
       fileIndex++;
-      currentWriter.close();
+      binWriter.close();
       currentDestination = new File(destinationFolder, "measurement-" + fileIndex + ".bin");
-      FileOutputStream tempFileStream = new FileOutputStream(currentDestination);
-      currentWriter = new BufferedOutputStream(tempFileStream);
-   }
-
-   private final ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
-   private final ByteBuffer longBuffer = ByteBuffer.allocate(Long.BYTES);
-   private final ByteBuffer doubleBuffer = ByteBuffer.allocate(Double.BYTES);
-
-   private void writeHeader(final DataNode node) throws IOException {
-      currentWriter.write(node.getCall().getBytes());
-      currentWriter.write(';');
-
-      int eoi, ess;
-      if (node instanceof AggregatedDataNode) {
-         eoi = ((AggregatedDataNode) node).getEoi();
-         ess = ((AggregatedDataNode) node).getEss();
-      } else {
-         eoi = -1;
-         ess = -1;
-      }
-      
-      writeInt(eoi);
-      writeInt(ess);
-   }
-
-   private void writeInt(int value) throws IOException {
-      intBuffer.clear();
-      intBuffer.putInt(0, value);
-      final byte[] byteArray = intBuffer.array();
-      currentWriter.write(byteArray);
-   }
-
-   private void writeStatistics(final WritingData value) throws IOException {
-      writeLong(value.getCurrentStart());
-      writeDouble(value.getCurrentStatistic().getMean());
-      writeDouble(value.getCurrentStatistic().getStandardDeviation());
-      writeLong(value.getCurrentStatistic().getN());
-      writeDouble(value.getCurrentStatistic().getMin());
-      writeDouble(value.getCurrentStatistic().getMax());
-   }
-
-   private void writeLong(long value) throws IOException {
-      longBuffer.clear();
-      longBuffer.putLong(0, value);
-      final byte[] byteArray = longBuffer.array();
-      currentWriter.write(byteArray);
-   }
-
-   private void writeDouble(double value) throws IOException {
-      doubleBuffer.clear();
-      doubleBuffer.putDouble(0, value);
-      final byte[] byteArray = doubleBuffer.array();
-      currentWriter.write(byteArray);
+      binWriter = new StatisticsBinWriter(currentDestination);
    }
 
    public synchronized void write(final DataNode node, final long duration) {
@@ -154,14 +101,13 @@ public class FileDataManagerBin implements Runnable, Closeable {
          nodeMap.put(node, data);
       }
       return data;
-
    }
 
    @Override
    public void close() throws IOException {
       System.out.println("Writing finally...");
       writeAll();
-      currentWriter.close();
-      currentWriter = null;
+      binWriter.close();
+      binWriter = null;
    }
 }
