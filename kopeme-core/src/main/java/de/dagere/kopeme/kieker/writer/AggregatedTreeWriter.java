@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataNode;
+import de.dagere.kopeme.kieker.aggregateddata.DataWriter;
 import de.dagere.kopeme.kieker.aggregateddata.FileDataManagerBin;
+import de.dagere.kopeme.kieker.aggregateddata.FileDataManagerCSV;
 import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -30,6 +32,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String CONFIG_IGNORE_EOIS = PREFIX + "ignoreEOIs";
    public static final String CONFIG_OUTLIER = PREFIX + "outlier";
    public static final String CONFIG_ENTRIESPERFILE = PREFIX + "entriesPerFile";
+   public static final String WRITING_TYPE = PREFIX + "writingType";
 
    private static AggregatedTreeWriter instance;
 
@@ -38,7 +41,8 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    private final int entriesPerFile;
    private final boolean ignoreEOIs;
    private File resultFolder;
-   private FileDataManagerBin dataManager;
+   private final String writingType;
+   private DataWriter dataManager;
 
    private Thread writerThread;
 
@@ -61,7 +65,20 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
       ignoreEOIs = configuration.getBooleanProperty(CONFIG_IGNORE_EOIS, true);
 
-      dataManager = new FileDataManagerBin(this);
+      writingType = configuration.getStringProperty(WRITING_TYPE, "BinaryAggregated");
+      createDataWriter();
+   }
+
+   private void createDataWriter() throws IOException {
+      if (WritingType.BinaryAggregated.toString().equals(writingType)) {
+         dataManager = new FileDataManagerBin(this);
+      } else if (WritingType.BinarySimple.toString().equals(writingType)) {
+         throw new RuntimeException("Not implemented yet");
+      } else if (WritingType.CSVAggregated.toString().equals(writingType)) {
+         dataManager = new FileDataManagerCSV(this);
+      } else if (WritingType.CSVSimple.toString().equals(writingType)) {
+         throw new RuntimeException("Not implemented yet");
+      }
    }
 
    @Override
@@ -114,7 +131,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       final Path kiekerPath = WriterUtil.buildKiekerLogFolder(writingFolder.getAbsolutePath(), configuration);
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
-      dataManager = new FileDataManagerBin(this);
+      createDataWriter();
       onStarting();
    }
 
@@ -142,5 +159,4 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       return ignoreEOIs;
    }
 
-   
 }

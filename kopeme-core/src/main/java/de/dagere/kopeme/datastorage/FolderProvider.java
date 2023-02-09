@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-import de.dagere.kopeme.AndroidConfiguration;
 
+import de.dagere.kopeme.AndroidConfiguration;
 import de.dagere.kopeme.KoPeMeConfiguration;
 
 public class FolderProvider {

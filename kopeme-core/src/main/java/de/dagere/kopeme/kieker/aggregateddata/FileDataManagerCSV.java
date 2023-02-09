@@ -1,7 +1,6 @@
 package de.dagere.kopeme.kieker.aggregateddata;
 
 import java.io.BufferedWriter;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
-public class FileDataManagerCSV implements Runnable, Closeable {
+public class FileDataManagerCSV implements DataWriter {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 

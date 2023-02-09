@@ -1,7 +1,9 @@
 package de.dagere.kopeme;
 import java.io.InputStream;
-import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 
 /**
  * Configuration class for Android projects to read environment variables, properties, etc
