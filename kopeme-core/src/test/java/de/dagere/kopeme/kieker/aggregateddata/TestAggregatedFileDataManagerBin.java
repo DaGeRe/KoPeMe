@@ -3,6 +3,7 @@ package de.dagere.kopeme.kieker.aggregateddata;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,16 @@ public class TestAggregatedFileDataManagerBin {
       results.mkdirs();
       AggregatedFileDataManagerBin fileManager = new AggregatedFileDataManagerBin(new StatisticConfig(-1, -1, 100, 1000), results);
 
+      Map<AggregatedDataNode, AggregatedData> datas = writeAndGetData(results, fileManager);
+      
+      AggregatedData nodeData = datas.get(new AggregatedDataNode(-1, -1, "TestCall"));
+      Assert.assertEquals(18, nodeData.getOverallStatistic().getMean(), 0.01);
+      Assert.assertEquals(6, nodeData.getOverallStatistic().getN());
+      
+      Assert.assertEquals(2, nodeData.getStatistic().size());
+   }
+
+   public static Map<AggregatedDataNode, AggregatedData> writeAndGetData(File results, DataWriter fileManager) throws InterruptedException, IOException {
       Thread thread = new Thread(fileManager);
       thread.start();
 
@@ -40,11 +51,6 @@ public class TestAggregatedFileDataManagerBin {
 
       HashMap<AggregatedDataNode, AggregatedData> datas = new HashMap<>();
       AggregatedDataReaderBin.readAggregatedDataFile(expectedResultFile, datas);
-      
-      AggregatedData nodeData = datas.get(new AggregatedDataNode(-1, -1, "TestCall"));
-      Assert.assertEquals(18, nodeData.getOverallStatistic().getMean(), 0.01);
-      Assert.assertEquals(6, nodeData.getOverallStatistic().getN());
-      
-      Assert.assertEquals(2, nodeData.getStatistic().size());
+      return datas;
    }
 }

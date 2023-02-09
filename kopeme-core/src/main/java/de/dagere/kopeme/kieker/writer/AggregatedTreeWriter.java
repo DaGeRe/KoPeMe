@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataWriter;
+import de.dagere.kopeme.kieker.aggregateddata.SimpleFileDataManagerBin;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedFileDataManagerBin;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedFileDataManagerCSV;
 import de.dagere.kopeme.kieker.record.DurationRecord;
@@ -70,7 +71,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       if (WritingType.BinaryAggregated.name().equals(writingType)) {
          dataManager = new AggregatedFileDataManagerBin(statisticConfig, resultFolder);
       } else if (WritingType.BinarySimple.name().equals(writingType)) {
-         throw new RuntimeException("Not implemented yet");
+         dataManager = new SimpleFileDataManagerBin(statisticConfig, resultFolder);
       } else if (WritingType.CSVAggregated.name().equals(writingType)) {
          dataManager = new AggregatedFileDataManagerCSV(statisticConfig, resultFolder);
       } else if (WritingType.CSVSimple.name().equals(writingType)) {
