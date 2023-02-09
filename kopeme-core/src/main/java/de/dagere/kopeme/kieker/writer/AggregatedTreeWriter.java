@@ -65,18 +65,18 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
       ignoreEOIs = configuration.getBooleanProperty(CONFIG_IGNORE_EOIS, true);
 
-      writingType = configuration.getStringProperty(WRITING_TYPE, "BinaryAggregated");
+      writingType = configuration.getStringProperty(WRITING_TYPE, WritingType.BinaryAggregated.name());
       createDataWriter();
    }
 
    private void createDataWriter() throws IOException {
-      if (WritingType.BinaryAggregated.toString().equals(writingType)) {
+      if (WritingType.BinaryAggregated.name().equals(writingType)) {
          dataManager = new AggregatedFileDataManagerBin(this);
-      } else if (WritingType.BinarySimple.toString().equals(writingType)) {
+      } else if (WritingType.BinarySimple.name().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
-      } else if (WritingType.CSVAggregated.toString().equals(writingType)) {
+      } else if (WritingType.CSVAggregated.name().equals(writingType)) {
          dataManager = new AggregatedFileDataManagerCSV(this);
-      } else if (WritingType.CSVSimple.toString().equals(writingType)) {
+      } else if (WritingType.CSVSimple.name().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
       }
    }
