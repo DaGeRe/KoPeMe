@@ -6,13 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
@@ -20,24 +20,37 @@ import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 
 public class AggregatedDataReaderBin {
    public static void readAggregatedDataFile(final File currentMeasureFile, final Map<AggregatedDataNode, AggregatedData> datas)
-         throws JsonParseException, JsonMappingException, IOException {
+         throws IOException {
       try (BufferedInputStream reader = new BufferedInputStream(new FileInputStream(currentMeasureFile))) {
 
          while (reader.available() > 0) {
             final AggregatedDataNode node = readAggregatedDataNode(reader);
-            
+
             AggregatedData data = datas.get(node);
             if (data == null) {
                data = new AggregatedData(0, new LinkedHashMap<>());
                datas.put(node, data);
             }
-            
+
             long time = readLong(reader);
-            
+
             final StatisticalSummary summary = readStatisticalSummary(reader);
-            
-            data.getStatistic().put(time, summary);
+
+            writeSummary(data, time, summary);
          }
+      }
+   }
+
+   private static void writeSummary(AggregatedData data, long time, final StatisticalSummary summary) {
+      StatisticalSummary oldSummary = data.getStatistic().get(time);
+      if (oldSummary == null) {
+         data.getStatistic().put(time, summary);
+      } else {
+         List<StatisticalSummary> summaries = new LinkedList<>();
+         summaries.add(oldSummary);
+         summaries.add(summary);
+         StatisticalSummary aggregated = AggregateSummaryStatistics.aggregate(summaries);
+         data.getStatistic().put(time, aggregated);
       }
    }
 
@@ -54,12 +67,12 @@ public class AggregatedDataReaderBin {
 
    private static AggregatedDataNode readAggregatedDataNode(BufferedInputStream reader) throws IOException {
       String call = WrittenResultReaderBin.readUntilSign(reader, ';');
-      
+
       int eoi = readInt(reader);
       int ess = readInt(reader);
-      
+
       System.out.println("Read: " + call + " " + eoi + " " + ess);
-      
+
       final AggregatedDataNode node = new AggregatedDataNode(eoi, ess, call);
       return node;
    }
@@ -78,7 +91,7 @@ public class AggregatedDataReaderBin {
          return value;
       }
    }
-   
+
    private static final byte[] intBytes = new byte[Integer.BYTES];
    private static final ByteBuffer intBuffer = ByteBuffer.allocate(Integer.BYTES);
 
@@ -93,7 +106,7 @@ public class AggregatedDataReaderBin {
          return value;
       }
    }
-   
+
    private static final byte[] doubleBytes = new byte[Double.BYTES];
    private static final ByteBuffer doubleBuffer = ByteBuffer.allocate(Double.BYTES);
 
