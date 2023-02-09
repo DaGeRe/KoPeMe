@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
-public class FileDataManagerBin implements Runnable, DataWriter {
+public class FileDataManagerBin implements DataWriter {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
