@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 
-public class FileDataManagerBin implements DataWriter {
+public class AggregatedFileDataManagerBin implements DataWriter {
 
    private final AggregatedTreeWriter aggregatedTreeWriter;
 
@@ -24,7 +24,7 @@ public class FileDataManagerBin implements DataWriter {
     * @param aggregatedTreeWriter
     * @throws IOException
     */
-   public FileDataManagerBin(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
+   public AggregatedFileDataManagerBin(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
       this.aggregatedTreeWriter = aggregatedTreeWriter;
       this.destinationFolder = aggregatedTreeWriter.getResultFolder();
       currentDestination = new File(destinationFolder, "measurement-0.bin");

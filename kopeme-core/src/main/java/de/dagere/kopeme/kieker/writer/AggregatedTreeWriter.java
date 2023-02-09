@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataNode;
 import de.dagere.kopeme.kieker.aggregateddata.DataWriter;
-import de.dagere.kopeme.kieker.aggregateddata.FileDataManagerBin;
-import de.dagere.kopeme.kieker.aggregateddata.FileDataManagerCSV;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedFileDataManagerBin;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedFileDataManagerCSV;
 import de.dagere.kopeme.kieker.record.DurationRecord;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.IMonitoringRecord;
@@ -71,11 +71,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    private void createDataWriter() throws IOException {
       if (WritingType.BinaryAggregated.toString().equals(writingType)) {
-         dataManager = new FileDataManagerBin(this);
+         dataManager = new AggregatedFileDataManagerBin(this);
       } else if (WritingType.BinarySimple.toString().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
       } else if (WritingType.CSVAggregated.toString().equals(writingType)) {
-         dataManager = new FileDataManagerCSV(this);
+         dataManager = new AggregatedFileDataManagerCSV(this);
       } else if (WritingType.CSVSimple.toString().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
       }
