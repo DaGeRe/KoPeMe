@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +16,8 @@ public class TestAggregatedFileDataManagerBin {
 
    @Test
    public void testRegularWriting() throws IOException, InterruptedException {
-      File results = new File("target/results");
-      results.mkdirs();
+      File results = prepareFolder();
+      
       AggregatedFileDataManagerBin fileManager = new AggregatedFileDataManagerBin(new StatisticConfig(-1, -1, 100, 1000), results);
 
       Map<AggregatedDataNode, AggregatedData> datas = writeAndGetData(results, fileManager);
@@ -26,6 +27,15 @@ public class TestAggregatedFileDataManagerBin {
       Assert.assertEquals(6, nodeData.getOverallStatistic().getN());
       
       Assert.assertEquals(2, nodeData.getStatistic().size());
+   }
+
+   public static File prepareFolder() throws IOException {
+      File results = new File("target/results");
+      if (results.exists()) {
+         FileUtils.cleanDirectory(results);
+      }
+      results.mkdirs();
+      return results;
    }
 
    public static Map<AggregatedDataNode, AggregatedData> writeAndGetData(File results, DataWriter fileManager) throws InterruptedException, IOException {

@@ -13,8 +13,8 @@ public class TestSimpleFileDataManagerBin {
 
    @Test
    public void testRegularWriting() throws IOException, InterruptedException {
-      File results = new File("target/results");
-      results.mkdirs();
+      File results = TestAggregatedFileDataManagerBin.prepareFolder();
+      
       SimpleFileDataManagerBin fileManager = new SimpleFileDataManagerBin(new StatisticConfig(-1, -1, 100, 1000), results);
 
       Map<AggregatedDataNode, AggregatedData> datas = TestAggregatedFileDataManagerBin.writeAndGetData(results, fileManager);
