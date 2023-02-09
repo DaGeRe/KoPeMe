@@ -15,7 +15,7 @@ public class TestStatistic {
 
    @Before
    public void setUp() {
-      data = new WritingData(null, new StatisticConfig(15, 5));
+      data = new WritingData(null, new StatisticConfig(15, 5, 0, 0));
    }
 
    private void addMeasurements(final int count, final long value) {
@@ -84,6 +84,6 @@ public class TestStatistic {
 
    @Test(expected = RuntimeException.class)
    public void testName() throws Exception {
-      final StatisticConfig config = new StatisticConfig(10, 0.9);
+      final StatisticConfig config = new StatisticConfig(10, 0.9, 0, 0);
    }
 }

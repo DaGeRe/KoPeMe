@@ -23,7 +23,6 @@ public class AggregatedDataReaderBin {
          throws JsonParseException, JsonMappingException, IOException {
       try (BufferedInputStream reader = new BufferedInputStream(new FileInputStream(currentMeasureFile))) {
 
-         System.out.println("test");
          while (reader.available() > 0) {
             final AggregatedDataNode node = readAggregatedDataNode(reader);
             
