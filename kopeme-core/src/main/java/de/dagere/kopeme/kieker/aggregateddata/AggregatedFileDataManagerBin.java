@@ -29,6 +29,10 @@ public class AggregatedFileDataManagerBin implements DataWriter {
       this.destinationFolder = destinationFolder;
       currentDestination = new File(destinationFolder, "measurement-0.bin");
       binWriter = new StatisticsBinWriter(currentDestination);
+      
+      if (config.getWriteInterval() < 1) {
+         throw new RuntimeException("The write interval always needs to be set to 1 or higher!");
+      }
    }
 
    @Override
