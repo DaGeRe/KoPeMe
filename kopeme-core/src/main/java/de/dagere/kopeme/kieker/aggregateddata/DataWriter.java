@@ -6,8 +6,6 @@ public interface DataWriter extends Runnable, Closeable {
 
    void finish();
 
-   void run();
-
    void write(DataNode node, long duration);
 
 }
