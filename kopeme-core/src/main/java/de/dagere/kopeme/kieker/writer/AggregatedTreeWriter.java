@@ -35,10 +35,7 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
    public static final String WRITING_TYPE = PREFIX + "writingType";
 
    private static AggregatedTreeWriter instance;
-
-   private final int writeInterval;
    private final StatisticConfig statisticConfig;
-   private final int entriesPerFile;
    private final boolean ignoreEOIs;
    private File resultFolder;
    private final String writingType;
@@ -60,9 +57,9 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
       resultFolder = kiekerPath.toFile();
       resultFolder.mkdirs();
 
-      writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
-      entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
-      statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1));
+      int writeInterval = configuration.getIntProperty(CONFIG_WRITE_INTERVAL, 5000);
+      int entriesPerFile = configuration.getIntProperty(CONFIG_ENTRIESPERFILE, 100);
+      statisticConfig = new StatisticConfig(-1, configuration.getDoubleProperty(CONFIG_OUTLIER, -1), writeInterval, entriesPerFile);
       ignoreEOIs = configuration.getBooleanProperty(CONFIG_IGNORE_EOIS, true);
 
       writingType = configuration.getStringProperty(WRITING_TYPE, WritingType.BinaryAggregated.name());
@@ -71,11 +68,11 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    private void createDataWriter() throws IOException {
       if (WritingType.BinaryAggregated.name().equals(writingType)) {
-         dataManager = new AggregatedFileDataManagerBin(this);
+         dataManager = new AggregatedFileDataManagerBin(statisticConfig, resultFolder);
       } else if (WritingType.BinarySimple.name().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
       } else if (WritingType.CSVAggregated.name().equals(writingType)) {
-         dataManager = new AggregatedFileDataManagerCSV(this);
+         dataManager = new AggregatedFileDataManagerCSV(statisticConfig, resultFolder);
       } else if (WritingType.CSVSimple.name().equals(writingType)) {
          throw new RuntimeException("Not implemented yet");
       }
@@ -137,14 +134,6 @@ public class AggregatedTreeWriter extends AbstractMonitoringWriter implements Ch
 
    public Thread getWriterThread() {
       return writerThread;
-   }
-
-   public int getWriteInterval() {
-      return writeInterval;
-   }
-
-   public int getEntriesPerFile() {
-      return entriesPerFile;
    }
 
    public File getResultFolder() {

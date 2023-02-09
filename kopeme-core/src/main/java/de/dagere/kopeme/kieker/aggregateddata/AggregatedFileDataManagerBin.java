@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
+import de.dagere.kopeme.kieker.writer.StatisticConfig;
 
 public class AggregatedFileDataManagerBin implements DataWriter {
 
-   private final AggregatedTreeWriter aggregatedTreeWriter;
+   private final StatisticConfig config;
 
    private final File destinationFolder;
    private File currentDestination;
@@ -24,9 +24,9 @@ public class AggregatedFileDataManagerBin implements DataWriter {
     * @param aggregatedTreeWriter
     * @throws IOException
     */
-   public AggregatedFileDataManagerBin(final AggregatedTreeWriter aggregatedTreeWriter) throws IOException {
-      this.aggregatedTreeWriter = aggregatedTreeWriter;
-      this.destinationFolder = aggregatedTreeWriter.getResultFolder();
+   public AggregatedFileDataManagerBin(final StatisticConfig config, final File destinationFolder) throws IOException {
+      this.config = config;
+      this.destinationFolder = destinationFolder;
       currentDestination = new File(destinationFolder, "measurement-0.bin");
       binWriter = new StatisticsBinWriter(currentDestination);
    }
@@ -40,8 +40,8 @@ public class AggregatedFileDataManagerBin implements DataWriter {
    public void run() {
       while (running) {
          try {
-            System.out.println("Sleeping: " + aggregatedTreeWriter.getWriteInterval());
-            Thread.sleep(aggregatedTreeWriter.getWriteInterval());
+            System.out.println("Sleeping: " + config.getWriteInterval());
+            Thread.sleep(config.getWriteInterval());
          } catch (final InterruptedException e) {
             System.out.println("Writing is finished...");
          }
@@ -59,7 +59,7 @@ public class AggregatedFileDataManagerBin implements DataWriter {
       for (final Map.Entry<DataNode, WritingData> value : nodeMap.entrySet()) {
          writeLine(value);
 
-         if (currentEntries >= aggregatedTreeWriter.getEntriesPerFile()) {
+         if (currentEntries >= config.getEntriesPerFile()) {
             startNextFile();
          }
       }
@@ -72,6 +72,7 @@ public class AggregatedFileDataManagerBin implements DataWriter {
             && value.getValue().getCurrentStatistic().getN() != 0) {
          binWriter.writeHeader(value.getKey());
          binWriter.writeStatistics(value.getValue());
+         
          // currentWriter.write('\n');
          currentEntries++;
          value.getValue().persistStatistic();
@@ -95,7 +96,7 @@ public class AggregatedFileDataManagerBin implements DataWriter {
    private WritingData getData(final DataNode node) {
       WritingData data = nodeMap.get(node);
       if (data == null) {
-         data = new WritingData(currentDestination, aggregatedTreeWriter.getStatisticConfig());
+         data = new WritingData(currentDestination, config);
          nodeMap.put(node, data);
       }
       return data;
