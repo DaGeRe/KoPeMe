@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestFailure;
+import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestFailureWithMock;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtensionTestThrowing;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 import de.dagere.kopeme.kopemedata.Kopemedata;
@@ -23,6 +24,17 @@ class TestJUnit5Throwing {
       Assertions.assertTrue(data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).isError());
    }
 
+   @Test
+   void testCorrectFailureWithMock() {
+      File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionTestFailureWithMock.class);
+
+      Assertions.assertTrue(KoPeMeExtension.isLastRunFailed());
+
+      Kopemedata data = JSONDataLoader.loadData(file);
+      Assertions.assertTrue(data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).isFailure());
+   }
+
+   
    @Test
    void testCorrectFailure() {
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionTestFailure.class);

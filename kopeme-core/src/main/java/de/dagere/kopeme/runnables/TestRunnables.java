@@ -67,9 +67,4 @@ public class TestRunnables implements TestRunnable {
    public KoPeMeThrowingRunnable getAfterRunnable() {
       return afterRunnable;
    }
-
-   @Override
-   public Throwable getThrowable() {
-      return null;
-   }
 }

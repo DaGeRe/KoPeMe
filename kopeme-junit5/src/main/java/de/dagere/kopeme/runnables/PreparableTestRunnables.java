@@ -43,9 +43,7 @@ public class PreparableTestRunnables implements TestRunnable {
             descriptor.execute(methodContext, null);
             methodContext.close();
             if (!methodContext.getThrowableCollector().isEmpty()) {
-               Method addMethod = ThrowableCollector.class.getDeclaredMethod("add", Throwable.class);
-               addMethod.setAccessible(true);
-               addMethod.invoke(jupiterContext.getThrowableCollector(), methodContext.getThrowableCollector().getThrowable());
+               throw methodContext.getThrowableCollector().getThrowable();
             }
          }
       };
@@ -77,10 +75,5 @@ public class PreparableTestRunnables implements TestRunnable {
    public KoPeMeThrowingRunnable getAfterRunnable() {
       KoPeMeThrowingRunnable afterRunnable = new ListOfMethodRunnable(afterMethods, instance);
       return afterRunnable;
-   }
-
-   @Override
-   public Throwable getThrowable() {
-      return jupiterContext.getThrowableCollector().getThrowable();
    }
 }
