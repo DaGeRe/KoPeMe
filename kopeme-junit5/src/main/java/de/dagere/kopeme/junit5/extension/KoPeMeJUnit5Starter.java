@@ -32,6 +32,7 @@ import de.dagere.kopeme.junit.rule.KoPeMeExtensionStatement;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.runnables.KoPeMeThrowingRunnable;
 import de.dagere.kopeme.runnables.PreparableTestRunnables;
+import de.dagere.kopeme.runnables.SimpleThrowingRunnable;
 import de.dagere.kopeme.runnables.TestRunnable;
 import de.dagere.kopeme.runnables.TestRunnables;
 
@@ -95,17 +96,7 @@ public class KoPeMeJUnit5Starter {
    private void executeTest(TestMethodTestDescriptor descriptor) {
       final JupiterEngineExecutionContext clazzContext = prepareJUnit5Method(descriptor);
       try {
-         final KoPeMeThrowingRunnable throwingRunnable = new KoPeMeThrowingRunnable() {
-
-            @Override
-            public void run() throws Throwable {
-               descriptor.execute(clazzContext, null);
-
-               if (clazzContext.getThrowableCollector().getThrowable() != null) {
-                  throw clazzContext.getThrowableCollector().getThrowable();
-               }
-            }
-         };
+         final KoPeMeThrowingRunnable throwingRunnable = new SimpleThrowingRunnable(descriptor, clazzContext);
          final Object ownCreatedInstance = clazzContext.getExtensionContext().getTestInstance().get();
 
          final RunConfiguration runConfiguration = new RunConfiguration(method.getAnnotation(PerformanceTest.class));
