@@ -86,14 +86,7 @@ public class KoPeMeJUnit5Starter {
 
       try {
          final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
-         statement.evaluate();
-         if (statement.getThrowable() != null) {
-            throw statement.getThrowable();
-         }
-         ThrowableCollector collector = jupiterContext.getThrowableCollector();
-         if (!collector.isEmpty()) {
-            throw new RuntimeException("Test caused exception", collector.getThrowable());
-         }
+         executeStatement(jupiterContext, statement);
       } catch (Throwable t) {
          throw new RuntimeException("Test caused exception", t);
       }
@@ -121,16 +114,20 @@ public class KoPeMeJUnit5Starter {
          final TestRunnable runnables = new TestRunnables(runConfiguration, throwingRunnable, outerInstance.getClass(), ownCreatedInstance,
                beforeClassMethods, afterClassMethods);
          final KoPeMeExtensionStatement statement = new KoPeMeExtensionStatement(runnables, method, outerInstance.getClass().getName(), params);
-         statement.evaluate();
-         if (statement.getThrowable() != null) {
-            throw statement.getThrowable();
-         }
-         ThrowableCollector collector = clazzContext.getThrowableCollector();
-         if (!collector.isEmpty()) {
-            throw new RuntimeException("Test caused exception", collector.getThrowable());
-         }
+         executeStatement(clazzContext, statement);
       } catch (Throwable t) {
          throw new RuntimeException("Test caused exception", t);
+      }
+   }
+
+   private void executeStatement(final JupiterEngineExecutionContext clazzContext, final KoPeMeExtensionStatement statement) throws Throwable {
+      statement.evaluate();
+      if (statement.getThrowable() != null) {
+         throw statement.getThrowable();
+      }
+      ThrowableCollector collector = clazzContext.getThrowableCollector();
+      if (!collector.isEmpty()) {
+         throw new RuntimeException("Test caused exception", collector.getThrowable());
       }
    }
 
