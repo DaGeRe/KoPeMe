@@ -18,7 +18,6 @@ import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.datastorage.SaveableTestData;
 import de.dagere.kopeme.junit.rule.annotations.ParameterChecker;
 import de.dagere.kopeme.runnables.TestRunnable;
-import junit.framework.AssertionFailedError;
 
 /**
  * Represents an execution of all runs of one test
@@ -50,7 +49,7 @@ public class KoPeMeExtensionStatement extends KoPeMeBasicStatement5 {
       }
    }
 
-   public void evaluate() throws Throwable {
+   public void evaluate() {
       boolean parameterIndexInvalid = ParameterChecker.parameterIndexInvalid(annotation, params);
       if (parameterIndexInvalid) {
          return;
