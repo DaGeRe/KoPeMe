@@ -42,9 +42,7 @@ public abstract class KoPeMeBasicStatement5 {
    protected TestRunnable runnables;
    protected boolean isFinished = false;
    protected DataCollectorList datacollectors;
-
    protected PerformanceTest annotation;
-   protected final RunConfiguration configuration;
 
    /**
     * Initializes the KoPemeBasicStatement.
@@ -76,7 +74,6 @@ public abstract class KoPeMeBasicStatement5 {
       }
 
       if (annotation != null) {
-         configuration = new RunConfiguration(annotation);
          maximalRelativeStandardDeviation = new HashMap<>();
          assertationvalues = new HashMap<>();
          for (final MaximalRelativeStandardDeviation maxDev : annotation.deviations()) {
@@ -88,7 +85,6 @@ public abstract class KoPeMeBasicStatement5 {
          }
       } else {
          LOG.error("No @PerformanceTest-Annotation present!");
-         configuration = null;
       }
    }
 

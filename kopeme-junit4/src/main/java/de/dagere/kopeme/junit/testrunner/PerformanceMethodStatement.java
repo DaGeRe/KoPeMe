@@ -99,7 +99,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement4 {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "iteration ", executions, configuration.getRepetitions());
+         runMainExecution(tr, "iteration ", executions, annotation.repetitions());
       } catch (final Throwable t) {
          tr.finalizeCollection(t);
          saveData(SaveableTestData.createErrorTestData(methodName, clazzname, tr, configuration));
@@ -123,7 +123,7 @@ public class PerformanceMethodStatement extends KoPeMeBasicStatement4 {
          LOG.warn("Not all Collectors are valid!");
       }
       try {
-         runMainExecution(tr, "warmup iteration ", annotation.warmup(), configuration.getRepetitions());
+         runMainExecution(tr, "warmup iteration ", annotation.warmup(), annotation.repetitions());
       } catch (final Throwable t) {
          t.printStackTrace();
          tr.finalizeCollection(t);
