@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.TestUtils;
-import de.dagere.kopeme.datastorage.EnvironmentUtil;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.kopeme.junit5.exampletests.ExampleExtension5ParameterizedTest;
@@ -50,7 +49,7 @@ public class TestJUnit5Parameterized {
    @Test
    public void testParameterizedExecutionChosenParameter() {
       if (isLinux()) {
-         for (File file : new File("/tmp/").listFiles((FileFilter) new WildcardFileFilter("kopeme-*bin"))) {
+         for (File file : new File("/tmp/").listFiles((FileFilter) WildcardFileFilter.builder().setWildcards("kopeme-*bin").get())) {
             file.delete();
          }
       }
@@ -66,7 +65,7 @@ public class TestJUnit5Parameterized {
       MatcherAssert.assertThat(file2, Matchers.not(FileMatchers.anExistingFile()));
 
       if (isLinux()) {
-         Assert.assertEquals(0, new File("/tmp/").listFiles((FileFilter) new WildcardFileFilter("kopeme-*bin")).length);
+         Assert.assertEquals(0, new File("/tmp/").listFiles((FileFilter) WildcardFileFilter.builder().setWildcards("kopeme-*bin").get()).length);
       }
    }
 

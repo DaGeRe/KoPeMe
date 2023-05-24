@@ -11,7 +11,7 @@ import de.dagere.kopeme.junit5.exampletests.JUnit5BeforeAfterAlltest;
 public class TestBeforeAfterMethodFinderJUnit5 {
    @Test
    public void testBeforeAll() throws ClassNotFoundException {
-      Class testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
+      Class<?> testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
       List<Method> beforeMethods = BeforeAfterMethodFinderJUnit5.getBeforeWithMeasurements(testedClazz);
 
       Assert.assertEquals(0, beforeMethods.size());
@@ -21,7 +21,7 @@ public class TestBeforeAfterMethodFinderJUnit5 {
 
    @Test
    public void testAfterAll() throws ClassNotFoundException {
-      Class testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
+      Class<?> testedClazz = Class.forName(JUnit5BeforeAfterAlltest.class.getName());
       List<Method> afterMethods = BeforeAfterMethodFinderJUnit5.getAfterWithMeasurements(testedClazz);
 
       Assert.assertEquals(0, afterMethods.size());

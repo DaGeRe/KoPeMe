@@ -57,7 +57,7 @@ public class DurationRecordAspectIT {
 
    private void checkResultFolder(final File tempDir) throws IOException {
       File resultFolder = tempDir.listFiles()[0];
-      File resultFile = resultFolder.listFiles((FileFilter) new WildcardFileFilter("*.dat"))[0];
+      File resultFile = resultFolder.listFiles((FileFilter) WildcardFileFilter.builder().setWildcards("*.dat").get())[0];
       String content = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       
       MatcherAssert.assertThat(content, Matchers.containsString("de.test.FinalFieldConstructorExample.getParameters"));
@@ -104,7 +104,7 @@ public class DurationRecordAspectIT {
 
    private File findKopemeFile() {
       File kopemeFile = null;
-      for (File candidate : FileUtil.listFiles(new File("../kopeme-core/target/"), new WildcardFileFilter("kopeme-core-*.jar"))) {
+      for (File candidate : FileUtil.listFiles(new File("../kopeme-core/target/"), WildcardFileFilter.builder().setWildcards("kopeme-core-*.jar").get())) {
          if (!candidate.getName().contains("-javadoc") &&
                !candidate.getName().contains("-sources") &&
                !candidate.getName().contains("-tests")) {

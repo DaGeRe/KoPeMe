@@ -1,9 +1,10 @@
 package de.dagere.kopeme.junit5.exampletests;
 
-import de.dagere.kopeme.annotations.PerformanceTest;
-import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import de.dagere.kopeme.annotations.PerformanceTest;
+import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
 @ExtendWith(KoPeMeExtension.class)
 public class ExampleExtension5TestWithoutWarmUpThrowingOOM {

@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.JUnit5RunUtil;
+import de.dagere.kopeme.junit5.exampletests.mockito.ExampleCleanCachesByMockMethodTest;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtension5MockitoTest;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionInjectMockJUnit5Test;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleExtensionMockitoBeforeTest;
 import de.dagere.kopeme.junit5.exampletests.mockito.InitializeInBeforeEach;
-import de.dagere.kopeme.junit5.exampletests.mockito.ExampleCleanCachesByMockMethodTest;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 
 /**

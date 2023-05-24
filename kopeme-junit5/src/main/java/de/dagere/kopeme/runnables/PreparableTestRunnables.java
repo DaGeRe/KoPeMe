@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
-import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
 import de.dagere.kopeme.datastorage.RunConfiguration;
 import de.dagere.kopeme.junit.rule.BeforeAfterMethodFinderJUnit5;
