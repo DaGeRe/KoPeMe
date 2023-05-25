@@ -9,12 +9,6 @@
   <name>KoPeMe - Parent</name>
   <description>KoPeMe is a framework for enabling performance tests in Java. This makes it possible to live a software development process where performance measures are taken continously and therefore react continously to changes in performance. With continous performance testing, one avoids refactorings after performance problems occured in a big testing phase before releasing the software.</description>
 
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>
-
   <properties>
     <additionalparam>-Xdoclint:none</additionalparam>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
