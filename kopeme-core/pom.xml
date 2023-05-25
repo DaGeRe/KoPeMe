@@ -40,7 +40,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.2</version>
 
         <!-- This is only temporary a part of KoPeMe, until Kieker supports DurationRecords -->
         <configuration>
