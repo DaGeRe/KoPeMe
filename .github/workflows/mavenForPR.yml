@@ -5,9 +5,9 @@ name: Java CI with Maven (PR)
 
 on:
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [ main, develop ]
   workflow_dispatch:
-    branches: [ master, main, develop ]
+    branches: [ main, develop ]
 
 jobs:
   build:
