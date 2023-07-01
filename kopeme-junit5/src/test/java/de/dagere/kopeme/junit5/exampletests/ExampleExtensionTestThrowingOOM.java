@@ -14,6 +14,6 @@ public class ExampleExtensionTestThrowingOOM {
 	public void testNormal() {
 		System.out.println("Normal Execution");
 		//throw new OutOfMemoryError("OOM Error");
-		String[] array = new String[100000 * 100000];
+		String[] array = new String[1000000 * 1000000];
 	}
 }
