@@ -37,7 +37,7 @@ public class KoPeMeKiekerSupportTest {
       
       // This causes an exception, but we need to stop the thread which writes to hdd before we can try whether waiting time is used correctly
       MonitoringWriterThread thread = getMonitoringWriter();
-      thread.stop();
+      thread.interrupt();
       
       // Wait, so thread is really stopped
       Thread.sleep(100);
