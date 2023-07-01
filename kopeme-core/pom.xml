@@ -5,7 +5,6 @@
 
   <name>KoPeMe</name>
   <description>KoPeMe performance testing core</description>
-  <url>http://kopeme.dagere.de</url>
 
   <parent>
     <groupId>de.dagere.kopeme</groupId>
