@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.io.CleanupMode;
+import org.junit.jupiter.api.io.TempDirFactory;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 
@@ -100,6 +102,12 @@ final class DummyConfiguration implements JupiterConfiguration {
 
    @Override
    public CleanupMode getDefaultTempDirCleanupMode() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public Supplier<TempDirFactory> getDefaultTempDirFactorySupplier() {
       // TODO Auto-generated method stub
       return null;
    }
