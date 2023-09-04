@@ -17,7 +17,7 @@
     <kieker.version>1.15.2</kieker.version>
     <jaxb.version>2.3.6</jaxb.version>
     <mockito.version>4.11.0</mockito.version>
-    <checkstyle.version>10.12.2</checkstyle.version>
+    <checkstyle.version>10.12.3</checkstyle.version>
     <log4j.version>2.20.0</log4j.version>
     <commonsio.version>2.13.0</commonsio.version>
     <aspectj.version>1.9.20</aspectj.version>
