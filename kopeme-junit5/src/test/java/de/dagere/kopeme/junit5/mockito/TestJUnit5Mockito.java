@@ -8,8 +8,10 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.io.FileMatchers;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.kopeme.TestUtils;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.junit5.JUnit5RunUtil;
 import de.dagere.kopeme.junit5.exampletests.mockito.ExampleCleanCachesByMockMethodTest;
@@ -31,6 +33,10 @@ public class TestJUnit5Mockito {
 
    @Test
    public void testRegularExecution() {
+      // Java 20 is the last version supported by Mockito 4.11; either a Mockito update is necessary (requiring Java 11+), or Java 21 cannot be supported by these tests
+      // However, this is not very bad, since this is only code testing KoPeMe; a system under test could still use the most recent Mockito and Java 21 
+      Assume.assumeFalse(TestUtils.getJavaVersion() >= 21);
+      
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtension5MockitoTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
@@ -44,6 +50,8 @@ public class TestJUnit5Mockito {
 
    @Test
    public void testWithFinalInjectedField() {
+      Assume.assumeFalse(TestUtils.getJavaVersion() >= 21);
+      
       ExampleExtensionInjectMockJUnit5Test.finishCount = 0;
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtensionInjectMockJUnit5Test.class);
 
@@ -70,6 +78,7 @@ public class TestJUnit5Mockito {
    
    @Test
    public void testBeforeEach() {
+      Assume.assumeFalse(TestUtils.getJavaVersion() >= 21);
       File file = JUnit5RunUtil.runJUnit5Test(InitializeInBeforeEach.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
@@ -80,6 +89,8 @@ public class TestJUnit5Mockito {
 
    @Test
    public void testCleanCachesByMockMethod() {
+      Assume.assumeFalse(TestUtils.getJavaVersion() >= 21);
+      
       File file = JUnit5RunUtil.runJUnit5Test(ExampleCleanCachesByMockMethodTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());

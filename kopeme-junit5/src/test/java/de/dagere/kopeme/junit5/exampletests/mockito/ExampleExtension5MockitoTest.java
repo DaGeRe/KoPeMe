@@ -15,17 +15,22 @@ import org.mockito.stubbing.Answer;
 import de.dagere.kopeme.annotations.PerformanceTest;
 import de.dagere.kopeme.junit5.extension.KoPeMeExtension;
 
-class MyMockClazz{
+class MyMockabel {
+   public void run() {
+   };
+}
+
+class MyMockClazz {
    @Mock
    private Object value1;
-   
+
    @Mock
    private Object value2;
-   
+
    public Object getValue1() {
       return value1;
    }
-   
+
    public Object getValue2() {
       return value2;
    }
@@ -42,25 +47,25 @@ class MyMockClazz{
 public class ExampleExtension5MockitoTest {
 
    @Mock
-   private Runnable myMock;
-   
+   private MyMockabel myMock;
+
    @Spy
-   private Runnable mySpy;
-   
+   private MyMockabel mySpy;
+
    @InjectMocks
    private MyMockClazz mapper;
-   
-	@BeforeEach
-	public void setUp() {
-		System.out.println("Executing Setup");
-		try {
-			Thread.sleep(5);
-		} catch (final InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@AfterEach
+
+   @BeforeEach
+   public void setUp() {
+      System.out.println("Executing Setup");
+      try {
+         Thread.sleep(5);
+      } catch (final InterruptedException e) {
+         e.printStackTrace();
+      }
+   }
+
+   @AfterEach
    public void tearDown() {
       System.out.println("Executing Teardown");
       try {
@@ -70,10 +75,10 @@ public class ExampleExtension5MockitoTest {
       }
    }
 
-	@Test
-	@PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME", useKieker = false)
-	public void testNormal() {
-	   Mockito.doAnswer(new Answer<Void>() {
+   @Test
+   @PerformanceTest(warmup = 3, iterations = 3, repetitions = 1, timeout = 5000000, dataCollectors = "ONLYTIME", useKieker = false)
+   public void testNormal() {
+      Mockito.doAnswer(new Answer<Void>() {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
@@ -81,15 +86,15 @@ public class ExampleExtension5MockitoTest {
             return null;
          }
       }).when(myMock).run();
-	   
-	   System.out.println("Normal Execution");
-	   myMock.run();
-	   mySpy.run();
-	   System.out.println(mapper.getValue1() + " " + mapper.getValue2());
-	   try {
+
+      System.out.println("Normal Execution");
+      myMock.run();
+      mySpy.run();
+      System.out.println(mapper.getValue1() + " " + mapper.getValue2());
+      try {
          Thread.sleep(15);
       } catch (InterruptedException e) {
          e.printStackTrace();
       }
-	}
+   }
 }
