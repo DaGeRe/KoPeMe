@@ -20,7 +20,7 @@
     <checkstyle.version>10.12.6</checkstyle.version>
     <junit.version>5.10.1</junit.version>
     <log4j.version>2.22.0</log4j.version>
-    <commonsio.version>2.13.0</commonsio.version>
+    <commonsio.version>2.15.1</commonsio.version>
     <aspectj.version>1.9.21</aspectj.version>
   </properties>
 
