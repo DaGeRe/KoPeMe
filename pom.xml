@@ -17,11 +17,11 @@
     <kieker.version>1.15.4</kieker.version>
     <jaxb.version>2.3.6</jaxb.version>
     <mockito.version>4.11.0</mockito.version>
-    <checkstyle.version>10.12.4</checkstyle.version>
+    <checkstyle.version>10.12.7</checkstyle.version>
     <junit.version>5.10.1</junit.version>
-    <log4j.version>2.21.1</log4j.version>
+    <log4j.version>2.22.0</log4j.version>
     <commonsio.version>2.13.0</commonsio.version>
-    <aspectj.version>1.9.20.1</aspectj.version>
+    <aspectj.version>1.9.21</aspectj.version>
   </properties>
 
   <modules>
@@ -74,7 +74,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.12.1</version>
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
@@ -83,7 +83,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.2.2</version>
+          <version>3.2.3</version>
           <configuration>
             <forkCount>1</forkCount>
             <excludes>
@@ -108,7 +108,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.6.3</version>
           <configuration>
             <doclint>none</doclint>
             <quiet>true</quiet>
