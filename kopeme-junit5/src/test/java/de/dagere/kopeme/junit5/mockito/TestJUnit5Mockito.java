@@ -29,21 +29,17 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
  */
 public class TestJUnit5Mockito {
 
-   public static Logger log = LogManager.getLogger(TestJUnit5Mockito.class);
+   public static Logger LOG = LogManager.getLogger(TestJUnit5Mockito.class);
 
    @Test
    public void testRegularExecution() {
-      // Java 20 is the last version supported by Mockito 4.11; either a Mockito update is necessary (requiring Java 11+), or Java 21 cannot be supported by these tests
-      // However, this is not very bad, since this is only code testing KoPeMe; a system under test could still use the most recent Mockito and Java 21 
-      Assume.assumeFalse(TestUtils.getJavaVersion() >= 21);
-      
       File file = JUnit5RunUtil.runJUnit5Test(ExampleExtension5MockitoTest.class);
 
       MatcherAssert.assertThat("File " + file.getAbsolutePath() + " did not exist", file, FileMatchers.anExistingFile());
 
       Kopemedata data = JSONDataLoader.loadData(file);
       double averageDurationInMs = data.getMethods().get(0).getDatacollectorResults().get(0).getResults().get(0).getValue() /1000000;  
-      System.out.println(file.getAbsolutePath() + "=" + averageDurationInMs);
+      LOG.info(file.getAbsolutePath() + "=" + averageDurationInMs);
 
       MatcherAssert.assertThat((int) averageDurationInMs, Matchers.greaterThan(20));
    }

@@ -21,10 +21,10 @@ class MyMockabel {
 }
 
 class MyMockClazz {
-   @Mock
+   @Mock(name = "value1")
    private Object value1;
 
-   @Mock
+   @Mock(name = "value2")
    private Object value2;
 
    public Object getValue1() {
@@ -46,7 +46,7 @@ class MyMockClazz {
 @ExtendWith(MockitoExtension.class)
 public class ExampleExtension5MockitoTest {
 
-   @Mock
+   @Mock(name="value1")
    private MyMockabel myMock;
 
    @Spy
