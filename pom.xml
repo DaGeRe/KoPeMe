@@ -16,7 +16,7 @@
     <java.version>11</java.version>
     <kieker.version>2.0.2</kieker.version>
     <jaxb.version>2.3.6</jaxb.version>
-    <mockito.version>5.14.2</mockito.version>
+    <mockito.version>5.15.2</mockito.version>
     <checkstyle.version>10.18.0</checkstyle.version>
     <junit.version>5.11.4</junit.version>
     <log4j.version>2.24.3</log4j.version>
