@@ -7,8 +7,11 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import io.github.terahidro2003.SamplingMeasurementPipeline;
+import io.github.terahidro2003.SamplingResultsAnalyzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.Statement;
@@ -117,13 +120,23 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
       System.gc();
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
-      tr.beforeRun();
+      tr.beforeRun(); // this seems unnecessary
       int execution = 1;
       try {
          if (annotation.redirectToTemp()) {
             redirectToTempFile();
          } else if (annotation.redirectToNull()) {
             OutputStreamUtil.redirectToNullStream();
+         }
+         final File samplingResultsFolder;
+         List<File> samplingResultFiles = null;
+         SamplingMeasurementPipeline measurementProcessor = null;
+         if(annotation.useSampling() && !warmupString.contains("warmup")
+                 && !annotation.samplingResultsFolder().contains("<NULL>")) {
+            LOG.info("KoPeMe with sampling enabled.");
+            measurementProcessor = new SamplingResultsAnalyzer();
+            samplingResultsFolder = new File(annotation.samplingResultsFolder());
+            samplingResultFiles = measurementProcessor.prepareForIterativeMeasurements(samplingResultsFolder, executions);
          }
          LOG.debug("Executing " + executions + " " + warmupString);
          for (execution = 1; execution <= executions; execution++) {
@@ -132,7 +145,22 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
             }
             runnables.getBeforeRunnable().run();
             tr.startCollection();
+            if(annotation.useSampling() && !warmupString.contains("warmup")
+                    && !annotation.samplingResultsFolder().contains("<NULL>") && measurementProcessor != null
+                    && samplingResultFiles != null) {
+               measurementProcessor.measure(samplingResultFiles.get(execution - 1), annotation.samplingInterval());
+               LOG.info("Collecting iteration {} samples" , execution);
+            }
             runAllRepetitions(repetitions);
+            if(annotation.useSampling() && !warmupString.contains("warmup")
+                    && !annotation.samplingResultsFolder().contains("<NULL>") && measurementProcessor != null
+                    && samplingResultFiles != null) {
+               try {
+                  measurementProcessor.stopMeasure();
+               } catch (IllegalStateException e) {
+                  LOG.error("Tried to stop non-running profiler. Ignoring this measurement");
+               }
+            }
             tr.stopCollection();
             runnables.getAfterRunnable().run();
             tr.setRealExecutions(execution - 1);
