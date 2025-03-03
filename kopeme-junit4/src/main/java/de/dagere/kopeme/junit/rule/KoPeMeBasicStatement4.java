@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.terahidro2003.SamplingMeasurementPipeline;
-import io.github.terahidro2003.SamplingResultsAnalyzer;
+import io.github.terahidro2003.measurement.executor.SjswInterProcessExecutor;
+import io.github.terahidro2003.measurement.executor.asprof.AsprofInterProcessExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.Statement;
@@ -130,11 +130,11 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
          }
          final File samplingResultsFolder;
          List<File> samplingResultFiles = null;
-         SamplingMeasurementPipeline measurementProcessor = null;
+         SjswInterProcessExecutor measurementProcessor = null;
          if(annotation.useSampling() && !warmupString.contains("warmup")
                  && !annotation.samplingResultsFolder().contains("<NULL>")) {
             LOG.info("KoPeMe with sampling enabled.");
-            measurementProcessor = new SamplingResultsAnalyzer();
+            measurementProcessor = new AsprofInterProcessExecutor();
             samplingResultsFolder = new File(annotation.samplingResultsFolder());
             samplingResultFiles = measurementProcessor.prepareForIterativeMeasurements(samplingResultsFolder, executions);
          }
