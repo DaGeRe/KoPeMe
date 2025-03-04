@@ -148,7 +148,7 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
             if(annotation.useSampling() && !warmupString.contains("warmup")
                     && !annotation.samplingResultsFolder().contains("<NULL>") && measurementProcessor != null
                     && samplingResultFiles != null) {
-               measurementProcessor.measure(samplingResultFiles.get(execution - 1), annotation.samplingInterval());
+               measurementProcessor.measure(samplingResultFiles.get(execution - 1), annotation.samplingInterval(), tr.getTestcase());
                LOG.info("Collecting iteration {} samples" , execution);
             }
             runAllRepetitions(repetitions);
