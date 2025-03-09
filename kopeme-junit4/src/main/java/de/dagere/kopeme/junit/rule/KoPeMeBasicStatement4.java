@@ -158,7 +158,7 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
                try {
                   measurementProcessor.stopMeasure();
                } catch (IllegalStateException e) {
-                  LOG.error("Tried to stop non-running profiler. Ignoring this measurement");
+                  LOG.error("Tried to stop non-running profiler. Ignoring this measurement", e);
                }
             }
             tr.stopCollection();
