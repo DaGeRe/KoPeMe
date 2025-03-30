@@ -129,15 +129,8 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
             OutputStreamUtil.redirectToNullStream();
          }
          
-         List<File> samplingResultFiles = null;
-         SjswInterProcessExecutor measurementProcessor = null;
-         if(annotation.useSampling() && !warmupString.contains("warmup")
-                 && !annotation.samplingResultsFolder().contains("<NULL>")) {
-            LOG.info("KoPeMe with sampling enabled.");
-            measurementProcessor = new AsprofInterProcessExecutor();
-            final File samplingResultsFolder = new File(annotation.samplingResultsFolder());
-            samplingResultFiles = measurementProcessor.prepareForIterativeMeasurements(samplingResultsFolder, executions);
-         }
+         SamplingHandler samplingHandler = new SamplingHandler(annotation, warmupString, executions);
+         
          LOG.debug("Executing " + executions + " " + warmupString);
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
@@ -145,22 +138,9 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
             }
             runnables.getBeforeRunnable().run();
             tr.startCollection();
-            if(annotation.useSampling() && !warmupString.contains("warmup")
-                    && !annotation.samplingResultsFolder().contains("<NULL>") && measurementProcessor != null
-                    && samplingResultFiles != null) {
-               measurementProcessor.measure(samplingResultFiles.get(execution - 1), annotation.samplingInterval(), tr.getTestcase());
-               LOG.info("Collecting iteration {} samples" , execution);
-            }
+            samplingHandler.handleSamplingStart(tr, execution);
             runAllRepetitions(repetitions);
-            if(annotation.useSampling() && !warmupString.contains("warmup")
-                    && !annotation.samplingResultsFolder().contains("<NULL>") && measurementProcessor != null
-                    && samplingResultFiles != null) {
-               try {
-                  measurementProcessor.stopMeasure();
-               } catch (IllegalStateException e) {
-                  LOG.error("Tried to stop non-running profiler. Ignoring this measurement", e);
-               }
-            }
+            samplingHandler.handleSamplingEnd();
             tr.stopCollection();
             runnables.getAfterRunnable().run();
             tr.setRealExecutions(execution - 1);
@@ -183,6 +163,8 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
    }
+
+   
    
    private void redirectToTempFile() throws IOException, FileNotFoundException {
       File tempFile = Files.createTempFile("kopeme", ".txt").toFile();
