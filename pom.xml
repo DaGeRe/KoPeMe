@@ -21,7 +21,7 @@
     <junit.version>5.11.4</junit.version>
     <log4j.version>2.24.3</log4j.version>
     <commonsio.version>2.18.0</commonsio.version>
-    <aspectj.version>1.9.22.1</aspectj.version>
+    <aspectj.version>1.9.23</aspectj.version>
   </properties>
 
   <modules>
