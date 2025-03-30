@@ -7,11 +7,8 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import io.github.terahidro2003.measurement.executor.SjswInterProcessExecutor;
-import io.github.terahidro2003.measurement.executor.asprof.AsprofInterProcessExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.runners.model.Statement;
@@ -120,7 +117,7 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
       System.gc();
       final String fullWarmupStart = "--- Starting " + warmupString + " {}/" + executions + " ---";
       final String fullWarmupStop = "--- Stopping " + warmupString + " {}/" + executions + " ---";
-      tr.beforeRun(); // this seems unnecessary
+      tr.beforeRun();
       int execution = 1;
       try {
          if (annotation.redirectToTemp()) {
@@ -128,9 +125,6 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
          } else if (annotation.redirectToNull()) {
             OutputStreamUtil.redirectToNullStream();
          }
-         
-         SamplingHandler samplingHandler = new SamplingHandler(annotation, warmupString, executions);
-         
          LOG.debug("Executing " + executions + " " + warmupString);
          for (execution = 1; execution <= executions; execution++) {
             if (annotation.showStart()) {
@@ -138,9 +132,7 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
             }
             runnables.getBeforeRunnable().run();
             tr.startCollection();
-            samplingHandler.handleSamplingStart(tr, execution);
             runAllRepetitions(repetitions);
-            samplingHandler.handleSamplingEnd();
             tr.stopCollection();
             runnables.getAfterRunnable().run();
             tr.setRealExecutions(execution - 1);
@@ -163,8 +155,6 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
       LOG.debug("Executions: " + (execution - 1));
       tr.setRealExecutions(execution - 1);
    }
-
-   
    
    private void redirectToTempFile() throws IOException, FileNotFoundException {
       File tempFile = Files.createTempFile("kopeme", ".txt").toFile();

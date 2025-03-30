@@ -63,11 +63,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.github.terahidro2003</groupId>
-      <artifactId>sjsw</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>de.dagere.kopeme</groupId>
       <artifactId>kopeme-core</artifactId>
       <version>${project.version}</version>
