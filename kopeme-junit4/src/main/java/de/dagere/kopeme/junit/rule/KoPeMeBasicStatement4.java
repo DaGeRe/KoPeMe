@@ -128,14 +128,14 @@ public abstract class KoPeMeBasicStatement4 extends Statement {
          } else if (annotation.redirectToNull()) {
             OutputStreamUtil.redirectToNullStream();
          }
-         final File samplingResultsFolder;
+         
          List<File> samplingResultFiles = null;
          SjswInterProcessExecutor measurementProcessor = null;
          if(annotation.useSampling() && !warmupString.contains("warmup")
                  && !annotation.samplingResultsFolder().contains("<NULL>")) {
             LOG.info("KoPeMe with sampling enabled.");
             measurementProcessor = new AsprofInterProcessExecutor();
-            samplingResultsFolder = new File(annotation.samplingResultsFolder());
+            final File samplingResultsFolder = new File(annotation.samplingResultsFolder());
             samplingResultFiles = measurementProcessor.prepareForIterativeMeasurements(samplingResultsFolder, executions);
          }
          LOG.debug("Executing " + executions + " " + warmupString);
