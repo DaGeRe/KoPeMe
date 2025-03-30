@@ -41,6 +41,12 @@ public @interface PerformanceTest {
     */
    boolean showStart() default false;
 
+   boolean useSampling() default false;
+
+   int samplingInterval() default 100;
+
+   String samplingResultsFolder() default "<NULL>";
+
    boolean redirectToTemp() default false;
 
    boolean redirectToNull() default false;
