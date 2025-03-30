@@ -1,11 +1,17 @@
 package de.dagere.kopeme.junit5.extension;
 
+import static java.util.Collections.emptySet;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,12 +19,14 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
+import org.junit.jupiter.engine.descriptor.Filterable;
 import org.junit.jupiter.engine.descriptor.JupiterEngineDescriptor;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.jupiter.engine.descriptor.TestTemplateInvocationTestDescriptor;
 import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.jupiter.engine.extension.MutableExtensionRegistry;
 import org.junit.jupiter.engine.support.JupiterThrowableCollectorFactory;
+import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
@@ -51,9 +59,15 @@ public class KoPeMeJUnit5Starter {
       method = context.getTestMethod().get();
       configuration = getDummyConfiguration();
    }
-
+   
    public void start() {
-      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, null, configuration);
+      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, new Supplier<List<Class<?>>>() {
+         
+         @Override
+         public List<Class<?>> get() {
+            return Arrays.asList(KoPeMeJUnit5Starter.class);
+         }
+      }, configuration);
 
       boolean reinitialize = needsReinitialization();
       if (reinitialize) {
