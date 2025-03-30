@@ -53,7 +53,7 @@ public class KoPeMeJUnit5Starter {
    }
 
    public void start() {
-      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, configuration);
+      TestMethodTestDescriptor descriptor = new TestMethodTestDescriptor(currentId, outerInstance.getClass(), method, null, configuration);
 
       boolean reinitialize = needsReinitialization();
       if (reinitialize) {

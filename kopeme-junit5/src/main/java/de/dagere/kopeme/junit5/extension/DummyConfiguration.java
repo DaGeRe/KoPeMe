@@ -11,10 +11,13 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExecutionCondition;
+import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.TestInstantiationAwareExtension.ExtensionContextScope;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDirFactory;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.engine.config.JupiterConfiguration;
+import org.junit.platform.engine.reporting.OutputDirectoryProvider;
 
 final class DummyConfiguration implements JupiterConfiguration {
    @Override
@@ -108,6 +111,30 @@ final class DummyConfiguration implements JupiterConfiguration {
 
    @Override
    public Supplier<TempDirFactory> getDefaultTempDirFactorySupplier() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public Predicate<Class<? extends Extension>> getFilterForAutoDetectedExtensions() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public boolean isThreadDumpOnTimeoutEnabled() {
+      // TODO Auto-generated method stub
+      return false;
+   }
+
+   @Override
+   public ExtensionContextScope getDefaultTestInstantiationExtensionContextScope() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public OutputDirectoryProvider getOutputDirectoryProvider() {
       // TODO Auto-generated method stub
       return null;
    }
