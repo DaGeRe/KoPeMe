@@ -104,7 +104,7 @@ public class ChangeableFolderWriter extends AbstractMonitoringWriter implements 
          addMappingRecord(record);
       }
       if (currentWriter != null) {
-         LOG.debug("Record: " + record);
+         LOG.trace("Record: " + record);
          // LOG.info("Change writing to: " + System.identityHashCode(currentWriter));
          currentWriter.writeMonitoringRecord(record);
       }
