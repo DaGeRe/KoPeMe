@@ -12,6 +12,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.Extension;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstantiationAwareExtension.ExtensionContextScope;
 import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDirFactory;
@@ -20,6 +21,13 @@ import org.junit.jupiter.engine.config.JupiterConfiguration;
 import org.junit.platform.engine.reporting.OutputDirectoryProvider;
 
 final class DummyConfiguration implements JupiterConfiguration {
+   
+   private final ExtensionContext old;
+   
+   public DummyConfiguration(ExtensionContext old) {
+      this.old = old;
+   }
+   
    @Override
    public boolean isParallelExecutionEnabled() {
       // TODO Auto-generated method stub
@@ -34,8 +42,7 @@ final class DummyConfiguration implements JupiterConfiguration {
 
    @Override
    public Optional<String> getRawConfigurationParameter(final String key) {
-      // TODO Auto-generated method stub
-      return null;
+      return old.getConfigurationParameter(key);
    }
 
    @Override

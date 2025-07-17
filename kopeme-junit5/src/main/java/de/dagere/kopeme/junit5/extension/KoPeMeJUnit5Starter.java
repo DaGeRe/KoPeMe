@@ -221,7 +221,7 @@ public class KoPeMeJUnit5Starter {
    }
 
    private JupiterConfiguration getDummyConfiguration() {
-      final JupiterConfiguration configuration = new DummyConfiguration();
+      final JupiterConfiguration configuration = new DummyConfiguration(context);
       return configuration;
    }
 }
