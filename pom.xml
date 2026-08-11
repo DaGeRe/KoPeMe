@@ -14,7 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
-    <kieker.version>2.0.2</kieker.version>
+    <kieker.version>2.0.3</kieker.version>
     <jaxb.version>2.3.6</jaxb.version>
     <mockito.version>5.16.1</mockito.version>
     <checkstyle.version>10.18.0</checkstyle.version>
